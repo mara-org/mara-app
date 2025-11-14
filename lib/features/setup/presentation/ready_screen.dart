@@ -30,21 +30,6 @@ class ReadyScreen extends StatelessWidget {
               child: Column(
                 children: [
                   const SizedBox(height: 100),
-                  // Icon placeholder (cognition/brain icon)
-                  Container(
-                    width: 80,
-                    height: 84,
-                    decoration: BoxDecoration(
-                      color: AppColors.languageButtonColor.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Icon(
-                      Icons.psychology,
-                      size: 48,
-                      color: AppColors.languageButtonColor,
-                    ),
-                  ),
-                  const SizedBox(height: 40),
                   // Title
                   Text(
                     'Are you ready?',
@@ -52,8 +37,27 @@ class ReadyScreen extends StatelessWidget {
                     style: TextStyle(
                       color: AppColors.languageButtonColor,
                       fontSize: 24,
-                      fontWeight: FontWeight.normal,
+                      fontWeight: FontWeight.w600, // Semibold
                       height: 1,
+                    ),
+                  ),
+                  const SizedBox(height: 40),
+                  // cognition_2.png image between headline and secondary line
+                  SizedBox(
+                    width: 80,
+                    height: 84.16,
+                    child: Image.asset(
+                      'assets/icons/cognition_2.png',
+                      width: 80,
+                      height: 84.16,
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Icon(
+                          Icons.image,
+                          color: AppColors.languageButtonColor,
+                          size: 48,
+                        );
+                      },
                     ),
                   ),
                   const SizedBox(height: 40),
