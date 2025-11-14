@@ -17,6 +17,36 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   int _selectedIndex = 0;
+  bool _isVitalSignsLoading = false;
+  bool _isSummaryLoading = false;
+
+  void _onVitalSignsTap() {
+    setState(() {
+      _isVitalSignsLoading = true;
+    });
+    // Simulate loading - you can replace this with actual async operation
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted) {
+        setState(() {
+          _isVitalSignsLoading = false;
+        });
+      }
+    });
+  }
+
+  void _onSummaryTap() {
+    setState(() {
+      _isSummaryLoading = true;
+    });
+    // Simulate loading - you can replace this with actual async operation
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted) {
+        setState(() {
+          _isSummaryLoading = false;
+        });
+      }
+    });
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -232,106 +262,130 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       ),
                       const SizedBox(height: 24),
                       // Vital signs card
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16),
-                          color: AppColors.homeVitalSignsBackground,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.25),
-                              offset: const Offset(0, 4),
-                              blurRadius: 4,
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  children: [
-                                    const Icon(
-                                      Icons.favorite,
-                                      color: Colors.white,
-                                      size: 32,
-                                    ),
-                                    const SizedBox(width: 12),
-                                    const Text(
-                                      'Vital signs',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.normal,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const Icon(
-                                  Icons.arrow_forward_ios,
-                                  size: 16,
-                                  color: Colors.white,
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 8),
-                            const Text(
-                              'Track your variability and resting heart rate',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 11,
-                                fontWeight: FontWeight.normal,
+                      GestureDetector(
+                        onTap: _isVitalSignsLoading ? null : _onVitalSignsTap,
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16),
+                            color: _isVitalSignsLoading
+                                ? Colors.grey
+                                : AppColors.homeVitalSignsBackground,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.25),
+                                offset: const Offset(0, 4),
+                                blurRadius: 4,
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        _isVitalSignsLoading
+                                            ? Icons.hourglass_empty
+                                            : Icons.favorite,
+                                        color: Colors.white,
+                                        size: 32,
+                                      ),
+                                      const SizedBox(width: 12),
+                                      const Text(
+                                        'Vital signs',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.normal,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Icon(
+                                    _isVitalSignsLoading
+                                        ? Icons.hourglass_empty
+                                        : Icons.arrow_forward_ios,
+                                    size: 16,
+                                    color: Colors.white,
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              const Text(
+                                'Track your variability and resting heart rate',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.normal,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                       const SizedBox(height: 16),
                       // Summary card
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16),
-                          color: AppColors.homeCardBackground,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.25),
-                              offset: const Offset(0, 4),
-                              blurRadius: 4,
-                            ),
-                          ],
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.insights,
-                                  color: AppColors.languageButtonColor,
-                                  size: 32,
-                                ),
-                                const SizedBox(width: 12),
-                                const Text(
-                                  'Summary',
-                                  style: TextStyle(
-                                    color: AppColors.languageButtonColor,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.normal,
+                      GestureDetector(
+                        onTap: _isSummaryLoading ? null : _onSummaryTap,
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16),
+                            color: _isSummaryLoading
+                                ? Colors.grey
+                                : AppColors.homeCardBackground,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.25),
+                                offset: const Offset(0, 4),
+                                blurRadius: 4,
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(
+                                    _isSummaryLoading
+                                        ? Icons.hourglass_empty
+                                        : Icons.insights,
+                                    color: _isSummaryLoading
+                                        ? Colors.white
+                                        : AppColors.languageButtonColor,
+                                    size: 32,
                                   ),
-                                ),
-                              ],
-                            ),
-                            const Icon(
-                              Icons.arrow_forward_ios,
-                              size: 16,
-                              color: AppColors.languageButtonColor,
-                            ),
-                          ],
+                                  const SizedBox(width: 12),
+                                  Text(
+                                    'Summary',
+                                    style: TextStyle(
+                                      color: _isSummaryLoading
+                                          ? Colors.white
+                                          : AppColors.languageButtonColor,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.normal,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Icon(
+                                _isSummaryLoading
+                                    ? Icons.hourglass_empty
+                                    : Icons.arrow_forward_ios,
+                                size: 16,
+                                color: _isSummaryLoading
+                                    ? Colors.white
+                                    : AppColors.languageButtonColor,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                       const SizedBox(height: 24),

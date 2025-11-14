@@ -14,12 +14,15 @@ class ProfileScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final profile = ref.watch(userProfileProvider);
     final name = profile.name ?? 'User';
-    final initials = name.isNotEmpty ? name[0].toUpperCase() : 'U';
     final email = 'abdulaziz@example.com'; // Placeholder
 
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new),
+          onPressed: () => context.pop(),
+        ),
         title: Row(
           children: [
             const MaraLogo(width: 32, height: 32),
@@ -38,30 +41,10 @@ class ProfileScreen extends ConsumerWidget {
             child: Column(
               children: [
                 const SizedBox(height: 20),
-                // Profile header
+                // Profile header - name, email, and Edit button
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // Avatar
-                    Container(
-                      width: 80,
-                      height: 80,
-                      decoration: BoxDecoration(
-                        color: AppColors.languageButtonColor,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Center(
-                        child: Text(
-                          initials,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 32,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    // Name and email
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -85,7 +68,6 @@ class ProfileScreen extends ConsumerWidget {
                         ],
                       ),
                     ),
-                    // Edit button
                     TextButton(
                       onPressed: () {
                         // TODO: Implement edit profile
@@ -102,15 +84,6 @@ class ProfileScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: 40),
                 // Menu items
-                _ProfileMenuItem(
-                  title: 'Daily Summary',
-                  subtitle: "View today's health summary",
-                  icon: Icons.insights,
-                  onTap: () {
-                    // TODO: Navigate to DailySummaryScreen
-                  },
-                ),
-                const SizedBox(height: 16),
                 _ProfileMenuItem(
                   title: 'Health Profile',
                   subtitle: 'Review your health data and preferences',
@@ -143,7 +116,7 @@ class ProfileScreen extends ConsumerWidget {
                   subtitle: null,
                   icon: Icons.privacy_tip,
                   onTap: () {
-                    context.go('/privacy-policy');
+                    context.push('/privacy-webview');
                   },
                 ),
                 const SizedBox(height: 16),

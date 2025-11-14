@@ -36,7 +36,8 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
     final code = _controllers.map((c) => c.text).join();
     if (code.length == 6) {
       // For MVP, accept any 6-digit code
-      context.go('/welcome-back');
+      // Navigate to ready screen (first setup screen)
+      context.go('/ready');
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(

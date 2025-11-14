@@ -15,22 +15,34 @@
 
 #### Onboarding & Setup
 - **Splash Screen**: App introduction
-- **Language Selector**: Choose preferred language
+- **Language Selector**: Choose preferred language (English/Arabic) with bold Roboto fonts
 - **Welcome & Onboarding**: Introduction to Mara's features and privacy
 - **User Profile Setup**: Collect name, DOB, gender, height, weight, blood type, and health goals
 - **Permissions**: Request camera, microphone, notifications, and health data access
 
 #### Authentication
-- **Sign Up**: Create account with email, Google, or Apple
-- **Sign In**: Login with email and password
-- **Welcome Back**: Returning user experience
+- **Sign Up (Join Mara)**: Create account with email, Google, or Apple sign-in options
+- **Enter Your Email**: Email and password sign-in with terms checkbox and Login link
+- **Verify Email**: 6-digit code verification screen
+- **Welcome Back**: Returning user experience with email/password fields and social sign-in
 
 #### Main App
-- **Home Screen**: Daily insights, mood, sleep, water intake, vital signs summary
+- **Home Screen**: 
+  - Daily insights (mood, sleep, water intake)
+  - Vital signs card (clickable with loading state - grey background and hourglass icon)
+  - Summary card (clickable with loading state - grey background and hourglass icon)
+  - Chat with Mara button
 - **Mara Chat**: Interactive chat interface with the AI health assistant
 - **Analytics Dashboard**: Health data visualization and insights
-- **Profile**: User profile information and settings access
-- **Settings**: Manage preferences, permissions, privacy policy, and terms of service
+- **Profile**: 
+  - User name and email display with Edit button
+  - Back arrow navigation
+  - Health Profile, Permissions, Settings, Privacy Policy (opens in WebView), Terms of Service, and Logout options
+- **Settings**: 
+  - Language preferences (English/Arabic)
+  - Notification toggles (Health reminders, Email notifications)
+  - Privacy Policy (opens in external browser)
+  - Terms of Service (opens in in-app WebView)
 
 ## 🛠️ Tech Stack
 
@@ -41,6 +53,8 @@
 - **Assets**: SVG and PNG support
 - **Internationalization**: intl package
 - **External Links**: url_launcher
+- **WebView**: webview_flutter (for in-app privacy policy and terms viewing)
+- **Typography**: Roboto font family throughout the app
 
 ## 📁 Project Structure
 
@@ -113,8 +127,10 @@ flutter build ios --release
 
 - **App Name**: Mara
 - **Primary Color**: #0EA5C6 (Teal/Cyan)
-- **Font**: Roboto
+- **Font**: Roboto (applied throughout all screens)
 - **Design System**: Custom theme with consistent colors and typography
+- **Language Selector**: Bold Roboto font for language buttons
+- **UI Elements**: Consistent use of rounded corners (16-20px radius), shadows, and spacing
 
 ## 📱 App Icons
 
@@ -140,10 +156,17 @@ All data processing happens locally on the device for maximum privacy.
 
 The app uses GoRouter for navigation. Key routes include:
 - `/splash` - Initial splash screen
+- `/language-selector` - Language selection screen
+- `/sign-up-choices` - Sign up options (Google, Apple, Email)
+- `/sign-in-email` - Email and password sign in
+- `/verify-email` - Email verification screen
+- `/welcome-back` - Welcome back screen for returning users
 - `/home` - Main home screen
 - `/chat` - Mara chat interface
+- `/analytics` - Analytics dashboard
 - `/profile` - User profile
 - `/settings` - App settings
+- `/privacy-webview` - In-app privacy policy WebView
 - `/onboarding-*` - Onboarding flow screens
 - `/permissions-*` - Permission request screens
 

@@ -30,6 +30,15 @@ class SettingsScreen extends ConsumerWidget {
         backgroundColor: AppColors.homeHeaderBackground,
         foregroundColor: Colors.white,
         elevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.home),
+            onPressed: () {
+              context.go('/home');
+            },
+            tooltip: 'Home',
+          ),
+        ],
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -57,18 +66,6 @@ class SettingsScreen extends ConsumerWidget {
                   icon: Icons.language,
                   onTap: () {
                     _showLanguagePicker(context, ref);
-                  },
-                ),
-                const SizedBox(height: 12),
-                // Theme
-                _SettingsRow(
-                  title: 'Theme',
-                  subtitle: settings.themeMode == AppThemeMode.light
-                      ? 'Light'
-                      : 'Dark',
-                  icon: Icons.palette,
-                  onTap: () {
-                    _showThemePicker(context, ref);
                   },
                 ),
                 const SizedBox(height: 32),
@@ -191,20 +188,25 @@ class SettingsScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: 16),
                 _SettingsRow(
-                  title: 'Manage permissions',
-                  subtitle: 'Camera, microphone, notifications, health data.',
-                  icon: Icons.shield,
-                  onTap: () {
-                    context.go('/permissions-summary');
-                  },
-                ),
-                const SizedBox(height: 12),
-                _SettingsRow(
                   title: 'Privacy Policy',
                   subtitle: null,
                   icon: Icons.privacy_tip,
-                  onTap: () {
-                    context.go('/privacy-policy');
+                  onTap: () async {
+                    final uri = Uri.parse('https://iammara.com/privacy');
+                    if (await canLaunchUrl(uri)) {
+                      await launchUrl(
+                        uri,
+                        mode: LaunchMode.externalApplication,
+                      );
+                    } else {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Could not open Privacy Policy'),
+                          ),
+                        );
+                      }
+                    }
                   },
                 ),
                 const SizedBox(height: 12),
@@ -289,57 +291,6 @@ class SettingsScreen extends ConsumerWidget {
                     ref
                         .read(languageProvider.notifier)
                         .setLanguage(AppLanguage.arabic);
-                    Navigator.pop(context);
-                  },
-                ),
-                const SizedBox(height: 20),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  void _showThemePicker(BuildContext context, WidgetRef ref) {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) {
-        return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'Select Theme',
-                  style: TextStyle(
-                    color: AppColors.textPrimary,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 20),
-                ListTile(
-                  title: const Text('Light'),
-                  leading: const Icon(Icons.light_mode),
-                  onTap: () {
-                    ref
-                        .read(settingsProvider.notifier)
-                        .setThemeMode(AppThemeMode.light);
-                    Navigator.pop(context);
-                  },
-                ),
-                ListTile(
-                  title: const Text('Dark'),
-                  leading: const Icon(Icons.dark_mode),
-                  onTap: () {
-                    ref
-                        .read(settingsProvider.notifier)
-                        .setThemeMode(AppThemeMode.dark);
                     Navigator.pop(context);
                   },
                 ),

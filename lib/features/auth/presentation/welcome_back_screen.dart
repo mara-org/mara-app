@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+
+import '../../../core/theme/app_colors.dart';
+import '../../../core/utils/platform_utils.dart';
 import '../../../core/widgets/mara_logo.dart';
 import '../../../core/widgets/mara_text_field.dart';
 import '../../../core/widgets/primary_button.dart';
-import '../../../core/theme/app_colors.dart';
-import '../../../core/utils/platform_utils.dart';
 
 class WelcomeBackScreen extends StatefulWidget {
   const WelcomeBackScreen({super.key});
@@ -43,69 +44,71 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen> {
     return null;
   }
 
-  void _handleContinue() {
+  void _handleVerify() {
     if (_formKey.currentState!.validate()) {
-      // Navigate to ReadyScreen (first setup screen)
-      context.go('/ready');
+      // Navigate to Home screen
+      context.go('/home');
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final buttonWidth = screenWidth - 56; // Same width as email and password fields
+    
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: PlatformUtils.getDefaultPadding(context),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  const SizedBox(height: 20),
-                  // Mara logo
-                  const Center(
-                    child: MaraLogo(
-                      width: 258,
-                      height: 202,
-                    ),
+        child: Form(
+          key: _formKey,
+          child: Stack(
+            children: [
+              // Scrollable content for buttons
+              SingleChildScrollView(
+                child: Padding(
+                  padding: PlatformUtils.getDefaultPadding(context),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 20),
+                      // Mara logo
+                      const Center(
+                        child: MaraLogo(
+                          width: 258,
+                          height: 202,
+                        ),
+                      ),
+                      const SizedBox(
+                          height: 800), // Space for positioned elements
+                    ],
                   ),
-                  const SizedBox(height: 40),
-                  // Title
-                  Text(
-                    'Welcome back',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: AppColors.languageButtonColor,
-                      fontSize: 26,
-                      fontWeight: FontWeight.normal,
-                      height: 1,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  // Subtitle
-                  Text(
-                    'Happy to have you again',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: AppColors.textSecondary,
-                      fontSize: 16,
-                      fontWeight: FontWeight.normal,
-                      height: 1.5,
-                    ),
-                  ),
-                  const SizedBox(height: 40),
-                  // Email field
-                  MaraTextField(
+                ),
+              ),
+
+              // Positioned Email field at x28, y365
+              Positioned(
+                left: 28,
+                top: 365,
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width -
+                      56, // Full width minus left and right padding
+                  child: MaraTextField(
                     label: 'Email',
                     hint: 'Enter your email',
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
                     validator: _validateEmail,
                   ),
-                  const SizedBox(height: 20),
-                  // Password field
-                  MaraTextField(
+                ),
+              ),
+
+              // Positioned Password field at x28, y427
+              Positioned(
+                left: 28,
+                top: 427,
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width -
+                      56, // Full width minus left and right padding
+                  child: MaraTextField(
                     label: 'Password',
                     hint: 'Enter your password',
                     controller: _passwordController,
@@ -113,7 +116,9 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen> {
                     validator: _validatePassword,
                     suffixIcon: IconButton(
                       icon: Icon(
-                        _obscurePassword ? Icons.visibility : Icons.visibility_off,
+                        _obscurePassword
+                            ? Icons.visibility
+                            : Icons.visibility_off,
                         color: Colors.grey,
                       ),
                       onPressed: () {
@@ -123,40 +128,164 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen> {
                       },
                     ),
                   ),
-                  const SizedBox(height: 40),
-                  // Continue button
-                  PrimaryButton(
-                    text: 'Continue',
-                    width: 324,
+                ),
+              ),
+
+              // Positioned Verify button at x28, y511 (same width as email/password fields)
+              Positioned(
+                left: 28,
+                top: 511,
+                child: SizedBox(
+                  width: buttonWidth,
+                  child: PrimaryButton(
+                    text: 'Verify',
+                    width: buttonWidth,
                     height: 52,
                     borderRadius: 20,
-                    onPressed: _handleContinue,
+                    onPressed: _handleVerify,
                   ),
-                  const SizedBox(height: 20),
-                  // Social login buttons
-                  _SocialButton(
+                ),
+              ),
+
+              // Positioned "Continue with Google" button at x28, y576 (same width as email/password fields)
+              Positioned(
+                left: 28,
+                top: 576,
+                child: SizedBox(
+                  width: buttonWidth,
+                  child: _SocialButton(
                     text: 'Continue with Google',
                     icon: Icons.g_mobiledata,
                     backgroundColor: Colors.white,
                     textColor: AppColors.textPrimary,
+                    width: buttonWidth,
+                    height: 52,
                     onPressed: () {
                       // TODO: Implement Google sign-in
                     },
                   ),
-                  const SizedBox(height: 12),
-                  _SocialButton(
+                ),
+              ),
+
+              // Positioned "Continue with Apple" button at x28, y640 (same width as email/password fields)
+              Positioned(
+                left: 28,
+                top: 640, // 576 + 52 (button height) + 12 (spacing)
+                child: SizedBox(
+                  width: buttonWidth,
+                  child: _SocialButton(
                     text: 'Continue with Apple',
                     icon: Icons.apple,
                     backgroundColor: AppColors.appleButtonColor,
                     textColor: Colors.white,
+                    width: buttonWidth,
+                    height: 52,
                     onPressed: () {
                       // TODO: Implement Apple sign-in
                     },
                   ),
-                  const SizedBox(height: 20),
-                ],
+                ),
               ),
-            ),
+
+              // Positioned "Welcome back" title at x38, y285
+              Positioned(
+                left: 38,
+                top: 285,
+                child: Text(
+                  'Welcome back',
+                  style: TextStyle(
+                    color: AppColors.languageButtonColor,
+                    fontSize: 38,
+                    fontWeight: FontWeight.w600, // SemiBold
+                    height: 1,
+                    fontFamily: 'Roboto',
+                  ),
+                ),
+              ),
+
+              // Positioned "Happy to have you again" at x40, y331
+              Positioned(
+                left: 40,
+                top: 331,
+                child: Text(
+                  'Happy to have you again',
+                  style: TextStyle(
+                    color: AppColors.textSecondary,
+                    fontSize: 16,
+                    fontWeight: FontWeight.normal,
+                    height: 1.5,
+                    fontFamily: 'Roboto',
+                  ),
+                ),
+              ),
+
+              // Positioned "Forget your password? Click here" at x193, y489
+              Positioned(
+                left: 193,
+                top: 489,
+                child: GestureDetector(
+                  onTap: () {
+                    // TODO: Implement forgot password functionality
+                  },
+                  child: RichText(
+                    text: TextSpan(
+                      style: TextStyle(
+                        color: AppColors.textSecondary,
+                        fontSize: 11,
+                        fontWeight: FontWeight.normal,
+                        fontFamily: 'Roboto',
+                        decoration: TextDecoration.underline,
+                      ),
+                      children: [
+                        const TextSpan(text: 'Forget your password? '),
+                        TextSpan(
+                          text: 'Click here',
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+
+              // Positioned "Already have a member?" at x87, y740
+              Positioned(
+                left: 87,
+                top: 740,
+                child: Text(
+                  'Already have a member? ',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 15,
+                    fontWeight: FontWeight.normal,
+                    fontFamily: 'Roboto',
+                  ),
+                ),
+              ),
+
+              // Positioned "Sign in" at x265, y740 (moved 5px to the right)
+              Positioned(
+                left: 265,
+                top: 740,
+                child: GestureDetector(
+                  onTap: () {
+                    context.go('/sign-up-choices');
+                  },
+                  child: Text(
+                    'Sign in',
+                    style: TextStyle(
+                      color: Color(0xFF0EA5C6), // #0EA5C6
+                      fontSize: 15,
+                      fontWeight: FontWeight.normal,
+                      fontFamily: 'Roboto',
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -169,6 +298,8 @@ class _SocialButton extends StatelessWidget {
   final IconData icon;
   final Color backgroundColor;
   final Color textColor;
+  final double width;
+  final double height;
   final VoidCallback onPressed;
 
   const _SocialButton({
@@ -176,6 +307,8 @@ class _SocialButton extends StatelessWidget {
     required this.icon,
     required this.backgroundColor,
     required this.textColor,
+    required this.width,
+    required this.height,
     required this.onPressed,
   });
 
@@ -184,8 +317,8 @@ class _SocialButton extends StatelessWidget {
     return GestureDetector(
       onTap: onPressed,
       child: Container(
-        width: double.infinity,
-        height: 52,
+        width: width,
+        height: height,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           color: backgroundColor,
@@ -209,8 +342,9 @@ class _SocialButton extends StatelessWidget {
               style: TextStyle(
                 color: textColor,
                 fontSize: 16,
-                fontWeight: FontWeight.normal,
+                fontWeight: FontWeight.w500, // Medium
                 height: 1,
+                fontFamily: 'Roboto',
               ),
             ),
           ],
@@ -219,4 +353,3 @@ class _SocialButton extends StatelessWidget {
     );
   }
 }
-

@@ -138,7 +138,8 @@ class _LanguageButton extends StatelessWidget {
             style: const TextStyle(
               color: Colors.white,
               fontSize: 24,
-              fontWeight: FontWeight.normal,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'Roboto',
               height: 1,
             ),
           ),
