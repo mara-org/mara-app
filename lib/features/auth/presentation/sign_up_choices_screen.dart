@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/platform_utils.dart';
 import '../../../core/widgets/mara_logo.dart';
-import '../../../core/widgets/primary_button.dart';
 
 class SignUpChoicesScreen extends StatelessWidget {
   const SignUpChoicesScreen({super.key});
@@ -75,7 +74,7 @@ class SignUpChoicesScreen extends StatelessWidget {
               top: 365,
               child: _SocialButton(
                 text: 'Continue with Google',
-                icon: Icons.g_mobiledata,
+                iconImagePath: 'assets/icons/Sign in/Social media logo.png',
                 backgroundColor: Colors.white,
                 textColor: AppColors.textPrimary,
                 width: screenWidth - 64,
@@ -91,7 +90,7 @@ class SignUpChoicesScreen extends StatelessWidget {
               top: 437,
               child: _SocialButton(
                 text: 'Continue with Apple',
-                icon: Icons.apple,
+                iconImagePath: 'assets/icons/Sign in/Wrapper.png',
                 backgroundColor: AppColors.appleButtonColor,
                 textColor: Colors.white,
                 width: screenWidth - 64,
@@ -105,17 +104,16 @@ class SignUpChoicesScreen extends StatelessWidget {
             Positioned(
               left: 32,
               top: 509,
-              child: SizedBox(
+              child: _SocialButton(
+                text: 'Sign up with Email',
+                iconImagePath: 'assets/icons/Sign in/mail.png',
+                backgroundColor: AppColors.languageButtonColor,
+                textColor: Colors.white,
                 width: screenWidth - 64,
-                child: PrimaryButton(
-                  text: 'Sign up with Email',
-                  width: screenWidth - 64,
-                  height: 52,
-                  borderRadius: 20,
-                  onPressed: () {
-                    context.go('/sign-in-email');
-                  },
-                ),
+                height: 52,
+                onPressed: () {
+                  context.go('/sign-in-email');
+                },
               ),
             ),
             // Positioned "Already a member ?" at x117, y740
@@ -168,7 +166,7 @@ class SignUpChoicesScreen extends StatelessWidget {
 
 class _SocialButton extends StatelessWidget {
   final String text;
-  final IconData icon;
+  final String? iconImagePath;
   final Color backgroundColor;
   final Color textColor;
   final double width;
@@ -177,7 +175,7 @@ class _SocialButton extends StatelessWidget {
 
   const _SocialButton({
     required this.text,
-    required this.icon,
+    this.iconImagePath,
     required this.backgroundColor,
     required this.textColor,
     required this.width,
@@ -203,12 +201,28 @@ class _SocialButton extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              color: textColor,
-              size: 24,
-            ),
-            const SizedBox(width: 12),
+            if (iconImagePath != null) ...[
+              SizedBox(
+                width: 28,
+                height: 28,
+                child: Image.asset(
+                  iconImagePath!,
+                  width: 28,
+                  height: 28,
+                  fit: BoxFit.contain,
+                  filterQuality: FilterQuality.high,
+                  errorBuilder: (context, error, stackTrace) {
+                    debugPrint('Error loading image: $iconImagePath - $error');
+                    return Icon(
+                      Icons.image,
+                      color: textColor,
+                      size: 28,
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(width: 12),
+            ],
             Text(
               text,
               textAlign: TextAlign.center,

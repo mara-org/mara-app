@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:material_symbols_icons/symbols.dart';
 import '../../../core/widgets/primary_button.dart';
 
 class OnboardingPersonalizedScreen extends StatelessWidget {
@@ -8,20 +7,16 @@ class OnboardingPersonalizedScreen extends StatelessWidget {
 
   Widget _buildHeartIcon() {
     return Container(
-      width: 88,
-      height: 88,
+      width: 120,
+      height: 120,
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.15),
+        color: const Color(0xFF38BDF8).withOpacity(0.2), // #38BDF8 at 20%
         shape: BoxShape.circle,
       ),
-      child: const Center(
-        child: Icon(
-          Symbols.favorite,
-          size: 40,
-          color: Colors.white,
-          weight: 700,
-          grade: 0,
-          opticalSize: 48,
+      child: Center(
+        child: Image.asset(
+          'assets/icons/favorite.png',
+          fit: BoxFit.contain,
         ),
       ),
     );

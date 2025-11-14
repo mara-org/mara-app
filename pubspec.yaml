@@ -28,4 +28,5 @@ flutter:
   assets:
     - assets/images/mara_logo_new.png
     - assets/icons/
+    - assets/icons/Sign in/
 

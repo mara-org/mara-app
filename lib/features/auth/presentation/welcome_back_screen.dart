@@ -155,7 +155,7 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen> {
                   width: buttonWidth,
                   child: _SocialButton(
                     text: 'Continue with Google',
-                    icon: Icons.g_mobiledata,
+                    iconImagePath: 'assets/icons/Sign in/Social media logo.png',
                     backgroundColor: Colors.white,
                     textColor: AppColors.textPrimary,
                     width: buttonWidth,
@@ -175,7 +175,7 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen> {
                   width: buttonWidth,
                   child: _SocialButton(
                     text: 'Continue with Apple',
-                    icon: Icons.apple,
+                    iconImagePath: 'assets/icons/Sign in/Wrapper.png',
                     backgroundColor: AppColors.appleButtonColor,
                     textColor: Colors.white,
                     width: buttonWidth,
@@ -295,7 +295,7 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen> {
 
 class _SocialButton extends StatelessWidget {
   final String text;
-  final IconData icon;
+  final String? iconImagePath;
   final Color backgroundColor;
   final Color textColor;
   final double width;
@@ -304,7 +304,7 @@ class _SocialButton extends StatelessWidget {
 
   const _SocialButton({
     required this.text,
-    required this.icon,
+    this.iconImagePath,
     required this.backgroundColor,
     required this.textColor,
     required this.width,
@@ -330,12 +330,28 @@ class _SocialButton extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              color: textColor,
-              size: 24,
-            ),
-            const SizedBox(width: 12),
+            if (iconImagePath != null) ...[
+              SizedBox(
+                width: 28,
+                height: 28,
+                child: Image.asset(
+                  iconImagePath!,
+                  width: 28,
+                  height: 28,
+                  fit: BoxFit.contain,
+                  filterQuality: FilterQuality.high,
+                  errorBuilder: (context, error, stackTrace) {
+                    debugPrint('Error loading image: $iconImagePath - $error');
+                    return Icon(
+                      Icons.image,
+                      color: textColor,
+                      size: 28,
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(width: 12),
+            ],
             Text(
               text,
               textAlign: TextAlign.center,
