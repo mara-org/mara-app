@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/widgets/mara_logo.dart';
+import '../../../core/widgets/mara_text_field.dart';
 import '../../../core/widgets/primary_button.dart';
 
 class SignInEmailScreen extends StatefulWidget {
@@ -89,40 +90,34 @@ class _SignInEmailScreenState extends State<SignInEmailScreen> {
                 ),
                 const SizedBox(height: 24),
                 // Email field
-                TextFormField(
+                MaraTextField(
+                  label: 'Email',
+                  hint: 'Enter your email',
                   controller: _emailController,
-                  decoration: const InputDecoration(
-                    labelText: 'Email',
-                    labelStyle: TextStyle(fontFamily: 'Roboto'),
-                  ),
                   keyboardType: TextInputType.emailAddress,
                   validator: _validateEmail,
-                  style: const TextStyle(fontFamily: 'Roboto'),
                 ),
                 const SizedBox(height: 12),
                 // Password field
-                TextFormField(
+                MaraTextField(
+                  label: 'Password',
+                  hint: 'Enter your password',
                   controller: _passwordController,
-                  decoration: InputDecoration(
-                    labelText: 'Password',
-                    labelStyle: const TextStyle(fontFamily: 'Roboto'),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscurePassword
-                            ? Icons.visibility_off
-                            : Icons.visibility,
-                        color: Colors.grey,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _obscurePassword = !_obscurePassword;
-                        });
-                      },
-                    ),
-                  ),
                   obscureText: _obscurePassword,
                   validator: _validatePassword,
-                  style: const TextStyle(fontFamily: 'Roboto'),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscurePassword
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                      color: Colors.grey,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _obscurePassword = !_obscurePassword;
+                      });
+                    },
+                  ),
                 ),
                 const SizedBox(height: 22),
                 // Terms checkbox + link
