@@ -75,15 +75,21 @@ class _NameInputScreenState extends ConsumerState<NameInputScreen> {
                   ),
                 ),
                 const SizedBox(height: 40),
-                // Title
-                Text(
-                  "What's your name?",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: AppColors.languageButtonColor,
-                    fontSize: 26,
-                    fontWeight: FontWeight.normal,
-                    height: 1,
+                // Title (positioned at x36)
+                Padding(
+                  padding: const EdgeInsets.only(left: 36),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "What's your name?",
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        color: AppColors.languageButtonColor,
+                        fontSize: 26,
+                        fontWeight: FontWeight.normal,
+                        height: 1,
+                      ),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -99,11 +105,16 @@ class _NameInputScreenState extends ConsumerState<NameInputScreen> {
                   ),
                 ),
                 const SizedBox(height: 40),
-                // Name field
-                MaraTextField(
-                  hint: 'Enter your name',
-                  controller: _nameController,
-                  onChanged: (_) => setState(() {}),
+                // Name field (width 324, same as button)
+                Center(
+                  child: SizedBox(
+                    width: 324,
+                    child: MaraTextField(
+                      hint: 'Enter your name',
+                      controller: _nameController,
+                      onChanged: (_) => setState(() {}),
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 40),
                 // Continue button

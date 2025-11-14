@@ -15,12 +15,13 @@ class DobInputScreen extends ConsumerStatefulWidget {
 }
 
 class _DobInputScreenState extends ConsumerState<DobInputScreen> {
-  int _selectedDay = 15;
-  int _selectedMonth = 6;
-  late int _selectedYear;
+  int? _selectedDay;
+  int? _selectedMonth;
+  int? _selectedYear;
   late FixedExtentScrollController _yearController;
+  late FixedExtentScrollController _monthController;
+  late FixedExtentScrollController _dayController;
 
-  final List<int> _days = List.generate(31, (i) => i + 1); // 1-31
   final List<int> _months = List.generate(12, (i) => i + 1); // 1-12
   late final List<int> _years;
 
@@ -29,20 +30,25 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
     super.initState();
     final currentYear = DateTime.now().year;
     _years = List.generate(currentYear - 1899, (i) => 1900 + i); // 1900 to current year
-    final defaultYearIndex = _years.length ~/ 2;
-    _selectedYear = _years[defaultYearIndex]; // Default to middle year
-    _yearController = FixedExtentScrollController(initialItem: defaultYearIndex);
+    _yearController = FixedExtentScrollController();
+    _monthController = FixedExtentScrollController();
+    _dayController = FixedExtentScrollController();
   }
 
   @override
   void dispose() {
     _yearController.dispose();
+    _monthController.dispose();
+    _dayController.dispose();
     super.dispose();
   }
 
   void _handleContinue() {
+    if (_selectedYear == null || _selectedMonth == null || _selectedDay == null) {
+      return;
+    }
     try {
-      final dateOfBirth = DateTime(_selectedYear, _selectedMonth, _selectedDay);
+      final dateOfBirth = DateTime(_selectedYear!, _selectedMonth!, _selectedDay!);
       if (dateOfBirth.isBefore(DateTime.now())) {
         ref.read(userProfileProvider.notifier).setDateOfBirth(dateOfBirth);
         context.go('/gender');
@@ -55,6 +61,16 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
         ),
       );
     }
+  }
+
+  bool get _canContinue => _selectedYear != null && _selectedMonth != null && _selectedDay != null;
+  
+  List<int> get _validDays {
+    if (_selectedYear == null || _selectedMonth == null) {
+      return [];
+    }
+    final daysInMonth = DateTime(_selectedYear!, _selectedMonth! + 1, 0).day;
+    return List.generate(daysInMonth, (i) => i + 1);
   }
 
   @override
@@ -97,134 +113,28 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
                   ),
                 ),
                 const SizedBox(height: 40),
-                // Title
-                Text(
-                  'When were you born?',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: AppColors.languageButtonColor,
-                    fontSize: 26,
-                    fontWeight: FontWeight.normal,
-                    height: 1,
+                // Title (moved 4px to the right from previous position)
+                Padding(
+                  padding: const EdgeInsets.only(left: 1),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'When were you born?',
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        color: AppColors.languageButtonColor,
+                        fontSize: 26,
+                        fontWeight: FontWeight.normal,
+                        height: 1,
+                      ),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 40),
-                // Date pickers in a row
+                // Date pickers in a row (Year first, then Month, then Day)
                 Row(
                   children: [
-                    // Day picker
-                    Expanded(
-                      child: Column(
-                        children: [
-                          Text(
-                            'Day',
-                            style: TextStyle(
-                              color: AppColors.textSecondary,
-                              fontSize: 14,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          SizedBox(
-                            height: 200,
-                            child: ListWheelScrollView.useDelegate(
-                              itemExtent: 50,
-                              diameterRatio: 1.5,
-                              physics: const FixedExtentScrollPhysics(),
-                              onSelectedItemChanged: (index) {
-                                setState(() {
-                                  _selectedDay = _days[index];
-                                });
-                              },
-                              childDelegate: ListWheelChildBuilderDelegate(
-                                builder: (context, index) {
-                                  if (index < 0 || index >= _days.length) return null;
-                                  final day = _days[index];
-                                  final isSelected = day == _selectedDay;
-                                  return Container(
-                                    alignment: Alignment.center,
-                                    decoration: BoxDecoration(
-                                      color: isSelected
-                                          ? AppColors.languageButtonColor.withOpacity(0.4)
-                                          : Colors.transparent,
-                                      borderRadius: BorderRadius.circular(19),
-                                    ),
-                                    child: Text(
-                                      day.toString(),
-                                      style: TextStyle(
-                                        color: isSelected
-                                            ? AppColors.languageButtonColor
-                                            : AppColors.textSecondary.withOpacity(0.66),
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.normal,
-                                      ),
-                                    ),
-                                  );
-                                },
-                                childCount: _days.length,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    // Month picker
-                    Expanded(
-                      child: Column(
-                        children: [
-                          Text(
-                            'Month',
-                            style: TextStyle(
-                              color: AppColors.textSecondary,
-                              fontSize: 14,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          SizedBox(
-                            height: 200,
-                            child: ListWheelScrollView.useDelegate(
-                              itemExtent: 50,
-                              diameterRatio: 1.5,
-                              physics: const FixedExtentScrollPhysics(),
-                              onSelectedItemChanged: (index) {
-                                setState(() {
-                                  _selectedMonth = _months[index];
-                                });
-                              },
-                              childDelegate: ListWheelChildBuilderDelegate(
-                                builder: (context, index) {
-                                  if (index < 0 || index >= _months.length) return null;
-                                  final month = _months[index];
-                                  final isSelected = month == _selectedMonth;
-                                  return Container(
-                                    alignment: Alignment.center,
-                                    decoration: BoxDecoration(
-                                      color: isSelected
-                                          ? AppColors.languageButtonColor.withOpacity(0.4)
-                                          : Colors.transparent,
-                                      borderRadius: BorderRadius.circular(19),
-                                    ),
-                                    child: Text(
-                                      month.toString(),
-                                      style: TextStyle(
-                                        color: isSelected
-                                            ? AppColors.languageButtonColor
-                                            : AppColors.textSecondary.withOpacity(0.66),
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.normal,
-                                      ),
-                                    ),
-                                  );
-                                },
-                                childCount: _months.length,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    // Year picker
+                    // Year picker (must be selected first)
                     Expanded(
                       child: Column(
                         children: [
@@ -246,6 +156,9 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
                               onSelectedItemChanged: (index) {
                                 setState(() {
                                   _selectedYear = _years[index];
+                                  // Reset month and day when year changes
+                                  _selectedMonth = null;
+                                  _selectedDay = null;
                                 });
                               },
                               childDelegate: ListWheelChildBuilderDelegate(
@@ -280,16 +193,156 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
                         ],
                       ),
                     ),
+                    const SizedBox(width: 8),
+                    // Month picker (enabled only after year is selected)
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Text(
+                            'Month',
+                            style: TextStyle(
+                              color: _selectedYear != null 
+                                  ? AppColors.textSecondary 
+                                  : AppColors.textSecondary.withOpacity(0.5),
+                              fontSize: 14,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          SizedBox(
+                            height: 200,
+                            child: ListWheelScrollView.useDelegate(
+                              itemExtent: 50,
+                              diameterRatio: 1.5,
+                              physics: _selectedYear != null
+                                  ? const FixedExtentScrollPhysics()
+                                  : const NeverScrollableScrollPhysics(),
+                              controller: _monthController,
+                              onSelectedItemChanged: _selectedYear != null
+                                  ? (index) {
+                                      setState(() {
+                                        _selectedMonth = _months[index];
+                                        // Reset day when month changes
+                                        _selectedDay = null;
+                                      });
+                                    }
+                                  : null,
+                              childDelegate: ListWheelChildBuilderDelegate(
+                                builder: (context, index) {
+                                  if (index < 0 || index >= _months.length) return null;
+                                  final month = _months[index];
+                                  final isSelected = month == _selectedMonth;
+                                  final isEnabled = _selectedYear != null;
+                                  return Opacity(
+                                    opacity: isEnabled ? 1.0 : 0.5,
+                                    child: Container(
+                                      alignment: Alignment.center,
+                                      decoration: BoxDecoration(
+                                        color: isSelected
+                                            ? AppColors.languageButtonColor.withOpacity(0.4)
+                                            : Colors.transparent,
+                                        borderRadius: BorderRadius.circular(19),
+                                      ),
+                                      child: Text(
+                                        month.toString(),
+                                        style: TextStyle(
+                                          color: isSelected
+                                              ? AppColors.languageButtonColor
+                                              : AppColors.textSecondary.withOpacity(0.66),
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.normal,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                                childCount: _months.length,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    // Day picker (enabled only after year and month are selected)
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Text(
+                            'Day',
+                            style: TextStyle(
+                              color: _selectedYear != null && _selectedMonth != null
+                                  ? AppColors.textSecondary 
+                                  : AppColors.textSecondary.withOpacity(0.5),
+                              fontSize: 14,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          SizedBox(
+                            height: 200,
+                            child: ListWheelScrollView.useDelegate(
+                              itemExtent: 50,
+                              diameterRatio: 1.5,
+                              physics: _selectedYear != null && _selectedMonth != null
+                                  ? const FixedExtentScrollPhysics()
+                                  : const NeverScrollableScrollPhysics(),
+                              controller: _dayController,
+                              onSelectedItemChanged: _selectedYear != null && _selectedMonth != null
+                                  ? (index) {
+                                      setState(() {
+                                        final validDays = _validDays;
+                                        if (index >= 0 && index < validDays.length) {
+                                          _selectedDay = validDays[index];
+                                        }
+                                      });
+                                    }
+                                  : null,
+                              childDelegate: ListWheelChildBuilderDelegate(
+                                builder: (context, index) {
+                                  final validDays = _validDays;
+                                  if (index < 0 || index >= validDays.length) return null;
+                                  final day = validDays[index];
+                                  final isSelected = day == _selectedDay;
+                                  final isEnabled = _selectedYear != null && _selectedMonth != null;
+                                  return Opacity(
+                                    opacity: isEnabled ? 1.0 : 0.5,
+                                    child: Container(
+                                      alignment: Alignment.center,
+                                      decoration: BoxDecoration(
+                                        color: isSelected
+                                            ? AppColors.languageButtonColor.withOpacity(0.4)
+                                            : Colors.transparent,
+                                        borderRadius: BorderRadius.circular(19),
+                                      ),
+                                      child: Text(
+                                        day.toString(),
+                                        style: TextStyle(
+                                          color: isSelected
+                                              ? AppColors.languageButtonColor
+                                              : AppColors.textSecondary.withOpacity(0.66),
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.normal,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                                childCount: _validDays.length,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 40),
-                // Continue button
+                // Continue button (disabled until all three are selected)
                 PrimaryButton(
                   text: 'Continue',
                   width: 324,
                   height: 52,
                   borderRadius: 20,
-                  onPressed: _handleContinue,
+                  onPressed: _canContinue ? _handleContinue : null,
                 ),
                 const SizedBox(height: 20),
               ],
