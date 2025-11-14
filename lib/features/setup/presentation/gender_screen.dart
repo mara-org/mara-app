@@ -1,0 +1,175 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import '../../../core/widgets/mara_logo.dart';
+import '../../../core/widgets/primary_button.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/utils/platform_utils.dart';
+import '../../../core/providers/user_profile_provider.dart';
+import '../../../core/models/user_profile_setup.dart';
+
+class GenderScreen extends ConsumerStatefulWidget {
+  const GenderScreen({super.key});
+
+  @override
+  ConsumerState<GenderScreen> createState() => _GenderScreenState();
+}
+
+class _GenderScreenState extends ConsumerState<GenderScreen> {
+  Gender? _selectedGender;
+
+  void _handleContinue() {
+    if (_selectedGender != null) {
+      ref.read(userProfileProvider.notifier).setGender(_selectedGender!);
+      context.go('/height');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.backgroundLight,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: PlatformUtils.getDefaultPadding(context),
+            child: Column(
+              children: [
+                const SizedBox(height: 20),
+                // Back button
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: GestureDetector(
+                    onTap: () => context.pop(),
+                    child: Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: AppColors.languageButtonColor.withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.arrow_back,
+                        color: AppColors.languageButtonColor,
+                        size: 20,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                // Mara logo
+                const Center(
+                  child: MaraLogo(
+                    width: 258,
+                    height: 202,
+                  ),
+                ),
+                const SizedBox(height: 40),
+                // Title
+                Text(
+                  'Tell us your gender?',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: AppColors.languageButtonColor,
+                    fontSize: 26,
+                    fontWeight: FontWeight.normal,
+                    height: 1,
+                  ),
+                ),
+                const SizedBox(height: 40),
+                // Gender buttons
+                Row(
+                  children: [
+                    Expanded(
+                      child: _GenderButton(
+                        text: 'Male 👨',
+                        isSelected: _selectedGender == Gender.male,
+                        isFemale: false,
+                        onTap: () {
+                          setState(() {
+                            _selectedGender = Gender.male;
+                          });
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: _GenderButton(
+                        text: 'Female 👩',
+                        isSelected: _selectedGender == Gender.female,
+                        isFemale: true,
+                        onTap: () {
+                          setState(() {
+                            _selectedGender = Gender.female;
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 40),
+                // Continue button
+                PrimaryButton(
+                  text: 'Continue',
+                  onPressed: _selectedGender != null ? _handleContinue : null,
+                ),
+                const SizedBox(height: 20),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _GenderButton extends StatelessWidget {
+  final String text;
+  final bool isSelected;
+  final bool isFemale;
+  final VoidCallback onTap;
+
+  const _GenderButton({
+    required this.text,
+    required this.isSelected,
+    required this.isFemale,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final selectedColor = isFemale
+        ? AppColors.femaleButtonColor
+        : AppColors.languageButtonColor;
+    
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 52,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          color: isSelected ? selectedColor : Colors.white,
+          border: Border.all(
+            color: isSelected ? selectedColor : AppColors.borderColor,
+            width: 1,
+          ),
+        ),
+        child: Center(
+          child: Text(
+            text,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: isSelected
+                  ? (isFemale ? AppColors.textPrimary : Colors.white)
+                  : AppColors.textSecondary,
+              fontSize: 16,
+              fontWeight: FontWeight.normal,
+              height: 1,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+

@@ -1,0 +1,167 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import '../../../core/widgets/mara_logo.dart';
+import '../../../core/widgets/primary_button.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/utils/platform_utils.dart';
+import '../../../core/providers/user_profile_provider.dart';
+
+class GoalsScreen extends ConsumerStatefulWidget {
+  const GoalsScreen({super.key});
+
+  @override
+  ConsumerState<GoalsScreen> createState() => _GoalsScreenState();
+}
+
+class _GoalsScreenState extends ConsumerState<GoalsScreen> {
+  String? _selectedGoal;
+
+  final List<Map<String, String>> _goals = [
+    {'emoji': '🏃‍♂️', 'text': 'Stay active'},
+    {'emoji': '😌', 'text': 'Reduce stress'},
+    {'emoji': '💤', 'text': 'Sleep better'},
+    {'emoji': '❤️', 'text': 'Track my health'},
+  ];
+
+  void _handleContinue() {
+    if (_selectedGoal != null) {
+      ref.read(userProfileProvider.notifier).setMainGoal(_selectedGoal!);
+      context.go('/welcome-personal');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.backgroundLight,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: PlatformUtils.getDefaultPadding(context),
+            child: Column(
+              children: [
+                const SizedBox(height: 20),
+                // Back button
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: GestureDetector(
+                    onTap: () => context.pop(),
+                    child: Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: AppColors.languageButtonColor.withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.arrow_back,
+                        color: AppColors.languageButtonColor,
+                        size: 20,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                // Mara logo
+                const Center(
+                  child: MaraLogo(
+                    width: 258,
+                    height: 202,
+                  ),
+                ),
+                const SizedBox(height: 40),
+                // Title
+                Text(
+                  "What's your main health goal?",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: AppColors.languageButtonColor,
+                    fontSize: 26,
+                    fontWeight: FontWeight.normal,
+                    height: 1,
+                  ),
+                ),
+                const SizedBox(height: 40),
+                // Goals list
+                ..._goals.map((goal) {
+                  final goalText = '${goal['emoji']} ${goal['text']}';
+                  final isSelected = _selectedGoal == goal['text'];
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: _GoalButton(
+                      text: goalText,
+                      isSelected: isSelected,
+                      onTap: () {
+                        setState(() {
+                          _selectedGoal = goal['text'];
+                        });
+                      },
+                    ),
+                  );
+                }),
+                const SizedBox(height: 40),
+                // Continue button
+                PrimaryButton(
+                  text: 'Continue',
+                  onPressed: _selectedGoal != null ? _handleContinue : null,
+                ),
+                const SizedBox(height: 20),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _GoalButton extends StatelessWidget {
+  final String text;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _GoalButton({
+    required this.text,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: double.infinity,
+        height: 52,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          color: isSelected
+              ? AppColors.languageButtonColor
+              : Colors.white,
+          border: Border.all(
+            color: isSelected
+                ? AppColors.languageButtonColor
+                : AppColors.borderColor,
+            width: 1,
+          ),
+        ),
+        child: Center(
+          child: Text(
+            text,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: isSelected
+                  ? Colors.white
+                  : AppColors.textSecondary,
+              fontSize: 16,
+              fontWeight: FontWeight.normal,
+              height: 1,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+

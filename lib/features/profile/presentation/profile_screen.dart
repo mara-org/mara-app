@@ -1,0 +1,284 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
+import '../../../core/widgets/mara_logo.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/utils/platform_utils.dart';
+import '../../../core/providers/user_profile_provider.dart';
+
+class ProfileScreen extends ConsumerWidget {
+  const ProfileScreen({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final profile = ref.watch(userProfileProvider);
+    final name = profile.name ?? 'User';
+    final initials = name.isNotEmpty ? name[0].toUpperCase() : 'U';
+    final email = 'abdulaziz@example.com'; // Placeholder
+
+    return Scaffold(
+      backgroundColor: AppColors.backgroundLight,
+      appBar: AppBar(
+        title: Row(
+          children: [
+            const MaraLogo(width: 32, height: 32),
+            const SizedBox(width: 12),
+            const Text('Profile'),
+          ],
+        ),
+        backgroundColor: AppColors.homeHeaderBackground,
+        foregroundColor: Colors.white,
+        elevation: 0,
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: PlatformUtils.getDefaultPadding(context),
+            child: Column(
+              children: [
+                const SizedBox(height: 20),
+                // Profile header
+                Row(
+                  children: [
+                    // Avatar
+                    Container(
+                      width: 80,
+                      height: 80,
+                      decoration: BoxDecoration(
+                        color: AppColors.languageButtonColor,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Center(
+                        child: Text(
+                          initials,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    // Name and email
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            name,
+                            style: TextStyle(
+                              color: AppColors.textPrimary,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            email,
+                            style: TextStyle(
+                              color: AppColors.textSecondary,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // Edit button
+                    TextButton(
+                      onPressed: () {
+                        // TODO: Implement edit profile
+                      },
+                      child: Text(
+                        'Edit',
+                        style: TextStyle(
+                          color: AppColors.languageButtonColor,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 40),
+                // Menu items
+                _ProfileMenuItem(
+                  title: 'Daily Summary',
+                  subtitle: "View today's health summary",
+                  icon: Icons.insights,
+                  onTap: () {
+                    // TODO: Navigate to DailySummaryScreen
+                  },
+                ),
+                const SizedBox(height: 16),
+                _ProfileMenuItem(
+                  title: 'Health Profile',
+                  subtitle: 'Review your health data and preferences',
+                  icon: Icons.favorite,
+                  onTap: () {
+                    // TODO: Navigate to edit health profile screen
+                  },
+                ),
+                const SizedBox(height: 16),
+                _ProfileMenuItem(
+                  title: 'Permissions',
+                  subtitle: 'Camera, Microphone, Notifications, Health data',
+                  icon: Icons.shield,
+                  onTap: () {
+                    context.go('/permissions-summary');
+                  },
+                ),
+                const SizedBox(height: 16),
+                _ProfileMenuItem(
+                  title: 'Settings',
+                  subtitle: 'Language, notifications and more',
+                  icon: Icons.settings,
+                  onTap: () {
+                    context.go('/settings');
+                  },
+                ),
+                const SizedBox(height: 16),
+                _ProfileMenuItem(
+                  title: 'Privacy Policy',
+                  subtitle: null,
+                  icon: Icons.privacy_tip,
+                  onTap: () {
+                    context.go('/privacy-policy');
+                  },
+                ),
+                const SizedBox(height: 16),
+                _ProfileMenuItem(
+                  title: 'Terms of Service',
+                  subtitle: null,
+                  icon: Icons.description,
+                  onTap: () async {
+                    final uri = Uri.parse('https://iammara.com/terms');
+                    if (await canLaunchUrl(uri)) {
+                      await launchUrl(
+                        uri,
+                        mode: LaunchMode.inAppWebView,
+                      );
+                    } else {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Could not open Terms of Service'),
+                          ),
+                        );
+                      }
+                    }
+                  },
+                ),
+                const SizedBox(height: 40),
+                // Log out button
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  child: TextButton(
+                    onPressed: () {
+                      context.go('/logout-confirmation');
+                    },
+                    style: TextButton.styleFrom(
+                      foregroundColor: AppColors.error,
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                    ),
+                    child: const Text(
+                      'Log out',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ProfileMenuItem extends StatelessWidget {
+  final String title;
+  final String? subtitle;
+  final IconData icon;
+  final VoidCallback onTap;
+
+  const _ProfileMenuItem({
+    required this.title,
+    this.subtitle,
+    required this.icon,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: AppColors.borderColor,
+            width: 1,
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: AppColors.languageButtonColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(
+                icon,
+                color: AppColors.languageButtonColor,
+                size: 24,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      color: AppColors.textPrimary,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  if (subtitle != null) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      subtitle!,
+                      style: TextStyle(
+                        color: AppColors.textSecondary,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            Icon(
+              Icons.arrow_forward_ios,
+              size: 16,
+              color: AppColors.textSecondary,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
