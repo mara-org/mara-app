@@ -1,26 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/widgets/primary_button.dart';
-import '../../../core/theme/app_colors.dart';
 
 class OnboardingPrivacyScreen extends StatelessWidget {
   const OnboardingPrivacyScreen({super.key});
-
-  Widget _buildCircleIcon(IconData icon) {
-    return Container(
-      width: 60,
-      height: 60,
-      decoration: BoxDecoration(
-        color: AppColors.languageButtonColor.withOpacity(0.1),
-        shape: BoxShape.circle,
-      ),
-      child: Icon(
-        icon,
-        size: 32,
-        color: AppColors.languageButtonColor,
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,9 +41,27 @@ class OnboardingPrivacyScreen extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _buildCircleIcon(Icons.lock_outline),
+                  SizedBox(
+                    width: 53.49,
+                    height: 70.2,
+                    child: Image.asset(
+                      'assets/icons/lock.png',
+                      width: 53.49,
+                      height: 70.2,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
                   const SizedBox(width: 16),
-                  _buildCircleIcon(Icons.language),
+                  SizedBox(
+                    width: 69,
+                    height: 66.86,
+                    child: Image.asset(
+                      'assets/icons/globe_uk.png',
+                      width: 69,
+                      height: 66.86,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
                 ],
               ),
               

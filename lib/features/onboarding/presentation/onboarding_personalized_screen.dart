@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import '../../../core/widgets/primary_button.dart';
 
 class OnboardingPersonalizedScreen extends StatelessWidget {
@@ -15,9 +16,12 @@ class OnboardingPersonalizedScreen extends StatelessWidget {
       ),
       child: const Center(
         child: Icon(
-          Icons.favorite_rounded,
+          Symbols.favorite,
           size: 40,
           color: Colors.white,
+          weight: 700,
+          grade: 0,
+          opticalSize: 48,
         ),
       ),
     );

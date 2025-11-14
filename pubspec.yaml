@@ -16,6 +16,7 @@ dependencies:
   intl: ^0.19.0
   url_launcher: ^6.2.5
   webview_flutter: ^4.4.2
+  material_symbols_icons: ^4.21.0
 
 dev_dependencies:
   flutter_test:
@@ -26,4 +27,5 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/mara_logo_new.png
+    - assets/icons/
 

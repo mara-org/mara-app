@@ -7,17 +7,14 @@ class OnboardingInsightsScreen extends StatelessWidget {
   const OnboardingInsightsScreen({super.key});
 
   Widget _buildRobotIcon() {
-    return Container(
-      width: 72,
-      height: 72,
-      decoration: BoxDecoration(
-        color: const Color(0xFF0EA5C6), // #0EA5C6
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: const Icon(
-        Icons.smart_toy_rounded,
-        size: 40,
-        color: Colors.white,
+    return SizedBox(
+      width: 88,
+      height: 76,
+      child: Image.asset(
+        'assets/icons/smart_toy.png',
+        width: 88,
+        height: 76,
+        fit: BoxFit.contain,
       ),
     );
   }
