@@ -104,6 +104,9 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
                 // Continue button
                 PrimaryButton(
                   text: 'Continue',
+                  width: 324,
+                  height: 52,
+                  borderRadius: 20,
                   onPressed: _selectedGoal != null ? _handleContinue : null,
                 ),
                 const SizedBox(height: 20),

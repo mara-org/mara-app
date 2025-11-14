@@ -46,9 +46,9 @@ class _SignInEmailScreenState extends State<SignInEmailScreen> {
     return null;
   }
 
-  void _handleVerify() {
+  void _handleSignIn() {
     if (_formKey.currentState!.validate()) {
-      context.go('/verify-email');
+      context.go('/welcome-back');
     }
   }
 
@@ -114,10 +114,10 @@ class _SignInEmailScreenState extends State<SignInEmailScreen> {
                     ),
                   ),
                   const SizedBox(height: 40),
-                  // Verify button
+                  // Sign in button
                   PrimaryButton(
-                    text: 'Verify',
-                    onPressed: _handleVerify,
+                    text: 'Sign in',
+                    onPressed: _handleSignIn,
                   ),
                   const SizedBox(height: 20),
                   // Sign up link

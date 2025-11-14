@@ -111,6 +111,9 @@ class _GenderScreenState extends ConsumerState<GenderScreen> {
                 // Continue button
                 PrimaryButton(
                   text: 'Continue',
+                  width: 324,
+                  height: 52,
+                  borderRadius: 20,
                   onPressed: _selectedGender != null ? _handleContinue : null,
                 ),
                 const SizedBox(height: 20),

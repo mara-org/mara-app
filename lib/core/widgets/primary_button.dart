@@ -7,6 +7,7 @@ class PrimaryButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final double? width;
   final double? height;
+  final double? borderRadius;
 
   const PrimaryButton({
     super.key,
@@ -14,12 +15,14 @@ class PrimaryButton extends StatelessWidget {
     this.onPressed,
     this.width,
     this.height,
+    this.borderRadius,
   });
 
   @override
   Widget build(BuildContext context) {
     final isIOS = PlatformUtils.isIOS;
     final buttonHeight = height ?? (isIOS ? 50.0 : 48.0);
+    final buttonBorderRadius = borderRadius ?? (isIOS ? 12.0 : 8.0);
     
     return SizedBox(
       width: width ?? double.infinity,
@@ -34,7 +37,7 @@ class PrimaryButton extends StatelessWidget {
             vertical: isIOS ? 14 : 12,
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(isIOS ? 12 : 8),
+            borderRadius: BorderRadius.circular(buttonBorderRadius),
           ),
           elevation: isIOS ? 0 : 2,
         ),

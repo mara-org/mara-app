@@ -105,6 +105,9 @@ class OnboardingPrivacyScreen extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
                 child: PrimaryButton(
                   text: 'Continue',
+                  width: 324,
+                  height: 52,
+                  borderRadius: 20,
                   onPressed: () {
                     context.go('/onboarding-personalized');
                   },

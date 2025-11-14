@@ -91,6 +91,9 @@ class OnboardingPersonalizedScreen extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(24, 0, 24, 16),
                 child: PrimaryButton(
                   text: 'Continue',
+                  width: 324,
+                  height: 52,
+                  borderRadius: 20,
                   onPressed: () {
                     context.go('/sign-up-choices');
                   },
@@ -98,14 +101,19 @@ class OnboardingPersonalizedScreen extends StatelessWidget {
               ),
               
               // 5) "Already have an account?" text
-              Text(
-                'Already have an account?',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontFamily: 'Roboto',
-                  fontSize: 14,
-                  fontWeight: FontWeight.w400,
-                  color: Colors.white.withOpacity(0.8),
+              GestureDetector(
+                onTap: () {
+                  context.go('/welcome-back');
+                },
+                child: Text(
+                  'Already have an account?',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: 'Roboto',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.white.withOpacity(0.8),
+                  ),
                 ),
               ),
               

@@ -87,7 +87,7 @@ class SignUpChoicesScreen extends StatelessWidget {
                 // Sign in link
                 GestureDetector(
                   onTap: () {
-                    context.go('/sign-in-email');
+                    context.go('/welcome-back');
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,

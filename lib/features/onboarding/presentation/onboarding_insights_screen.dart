@@ -91,6 +91,9 @@ class OnboardingInsightsScreen extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: PrimaryButton(
                   text: 'Continue',
+                  width: 324,
+                  height: 52,
+                  borderRadius: 20,
                   onPressed: () {
                     context.go('/onboarding-privacy');
                   },

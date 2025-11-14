@@ -152,6 +152,9 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
                 // Continue button
                 PrimaryButton(
                   text: 'Continue',
+                  width: 324,
+                  height: 52,
+                  borderRadius: 20,
                   onPressed: _handleContinue,
                 ),
                 const SizedBox(height: 20),
