@@ -10,6 +10,9 @@ import '../../features/auth/presentation/sign_up_choices_screen.dart';
 import '../../features/auth/presentation/sign_in_email_screen.dart';
 import '../../features/auth/presentation/verify_email_screen.dart';
 import '../../features/auth/presentation/welcome_back_screen.dart';
+import '../../features/auth/presentation/forgot_password_email_screen.dart';
+import '../../features/auth/presentation/forgot_password_verify_screen.dart';
+import '../../features/auth/presentation/reset_password_screen.dart';
 import '../../features/auth/auth_screen.dart';
 import '../../features/setup/presentation/ready_screen.dart';
 import '../../features/setup/presentation/name_input_screen.dart';
@@ -86,6 +89,18 @@ class AppRouter {
       GoRoute(
         path: '/welcome-back',
         builder: (context, state) => const WelcomeBackScreen(),
+      ),
+      GoRoute(
+        path: '/forgot-password-email',
+        builder: (context, state) => const ForgotPasswordEmailScreen(),
+      ),
+      GoRoute(
+        path: '/forgot-password-verify',
+        builder: (context, state) => const ForgotPasswordVerifyScreen(),
+      ),
+      GoRoute(
+        path: '/reset-password',
+        builder: (context, state) => const ResetPasswordScreen(),
       ),
       GoRoute(
         path: '/auth',
