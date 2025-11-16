@@ -28,7 +28,7 @@ class _NameInputScreenState extends ConsumerState<NameInputScreen> {
     final name = _nameController.text.trim();
     if (name.isNotEmpty) {
       ref.read(userProfileProvider.notifier).setName(name);
-      context.go('/dob-input');
+      context.push('/dob-input');
     }
   }
 

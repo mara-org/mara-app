@@ -88,7 +88,7 @@ class CameraPermissionScreen extends ConsumerWidget {
                   text: 'Allow',
                   onPressed: () {
                     ref.read(permissionsProvider.notifier).setCamera(true);
-                    context.go('/microphone-permission');
+                    context.push('/microphone-permission');
                   },
                 ),
                 const SizedBox(height: 16),
@@ -96,7 +96,7 @@ class CameraPermissionScreen extends ConsumerWidget {
                 TextButton(
                   onPressed: () {
                     ref.read(permissionsProvider.notifier).setCamera(false);
-                    context.go('/microphone-permission');
+                    context.push('/microphone-permission');
                   },
                   child: Text(
                     'Not now',

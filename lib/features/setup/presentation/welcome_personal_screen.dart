@@ -85,7 +85,7 @@ class WelcomePersonalScreen extends ConsumerWidget {
                   text: 'Start Setup',
                   onPressed: () {
                     // Navigate to first permission screen
-                    context.go('/camera-permission');
+                    context.push('/camera-permission');
                   },
                 ),
                 const SizedBox(height: 20),

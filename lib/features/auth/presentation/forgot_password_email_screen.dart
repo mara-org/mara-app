@@ -35,7 +35,7 @@ class _ForgotPasswordEmailScreenState extends State<ForgotPasswordEmailScreen> {
   void _onContinuePressed() {
     if (_formKey.currentState!.validate()) {
       // Navigate to verify email screen for password reset
-      context.go('/forgot-password-verify');
+      context.push('/forgot-password-verify');
     }
   }
 

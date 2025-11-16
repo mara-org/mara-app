@@ -100,7 +100,7 @@ class NotificationsPermissionScreen extends ConsumerWidget {
                     text: 'Allow Notifications',
                     onPressed: () {
                       ref.read(permissionsProvider.notifier).setNotifications(true);
-                      context.go('/health-data-permission');
+                      context.push('/health-data-permission');
                     },
                   ),
                   const SizedBox(height: 16),
@@ -108,7 +108,7 @@ class NotificationsPermissionScreen extends ConsumerWidget {
                   TextButton(
                     onPressed: () {
                       ref.read(permissionsProvider.notifier).setNotifications(false);
-                      context.go('/health-data-permission');
+                      context.push('/health-data-permission');
                     },
                     child: Text(
                       'Not now',

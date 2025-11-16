@@ -84,7 +84,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
   void _onResetPressed() {
     if (_formKey.currentState!.validate()) {
-      // Navigate to home screen after password reset
+      // Navigate to home screen after password reset (replace all previous routes)
       context.go('/home');
     }
   }

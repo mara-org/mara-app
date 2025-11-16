@@ -80,7 +80,7 @@ class ReadyScreen extends StatelessWidget {
                   PrimaryButton(
                     text: 'Ready!',
                     onPressed: () {
-                      context.go('/name-input');
+                      context.push('/name-input');
                     },
                   ),
                   const SizedBox(height: 20),

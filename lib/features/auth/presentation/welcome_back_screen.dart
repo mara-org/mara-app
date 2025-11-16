@@ -225,7 +225,7 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen> {
                 top: 489,
                 child: GestureDetector(
                   onTap: () {
-                    context.go('/forgot-password-email');
+                    context.push('/forgot-password-email');
                   },
                   child: RichText(
                     text: TextSpan(

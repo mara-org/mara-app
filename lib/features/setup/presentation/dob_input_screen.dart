@@ -51,7 +51,7 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
       final dateOfBirth = DateTime(_selectedYear!, _selectedMonth!, _selectedDay!);
       if (dateOfBirth.isBefore(DateTime.now())) {
         ref.read(userProfileProvider.notifier).setDateOfBirth(dateOfBirth);
-        context.go('/gender');
+        context.push('/gender');
       }
     } catch (e) {
       // Invalid date (e.g., Feb 30)

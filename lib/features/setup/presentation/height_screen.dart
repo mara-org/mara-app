@@ -16,11 +16,13 @@ class HeightScreen extends ConsumerStatefulWidget {
 
 class _HeightScreenState extends ConsumerState<HeightScreen> {
   String _selectedUnit = 'cm';
-  int _selectedHeight = 175; // Default in cm
+  int? _selectedHeight; // No default - user must choose
 
   void _handleContinue() {
-    ref.read(userProfileProvider.notifier).setHeight(_selectedHeight, _selectedUnit);
-    context.go('/weight');
+    if (_selectedHeight != null && _selectedHeight! > 0) {
+      ref.read(userProfileProvider.notifier).setHeight(_selectedHeight!, _selectedUnit);
+      context.push('/weight');
+    }
   }
 
   @override
@@ -89,7 +91,7 @@ class _HeightScreenState extends ConsumerState<HeightScreen> {
                       onTap: () {
                         setState(() {
                           _selectedUnit = 'cm';
-                          _selectedHeight = 175;
+                          _selectedHeight = null; // Reset selection when unit changes
                         });
                       },
                     ),
@@ -100,7 +102,7 @@ class _HeightScreenState extends ConsumerState<HeightScreen> {
                       onTap: () {
                         setState(() {
                           _selectedUnit = 'in';
-                          _selectedHeight = 70; // Default in inches
+                          _selectedHeight = null; // Reset selection when unit changes
                         });
                       },
                     ),
@@ -114,10 +116,15 @@ class _HeightScreenState extends ConsumerState<HeightScreen> {
                     itemExtent: 50,
                     diameterRatio: 1.5,
                     physics: const FixedExtentScrollPhysics(),
+                    controller: FixedExtentScrollController(
+                      initialItem: heights.length ~/ 2,
+                    ),
                     onSelectedItemChanged: (index) {
-                      setState(() {
-                        _selectedHeight = heights[index];
-                      });
+                      if (index >= 0 && index < heights.length) {
+                        setState(() {
+                          _selectedHeight = heights[index];
+                        });
+                      }
                     },
                     childDelegate: ListWheelChildBuilderDelegate(
                       builder: (context, index) {
@@ -152,7 +159,7 @@ class _HeightScreenState extends ConsumerState<HeightScreen> {
                 // Continue button
                 PrimaryButton(
                   text: 'Continue',
-                  onPressed: _handleContinue,
+                  onPressed: (_selectedHeight != null && _selectedHeight! > 0) ? _handleContinue : null,
                 ),
                 const SizedBox(height: 20),
               ],

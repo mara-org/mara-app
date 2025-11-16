@@ -27,7 +27,7 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
   void _handleContinue() {
     if (_selectedGoal != null) {
       ref.read(userProfileProvider.notifier).setMainGoal(_selectedGoal!);
-      context.go('/welcome-personal');
+      context.push('/welcome-personal');
     }
   }
 

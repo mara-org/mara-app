@@ -100,7 +100,7 @@ class HealthDataPermissionScreen extends ConsumerWidget {
                     text: 'Connect Health Data',
                     onPressed: () {
                       ref.read(permissionsProvider.notifier).setHealthData(true);
-                      context.go('/permissions-summary');
+                      context.push('/permissions-summary');
                     },
                   ),
                   const SizedBox(height: 16),
@@ -108,7 +108,7 @@ class HealthDataPermissionScreen extends ConsumerWidget {
                   TextButton(
                     onPressed: () {
                       ref.read(permissionsProvider.notifier).setHealthData(false);
-                      context.go('/permissions-summary');
+                      context.push('/permissions-summary');
                     },
                     child: Text(
                       'Not now',

@@ -21,7 +21,7 @@ class _GenderScreenState extends ConsumerState<GenderScreen> {
   void _handleContinue() {
     if (_selectedGender != null) {
       ref.read(userProfileProvider.notifier).setGender(_selectedGender!);
-      context.go('/height');
+      context.push('/height');
     }
   }
 
@@ -79,31 +79,28 @@ class _GenderScreenState extends ConsumerState<GenderScreen> {
                 const SizedBox(height: 40),
                 // Gender buttons
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Expanded(
-                      child: _GenderButton(
-                        text: 'Male 👨',
-                        isSelected: _selectedGender == Gender.male,
-                        isFemale: false,
-                        onTap: () {
-                          setState(() {
-                            _selectedGender = Gender.male;
-                          });
-                        },
-                      ),
+                    _GenderButton(
+                      text: 'Male 👨',
+                      isSelected: _selectedGender == Gender.male,
+                      isFemale: false,
+                      onTap: () {
+                        setState(() {
+                          _selectedGender = Gender.male;
+                        });
+                      },
                     ),
                     const SizedBox(width: 16),
-                    Expanded(
-                      child: _GenderButton(
-                        text: 'Female 👩',
-                        isSelected: _selectedGender == Gender.female,
-                        isFemale: true,
-                        onTap: () {
-                          setState(() {
-                            _selectedGender = Gender.female;
-                          });
-                        },
-                      ),
+                    _GenderButton(
+                      text: 'Female 👩',
+                      isSelected: _selectedGender == Gender.female,
+                      isFemale: true,
+                      onTap: () {
+                        setState(() {
+                          _selectedGender = Gender.female;
+                        });
+                      },
                     ),
                   ],
                 ),
@@ -142,18 +139,27 @@ class _GenderButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final selectedColor = isFemale
-        ? AppColors.femaleButtonColor
+        ? AppColors.languageButtonColor
         : AppColors.languageButtonColor;
+    
+    // Female button colors when selected
+    final femaleSelectedBackground = const Color(0xFFFFDADA); // #FFDADA
+    final femaleSelectedBorder = const Color(0xFFD49AD0); // #D49AD0
     
     return GestureDetector(
       onTap: onTap,
       child: Container(
+        width: 158,
         height: 52,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          color: isSelected ? selectedColor : Colors.white,
+          color: isSelected
+              ? (isFemale ? femaleSelectedBackground : selectedColor)
+              : Colors.white,
           border: Border.all(
-            color: isSelected ? selectedColor : AppColors.borderColor,
+            color: isSelected
+                ? (isFemale ? femaleSelectedBorder : selectedColor)
+                : AppColors.borderColor,
             width: 1,
           ),
         ),

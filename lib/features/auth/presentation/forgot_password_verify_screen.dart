@@ -36,7 +36,7 @@ class _ForgotPasswordVerifyScreenState extends State<ForgotPasswordVerifyScreen>
     final code = _controllers.map((c) => c.text).join();
     if (code.length == 6) {
       // Navigate to reset password screen
-      context.go('/reset-password');
+      context.push('/reset-password');
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(

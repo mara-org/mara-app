@@ -31,7 +31,7 @@ class _BloodTypeScreenState extends ConsumerState<BloodTypeScreen> {
   void _handleContinue() {
     if (_selectedBloodType != null) {
       ref.read(userProfileProvider.notifier).setBloodType(_selectedBloodType!);
-      context.go('/goals');
+      context.push('/goals');
     }
   }
 

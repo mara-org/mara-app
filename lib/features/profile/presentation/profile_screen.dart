@@ -98,7 +98,7 @@ class ProfileScreen extends ConsumerWidget {
                   subtitle: 'Camera, Microphone, Notifications, Health data',
                   icon: Icons.shield,
                   onTap: () {
-                    context.go('/permissions-summary');
+                    context.push('/permissions-summary');
                   },
                 ),
                 const SizedBox(height: 16),

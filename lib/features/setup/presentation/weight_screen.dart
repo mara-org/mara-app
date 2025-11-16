@@ -16,11 +16,13 @@ class WeightScreen extends ConsumerStatefulWidget {
 
 class _WeightScreenState extends ConsumerState<WeightScreen> {
   String _selectedUnit = 'kg';
-  int _selectedWeight = 76; // Default in kg
+  int? _selectedWeight; // No default - user must choose
 
   void _handleContinue() {
-    ref.read(userProfileProvider.notifier).setWeight(_selectedWeight, _selectedUnit);
-    context.go('/blood-type');
+    if (_selectedWeight != null && _selectedWeight! > 0) {
+      ref.read(userProfileProvider.notifier).setWeight(_selectedWeight!, _selectedUnit);
+      context.push('/blood-type');
+    }
   }
 
   @override
@@ -89,7 +91,7 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
                       onTap: () {
                         setState(() {
                           _selectedUnit = 'kg';
-                          _selectedWeight = 76;
+                          _selectedWeight = null; // Reset selection when unit changes
                         });
                       },
                     ),
@@ -100,7 +102,7 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
                       onTap: () {
                         setState(() {
                           _selectedUnit = 'lb';
-                          _selectedWeight = 167; // Default in lbs
+                          _selectedWeight = null; // Reset selection when unit changes
                         });
                       },
                     ),
@@ -114,10 +116,15 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
                     itemExtent: 50,
                     diameterRatio: 1.5,
                     physics: const FixedExtentScrollPhysics(),
+                    controller: FixedExtentScrollController(
+                      initialItem: weights.length ~/ 2,
+                    ),
                     onSelectedItemChanged: (index) {
-                      setState(() {
-                        _selectedWeight = weights[index];
-                      });
+                      if (index >= 0 && index < weights.length) {
+                        setState(() {
+                          _selectedWeight = weights[index];
+                        });
+                      }
                     },
                     childDelegate: ListWheelChildBuilderDelegate(
                       builder: (context, index) {
@@ -155,7 +162,7 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
                   width: 324,
                   height: 52,
                   borderRadius: 20,
-                  onPressed: _handleContinue,
+                  onPressed: (_selectedWeight != null && _selectedWeight! > 0) ? _handleContinue : null,
                 ),
                 const SizedBox(height: 20),
               ],
