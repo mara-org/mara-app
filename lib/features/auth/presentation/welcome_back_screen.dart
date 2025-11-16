@@ -250,37 +250,34 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen> {
                 ),
               ),
 
-              // Positioned "Already have a member?" at x87, y740
+              // Positioned "Don't have an account? Click here" at x87, y740
               Positioned(
                 left: 87,
-                top: 740,
-                child: Text(
-                  'Already have a member? ',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 15,
-                    fontWeight: FontWeight.normal,
-                    fontFamily: 'Roboto',
-                  ),
-                ),
-              ),
-
-              // Positioned "Sign in" at x265, y740 (moved 5px to the right)
-              Positioned(
-                left: 265,
                 top: 740,
                 child: GestureDetector(
                   onTap: () {
                     context.go('/sign-up-choices');
                   },
-                  child: Text(
-                    'Sign in',
-                    style: TextStyle(
-                      color: Color(0xFF0EA5C6), // #0EA5C6
-                      fontSize: 15,
-                      fontWeight: FontWeight.normal,
-                      fontFamily: 'Roboto',
-                      decoration: TextDecoration.underline,
+                  child: RichText(
+                    text: TextSpan(
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 15,
+                        fontWeight: FontWeight.normal,
+                        fontFamily: 'Roboto',
+                      ),
+                      children: [
+                        const TextSpan(text: 'Don\'t have an account? '),
+                        TextSpan(
+                          text: 'Click here',
+                          style: const TextStyle(
+                            color: Color(0xFF0EA5C6), // #0EA5C6
+                            fontWeight: FontWeight.normal,
+                            fontFamily: 'Roboto',
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
