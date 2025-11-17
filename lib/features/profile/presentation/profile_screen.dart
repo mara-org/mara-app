@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../../core/widgets/mara_logo.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/platform_utils.dart';
-import '../../../core/providers/user_profile_provider.dart';
 import '../../../shared/system/system_providers.dart';
 import 'widgets/health_profile_section.dart';
 import 'widgets/app_settings_section.dart';
@@ -15,145 +13,202 @@ class ProfileScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final profile = ref.watch(userProfileProvider);
-    final name = profile.name ?? 'User';
     final email = 'abdulaziz@example.com'; // Placeholder
 
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new),
-          onPressed: () => context.pop(),
-        ),
-        title: Row(
-          children: [
-            const MaraLogo(width: 32, height: 32),
-            const SizedBox(width: 12),
-            const Text('Profile'),
-          ],
-        ),
-        backgroundColor: AppColors.homeHeaderBackground,
-        foregroundColor: Colors.white,
-        elevation: 0,
-      ),
+      backgroundColor: Colors.white, // Pure white background
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: PlatformUtils.getDefaultPadding(context),
-            child: Column(
-              children: [
-                const SizedBox(height: 20),
-                // Profile header - name, email, and Edit button
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Column(
+        child: Column(
+          children: [
+            // Simple AppBar-style header
+            Container(
+              color: Colors.white,
+              padding: EdgeInsets.only(
+                left: PlatformUtils.getDefaultPadding(context).left,
+                right: PlatformUtils.getDefaultPadding(context).right,
+                top: 8,
+                bottom: 8,
+              ),
+              child: Row(
+                children: [
+                  GestureDetector(
+                    onTap: () => context.pop(),
+                    child: Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: AppColors.languageButtonColor.withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.arrow_back,
+                        color: AppColors.languageButtonColor,
+                        size: 20,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Center(
+                      child: Text(
+                        'Profile',
+                        style: TextStyle(
+                          color: const Color(0xFF0F172A), // #0F172A
+                          fontSize: 22,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 36), // Balance the back button
+                ],
+              ),
+            ),
+            // Scrollable content
+            Expanded(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: PlatformUtils.getDefaultPadding(context),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 20),
+                      // User section
+                      Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            name,
-                            style: TextStyle(
-                              color: AppColors.textPrimary,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
+                          Padding(
+                            padding: const EdgeInsets.only(left: 4, bottom: 12),
+                            child: Text(
+                              'User',
+                              style: TextStyle(
+                                color: AppColors.textSecondary,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
-                          const SizedBox(height: 4),
-                          Text(
-                            email,
-                            style: TextStyle(
-                              color: AppColors.textSecondary,
-                              fontSize: 14,
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: AppColors.borderColor,
+                                width: 1,
+                              ),
+                            ),
+                            child: InkWell(
+                              onTap: () {
+                                // TODO: Implement edit profile
+                              },
+                              borderRadius: BorderRadius.circular(8),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Email',
+                                          style: TextStyle(
+                                            color: const Color(0xFF0F172A), // #0F172A
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          email,
+                                          style: TextStyle(
+                                            color: const Color(0xFF64748B), // #64748B
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.arrow_forward_ios,
+                                    size: 16,
+                                    color: AppColors.textSecondary,
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ],
                       ),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        // TODO: Implement edit profile
-                      },
-                      child: Text(
-                        'Edit',
-                        style: TextStyle(
-                          color: AppColors.languageButtonColor,
-                          fontSize: 16,
+                      const SizedBox(height: 40),
+                      // Health Profile section
+                      const HealthProfileSection(),
+                      const SizedBox(height: 40),
+                      // App Settings section
+                      const AppSettingsSection(),
+                      const SizedBox(height: 40),
+                      // Privacy Policy
+                      _ProfileMenuItem(
+                        title: 'Privacy Policy',
+                        subtitle: null,
+                        icon: Icons.privacy_tip,
+                        onTap: () {
+                          context.push('/privacy-webview');
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      // Terms of Service
+                      _ProfileMenuItem(
+                        title: 'Terms of Service',
+                        subtitle: null,
+                        icon: Icons.description,
+                        onTap: () async {
+                          final uri = Uri.parse('https://iammara.com/terms');
+                          if (await canLaunchUrl(uri)) {
+                            await launchUrl(
+                              uri,
+                              mode: LaunchMode.inAppWebView,
+                            );
+                          } else {
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Could not open Terms of Service'),
+                                ),
+                              );
+                            }
+                          }
+                        },
+                      ),
+                      const SizedBox(height: 40),
+                      // Developer Settings section
+                      _DeveloperSettingsSection(),
+                      const SizedBox(height: 40),
+                      // Log out button
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        child: TextButton(
+                          onPressed: () {
+                            context.go('/logout-confirmation');
+                          },
+                          style: TextButton.styleFrom(
+                            foregroundColor: AppColors.error,
+                            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                          ),
+                          child: const Text(
+                            'Log out',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 40),
-                // Health Profile section
-                const HealthProfileSection(),
-                const SizedBox(height: 40),
-                // App Settings section
-                const AppSettingsSection(),
-                const SizedBox(height: 40),
-                // Privacy Policy
-                _ProfileMenuItem(
-                  title: 'Privacy Policy',
-                  subtitle: null,
-                  icon: Icons.privacy_tip,
-                  onTap: () {
-                    context.push('/privacy-webview');
-                  },
-                ),
-                const SizedBox(height: 16),
-                // Terms of Service
-                _ProfileMenuItem(
-                  title: 'Terms of Service',
-                  subtitle: null,
-                  icon: Icons.description,
-                  onTap: () async {
-                    final uri = Uri.parse('https://iammara.com/terms');
-                    if (await canLaunchUrl(uri)) {
-                      await launchUrl(
-                        uri,
-                        mode: LaunchMode.inAppWebView,
-                      );
-                    } else {
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Could not open Terms of Service'),
-                          ),
-                        );
-                      }
-                    }
-                  },
-                ),
-                const SizedBox(height: 40),
-                // Developer Settings section
-                _DeveloperSettingsSection(),
-                const SizedBox(height: 40),
-                // Log out button
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  child: TextButton(
-                    onPressed: () {
-                      context.go('/logout-confirmation');
-                    },
-                    style: TextButton.styleFrom(
-                      foregroundColor: AppColors.error,
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                    ),
-                    child: const Text(
-                      'Log out',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+                      const SizedBox(height: 20),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 20),
-              ],
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );
@@ -211,9 +266,9 @@ class _ProfileMenuItem extends StatelessWidget {
                   Text(
                     title,
                     style: TextStyle(
-                      color: AppColors.textPrimary,
+                      color: const Color(0xFF0F172A), // #0F172A
                       fontSize: 16,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                   if (subtitle != null) ...[
@@ -333,16 +388,16 @@ class _DeveloperInfoItem extends StatelessWidget {
                 Text(
                   title,
                   style: TextStyle(
-                    color: AppColors.textPrimary,
+                    color: const Color(0xFF0F172A), // #0F172A
                     fontSize: 16,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   value,
                   style: TextStyle(
-                    color: AppColors.textSecondary,
+                    color: const Color(0xFF64748B), // #64748B
                     fontSize: 14,
                   ),
                 ),

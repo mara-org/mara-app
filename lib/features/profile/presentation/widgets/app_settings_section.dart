@@ -63,16 +63,16 @@ class AppSettingsSection extends ConsumerWidget {
                       Text(
                         'App language',
                         style: TextStyle(
-                          color: AppColors.textPrimary,
+                          color: const Color(0xFF0F172A), // #0F172A
                           fontSize: 16,
-                          fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         language == AppLanguage.english ? 'English' : 'العربية',
                         style: TextStyle(
-                          color: AppColors.textSecondary,
+                          color: const Color(0xFF64748B), // #64748B
                           fontSize: 14,
                         ),
                       ),
@@ -123,16 +123,16 @@ class AppSettingsSection extends ConsumerWidget {
                     Text(
                       'Health reminders',
                       style: TextStyle(
-                        color: AppColors.textPrimary,
+                        color: const Color(0xFF0F172A), // #0F172A
                         fontSize: 16,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       'Hydration, medication, and daily goals reminders.',
                       style: TextStyle(
-                        color: AppColors.textSecondary,
+                        color: const Color(0xFF64748B), // #64748B
                         fontSize: 14,
                       ),
                     ),
@@ -186,16 +186,16 @@ class AppSettingsSection extends ConsumerWidget {
                     Text(
                       'Email notifications',
                       style: TextStyle(
-                        color: AppColors.textPrimary,
+                        color: const Color(0xFF0F172A), // #0F172A
                         fontSize: 16,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       'Receive important updates and reports by email.',
                       style: TextStyle(
-                        color: AppColors.textSecondary,
+                        color: const Color(0xFF64748B), // #64748B
                         fontSize: 14,
                       ),
                     ),
