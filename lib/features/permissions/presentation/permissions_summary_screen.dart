@@ -23,27 +23,6 @@ class PermissionsSummaryScreen extends ConsumerWidget {
             child: Column(
               children: [
                 const SizedBox(height: 20),
-                // Back button
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: GestureDetector(
-                    onTap: () => context.pop(),
-                    child: Container(
-                      width: 36,
-                      height: 36,
-                      decoration: BoxDecoration(
-                        color: AppColors.languageButtonColor.withOpacity(0.1),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.arrow_back,
-                        color: AppColors.languageButtonColor,
-                        size: 20,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
                 // Mara logo
                 const Center(
                   child: MaraLogo(
