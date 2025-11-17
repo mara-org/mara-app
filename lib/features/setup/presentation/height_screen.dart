@@ -82,29 +82,40 @@ class _HeightScreenState extends ConsumerState<HeightScreen> {
                 ),
                 const SizedBox(height: 40),
                 // Unit toggle
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                Column(
                   children: [
-                    _UnitToggle(
-                      text: 'cm',
-                      isSelected: _selectedUnit == 'cm',
-                      onTap: () {
-                        setState(() {
-                          _selectedUnit = 'cm';
-                          _selectedHeight = null; // Reset selection when unit changes
-                        });
-                      },
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _UnitToggle(
+                          text: 'cm',
+                          isSelected: _selectedUnit == 'cm',
+                          onTap: () {
+                            setState(() {
+                              _selectedUnit = 'cm';
+                              _selectedHeight = null; // Reset selection when unit changes
+                            });
+                          },
+                        ),
+                        const SizedBox(width: 96),
+                        _UnitToggle(
+                          text: 'in',
+                          isSelected: _selectedUnit == 'in',
+                          onTap: () {
+                            setState(() {
+                              _selectedUnit = 'in';
+                              _selectedHeight = null; // Reset selection when unit changes
+                            });
+                          },
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 40),
-                    _UnitToggle(
-                      text: 'in',
-                      isSelected: _selectedUnit == 'in',
-                      onTap: () {
-                        setState(() {
-                          _selectedUnit = 'in';
-                          _selectedHeight = null; // Reset selection when unit changes
-                        });
-                      },
+                    const SizedBox(height: 8),
+                    // Blue line under unit selector
+                    Container(
+                      width: 176,
+                      height: 2,
+                      color: AppColors.languageButtonColor,
                     ),
                   ],
                 ),
@@ -113,7 +124,7 @@ class _HeightScreenState extends ConsumerState<HeightScreen> {
                 SizedBox(
                   height: 200,
                   child: ListWheelScrollView.useDelegate(
-                    itemExtent: 50,
+                    itemExtent: 48,
                     diameterRatio: 1.5,
                     physics: const FixedExtentScrollPhysics(),
                     controller: FixedExtentScrollController(
@@ -132,10 +143,11 @@ class _HeightScreenState extends ConsumerState<HeightScreen> {
                         final height = heights[index];
                         final isSelected = height == _selectedHeight;
                         return Container(
+                          height: 48,
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
                             color: isSelected
-                                ? AppColors.languageButtonColor.withOpacity(0.4)
+                                ? const Color(0xFFC4F4FF)
                                 : Colors.transparent,
                             borderRadius: BorderRadius.circular(19),
                           ),
@@ -143,10 +155,12 @@ class _HeightScreenState extends ConsumerState<HeightScreen> {
                             height.toString(),
                             style: TextStyle(
                               color: isSelected
-                                  ? AppColors.languageButtonColor
-                                  : AppColors.textSecondary.withOpacity(0.66),
+                                  ? const Color(0xFF10A9CC)
+                                  : const Color(0xFF94A3B8).withOpacity(0.6),
                               fontSize: 20,
-                              fontWeight: FontWeight.normal,
+                              fontWeight: isSelected
+                                  ? FontWeight.w500
+                                  : FontWeight.normal,
                             ),
                           ),
                         );

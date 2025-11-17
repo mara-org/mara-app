@@ -150,12 +150,10 @@ class _BloodTypeButton extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           color: isSelected
-              ? AppColors.languageButtonColor
-              : Colors.white,
+              ? const Color(0xFFC4F4FF)
+              : const Color(0xFFFFFFFF),
           border: Border.all(
-            color: isSelected
-                ? AppColors.languageButtonColor
-                : AppColors.borderColor,
+            color: const Color(0xFFE2E8F0),
             width: 1,
           ),
         ),
@@ -165,8 +163,8 @@ class _BloodTypeButton extends StatelessWidget {
             textAlign: TextAlign.center,
             style: TextStyle(
               color: isSelected
-                  ? Colors.white
-                  : AppColors.textSecondary,
+                  ? const Color(0xFF10A9CC)
+                  : const Color(0xFF94A3B8),
               fontSize: 16,
               fontWeight: FontWeight.normal,
               height: 1,

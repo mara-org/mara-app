@@ -140,11 +140,11 @@ class _GoalButton extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           color: isSelected
-              ? AppColors.languageButtonColor
+              ? const Color(0xFFC4F4FF)
               : Colors.white,
           border: Border.all(
             color: isSelected
-                ? AppColors.languageButtonColor
+                ? const Color(0xFFC4F4FF)
                 : AppColors.borderColor,
             width: 1,
           ),
@@ -155,7 +155,7 @@ class _GoalButton extends StatelessWidget {
             textAlign: TextAlign.center,
             style: TextStyle(
               color: isSelected
-                  ? Colors.white
+                  ? const Color(0xFF10A9CC)
                   : AppColors.textSecondary,
               fontSize: 16,
               fontWeight: FontWeight.normal,
