@@ -63,7 +63,7 @@ class MicrophonePermissionScreen extends ConsumerWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 60),
+                  const SizedBox(height: 160),
                   // Allow button
                   PrimaryButton(
                     text: 'Allow',

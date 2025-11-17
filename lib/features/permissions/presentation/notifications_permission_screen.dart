@@ -35,7 +35,7 @@ class NotificationsPermissionScreen extends ConsumerWidget {
                     children: [
                       const SizedBox(height: 40),
                       // Spacer for image
-                      const SizedBox(height: 167),
+                      const SizedBox(height: 120),
                       const SizedBox(height: 40),
                   // Title
                   Text(
@@ -63,7 +63,7 @@ class NotificationsPermissionScreen extends ConsumerWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 60),
+                  const SizedBox(height: 160),
                   // Allow button
                   PrimaryButton(
                     text: 'Allow Notifications',
