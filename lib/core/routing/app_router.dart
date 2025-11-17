@@ -116,27 +116,45 @@ class AppRouter {
       ),
       GoRoute(
         path: '/dob-input',
-        builder: (context, state) => const DobInputScreen(),
+        builder: (context, state) {
+          final isFromProfile = state.uri.queryParameters['from'] == 'profile';
+          return DobInputScreen(isFromProfile: isFromProfile);
+        },
       ),
       GoRoute(
         path: '/gender',
-        builder: (context, state) => const GenderScreen(),
+        builder: (context, state) {
+          final isFromProfile = state.uri.queryParameters['from'] == 'profile';
+          return GenderScreen(isFromProfile: isFromProfile);
+        },
       ),
       GoRoute(
         path: '/height',
-        builder: (context, state) => const HeightScreen(),
+        builder: (context, state) {
+          final isFromProfile = state.uri.queryParameters['from'] == 'profile';
+          return HeightScreen(isFromProfile: isFromProfile);
+        },
       ),
       GoRoute(
         path: '/weight',
-        builder: (context, state) => const WeightScreen(),
+        builder: (context, state) {
+          final isFromProfile = state.uri.queryParameters['from'] == 'profile';
+          return WeightScreen(isFromProfile: isFromProfile);
+        },
       ),
       GoRoute(
         path: '/blood-type',
-        builder: (context, state) => const BloodTypeScreen(),
+        builder: (context, state) {
+          final isFromProfile = state.uri.queryParameters['from'] == 'profile';
+          return BloodTypeScreen(isFromProfile: isFromProfile);
+        },
       ),
       GoRoute(
         path: '/goals',
-        builder: (context, state) => const GoalsScreen(),
+        builder: (context, state) {
+          final isFromProfile = state.uri.queryParameters['from'] == 'profile';
+          return GoalsScreen(isFromProfile: isFromProfile);
+        },
       ),
       GoRoute(
         path: '/welcome-personal',

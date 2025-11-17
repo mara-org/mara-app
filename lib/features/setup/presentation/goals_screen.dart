@@ -8,7 +8,9 @@ import '../../../core/utils/platform_utils.dart';
 import '../../../core/providers/user_profile_provider.dart';
 
 class GoalsScreen extends ConsumerStatefulWidget {
-  const GoalsScreen({super.key});
+  final bool isFromProfile;
+  
+  const GoalsScreen({super.key, this.isFromProfile = false});
 
   @override
   ConsumerState<GoalsScreen> createState() => _GoalsScreenState();
@@ -27,7 +29,11 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
   void _handleContinue() {
     if (_selectedGoal != null) {
       ref.read(userProfileProvider.notifier).setMainGoal(_selectedGoal!);
-      context.push('/welcome-personal');
+      if (widget.isFromProfile) {
+        context.go('/profile');
+      } else {
+        context.push('/welcome-personal');
+      }
     }
   }
 

@@ -8,7 +8,9 @@ import '../../../core/utils/platform_utils.dart';
 import '../../../core/providers/user_profile_provider.dart';
 
 class WeightScreen extends ConsumerStatefulWidget {
-  const WeightScreen({super.key});
+  final bool isFromProfile;
+  
+  const WeightScreen({super.key, this.isFromProfile = false});
 
   @override
   ConsumerState<WeightScreen> createState() => _WeightScreenState();
@@ -21,7 +23,11 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
   void _handleContinue() {
     if (_selectedWeight != null && _selectedWeight! > 0) {
       ref.read(userProfileProvider.notifier).setWeight(_selectedWeight!, _selectedUnit);
-      context.push('/blood-type');
+      if (widget.isFromProfile) {
+        context.go('/profile');
+      } else {
+        context.push('/blood-type');
+      }
     }
   }
 

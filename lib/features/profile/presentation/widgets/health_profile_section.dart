@@ -54,7 +54,7 @@ class HealthProfileSection extends ConsumerWidget {
                 value: profile.dateOfBirth != null
                     ? DateFormat('MMM dd, yyyy').format(profile.dateOfBirth!)
                     : 'Not set',
-                onTap: () => _showDatePicker(context, ref),
+                onTap: () => context.push('/dob-input?from=profile'),
               ),
               Divider(
                 height: 24,
@@ -68,7 +68,7 @@ class HealthProfileSection extends ConsumerWidget {
                         ? 'Male'
                         : 'Female'
                     : 'Not set',
-                onTap: () => _showGenderPicker(context, ref),
+                onTap: () => context.push('/gender?from=profile'),
               ),
               Divider(
                 height: 24,
@@ -80,7 +80,7 @@ class HealthProfileSection extends ConsumerWidget {
                 value: profile.height != null && profile.heightUnit != null
                     ? '${profile.height} ${profile.heightUnit}'
                     : 'Not set',
-                onTap: () => context.push('/height'),
+                onTap: () => context.push('/height?from=profile'),
               ),
               Divider(
                 height: 24,
@@ -92,7 +92,7 @@ class HealthProfileSection extends ConsumerWidget {
                 value: profile.weight != null && profile.weightUnit != null
                     ? '${profile.weight} ${profile.weightUnit}'
                     : 'Not set',
-                onTap: () => context.push('/weight'),
+                onTap: () => context.push('/weight?from=profile'),
               ),
               Divider(
                 height: 24,
@@ -102,7 +102,7 @@ class HealthProfileSection extends ConsumerWidget {
               _HealthProfileRow(
                 label: 'Blood Type',
                 value: profile.bloodType ?? 'Not set',
-                onTap: () => context.push('/blood-type'),
+                onTap: () => context.push('/blood-type?from=profile'),
               ),
               Divider(
                 height: 24,
@@ -112,7 +112,7 @@ class HealthProfileSection extends ConsumerWidget {
               _HealthProfileRow(
                 label: 'Main Goal',
                 value: profile.mainGoal ?? 'Not set',
-                onTap: () => context.push('/goals'),
+                onTap: () => context.push('/goals?from=profile'),
               ),
             ],
           ),
@@ -154,64 +154,6 @@ class HealthProfileSection extends ConsumerWidget {
     );
   }
 
-  void _showDatePicker(BuildContext context, WidgetRef ref) {
-    final currentDate = ref.read(userProfileProvider).dateOfBirth ?? DateTime.now();
-    showDatePicker(
-      context: context,
-      initialDate: currentDate,
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-    ).then((date) {
-      if (date != null) {
-        ref.read(userProfileProvider.notifier).setDateOfBirth(date);
-      }
-    });
-  }
-
-  void _showGenderPicker(BuildContext context, WidgetRef ref) {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Select Gender',
-                style: TextStyle(
-                  color: AppColors.textPrimary,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 20),
-              ListTile(
-                title: const Text('Male'),
-                leading: const Icon(Icons.male),
-                onTap: () {
-                  ref.read(userProfileProvider.notifier).setGender(Gender.male);
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                title: const Text('Female'),
-                leading: const Icon(Icons.female),
-                onTap: () {
-                  ref.read(userProfileProvider.notifier).setGender(Gender.female);
-                  Navigator.pop(context);
-                },
-              ),
-              const SizedBox(height: 20),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 }
 
 class _HealthProfileRow extends StatelessWidget {

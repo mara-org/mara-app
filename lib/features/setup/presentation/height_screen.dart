@@ -8,7 +8,9 @@ import '../../../core/utils/platform_utils.dart';
 import '../../../core/providers/user_profile_provider.dart';
 
 class HeightScreen extends ConsumerStatefulWidget {
-  const HeightScreen({super.key});
+  final bool isFromProfile;
+  
+  const HeightScreen({super.key, this.isFromProfile = false});
 
   @override
   ConsumerState<HeightScreen> createState() => _HeightScreenState();
@@ -21,7 +23,11 @@ class _HeightScreenState extends ConsumerState<HeightScreen> {
   void _handleContinue() {
     if (_selectedHeight != null && _selectedHeight! > 0) {
       ref.read(userProfileProvider.notifier).setHeight(_selectedHeight!, _selectedUnit);
-      context.push('/weight');
+      if (widget.isFromProfile) {
+        context.go('/profile');
+      } else {
+        context.push('/weight');
+      }
     }
   }
 

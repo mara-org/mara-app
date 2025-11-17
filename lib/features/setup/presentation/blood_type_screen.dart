@@ -8,7 +8,9 @@ import '../../../core/utils/platform_utils.dart';
 import '../../../core/providers/user_profile_provider.dart';
 
 class BloodTypeScreen extends ConsumerStatefulWidget {
-  const BloodTypeScreen({super.key});
+  final bool isFromProfile;
+  
+  const BloodTypeScreen({super.key, this.isFromProfile = false});
 
   @override
   ConsumerState<BloodTypeScreen> createState() => _BloodTypeScreenState();
@@ -31,7 +33,11 @@ class _BloodTypeScreenState extends ConsumerState<BloodTypeScreen> {
   void _handleContinue() {
     if (_selectedBloodType != null) {
       ref.read(userProfileProvider.notifier).setBloodType(_selectedBloodType!);
-      context.push('/goals');
+      if (widget.isFromProfile) {
+        context.go('/profile');
+      } else {
+        context.push('/goals');
+      }
     }
   }
 

@@ -9,7 +9,9 @@ import '../../../core/providers/user_profile_provider.dart';
 import '../../../core/models/user_profile_setup.dart';
 
 class GenderScreen extends ConsumerStatefulWidget {
-  const GenderScreen({super.key});
+  final bool isFromProfile;
+  
+  const GenderScreen({super.key, this.isFromProfile = false});
 
   @override
   ConsumerState<GenderScreen> createState() => _GenderScreenState();
@@ -21,7 +23,11 @@ class _GenderScreenState extends ConsumerState<GenderScreen> {
   void _handleContinue() {
     if (_selectedGender != null) {
       ref.read(userProfileProvider.notifier).setGender(_selectedGender!);
-      context.push('/height');
+      if (widget.isFromProfile) {
+        context.go('/profile');
+      } else {
+        context.push('/height');
+      }
     }
   }
 
