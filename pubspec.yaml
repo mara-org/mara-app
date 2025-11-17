@@ -17,6 +17,8 @@ dependencies:
   url_launcher: ^6.2.5
   webview_flutter: ^4.4.2
   material_symbols_icons: ^4.21.0
+  package_info_plus: ^8.0.0
+  device_info_plus: ^10.0.0
 
 dev_dependencies:
   flutter_test:
