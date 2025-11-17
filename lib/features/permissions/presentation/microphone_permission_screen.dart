@@ -26,27 +26,17 @@ class MicrophonePermissionScreen extends ConsumerWidget {
           ),
         ),
         child: SafeArea(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: PlatformUtils.getDefaultPadding(context),
-              child: Column(
-                children: [
-                  const SizedBox(height: 40),
-                  // Microphone icon
-                  Container(
-                    width: 100,
-                    height: 100,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Icon(
-                      Icons.mic,
-                      size: 60,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 40),
+          child: Stack(
+            children: [
+              SingleChildScrollView(
+                child: Padding(
+                  padding: PlatformUtils.getDefaultPadding(context),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 40),
+                      // Spacer for image
+                      const SizedBox(height: 120),
+                      const SizedBox(height: 40),
                   // Title
                   Text(
                     'Allow Microphone Access',
@@ -54,7 +44,7 @@ class MicrophonePermissionScreen extends ConsumerWidget {
                     style: TextStyle(
                       color: AppColors.textPrimary,
                       fontSize: 26,
-                      fontWeight: FontWeight.normal,
+                      fontWeight: FontWeight.w600,
                       height: 1,
                     ),
                   ),
@@ -114,9 +104,28 @@ class MicrophonePermissionScreen extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(height: 20),
-                ],
+                    ],
+                  ),
+                ),
               ),
-            ),
+              // Microphone image centered horizontally at y330
+              Positioned(
+                left: (MediaQuery.of(context).size.width - 88) / 2,
+                top: 330,
+                child: ColorFiltered(
+                  colorFilter: ColorFilter.mode(
+                    const Color(0xFF0EA5C6).withOpacity(0.25),
+                    BlendMode.srcIn,
+                  ),
+                  child: Image.asset(
+                    'assets/icons/mic.png',
+                    width: 88,
+                    height: 120,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),

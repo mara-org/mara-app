@@ -26,27 +26,17 @@ class HealthDataPermissionScreen extends ConsumerWidget {
           ),
         ),
         child: SafeArea(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: PlatformUtils.getDefaultPadding(context),
-              child: Column(
-                children: [
-                  const SizedBox(height: 40),
-                  // Health data icon
-                  Container(
-                    width: 100,
-                    height: 100,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Icon(
-                      Icons.favorite,
-                      size: 60,
-                      color: Colors.red,
-                    ),
-                  ),
-                  const SizedBox(height: 40),
+          child: Stack(
+            children: [
+              SingleChildScrollView(
+                child: Padding(
+                  padding: PlatformUtils.getDefaultPadding(context),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 40),
+                      // Spacer for image
+                      const SizedBox(height: 80),
+                      const SizedBox(height: 40),
                   // Title
                   Text(
                     'Connect Health Data',
@@ -54,7 +44,7 @@ class HealthDataPermissionScreen extends ConsumerWidget {
                     style: TextStyle(
                       color: AppColors.textPrimary,
                       fontSize: 26,
-                      fontWeight: FontWeight.normal,
+                      fontWeight: FontWeight.w600,
                       height: 1,
                     ),
                   ),
@@ -114,9 +104,28 @@ class HealthDataPermissionScreen extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(height: 20),
-                ],
+                    ],
+                  ),
+                ),
               ),
-            ),
+              // Health data image centered horizontally at y288
+              Positioned(
+                left: (MediaQuery.of(context).size.width - 100) / 2,
+                top: 288,
+                child: ColorFiltered(
+                  colorFilter: ColorFilter.mode(
+                    const Color(0xFF0EA5C6).withOpacity(0.5),
+                    BlendMode.srcIn,
+                  ),
+                  child: Image.asset(
+                    'assets/icons/monitor_heart.png',
+                    width: 100,
+                    height: 80,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),

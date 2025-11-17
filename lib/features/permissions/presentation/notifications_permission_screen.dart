@@ -26,27 +26,17 @@ class NotificationsPermissionScreen extends ConsumerWidget {
           ),
         ),
         child: SafeArea(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: PlatformUtils.getDefaultPadding(context),
-              child: Column(
-                children: [
-                  const SizedBox(height: 40),
-                  // Notifications icon
-                  Container(
-                    width: 100,
-                    height: 100,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Icon(
-                      Icons.notifications_active,
-                      size: 60,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 40),
+          child: Stack(
+            children: [
+              SingleChildScrollView(
+                child: Padding(
+                  padding: PlatformUtils.getDefaultPadding(context),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 40),
+                      // Spacer for image
+                      const SizedBox(height: 167),
+                      const SizedBox(height: 40),
                   // Title
                   Text(
                     'Enable Notifications',
@@ -54,7 +44,7 @@ class NotificationsPermissionScreen extends ConsumerWidget {
                     style: TextStyle(
                       color: AppColors.textPrimary,
                       fontSize: 26,
-                      fontWeight: FontWeight.normal,
+                      fontWeight: FontWeight.w600,
                       height: 1,
                     ),
                   ),
@@ -99,9 +89,28 @@ class NotificationsPermissionScreen extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(height: 20),
-                ],
+                    ],
+                  ),
+                ),
               ),
-            ),
+              // Notifications image centered horizontally at y288
+              Positioned(
+                left: (MediaQuery.of(context).size.width - 167) / 2,
+                top: 288,
+                child: ColorFiltered(
+                  colorFilter: ColorFilter.mode(
+                    const Color(0xFF0EA5C6).withOpacity(0.5),
+                    BlendMode.srcIn,
+                  ),
+                  child: Image.asset(
+                    'assets/icons/notifications_active.png',
+                    width: 167,
+                    height: 167,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),

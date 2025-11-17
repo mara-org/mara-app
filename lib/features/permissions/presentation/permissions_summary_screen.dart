@@ -38,7 +38,7 @@ class PermissionsSummaryScreen extends ConsumerWidget {
                   style: TextStyle(
                     color: AppColors.textPrimary,
                     fontSize: 26,
-                    fontWeight: FontWeight.normal,
+                    fontWeight: FontWeight.w600,
                     height: 1,
                   ),
                 ),
@@ -128,8 +128,8 @@ class _PermissionItem extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         color: isEnabled
-            ? AppColors.permissionEnabled
-            : AppColors.permissionCardBackground,
+            ? const Color(0xFFC4F4FF)
+            : const Color(0xFFA2BCC2),
       ),
       child: Center(
         child: Text(
@@ -137,8 +137,8 @@ class _PermissionItem extends StatelessWidget {
           textAlign: TextAlign.center,
           style: TextStyle(
             color: isEnabled
-                ? Colors.white
-                : AppColors.languageButtonColor,
+                ? const Color(0xFF10A9CC)
+                : const Color(0xFFFCFEFF),
             fontSize: isEnabled ? 20 : 16,
             fontWeight: FontWeight.normal,
             height: 1,

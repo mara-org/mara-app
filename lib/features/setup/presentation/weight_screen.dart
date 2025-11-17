@@ -84,29 +84,29 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
                 // Unit toggle
                 Column(
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        _UnitToggle(
-                          text: 'Kg',
-                          isSelected: _selectedUnit == 'kg',
-                          onTap: () {
-                            setState(() {
-                              _selectedUnit = 'kg';
-                              _selectedWeight = null; // Reset selection when unit changes
-                            });
-                          },
-                        ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _UnitToggle(
+                      text: 'Kg',
+                      isSelected: _selectedUnit == 'kg',
+                      onTap: () {
+                        setState(() {
+                          _selectedUnit = 'kg';
+                          _selectedWeight = null; // Reset selection when unit changes
+                        });
+                      },
+                    ),
                         const SizedBox(width: 96),
-                        _UnitToggle(
-                          text: 'lb',
-                          isSelected: _selectedUnit == 'lb',
-                          onTap: () {
-                            setState(() {
-                              _selectedUnit = 'lb';
-                              _selectedWeight = null; // Reset selection when unit changes
-                            });
-                          },
+                    _UnitToggle(
+                      text: 'lb',
+                      isSelected: _selectedUnit == 'lb',
+                      onTap: () {
+                        setState(() {
+                          _selectedUnit = 'lb';
+                          _selectedWeight = null; // Reset selection when unit changes
+                        });
+                      },
                         ),
                       ],
                     ),

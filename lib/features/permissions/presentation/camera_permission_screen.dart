@@ -14,27 +14,17 @@ class CameraPermissionScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: AppColors.cameraPermissionBackground,
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: PlatformUtils.getDefaultPadding(context),
-            child: Column(
-              children: [
-                const SizedBox(height: 40),
-                // Camera icon
-                Container(
-                  width: 133,
-                  height: 120,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Icon(
-                    Icons.camera_alt,
-                    size: 80,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 40),
+        child: Stack(
+          children: [
+            SingleChildScrollView(
+              child: Padding(
+                padding: PlatformUtils.getDefaultPadding(context),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 40),
+                    // Spacer for image
+                    const SizedBox(height: 120),
+                    const SizedBox(height: 40),
                 // Title
                 Text(
                   'Allow Camera Access',
@@ -42,7 +32,7 @@ class CameraPermissionScreen extends ConsumerWidget {
                   style: TextStyle(
                     color: AppColors.textPrimary,
                     fontSize: 26,
-                    fontWeight: FontWeight.normal,
+                    fontWeight: FontWeight.w600,
                     height: 1,
                   ),
                 ),
@@ -102,9 +92,28 @@ class CameraPermissionScreen extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: 20),
-              ],
+                  ],
+                ),
+              ),
             ),
-          ),
+            // Camera image centered horizontally at y327
+            Positioned(
+              left: (MediaQuery.of(context).size.width - 133) / 2,
+              top: 327,
+              child: ColorFiltered(
+                colorFilter: ColorFilter.mode(
+                  const Color(0xFF0EA5C6).withOpacity(0.4),
+                  BlendMode.srcIn,
+                ),
+                child: Image.asset(
+                  'assets/icons/photo_camera.png',
+                  width: 133,
+                  height: 120,
+                  fit: BoxFit.contain,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
