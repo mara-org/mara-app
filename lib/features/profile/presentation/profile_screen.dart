@@ -7,6 +7,8 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/platform_utils.dart';
 import '../../../core/providers/user_profile_provider.dart';
 import '../../../shared/system/system_providers.dart';
+import 'widgets/health_profile_section.dart';
+import 'widgets/app_settings_section.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -84,25 +86,13 @@ class ProfileScreen extends ConsumerWidget {
                   ],
                 ),
                 const SizedBox(height: 40),
-                // Menu items
-                _ProfileMenuItem(
-                  title: 'Health Profile',
-                  subtitle: 'Review your health data and preferences',
-                  icon: Icons.favorite,
-                  onTap: () {
-                    // TODO: Navigate to edit health profile screen
-                  },
-                ),
-                const SizedBox(height: 16),
-                _ProfileMenuItem(
-                  title: 'Settings',
-                  subtitle: 'Language, notifications and more',
-                  icon: Icons.settings,
-                  onTap: () {
-                    context.go('/settings');
-                  },
-                ),
-                const SizedBox(height: 16),
+                // Health Profile section
+                const HealthProfileSection(),
+                const SizedBox(height: 40),
+                // App Settings section
+                const AppSettingsSection(),
+                const SizedBox(height: 40),
+                // Privacy Policy
                 _ProfileMenuItem(
                   title: 'Privacy Policy',
                   subtitle: null,
@@ -112,6 +102,7 @@ class ProfileScreen extends ConsumerWidget {
                   },
                 ),
                 const SizedBox(height: 16),
+                // Terms of Service
                 _ProfileMenuItem(
                   title: 'Terms of Service',
                   subtitle: null,
