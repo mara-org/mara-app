@@ -19,6 +19,10 @@
 - **Welcome & Onboarding**: Introduction to Mara's features and privacy
 - **User Profile Setup**: Collect name, DOB, gender, height, weight, blood type, and health goals
 - **Permissions**: Request camera, microphone, notifications, and health data access
+  - Camera permission with photo_camera.png icon
+  - Microphone permission with mic.png icon
+  - Notifications permission with notifications_active.png icon
+  - Health data permission with monitor_heart.png icon
 
 #### Authentication
 - **Sign Up (Join Mara)**: Create account with email, Google, or Apple sign-in options
@@ -37,7 +41,7 @@
 - **Profile**: 
   - User name and email display with Edit button
   - Back arrow navigation
-  - Health Profile, Permissions, Settings, Privacy Policy (opens in WebView), Terms of Service, and Logout options
+  - Health Profile, Settings, Privacy Policy (opens in WebView), Terms of Service, and Logout options
 - **Settings**: 
   - Language preferences (English/Arabic)
   - Notification toggles (Health reminders, Email notifications)
@@ -54,7 +58,7 @@
 - **Internationalization**: intl package
 - **External Links**: url_launcher
 - **WebView**: webview_flutter (for in-app privacy policy and terms viewing)
-- **Typography**: Roboto font family throughout the app
+- **Typography**: Roboto font family applied globally throughout the entire app
 
 ## 📁 Project Structure
 
@@ -64,7 +68,7 @@ lib/
 │   ├── models/              # Data models (permissions, chat messages, user profile)
 │   ├── providers/           # Riverpod providers (settings, permissions, language, user profile)
 │   ├── routing/             # App routing configuration
-│   ├── theme/               # App colors, text styles, theme
+│   ├── theme/               # App colors, text styles, theme (Roboto font configured globally)
 │   ├── utils/               # Platform utilities
 │   └── widgets/             # Reusable widgets (buttons, text fields, logo)
 ├── features/
@@ -127,10 +131,23 @@ flutter build ios --release
 
 - **App Name**: Mara
 - **Primary Color**: #0EA5C6 (Teal/Cyan)
-- **Font**: Roboto (applied throughout all screens)
+- **Font**: Roboto (applied globally to every single word in the app via theme configuration)
 - **Design System**: Custom theme with consistent colors and typography
-- **Language Selector**: Bold Roboto font for language buttons
 - **UI Elements**: Consistent use of rounded corners (16-20px radius), shadows, and spacing
+
+### Design Details
+
+#### Permission Screens
+- All permission screens use custom icons with color filters
+- Consistent button positioning and spacing across all permission screens
+- SemiBold font weight for all headlines
+- Centered images with consistent styling
+
+#### Setup Screens
+- Height and Weight screens with unit selectors (cm/in, kg/lb)
+- Continuous blue line under unit selectors
+- Custom picker styling with selected/unselected states
+- Blood type and goals screens with updated button styling
 
 ## 📱 App Icons
 
@@ -145,6 +162,7 @@ App icons are located in the `AppIcon/` folder. Icons are configured for both An
 ## 🔐 Permissions
 
 The app requests the following permissions:
+
 - **Camera**: For facial expression analysis and fatigue detection (processed locally)
 - **Microphone**: For voice input and natural conversation
 - **Notifications**: For health reminders and daily goals
@@ -155,6 +173,7 @@ All data processing happens locally on the device for maximum privacy.
 ## 🌐 Navigation
 
 The app uses GoRouter for navigation. Key routes include:
+
 - `/splash` - Initial splash screen
 - `/language-selector` - Language selection screen
 - `/sign-up-choices` - Sign up options (Google, Apple, Email)

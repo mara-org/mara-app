@@ -23,9 +23,20 @@ class AppTheme {
       textTheme: const TextTheme(
         displayLarge: AppTextStyles.heading1Static,
         displayMedium: AppTextStyles.heading2Static,
+        displaySmall: AppTextStyles.heading2Static,
+        headlineLarge: AppTextStyles.heading1Static,
+        headlineMedium: AppTextStyles.heading2Static,
+        headlineSmall: AppTextStyles.heading2Static,
+        titleLarge: AppTextStyles.heading2Static,
+        titleMedium: AppTextStyles.bodyStatic,
+        titleSmall: AppTextStyles.bodyStatic,
         bodyLarge: AppTextStyles.bodyStatic,
+        bodyMedium: AppTextStyles.bodyStatic,
         bodySmall: AppTextStyles.captionStatic,
-      ),
+        labelLarge: AppTextStyles.bodyStatic,
+        labelMedium: AppTextStyles.captionStatic,
+        labelSmall: AppTextStyles.captionStatic,
+      ).apply(fontFamily: 'Roboto'),
       // Platform-aware button styles
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(

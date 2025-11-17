@@ -94,15 +94,6 @@ class ProfileScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: 16),
                 _ProfileMenuItem(
-                  title: 'Permissions',
-                  subtitle: 'Camera, Microphone, Notifications, Health data',
-                  icon: Icons.shield,
-                  onTap: () {
-                    context.push('/permissions-summary');
-                  },
-                ),
-                const SizedBox(height: 16),
-                _ProfileMenuItem(
                   title: 'Settings',
                   subtitle: 'Language, notifications and more',
                   icon: Icons.settings,
