@@ -4,9 +4,11 @@ import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/platform_utils.dart';
+import '../../../core/providers/subscription_provider.dart';
 import '../../../shared/system/system_providers.dart';
 import 'widgets/health_profile_section.dart';
 import 'widgets/app_settings_section.dart';
+import 'widgets/subscription_banner.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -70,6 +72,46 @@ class ProfileScreen extends ConsumerWidget {
                   padding: PlatformUtils.getDefaultPadding(context),
                   child: Column(
                     children: [
+                      const SizedBox(height: 20),
+                      // Subscription banner or premium status
+                      Consumer(
+                        builder: (context, ref, child) {
+                          final subscriptionStatus = ref.watch(subscriptionProvider);
+                          if (subscriptionStatus == SubscriptionStatus.premium) {
+                            return Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: Colors.green.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: Colors.green,
+                                  width: 1,
+                                ),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.check_circle,
+                                    color: Colors.green,
+                                    size: 20,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    'You are on Mara Pro',
+                                    style: TextStyle(
+                                      color: Colors.green,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          } else {
+                            return const SubscriptionBanner();
+                          }
+                        },
+                      ),
                       const SizedBox(height: 20),
                       // User section
                       Column(

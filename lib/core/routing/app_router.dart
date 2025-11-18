@@ -35,6 +35,7 @@ import '../../features/analytics/presentation/analyst_dashboard_screen.dart';
 import '../../features/chat/presentation/mara_chat_screen.dart';
 import '../../features/profile/presentation/profile_screen.dart';
 import '../../features/profile/presentation/privacy_webview_screen.dart';
+import '../../features/subscription/presentation/subscription_screen.dart';
 import '../../features/settings/presentation/settings_screen.dart';
 import '../../features/settings/presentation/privacy_policy_screen.dart';
 import '../../features/settings/presentation/terms_of_service_screen.dart';
@@ -206,6 +207,10 @@ class AppRouter {
       GoRoute(
         path: '/profile',
         builder: (context, state) => const ProfileScreen(),
+      ),
+      GoRoute(
+        path: '/subscription',
+        builder: (context, state) => const SubscriptionScreen(),
       ),
       GoRoute(
         path: '/privacy-webview',
