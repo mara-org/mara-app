@@ -9,14 +9,23 @@ import '../../../core/utils/platform_utils.dart';
 import '../../../core/providers/user_profile_provider.dart';
 
 class NameInputScreen extends ConsumerStatefulWidget {
-  const NameInputScreen({super.key});
+  final bool isFromProfile;
+  
+  const NameInputScreen({super.key, this.isFromProfile = false});
 
   @override
   ConsumerState<NameInputScreen> createState() => _NameInputScreenState();
 }
 
 class _NameInputScreenState extends ConsumerState<NameInputScreen> {
-  final _nameController = TextEditingController();
+  late final TextEditingController _nameController;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize controller - will be populated in build if needed
+    _nameController = TextEditingController();
+  }
 
   @override
   void dispose() {
@@ -28,12 +37,24 @@ class _NameInputScreenState extends ConsumerState<NameInputScreen> {
     final name = _nameController.text.trim();
     if (name.isNotEmpty) {
       ref.read(userProfileProvider.notifier).setName(name);
-      context.push('/dob-input');
+      if (widget.isFromProfile) {
+        context.go('/profile');
+      } else {
+        context.push('/dob-input');
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    // Pre-populate with current name if coming from profile (only once)
+    if (widget.isFromProfile && _nameController.text.isEmpty) {
+      final currentName = ref.read(userProfileProvider).name ?? '';
+      if (currentName.isNotEmpty) {
+        _nameController.text = currentName;
+      }
+    }
+    
     final name = _nameController.text.trim();
     final canContinue = name.isNotEmpty;
 

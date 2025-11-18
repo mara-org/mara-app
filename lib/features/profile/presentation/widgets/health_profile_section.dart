@@ -42,7 +42,7 @@ class HealthProfileSection extends ConsumerWidget {
               _HealthProfileRow(
                 label: 'Name',
                 value: profile.name ?? 'Not set',
-                onTap: () => _showNameEditor(context, ref, profile.name),
+                onTap: () => context.push('/name-input?from=profile'),
               ),
               Divider(
                 height: 24,
@@ -118,39 +118,6 @@ class HealthProfileSection extends ConsumerWidget {
           ),
         ),
       ],
-    );
-  }
-
-  void _showNameEditor(BuildContext context, WidgetRef ref, String? currentName) {
-    final controller = TextEditingController(text: currentName);
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Edit Name'),
-        content: TextField(
-          controller: controller,
-          decoration: const InputDecoration(
-            hintText: 'Enter your name',
-            border: OutlineInputBorder(),
-          ),
-          autofocus: true,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              if (controller.text.trim().isNotEmpty) {
-                ref.read(userProfileProvider.notifier).setName(controller.text.trim());
-              }
-              Navigator.pop(context);
-            },
-            child: const Text('Save'),
-          ),
-        ],
-      ),
     );
   }
 

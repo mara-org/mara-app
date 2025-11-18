@@ -32,7 +32,7 @@ class ProfileScreen extends ConsumerWidget {
               child: Row(
                 children: [
                   GestureDetector(
-                    onTap: () => context.pop(),
+                    onTap: () => context.go('/home'),
                     child: Container(
                       width: 36,
                       height: 36,

@@ -39,14 +39,15 @@
 - **Mara Chat**: Interactive chat interface with the AI health assistant
 - **Analytics Dashboard**: Health data visualization and insights
 - **Profile**: 
-  - User name and email display with Edit button
-  - Back arrow navigation
-  - Health Profile, Settings, Privacy Policy (opens in WebView), Terms of Service, and Logout options
-- **Settings**: 
-  - Language preferences (English/Arabic)
-  - Notification toggles (Health reminders, Email notifications)
-  - Privacy Policy (opens in external browser)
-  - Terms of Service (opens in in-app WebView)
+  - Single scrollable page with unified visual style
+  - White header with back arrow (navigates to home screen)
+  - User section with email display
+  - Full Health Profile section (Name, Date of Birth, Gender, Height, Weight, Blood Type, Main Goal) - all editable using onboarding screens
+  - Full App Settings section (Language preferences, Health reminders, Email notifications)
+  - Privacy Policy (opens in WebView)
+  - Terms of Service (opens in external browser)
+  - Developer Settings (App Version, Device Info - dynamic data)
+  - Logout option
 
 ## 🛠️ Tech Stack
 
@@ -58,6 +59,7 @@
 - **Internationalization**: intl package
 - **External Links**: url_launcher
 - **WebView**: webview_flutter (for in-app privacy policy and terms viewing)
+- **System Info**: package_info_plus, device_info_plus (for dynamic app version and device information)
 - **Typography**: Roboto font family applied globally throughout the entire app
 
 ## 📁 Project Structure
@@ -148,6 +150,17 @@ flutter build ios --release
 - Continuous blue line under unit selectors
 - Custom picker styling with selected/unselected states
 - Blood type and goals screens with updated button styling
+- **Reusable for Profile Editing**: All setup screens (Name, Date of Birth, Gender, Height, Weight, Blood Type, Goals) can be used both for initial onboarding and for editing from the Profile screen
+
+#### Profile Screen
+- Unified visual style with white background (#FFFFFF)
+- Simple AppBar-style header with back arrow and centered "Profile" title
+- Consistent row styling across all sections:
+  - Row title text: #0F172A, fontWeight w500
+  - Row value text: #64748B
+  - Brand blue dividers (#0EA5C6) between rows
+- All sections in a single scrollable page for better UX
+- Developer Settings section with dynamic app version and device info
 
 ## 📱 App Icons
 
@@ -183,11 +196,19 @@ The app uses GoRouter for navigation. Key routes include:
 - `/home` - Main home screen
 - `/chat` - Mara chat interface
 - `/analytics` - Analytics dashboard
-- `/profile` - User profile
-- `/settings` - App settings
+- `/profile` - User profile (single scrollable page with all sections)
+- `/settings` - App settings (legacy, now embedded in Profile)
 - `/privacy-webview` - In-app privacy policy WebView
 - `/onboarding-*` - Onboarding flow screens
 - `/permissions-*` - Permission request screens
+- `/name-input`, `/dob-input`, `/gender`, `/height`, `/weight`, `/blood-type`, `/goals` - Profile setup screens (can be accessed with `?from=profile` query parameter for editing)
+
+### Navigation Behavior
+
+- **Profile Screen**: Back arrow navigates to `/home` instead of going back in navigation history
+- **Profile Editing**: When editing profile fields, screens check for `?from=profile` query parameter:
+  - If present: After saving, navigates back to `/profile`
+  - If absent: Continues normal onboarding flow
 
 ## 🧪 Testing
 

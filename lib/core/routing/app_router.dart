@@ -112,7 +112,10 @@ class AppRouter {
       ),
       GoRoute(
         path: '/name-input',
-        builder: (context, state) => const NameInputScreen(),
+        builder: (context, state) {
+          final isFromProfile = state.uri.queryParameters['from'] == 'profile';
+          return NameInputScreen(isFromProfile: isFromProfile);
+        },
       ),
       GoRoute(
         path: '/dob-input',
