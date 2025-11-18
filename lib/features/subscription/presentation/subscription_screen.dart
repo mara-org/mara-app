@@ -20,18 +20,25 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: AppColors.backgroundLight,
       appBar: AppBar(
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.white,
         leading: IconButton(
-          icon: const Icon(Icons.close, color: Colors.white),
-          onPressed: () => context.pop(),
+          icon: Icon(
+            Icons.close,
+            color: AppColors.textPrimary,
+          ),
+          onPressed: () => context.go('/profile'),
         ),
-        title: const Text(
+        title: Text(
           'Mara Pro',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(
+            color: AppColors.textPrimary,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         centerTitle: true,
+        elevation: 0,
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -41,11 +48,11 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
               children: [
                 const SizedBox(height: 40),
                 // Big header
-                const Text(
+                Text(
                   'Mara Pro subscription',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: Colors.white,
+                    color: AppColors.textPrimary,
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
                   ),
@@ -90,7 +97,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                   onPressed: () {
                     // Stub: Mark as subscribed
                     ref.read(subscriptionProvider.notifier).setPremium();
-                    context.pop();
+                    context.go('/profile');
                   },
                 ),
                 const SizedBox(height: 24),
@@ -101,7 +108,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                     TextSpan(
                       text: 'By continuing, you agree to Mara\'s ',
                       style: TextStyle(
-                        color: Colors.white70,
+                        color: AppColors.textSecondary,
                         fontSize: 12,
                       ),
                       children: [
@@ -167,8 +174,8 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
         Expanded(
           child: Text(
             text,
-            style: const TextStyle(
-              color: Colors.white,
+            style: TextStyle(
+              color: AppColors.textPrimary,
               fontSize: 16,
             ),
           ),

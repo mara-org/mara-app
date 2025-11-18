@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/theme/app_colors.dart';
 
 class SubscriptionBanner extends StatelessWidget {
   const SubscriptionBanner({super.key});
@@ -12,22 +13,26 @@ class SubscriptionBanner extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
-          color: const Color(0xFF050816), // Dark background
+          color: Colors.white,
           borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: AppColors.borderColor,
+            width: 1,
+          ),
         ),
         child: Row(
           children: [
-            // Left: back arrow icon (white)
+            // Left: back arrow icon
             Container(
               width: 36,
               height: 36,
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.1),
+                color: AppColors.languageButtonColor.withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.arrow_back,
-                color: Colors.white,
+                color: AppColors.languageButtonColor,
                 size: 20,
               ),
             ),
@@ -40,7 +45,7 @@ class SubscriptionBanner extends StatelessWidget {
                   Text(
                     'Upgrade your Mara account',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: AppColors.textPrimary,
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
                     ),
@@ -49,7 +54,7 @@ class SubscriptionBanner extends StatelessWidget {
                   Text(
                     'Unlock premium insights, more reminders, and priority support.',
                     style: TextStyle(
-                      color: Colors.white70,
+                      color: AppColors.textSecondary,
                       fontSize: 13,
                     ),
                   ),
@@ -60,7 +65,7 @@ class SubscriptionBanner extends StatelessWidget {
             // Right: spark/badge icon
             Icon(
               Icons.workspace_premium_rounded,
-              color: Colors.white,
+              color: AppColors.languageButtonColor,
               size: 24,
             ),
           ],
