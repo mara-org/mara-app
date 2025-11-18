@@ -9,6 +9,7 @@ import '../../../shared/system/system_providers.dart';
 import 'widgets/health_profile_section.dart';
 import 'widgets/app_settings_section.dart';
 import 'widgets/subscription_banner.dart';
+import 'widgets/contact_us_section.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -222,6 +223,9 @@ class ProfileScreen extends ConsumerWidget {
                       const SizedBox(height: 40),
                       // Developer Settings section
                       _DeveloperSettingsSection(),
+                      const SizedBox(height: 40),
+                      // Contact us section
+                      const ContactUsSection(),
                       const SizedBox(height: 40),
                       // Log out button
                       Container(
