@@ -27,7 +27,7 @@ class _HeightScreenState extends ConsumerState<HeightScreen> {
       if (widget.isFromProfile) {
         context.go('/profile');
       } else {
-        context.push('/weight');
+      context.push('/weight');
       }
     }
   }
@@ -92,29 +92,29 @@ class _HeightScreenState extends ConsumerState<HeightScreen> {
                 // Unit toggle
                 Column(
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        _UnitToggle(
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _UnitToggle(
                           text: l10n.cm,
-                          isSelected: _selectedUnit == 'cm',
-                          onTap: () {
-                            setState(() {
-                              _selectedUnit = 'cm';
-                              _selectedHeight = null; // Reset selection when unit changes
-                            });
-                          },
-                        ),
+                      isSelected: _selectedUnit == 'cm',
+                      onTap: () {
+                        setState(() {
+                          _selectedUnit = 'cm';
+                          _selectedHeight = null; // Reset selection when unit changes
+                        });
+                      },
+                    ),
                         const SizedBox(width: 96),
-                        _UnitToggle(
+                    _UnitToggle(
                           text: l10n.inchUnit,
-                          isSelected: _selectedUnit == 'in',
-                          onTap: () {
-                            setState(() {
-                              _selectedUnit = 'in';
-                              _selectedHeight = null; // Reset selection when unit changes
-                            });
-                          },
+                      isSelected: _selectedUnit == 'in',
+                      onTap: () {
+                        setState(() {
+                          _selectedUnit = 'in';
+                          _selectedHeight = null; // Reset selection when unit changes
+                        });
+                      },
                         ),
                       ],
                     ),

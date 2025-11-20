@@ -5,12 +5,14 @@ import '../../../core/widgets/primary_button.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/platform_utils.dart';
 import '../../../core/providers/permissions_provider.dart';
+import '../../../l10n/app_localizations.dart';
 
 class NotificationsPermissionScreen extends ConsumerWidget {
   const NotificationsPermissionScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -39,7 +41,7 @@ class NotificationsPermissionScreen extends ConsumerWidget {
                       const SizedBox(height: 40),
                   // Title
                   Text(
-                    'Enable Notifications',
+                    l10n.enableNotifications,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: AppColors.textPrimary,
@@ -53,7 +55,7 @@ class NotificationsPermissionScreen extends ConsumerWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Text(
-                      'Stay on top of your health routine with gentle reminders for hydration, medications, and daily goals. You control what to receive and when — always.',
+                      l10n.notificationsDescription,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: AppColors.textSecondary,
@@ -66,7 +68,7 @@ class NotificationsPermissionScreen extends ConsumerWidget {
                   const SizedBox(height: 160),
                   // Allow button
                   PrimaryButton(
-                    text: 'Allow Notifications',
+                    text: l10n.allowNotifications,
                     onPressed: () {
                       ref.read(permissionsProvider.notifier).setNotifications(true);
                       context.push('/health-data-permission');
@@ -80,7 +82,7 @@ class NotificationsPermissionScreen extends ConsumerWidget {
                       context.push('/health-data-permission');
                     },
                     child: Text(
-                      'Not now',
+                      l10n.notNow,
                       style: TextStyle(
                         color: AppColors.textSecondary,
                         fontSize: 16,

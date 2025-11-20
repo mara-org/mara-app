@@ -7,6 +7,7 @@ import '../../../core/widgets/primary_button.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/platform_utils.dart';
 import '../../../core/providers/user_profile_provider.dart';
+import '../../../l10n/app_localizations.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -66,19 +67,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final profile = ref.watch(userProfileProvider);
-    final name = profile.name ?? 'there';
+    final name = profile.name ?? l10n.there;
     final now = DateTime.now();
-    final dateFormat = DateFormat('EEEE, MMMM d');
+    final locale = Localizations.localeOf(context);
+    final dateFormat = DateFormat('EEEE, MMMM d', locale.toString());
     final dateText = dateFormat.format(now);
     final timeOfDay = now.hour;
     String greeting;
     if (timeOfDay < 12) {
-      greeting = 'Good morning';
+      greeting = l10n.goodMorning;
     } else if (timeOfDay < 17) {
-      greeting = 'Good afternoon';
+      greeting = l10n.goodAfternoon;
     } else {
-      greeting = 'Good evening';
+      greeting = l10n.goodEvening;
     }
 
     return Scaffold(
@@ -193,14 +196,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Expanded(
-                                  child: Text(
-                                    'What happened to your cough?',
-                                    style: TextStyle(
-                                      color: AppColors.languageButtonColor,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.normal,
-                                    ),
-                                  ),
+                                  child:                               Text(
+                                l10n.whatHappenedToYourCough,
+                                style: TextStyle(
+                                  color: AppColors.languageButtonColor,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.normal,
+                                ),
+                              ),
                                 ),
                                 const Icon(
                                   Icons.arrow_forward_ios,
@@ -211,7 +214,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              'complete your last conversation',
+                              l10n.completeYourLastConversation,
                               style: TextStyle(
                                 color: AppColors.languageButtonColor,
                                 fontSize: 10,
@@ -224,7 +227,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       const SizedBox(height: 24),
                       // Daily Insights section
                       Text(
-                        'Your Daily Insights',
+                        l10n.yourDailyInsights,
                         style: TextStyle(
                           color: AppColors.textPrimary,
                           fontSize: 16,
@@ -237,7 +240,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         children: [
                           Expanded(
                             child: _InsightCard(
-                              label: 'Mood',
+                              label: l10n.mood,
                               value: 'calm',
                               icon: Icons.sentiment_satisfied,
                             ),
@@ -245,7 +248,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           const SizedBox(width: 12),
                           Expanded(
                             child: _InsightCard(
-                              label: 'Sleep',
+                              label: l10n.sleep,
                               value: '7h 25m',
                               icon: Icons.bedtime,
                             ),
@@ -253,7 +256,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           const SizedBox(width: 12),
                           Expanded(
                             child: _InsightCard(
-                              label: 'Water',
+                              label: l10n.water,
                               value: '2.5L',
                               icon: Icons.water_drop,
                             ),
@@ -296,8 +299,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                         size: 32,
                                       ),
                                       const SizedBox(width: 12),
-                                      const Text(
-                                        'Vital signs',
+                                      Text(
+                                        l10n.vitalSigns,
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontSize: 20,
@@ -316,8 +319,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 ],
                               ),
                               const SizedBox(height: 8),
-                              const Text(
-                                'Track your variability and resting heart rate',
+                              Text(
+                                l10n.trackYourVariabilityAndRestingHeartRate,
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 11,
@@ -364,7 +367,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   ),
                                   const SizedBox(width: 12),
                                   Text(
-                                    'Summary',
+                                    l10n.summary,
                                     style: TextStyle(
                                       color: _isSummaryLoading
                                           ? Colors.white
@@ -391,7 +394,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       const SizedBox(height: 24),
                       // Chat with Mara button
                       PrimaryButton(
-                        text: 'Chat with Mara',
+                        text: l10n.chatWithMara,
                         onPressed: () {
                           context.go('/chat');
                         },
@@ -415,7 +418,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             const SizedBox(width: 12),
                             Expanded(
                               child: Text(
-                                'Drink a glass of water every morning to boost your metabolism.',
+                                l10n.drinkGlassOfWaterEveryMorning,
                                 style: TextStyle(
                                   color: Colors.black,
                                   fontSize: 13,
@@ -440,18 +443,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         onTap: _onItemTapped,
         selectedItemColor: AppColors.languageButtonColor,
         unselectedItemColor: AppColors.textSecondary,
-        items: const [
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
+            icon: const Icon(Icons.home),
+            label: l10n.home,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.bar_chart),
-            label: 'Analyst',
+            icon: const Icon(Icons.bar_chart),
+            label: l10n.analyst,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.chat),
-            label: 'Mara',
+            icon: const Icon(Icons.chat),
+            label: l10n.mara,
           ),
         ],
       ),

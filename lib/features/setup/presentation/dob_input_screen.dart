@@ -63,7 +63,7 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
         if (widget.isFromProfile) {
           context.go('/profile');
         } else {
-          context.push('/gender');
+        context.push('/gender');
         }
       }
     } catch (e) {
@@ -78,7 +78,7 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
 
   bool get _canContinue =>
       _selectedYear != null && _selectedMonth != null && _selectedDay != null;
-
+  
   List<int> get _validDays {
     if (_selectedYear == null || _selectedMonth == null) {
       return [];
@@ -219,8 +219,8 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
                           Text(
                             l10n.month,
                             style: TextStyle(
-                              color: _selectedYear != null
-                                  ? AppColors.textSecondary
+                              color: _selectedYear != null 
+                                  ? AppColors.textSecondary 
                                   : AppColors.textSecondary.withOpacity(0.5),
                               fontSize: 14,
                             ),
@@ -293,7 +293,7 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
                             style: TextStyle(
                               color: _selectedYear != null &&
                                       _selectedMonth != null
-                                  ? AppColors.textSecondary
+                                  ? AppColors.textSecondary 
                                   : AppColors.textSecondary.withOpacity(0.5),
                               fontSize: 14,
                             ),

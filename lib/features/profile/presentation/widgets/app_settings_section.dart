@@ -3,12 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/providers/language_provider.dart';
 import '../../../../core/providers/settings_provider.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class AppSettingsSection extends ConsumerWidget {
   const AppSettingsSection({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final settings = ref.watch(settingsProvider);
     final language = ref.watch(languageProvider);
 
@@ -16,9 +18,9 @@ class AppSettingsSection extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: 4, bottom: 12),
+          padding: const EdgeInsetsDirectional.only(start: 4, bottom: 12),
           child: Text(
-            'Settings',
+            l10n.settingsTitle,
             style: TextStyle(
               color: AppColors.textSecondary,
               fontSize: 14,
@@ -61,7 +63,7 @@ class AppSettingsSection extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'App language',
+                        l10n.appLanguage,
                         style: TextStyle(
                           color: const Color(0xFF0F172A), // #0F172A
                           fontSize: 16,
@@ -70,7 +72,7 @@ class AppSettingsSection extends ConsumerWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        language == AppLanguage.english ? 'English' : 'العربية',
+                        language == AppLanguage.english ? l10n.english : l10n.arabic,
                         style: TextStyle(
                           color: const Color(0xFF64748B), // #64748B
                           fontSize: 14,
@@ -119,24 +121,24 @@ class AppSettingsSection extends ConsumerWidget {
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Health reminders',
-                      style: TextStyle(
-                        color: const Color(0xFF0F172A), // #0F172A
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
+                    children: [
+                      Text(
+                        l10n.healthReminders,
+                        style: TextStyle(
+                          color: const Color(0xFF0F172A), // #0F172A
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Hydration, medication, and daily goals reminders.',
-                      style: TextStyle(
-                        color: const Color(0xFF64748B), // #64748B
-                        fontSize: 14,
+                      const SizedBox(height: 4),
+                      Text(
+                        l10n.healthRemindersSubtitle,
+                        style: TextStyle(
+                          color: const Color(0xFF64748B), // #64748B
+                          fontSize: 14,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
                 ),
               ),
               Switch(
@@ -182,24 +184,24 @@ class AppSettingsSection extends ConsumerWidget {
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Email notifications',
-                      style: TextStyle(
-                        color: const Color(0xFF0F172A), // #0F172A
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
+                    children: [
+                      Text(
+                        l10n.emailNotifications,
+                        style: TextStyle(
+                          color: const Color(0xFF0F172A), // #0F172A
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Receive important updates and reports by email.',
-                      style: TextStyle(
-                        color: const Color(0xFF64748B), // #64748B
-                        fontSize: 14,
+                      const SizedBox(height: 4),
+                      Text(
+                        l10n.emailNotificationsSubtitle,
+                        style: TextStyle(
+                          color: const Color(0xFF64748B), // #64748B
+                          fontSize: 14,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
                 ),
               ),
               Switch(
@@ -219,6 +221,7 @@ class AppSettingsSection extends ConsumerWidget {
   }
 
   void _showLanguagePicker(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -232,7 +235,7 @@ class AppSettingsSection extends ConsumerWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Select Language',
+                  l10n.selectLanguage,
                   style: TextStyle(
                     color: AppColors.textPrimary,
                     fontSize: 20,
@@ -241,7 +244,7 @@ class AppSettingsSection extends ConsumerWidget {
                 ),
                 const SizedBox(height: 20),
                 ListTile(
-                  title: const Text('English'),
+                  title: Text(l10n.english),
                   leading: const Icon(Icons.language),
                   onTap: () {
                     ref
@@ -251,7 +254,7 @@ class AppSettingsSection extends ConsumerWidget {
                   },
                 ),
                 ListTile(
-                  title: const Text('العربية'),
+                  title: Text(l10n.arabic),
                   leading: const Icon(Icons.language),
                   onTap: () {
                     ref

@@ -6,12 +6,14 @@ import '../../../core/widgets/primary_button.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/platform_utils.dart';
 import '../../../core/providers/permissions_provider.dart';
+import '../../../l10n/app_localizations.dart';
 
 class PermissionsSummaryScreen extends ConsumerWidget {
   const PermissionsSummaryScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final permissions = ref.watch(permissionsProvider);
 
     return Scaffold(
@@ -33,7 +35,7 @@ class PermissionsSummaryScreen extends ConsumerWidget {
                 const SizedBox(height: 40),
                 // Title
                 Text(
-                  'Review Permissions',
+                  l10n.reviewPermissions,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: AppColors.textPrimary,
@@ -47,7 +49,7 @@ class PermissionsSummaryScreen extends ConsumerWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Text(
-                    "Here's what Mara can access to personalize your experience",
+                    l10n.permissionsSummarySubtitle,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: AppColors.textSecondary,
@@ -60,28 +62,28 @@ class PermissionsSummaryScreen extends ConsumerWidget {
                 const SizedBox(height: 40),
                 // Permission list
                 _PermissionItem(
-                  title: 'Camera',
+                  title: l10n.camera,
                   isEnabled: permissions.camera,
                 ),
                 const SizedBox(height: 16),
                 _PermissionItem(
-                  title: 'Microphone',
+                  title: l10n.microphone,
                   isEnabled: permissions.microphone,
                 ),
                 const SizedBox(height: 16),
                 _PermissionItem(
-                  title: 'Notifications',
+                  title: l10n.notifications,
                   isEnabled: permissions.notifications,
                 ),
                 const SizedBox(height: 16),
                 _PermissionItem(
-                  title: 'Health Data',
+                  title: l10n.healthData,
                   isEnabled: permissions.healthData,
                 ),
                 const SizedBox(height: 40),
                 // Start using Mara button
                 PrimaryButton(
-                  text: 'Start using Mara',
+                  text: l10n.startUsingMara,
                   onPressed: () {
                     context.go('/home');
                   },
@@ -91,7 +93,7 @@ class PermissionsSummaryScreen extends ConsumerWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Text(
-                    'Your privacy is always our top priority.',
+                    l10n.yourPrivacyIsAlwaysOurTopPriority,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: AppColors.textSecondary.withOpacity(0.7),

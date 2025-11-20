@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/widgets/mara_logo.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/platform_utils.dart';
+import '../../../l10n/app_localizations.dart';
 
 class AnalystDashboardScreen extends StatefulWidget {
   const AnalystDashboardScreen({super.key});
@@ -32,6 +33,7 @@ class _AnalystDashboardScreenState extends State<AnalystDashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
       appBar: AppBar(
@@ -39,7 +41,7 @@ class _AnalystDashboardScreenState extends State<AnalystDashboardScreen> {
           children: [
             const MaraLogo(width: 32, height: 32),
             const SizedBox(width: 12),
-            const Text('Analyst Dashboard'),
+            Text(l10n.analystDashboard),
           ],
         ),
         backgroundColor: AppColors.homeHeaderBackground,
@@ -61,7 +63,7 @@ class _AnalystDashboardScreenState extends State<AnalystDashboardScreen> {
                 ),
                 const SizedBox(height: 24),
                 Text(
-                  'Coming soon',
+                  l10n.comingSoon,
                   style: TextStyle(
                     color: AppColors.textPrimary,
                     fontSize: 24,
@@ -72,7 +74,7 @@ class _AnalystDashboardScreenState extends State<AnalystDashboardScreen> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 40),
                   child: Text(
-                    'Detailed analytics about your health will be available here soon.',
+                    l10n.detailedAnalyticsAboutYourHealth,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: AppColors.textSecondary,
@@ -91,18 +93,18 @@ class _AnalystDashboardScreenState extends State<AnalystDashboardScreen> {
         onTap: _onItemTapped,
         selectedItemColor: AppColors.languageButtonColor,
         unselectedItemColor: AppColors.textSecondary,
-        items: const [
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
+            icon: const Icon(Icons.home),
+            label: l10n.home,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.bar_chart),
-            label: 'Analyst',
+            icon: const Icon(Icons.bar_chart),
+            label: l10n.analyst,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.chat),
-            label: 'Mara',
+            icon: const Icon(Icons.chat),
+            label: l10n.mara,
           ),
         ],
       ),

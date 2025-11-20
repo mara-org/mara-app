@@ -5,12 +5,14 @@ import '../../../core/widgets/primary_button.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/platform_utils.dart';
 import '../../../core/providers/permissions_provider.dart';
+import '../../../l10n/app_localizations.dart';
 
 class MicrophonePermissionScreen extends ConsumerWidget {
   const MicrophonePermissionScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -39,7 +41,7 @@ class MicrophonePermissionScreen extends ConsumerWidget {
                       const SizedBox(height: 40),
                   // Title
                   Text(
-                    'Allow Microphone Access',
+                    l10n.allowMicrophoneAccess,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: AppColors.textPrimary,
@@ -53,7 +55,7 @@ class MicrophonePermissionScreen extends ConsumerWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Text(
-                      'Mara listens when you talk — so you can describe your symptoms naturally, just like talking to a friend. Your voice is processed safely on your device and never stored or shared.',
+                      l10n.microphoneAccessDescription,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: AppColors.textSecondary,
@@ -66,7 +68,7 @@ class MicrophonePermissionScreen extends ConsumerWidget {
                   const SizedBox(height: 160),
                   // Allow button
                   PrimaryButton(
-                    text: 'Allow',
+                    text: l10n.allow,
                     onPressed: () {
                       ref.read(permissionsProvider.notifier).setMicrophone(true);
                       context.push('/notifications-permission');
@@ -80,7 +82,7 @@ class MicrophonePermissionScreen extends ConsumerWidget {
                       context.push('/notifications-permission');
                     },
                     child: Text(
-                      'Not now',
+                      l10n.notNow,
                       style: TextStyle(
                         color: AppColors.textSecondary,
                         fontSize: 16,
@@ -93,7 +95,7 @@ class MicrophonePermissionScreen extends ConsumerWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Text(
-                      'Your privacy matters. your voice access stays local in your device.',
+                      l10n.microphonePermissionPrivacy,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: AppColors.textSecondary.withOpacity(0.7),

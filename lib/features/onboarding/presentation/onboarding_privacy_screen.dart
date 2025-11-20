@@ -105,7 +105,7 @@ class OnboardingPrivacyScreen extends StatelessWidget {
               
               // 5) Continue button
               Padding(
-                padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
+                padding: const EdgeInsetsDirectional.fromSTEB(24, 0, 24, 32),
                 child: PrimaryButton(
                   text: l10n.continueButton,
                   width: 324,

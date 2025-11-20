@@ -725,7 +725,7 @@ abstract class AppLocalizations {
   /// No description provided for @permissionsSummarySubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Review and manage your app permissions'**
+  /// **'Here\'s what Mara can access to personalize your experience'**
   String get permissionsSummarySubtitle;
 
   /// No description provided for @camera.
@@ -1087,6 +1087,234 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'What\'s your main health goal?'**
   String get whatsYourMainHealthGoal;
+
+  /// No description provided for @goodMorning.
+  ///
+  /// In en, this message translates to:
+  /// **'Good morning'**
+  String get goodMorning;
+
+  /// No description provided for @goodAfternoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Good afternoon'**
+  String get goodAfternoon;
+
+  /// No description provided for @goodEvening.
+  ///
+  /// In en, this message translates to:
+  /// **'Good evening'**
+  String get goodEvening;
+
+  /// No description provided for @there.
+  ///
+  /// In en, this message translates to:
+  /// **'there'**
+  String get there;
+
+  /// No description provided for @whatHappenedToYourCough.
+  ///
+  /// In en, this message translates to:
+  /// **'What happened to your cough?'**
+  String get whatHappenedToYourCough;
+
+  /// No description provided for @completeYourLastConversation.
+  ///
+  /// In en, this message translates to:
+  /// **'complete your last conversation'**
+  String get completeYourLastConversation;
+
+  /// No description provided for @yourDailyInsights.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Daily Insights'**
+  String get yourDailyInsights;
+
+  /// No description provided for @mood.
+  ///
+  /// In en, this message translates to:
+  /// **'Mood'**
+  String get mood;
+
+  /// No description provided for @sleep.
+  ///
+  /// In en, this message translates to:
+  /// **'Sleep'**
+  String get sleep;
+
+  /// No description provided for @water.
+  ///
+  /// In en, this message translates to:
+  /// **'Water'**
+  String get water;
+
+  /// No description provided for @vitalSigns.
+  ///
+  /// In en, this message translates to:
+  /// **'Vital signs'**
+  String get vitalSigns;
+
+  /// No description provided for @trackYourVariabilityAndRestingHeartRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Track your variability and resting heart rate'**
+  String get trackYourVariabilityAndRestingHeartRate;
+
+  /// No description provided for @summary.
+  ///
+  /// In en, this message translates to:
+  /// **'Summary'**
+  String get summary;
+
+  /// No description provided for @chatWithMara.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat with Mara'**
+  String get chatWithMara;
+
+  /// No description provided for @drinkGlassOfWaterEveryMorning.
+  ///
+  /// In en, this message translates to:
+  /// **'Drink a glass of water every morning to boost your metabolism.'**
+  String get drinkGlassOfWaterEveryMorning;
+
+  /// No description provided for @home.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get home;
+
+  /// No description provided for @analyst.
+  ///
+  /// In en, this message translates to:
+  /// **'Analyst'**
+  String get analyst;
+
+  /// No description provided for @mara.
+  ///
+  /// In en, this message translates to:
+  /// **'Mara'**
+  String get mara;
+
+  /// No description provided for @allowCameraAccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow Camera Access'**
+  String get allowCameraAccess;
+
+  /// No description provided for @cameraAccessDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Mara uses your camera to help analyze your facial expressions, detect fatigue, and support your well-being — directly on your device. No videos or images are stored or shared. Ever.'**
+  String get cameraAccessDescription;
+
+  /// No description provided for @allowMicrophoneAccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow Microphone Access'**
+  String get allowMicrophoneAccess;
+
+  /// No description provided for @microphoneAccessDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Mara listens when you talk — so you can describe your symptoms naturally, just like talking to a friend. Your voice is processed safely on your device and never stored or shared.'**
+  String get microphoneAccessDescription;
+
+  /// No description provided for @enableNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable Notifications'**
+  String get enableNotifications;
+
+  /// No description provided for @notificationsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Stay on top of your health routine with gentle reminders for hydration, medications, and daily goals. You control what to receive and when — always.'**
+  String get notificationsDescription;
+
+  /// No description provided for @healthDataDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Mara can read your activity, sleep, and heart rate from your device to give you personalized health insights. Your data stays encrypted and private used only to help you understand your well-being better.'**
+  String get healthDataDescription;
+
+  /// No description provided for @stayConnectedToYourHealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Stay connected to your health — the smart way.'**
+  String get stayConnectedToYourHealth;
+
+  /// No description provided for @reviewPermissions.
+  ///
+  /// In en, this message translates to:
+  /// **'Review Permissions'**
+  String get reviewPermissions;
+
+  /// No description provided for @startUsingMara.
+  ///
+  /// In en, this message translates to:
+  /// **'Start using Mara'**
+  String get startUsingMara;
+
+  /// No description provided for @yourPrivacyIsAlwaysOurTopPriority.
+  ///
+  /// In en, this message translates to:
+  /// **'Your privacy is always our top priority.'**
+  String get yourPrivacyIsAlwaysOurTopPriority;
+
+  /// No description provided for @maraChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Mara Chat'**
+  String get maraChat;
+
+  /// No description provided for @whatsInYourHead.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s in your head?'**
+  String get whatsInYourHead;
+
+  /// No description provided for @thanksForSharing.
+  ///
+  /// In en, this message translates to:
+  /// **'Thanks for sharing, I\'ll help you track this.'**
+  String get thanksForSharing;
+
+  /// No description provided for @analystDashboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Analyst Dashboard'**
+  String get analystDashboard;
+
+  /// No description provided for @comingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming soon'**
+  String get comingSoon;
+
+  /// No description provided for @detailedAnalyticsAboutYourHealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Detailed analytics about your health will be available here soon.'**
+  String get detailedAnalyticsAboutYourHealth;
+
+  /// No description provided for @allowCameraAccessTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow Camera Access'**
+  String get allowCameraAccessTitle;
+
+  /// No description provided for @allowMicrophoneAccessTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow Microphone Access'**
+  String get allowMicrophoneAccessTitle;
+
+  /// No description provided for @selectLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Language'**
+  String get selectLanguage;
 }
 
 class _AppLocalizationsDelegate

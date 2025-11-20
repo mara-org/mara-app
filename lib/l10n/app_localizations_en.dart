@@ -341,7 +341,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get permissionsSummarySubtitle =>
-      'Review and manage your app permissions';
+      'Here\'s what Mara can access to personalize your experience';
 
   @override
   String get camera => 'Camera';
@@ -529,4 +529,128 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get whatsYourMainHealthGoal => 'What\'s your main health goal?';
+
+  @override
+  String get goodMorning => 'Good morning';
+
+  @override
+  String get goodAfternoon => 'Good afternoon';
+
+  @override
+  String get goodEvening => 'Good evening';
+
+  @override
+  String get there => 'there';
+
+  @override
+  String get whatHappenedToYourCough => 'What happened to your cough?';
+
+  @override
+  String get completeYourLastConversation => 'complete your last conversation';
+
+  @override
+  String get yourDailyInsights => 'Your Daily Insights';
+
+  @override
+  String get mood => 'Mood';
+
+  @override
+  String get sleep => 'Sleep';
+
+  @override
+  String get water => 'Water';
+
+  @override
+  String get vitalSigns => 'Vital signs';
+
+  @override
+  String get trackYourVariabilityAndRestingHeartRate =>
+      'Track your variability and resting heart rate';
+
+  @override
+  String get summary => 'Summary';
+
+  @override
+  String get chatWithMara => 'Chat with Mara';
+
+  @override
+  String get drinkGlassOfWaterEveryMorning =>
+      'Drink a glass of water every morning to boost your metabolism.';
+
+  @override
+  String get home => 'Home';
+
+  @override
+  String get analyst => 'Analyst';
+
+  @override
+  String get mara => 'Mara';
+
+  @override
+  String get allowCameraAccess => 'Allow Camera Access';
+
+  @override
+  String get cameraAccessDescription =>
+      'Mara uses your camera to help analyze your facial expressions, detect fatigue, and support your well-being — directly on your device. No videos or images are stored or shared. Ever.';
+
+  @override
+  String get allowMicrophoneAccess => 'Allow Microphone Access';
+
+  @override
+  String get microphoneAccessDescription =>
+      'Mara listens when you talk — so you can describe your symptoms naturally, just like talking to a friend. Your voice is processed safely on your device and never stored or shared.';
+
+  @override
+  String get enableNotifications => 'Enable Notifications';
+
+  @override
+  String get notificationsDescription =>
+      'Stay on top of your health routine with gentle reminders for hydration, medications, and daily goals. You control what to receive and when — always.';
+
+  @override
+  String get healthDataDescription =>
+      'Mara can read your activity, sleep, and heart rate from your device to give you personalized health insights. Your data stays encrypted and private used only to help you understand your well-being better.';
+
+  @override
+  String get stayConnectedToYourHealth =>
+      'Stay connected to your health — the smart way.';
+
+  @override
+  String get reviewPermissions => 'Review Permissions';
+
+  @override
+  String get startUsingMara => 'Start using Mara';
+
+  @override
+  String get yourPrivacyIsAlwaysOurTopPriority =>
+      'Your privacy is always our top priority.';
+
+  @override
+  String get maraChat => 'Mara Chat';
+
+  @override
+  String get whatsInYourHead => 'What\'s in your head?';
+
+  @override
+  String get thanksForSharing =>
+      'Thanks for sharing, I\'ll help you track this.';
+
+  @override
+  String get analystDashboard => 'Analyst Dashboard';
+
+  @override
+  String get comingSoon => 'Coming soon';
+
+  @override
+  String get detailedAnalyticsAboutYourHealth =>
+      'Detailed analytics about your health will be available here soon.';
+
+  @override
+  String get allowCameraAccessTitle => 'Allow Camera Access';
+
+  @override
+  String get allowMicrophoneAccessTitle => 'Allow Microphone Access';
+
+  @override
+  String get selectLanguage => 'Select Language';
 }

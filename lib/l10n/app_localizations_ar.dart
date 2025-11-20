@@ -336,7 +336,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get permissionsSummaryTitle => 'ملخص الأذونات';
 
   @override
-  String get permissionsSummarySubtitle => 'مراجعة وإدارة أذونات التطبيق';
+  String get permissionsSummarySubtitle =>
+      'إليك ما يمكن لمرا الوصول إليه لتخصيص تجربتك';
 
   @override
   String get camera => 'الكاميرا';
@@ -523,4 +524,126 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get whatsYourMainHealthGoal => 'ما هدفك الصحي الرئيسي؟';
+
+  @override
+  String get goodMorning => 'صباح الخير';
+
+  @override
+  String get goodAfternoon => 'مساء الخير';
+
+  @override
+  String get goodEvening => 'مساء الخير';
+
+  @override
+  String get there => 'هناك';
+
+  @override
+  String get whatHappenedToYourCough => 'ماذا حدث لسعالك؟';
+
+  @override
+  String get completeYourLastConversation => 'أكمل محادثتك الأخيرة';
+
+  @override
+  String get yourDailyInsights => 'رؤىك اليومية';
+
+  @override
+  String get mood => 'المزاج';
+
+  @override
+  String get sleep => 'النوم';
+
+  @override
+  String get water => 'الماء';
+
+  @override
+  String get vitalSigns => 'العلامات الحيوية';
+
+  @override
+  String get trackYourVariabilityAndRestingHeartRate =>
+      'تتبع تقلبك ومعدل ضربات القلب أثناء الراحة';
+
+  @override
+  String get summary => 'ملخص';
+
+  @override
+  String get chatWithMara => 'تحدث مع مرا';
+
+  @override
+  String get drinkGlassOfWaterEveryMorning =>
+      'اشرب كوبًا من الماء كل صباح لتعزيز عملية الأيض لديك.';
+
+  @override
+  String get home => 'الرئيسية';
+
+  @override
+  String get analyst => 'المحلل';
+
+  @override
+  String get mara => 'مرا';
+
+  @override
+  String get allowCameraAccess => 'السماح بالوصول إلى الكاميرا';
+
+  @override
+  String get cameraAccessDescription =>
+      'يستخدم مرا الكاميرا لمساعدتك في تحليل تعابير وجهك واكتشاف التعب ودعم صحتك — مباشرة على جهازك. لا يتم تخزين أو مشاركة أي مقاطع فيديو أو صور. أبدًا.';
+
+  @override
+  String get allowMicrophoneAccess => 'السماح بالوصول إلى الميكروفون';
+
+  @override
+  String get microphoneAccessDescription =>
+      'يستمع مرا عندما تتحدث — حتى تتمكن من وصف أعراضك بشكل طبيعي، تمامًا مثل التحدث إلى صديق. يتم معالجة صوتك بأمان على جهازك ولا يتم تخزينه أو مشاركته أبدًا.';
+
+  @override
+  String get enableNotifications => 'تفعيل الإشعارات';
+
+  @override
+  String get notificationsDescription =>
+      'ابق على اطلاع بروتينك الصحي مع تذكيرات لطيفة للترطيب والأدوية والأهداف اليومية. أنت تتحكم فيما تتلقاه ومتى — دائمًا.';
+
+  @override
+  String get healthDataDescription =>
+      'يمكن لمرا قراءة نشاطك ونومك ومعدل ضربات القلب من جهازك لإعطائك رؤى صحية مخصصة. تبقى بياناتك مشفرة وخاصة تُستخدم فقط لمساعدتك على فهم صحتك بشكل أفضل.';
+
+  @override
+  String get stayConnectedToYourHealth => 'ابق متصلًا بصحتك — بالطريقة الذكية.';
+
+  @override
+  String get reviewPermissions => 'مراجعة الأذونات';
+
+  @override
+  String get startUsingMara => 'ابدأ استخدام مرا';
+
+  @override
+  String get yourPrivacyIsAlwaysOurTopPriority =>
+      'خصوصيتك دائمًا أولويتنا القصوى.';
+
+  @override
+  String get maraChat => 'محادثة مرا';
+
+  @override
+  String get whatsInYourHead => 'ماذا في رأسك؟';
+
+  @override
+  String get thanksForSharing => 'شكرًا للمشاركة، سأساعدك في تتبع هذا.';
+
+  @override
+  String get analystDashboard => 'لوحة تحليل البيانات';
+
+  @override
+  String get comingSoon => 'قريبًا';
+
+  @override
+  String get detailedAnalyticsAboutYourHealth =>
+      'ستكون التحليلات التفصيلية حول صحتك متاحة هنا قريبًا.';
+
+  @override
+  String get allowCameraAccessTitle => 'السماح بالوصول إلى الكاميرا';
+
+  @override
+  String get allowMicrophoneAccessTitle => 'السماح بالوصول إلى الميكروفون';
+
+  @override
+  String get selectLanguage => 'اختر اللغة';
 }

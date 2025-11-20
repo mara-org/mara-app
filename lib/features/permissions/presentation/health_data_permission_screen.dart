@@ -5,12 +5,14 @@ import '../../../core/widgets/primary_button.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/platform_utils.dart';
 import '../../../core/providers/permissions_provider.dart';
+import '../../../l10n/app_localizations.dart';
 
 class HealthDataPermissionScreen extends ConsumerWidget {
   const HealthDataPermissionScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -39,7 +41,7 @@ class HealthDataPermissionScreen extends ConsumerWidget {
                       const SizedBox(height: 40),
                   // Title
                   Text(
-                    'Connect Health Data',
+                    l10n.connectHealthData,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: AppColors.textPrimary,
@@ -53,7 +55,7 @@ class HealthDataPermissionScreen extends ConsumerWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Text(
-                      'Mara can read your activity, sleep, and heart rate from your device to give you personalized health insights. Your data stays encrypted and private used only to help you understand your well-being better.',
+                      l10n.healthDataDescription,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: AppColors.textSecondary,
@@ -66,7 +68,7 @@ class HealthDataPermissionScreen extends ConsumerWidget {
                   const SizedBox(height: 160),
                   // Connect button
                   PrimaryButton(
-                    text: 'Connect Health Data',
+                    text: l10n.connectHealthData,
                     onPressed: () {
                       ref.read(permissionsProvider.notifier).setHealthData(true);
                       context.push('/permissions-summary');
@@ -80,7 +82,7 @@ class HealthDataPermissionScreen extends ConsumerWidget {
                       context.push('/permissions-summary');
                     },
                     child: Text(
-                      'Not now',
+                      l10n.notNow,
                       style: TextStyle(
                         color: AppColors.textSecondary,
                         fontSize: 16,
@@ -93,7 +95,7 @@ class HealthDataPermissionScreen extends ConsumerWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Text(
-                      'Stay connected to your health — the smart way.',
+                      l10n.stayConnectedToYourHealth,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: AppColors.textSecondary.withOpacity(0.7),

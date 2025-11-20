@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/widgets/mara_logo.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/models/chat_message.dart';
+import '../../../l10n/app_localizations.dart';
 
 class ChatMessagesNotifier extends StateNotifier<List<ChatMessage>> {
   ChatMessagesNotifier() : super([]);
@@ -66,25 +67,28 @@ class _MaraChatScreenState extends ConsumerState<MaraChatScreen> {
     });
 
     // Add mocked Mara reply after a short delay
-    Future.delayed(const Duration(milliseconds: 500), () {
-      ref.read(chatMessagesProvider.notifier).addMessage(
-            ChatMessage(
-              text: "Thanks for sharing, I'll help you track this.",
-              type: MessageType.bot,
-            ),
-          );
+    final l10n = AppLocalizations.of(context);
+    if (l10n != null) {
+      Future.delayed(const Duration(milliseconds: 500), () {
+        ref.read(chatMessagesProvider.notifier).addMessage(
+              ChatMessage(
+                text: l10n.thanksForSharing,
+                type: MessageType.bot,
+              ),
+            );
 
-      // Scroll to bottom again
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (_scrollController.hasClients) {
-          _scrollController.animateTo(
-            _scrollController.position.maxScrollExtent,
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeOut,
-          );
-        }
+        // Scroll to bottom again
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (_scrollController.hasClients) {
+            _scrollController.animateTo(
+              _scrollController.position.maxScrollExtent,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeOut,
+            );
+          }
+        });
       });
-    });
+    }
   }
 
   void _onItemTapped(int index) {
@@ -105,6 +109,7 @@ class _MaraChatScreenState extends ConsumerState<MaraChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final messages = ref.watch(chatMessagesProvider);
 
     return Scaffold(
@@ -114,7 +119,7 @@ class _MaraChatScreenState extends ConsumerState<MaraChatScreen> {
           children: [
             const MaraLogo(width: 32, height: 32),
             const SizedBox(width: 12),
-            const Text('Mara Chat'),
+            Text(l10n.maraChat),
           ],
         ),
         backgroundColor: AppColors.homeHeaderBackground,
@@ -130,7 +135,7 @@ class _MaraChatScreenState extends ConsumerState<MaraChatScreen> {
               child: messages.isEmpty
                   ? Center(
                       child: Text(
-                        "What's in your head?",
+                        l10n.whatsInYourHead,
                         style: TextStyle(
                           color: AppColors.textSecondary,
                           fontSize: 16,
@@ -167,7 +172,7 @@ class _MaraChatScreenState extends ConsumerState<MaraChatScreen> {
                       child: TextField(
                         controller: _messageController,
                         decoration: InputDecoration(
-                          hintText: "What's in your head?",
+                          hintText: l10n.whatsInYourHead,
                           hintStyle: TextStyle(
                             color: AppColors.textSecondary,
                             fontSize: 16,
@@ -231,18 +236,18 @@ class _MaraChatScreenState extends ConsumerState<MaraChatScreen> {
         onTap: _onItemTapped,
         selectedItemColor: AppColors.languageButtonColor,
         unselectedItemColor: AppColors.textSecondary,
-        items: const [
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
+            icon: const Icon(Icons.home),
+            label: l10n.home,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.bar_chart),
-            label: 'Analyst',
+            icon: const Icon(Icons.bar_chart),
+            label: l10n.analyst,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.chat),
-            label: 'Mara',
+            icon: const Icon(Icons.chat),
+            label: l10n.mara,
           ),
         ],
       ),

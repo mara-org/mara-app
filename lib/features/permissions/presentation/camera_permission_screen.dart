@@ -5,12 +5,14 @@ import '../../../core/widgets/primary_button.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/platform_utils.dart';
 import '../../../core/providers/permissions_provider.dart';
+import '../../../l10n/app_localizations.dart';
 
 class CameraPermissionScreen extends ConsumerWidget {
   const CameraPermissionScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppColors.cameraPermissionBackground,
       body: SafeArea(
@@ -27,7 +29,7 @@ class CameraPermissionScreen extends ConsumerWidget {
                     const SizedBox(height: 40),
                 // Title
                 Text(
-                  'Allow Camera Access',
+                  l10n.allowCameraAccess,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: AppColors.textPrimary,
@@ -41,7 +43,7 @@ class CameraPermissionScreen extends ConsumerWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Text(
-                    'Mara uses your camera to help analyze your facial expressions, detect fatigue, and support your well-being — directly on your device. No videos or images are stored or shared. Ever.',
+                    l10n.cameraAccessDescription,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: AppColors.textSecondary,
@@ -54,7 +56,7 @@ class CameraPermissionScreen extends ConsumerWidget {
                 const SizedBox(height: 160),
                 // Allow button
                 PrimaryButton(
-                  text: 'Allow',
+                  text: l10n.allow,
                   onPressed: () {
                     ref.read(permissionsProvider.notifier).setCamera(true);
                     context.push('/microphone-permission');
@@ -68,7 +70,7 @@ class CameraPermissionScreen extends ConsumerWidget {
                     context.push('/microphone-permission');
                   },
                   child: Text(
-                    'Not now',
+                    l10n.notNow,
                     style: TextStyle(
                       color: AppColors.textSecondary,
                       fontSize: 16,
@@ -81,7 +83,7 @@ class CameraPermissionScreen extends ConsumerWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Text(
-                    'Your privacy matters. Camera access stays local to your device.',
+                    l10n.cameraPermissionPrivacy,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: AppColors.textSecondary.withOpacity(0.7),

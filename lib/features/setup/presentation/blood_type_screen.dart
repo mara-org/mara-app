@@ -37,7 +37,7 @@ class _BloodTypeScreenState extends ConsumerState<BloodTypeScreen> {
       if (widget.isFromProfile) {
         context.go('/profile');
       } else {
-        context.push('/goals');
+      context.push('/goals');
       }
     }
   }

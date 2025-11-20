@@ -6,6 +6,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/platform_utils.dart';
 import '../../../core/providers/subscription_provider.dart';
 import '../../../shared/system/system_providers.dart';
+import '../../../l10n/app_localizations.dart';
 import 'widgets/health_profile_section.dart';
 import 'widgets/app_settings_section.dart';
 import 'widgets/subscription_banner.dart';
@@ -16,6 +17,7 @@ class ProfileScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final email = 'abdulaziz@example.com'; // Placeholder
 
     return Scaffold(
@@ -53,7 +55,7 @@ class ProfileScreen extends ConsumerWidget {
                   Expanded(
                     child: Center(
                       child: Text(
-                        'Profile',
+                        l10n.profileTitle,
                         style: TextStyle(
                           color: const Color(0xFF0F172A), // #0F172A
                           fontSize: 22,
@@ -98,7 +100,7 @@ class ProfileScreen extends ConsumerWidget {
                                   ),
                                   const SizedBox(width: 8),
                                   Text(
-                                    'You are on Mara Pro',
+                                    l10n.youAreOnMaraPro,
                                     style: TextStyle(
                                       color: Colors.green,
                                       fontSize: 14,
@@ -119,9 +121,9 @@ class ProfileScreen extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Padding(
-                            padding: const EdgeInsets.only(left: 4, bottom: 12),
+                            padding: const EdgeInsetsDirectional.only(start: 4, bottom: 12),
                             child: Text(
-                              'User',
+                              l10n.user,
                               style: TextStyle(
                                 color: AppColors.textSecondary,
                                 fontSize: 14,
@@ -151,7 +153,7 @@ class ProfileScreen extends ConsumerWidget {
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          'Email',
+                                          l10n.emailLabel,
                                           style: TextStyle(
                                             color: const Color(0xFF0F172A), // #0F172A
                                             fontSize: 16,
@@ -189,7 +191,7 @@ class ProfileScreen extends ConsumerWidget {
                       const SizedBox(height: 40),
                       // Privacy Policy
                       _ProfileMenuItem(
-                        title: 'Privacy Policy',
+                        title: l10n.privacyPolicy,
                         subtitle: null,
                         icon: Icons.privacy_tip,
                         onTap: () {
@@ -199,7 +201,7 @@ class ProfileScreen extends ConsumerWidget {
                       const SizedBox(height: 16),
                       // Terms of Service
                       _ProfileMenuItem(
-                        title: 'Terms of Service',
+                        title: l10n.termsOfService,
                         subtitle: null,
                         icon: Icons.description,
                         onTap: () async {
@@ -212,8 +214,8 @@ class ProfileScreen extends ConsumerWidget {
                           } else {
                             if (context.mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Could not open Terms of Service'),
+                                SnackBar(
+                                  content: Text(l10n.couldNotOpenTerms),
                                 ),
                               );
                             }
@@ -239,8 +241,8 @@ class ProfileScreen extends ConsumerWidget {
                             foregroundColor: AppColors.error,
                             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                           ),
-                          child: const Text(
-                            'Log out',
+                          child: Text(
+                            l10n.logOut,
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
@@ -347,6 +349,7 @@ class _DeveloperSettingsSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final appVersionAsync = ref.watch(appVersionProvider);
     final deviceInfoAsync = ref.watch(deviceInfoProvider);
 
@@ -354,9 +357,9 @@ class _DeveloperSettingsSection extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: 4, bottom: 12),
+          padding: const EdgeInsetsDirectional.only(start: 4, bottom: 12),
           child: Text(
-            'Developer Settings',
+            l10n.developerSettings,
             style: TextStyle(
               color: AppColors.textSecondary,
               fontSize: 14,
@@ -365,21 +368,21 @@ class _DeveloperSettingsSection extends ConsumerWidget {
           ),
         ),
         _DeveloperInfoItem(
-          title: 'App Version',
+          title: l10n.appVersion,
           icon: Icons.info_outline,
           value: appVersionAsync.when(
             data: (value) => value,
-            loading: () => 'Loading...',
+            loading: () => l10n.loading,
             error: (_, __) => '-',
           ),
         ),
         const SizedBox(height: 16),
         _DeveloperInfoItem(
-          title: 'Device Info',
+          title: l10n.deviceInfo,
           icon: Icons.phone_android,
           value: deviceInfoAsync.when(
             data: (value) => value,
-            loading: () => 'Loading...',
+            loading: () => l10n.loading,
             error: (_, __) => '-',
           ),
         ),

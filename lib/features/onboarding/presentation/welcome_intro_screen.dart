@@ -32,10 +32,10 @@ class WelcomeIntroScreen extends StatelessWidget {
             ),
           ),
           // Title positioned at Y = 324 (~38% of screen height)
-          Positioned(
+          PositionedDirectional(
             top: h * 0.38,
-            left: 24,
-            right: 24,
+            start: 24,
+            end: 24,
             child: Text(
               l10n.welcomeTitle,
               textAlign: TextAlign.center,
@@ -48,10 +48,10 @@ class WelcomeIntroScreen extends StatelessWidget {
             ),
           ),
           // Subtitle positioned at Y = 382 (~45% of screen height)
-          Positioned(
+          PositionedDirectional(
             top: h * 0.45,
-            left: 24,
-            right: 24,
+            start: 24,
+            end: 24,
             child: Text(
               l10n.welcomeSubtitle,
               textAlign: TextAlign.center,
@@ -86,9 +86,9 @@ class WelcomeIntroScreen extends StatelessWidget {
                 ],
               ),
               child: Padding(
-                padding: EdgeInsets.only(
-                  left: 24,
-                  right: 24,
+                padding: EdgeInsetsDirectional.only(
+                  start: 24,
+                  end: 24,
                   top: 32,
                   bottom: MediaQuery.of(context).padding.bottom + 20,
                 ),

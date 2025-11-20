@@ -5,21 +5,24 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/providers/user_profile_provider.dart';
 import '../../../../core/models/user_profile_setup.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class HealthProfileSection extends ConsumerWidget {
   const HealthProfileSection({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final profile = ref.watch(userProfileProvider);
+    final locale = Localizations.localeOf(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: 4, bottom: 12),
+          padding: const EdgeInsetsDirectional.only(start: 4, bottom: 12),
           child: Text(
-            'Health Profile',
+            l10n.healthProfileTitle,
             style: TextStyle(
               color: AppColors.textSecondary,
               fontSize: 14,
@@ -40,8 +43,8 @@ class HealthProfileSection extends ConsumerWidget {
           child: Column(
             children: [
               _HealthProfileRow(
-                label: 'Name',
-                value: profile.name ?? 'Not set',
+                label: l10n.nameField,
+                value: profile.name ?? l10n.notSet,
                 onTap: () => context.push('/name-input?from=profile'),
               ),
               Divider(
@@ -50,10 +53,10 @@ class HealthProfileSection extends ConsumerWidget {
                 color: const Color(0xFF0EA5C6).withOpacity(1.0), // #0EA5C6, 100% opacity
               ),
               _HealthProfileRow(
-                label: 'Date of Birth',
+                label: l10n.dateOfBirthField,
                 value: profile.dateOfBirth != null
-                    ? DateFormat('MMM dd, yyyy').format(profile.dateOfBirth!)
-                    : 'Not set',
+                    ? DateFormat('MMM dd, yyyy', locale.toString()).format(profile.dateOfBirth!)
+                    : l10n.notSet,
                 onTap: () => context.push('/dob-input?from=profile'),
               ),
               Divider(
@@ -62,12 +65,12 @@ class HealthProfileSection extends ConsumerWidget {
                 color: const Color(0xFF0EA5C6).withOpacity(1.0), // #0EA5C6, 100% opacity
               ),
               _HealthProfileRow(
-                label: 'Gender',
+                label: l10n.genderField,
                 value: profile.gender != null
                     ? profile.gender == Gender.male
-                        ? 'Male'
-                        : 'Female'
-                    : 'Not set',
+                        ? l10n.male
+                        : l10n.female
+                    : l10n.notSet,
                 onTap: () => context.push('/gender?from=profile'),
               ),
               Divider(
@@ -76,10 +79,10 @@ class HealthProfileSection extends ConsumerWidget {
                 color: const Color(0xFF0EA5C6).withOpacity(1.0), // #0EA5C6, 100% opacity
               ),
               _HealthProfileRow(
-                label: 'Height',
+                label: l10n.heightField,
                 value: profile.height != null && profile.heightUnit != null
                     ? '${profile.height} ${profile.heightUnit}'
-                    : 'Not set',
+                    : l10n.notSet,
                 onTap: () => context.push('/height?from=profile'),
               ),
               Divider(
@@ -88,10 +91,10 @@ class HealthProfileSection extends ConsumerWidget {
                 color: const Color(0xFF0EA5C6).withOpacity(1.0), // #0EA5C6, 100% opacity
               ),
               _HealthProfileRow(
-                label: 'Weight',
+                label: l10n.weightField,
                 value: profile.weight != null && profile.weightUnit != null
                     ? '${profile.weight} ${profile.weightUnit}'
-                    : 'Not set',
+                    : l10n.notSet,
                 onTap: () => context.push('/weight?from=profile'),
               ),
               Divider(
@@ -100,8 +103,8 @@ class HealthProfileSection extends ConsumerWidget {
                 color: const Color(0xFF0EA5C6).withOpacity(1.0), // #0EA5C6, 100% opacity
               ),
               _HealthProfileRow(
-                label: 'Blood Type',
-                value: profile.bloodType ?? 'Not set',
+                label: l10n.bloodTypeField,
+                value: profile.bloodType ?? l10n.notSet,
                 onTap: () => context.push('/blood-type?from=profile'),
               ),
               Divider(
@@ -110,8 +113,8 @@ class HealthProfileSection extends ConsumerWidget {
                 color: const Color(0xFF0EA5C6).withOpacity(1.0), // #0EA5C6, 100% opacity
               ),
               _HealthProfileRow(
-                label: 'Main Goal',
-                value: profile.mainGoal ?? 'Not set',
+                label: l10n.mainGoalField,
+                value: profile.mainGoal ?? l10n.notSet,
                 onTap: () => context.push('/goals?from=profile'),
               ),
             ],
@@ -154,14 +157,14 @@ class _HealthProfileRow extends StatelessWidget {
             ),
             Expanded(
               child: Align(
-                alignment: Alignment.centerRight,
+                alignment: AlignmentDirectional.centerEnd,
                 child: Text(
                   value,
                   style: TextStyle(
                     color: const Color(0xFF64748B), // #64748B
                     fontSize: 14,
                   ),
-                  textAlign: TextAlign.right,
+                  textAlign: TextAlign.end,
                 ),
               ),
             ),

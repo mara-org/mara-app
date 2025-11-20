@@ -20,12 +20,14 @@ class GoalsScreen extends ConsumerStatefulWidget {
 class _GoalsScreenState extends ConsumerState<GoalsScreen> {
   String? _selectedGoal;
 
-  final List<Map<String, String>> _goals = [
-    {'emoji': '🏃‍♂️', 'text': 'Stay active'},
-    {'emoji': '😌', 'text': 'Reduce stress'},
-    {'emoji': '💤', 'text': 'Sleep better'},
-    {'emoji': '❤️', 'text': 'Track my health'},
-  ];
+  List<Map<String, String>> _getGoals(AppLocalizations l10n) {
+    return [
+      {'emoji': '🏃‍♂️', 'text': l10n.stayActive},
+      {'emoji': '😌', 'text': l10n.reduceStress},
+      {'emoji': '💤', 'text': l10n.sleepBetter},
+      {'emoji': '❤️', 'text': l10n.trackMyHealth},
+    ];
+  }
 
   void _handleContinue() {
     if (_selectedGoal != null) {
@@ -33,7 +35,7 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
       if (widget.isFromProfile) {
         context.go('/profile');
       } else {
-        context.push('/welcome-personal');
+      context.push('/welcome-personal');
       }
     }
   }
@@ -92,7 +94,7 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
                 ),
                 const SizedBox(height: 40),
                 // Goals list
-                ..._goals.map((goal) {
+                ..._getGoals(l10n).map((goal) {
                   final goalText = '${goal['emoji']} ${goal['text']}';
                   final isSelected = _selectedGoal == goal['text'];
                   return Padding(

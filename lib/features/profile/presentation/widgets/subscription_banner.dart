@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class SubscriptionBanner extends StatelessWidget {
   const SubscriptionBanner({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return InkWell(
       onTap: () => context.go('/subscription'),
       borderRadius: BorderRadius.circular(16),
@@ -43,7 +45,7 @@ class SubscriptionBanner extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Upgrade your Mara account',
+                    l10n.upgradeYourMaraAccount,
                     style: TextStyle(
                       color: AppColors.textPrimary,
                       fontSize: 18,
@@ -52,7 +54,7 @@ class SubscriptionBanner extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Unlock premium insights, more reminders, and priority support.',
+                    l10n.upgradeSubtitle,
                     style: TextStyle(
                       color: AppColors.textSecondary,
                       fontSize: 13,

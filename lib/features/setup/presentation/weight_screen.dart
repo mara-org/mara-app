@@ -27,7 +27,7 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
       if (widget.isFromProfile) {
         context.go('/profile');
       } else {
-        context.push('/blood-type');
+      context.push('/blood-type');
       }
     }
   }

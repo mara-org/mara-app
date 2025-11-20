@@ -43,10 +43,10 @@ class OnboardingInsightsScreen extends StatelessWidget {
         child: Stack(
           children: [
             // Title positioned at Y = 249/852 (first - highest)
-            Positioned(
+            PositionedDirectional(
               top: h * (249 / 852),
-              left: 24,
-              right: 24,
+              start: 24,
+              end: 24,
               child: Text(
                 l10n.onboardingInsightsTitle,
                 textAlign: TextAlign.center,
@@ -66,10 +66,10 @@ class OnboardingInsightsScreen extends StatelessWidget {
               child: Center(child: _buildRobotIcon()),
             ),
             // Subtitle positioned at Y = 363/852 (last - lowest, renders on top)
-            Positioned(
+            PositionedDirectional(
               top: h * (390 / 852),
-              left: 32,
-              right: 32,
+              start: 32,
+              end: 32,
               child: Text(
                 l10n.onboardingInsightsSubtitle,
                 textAlign: TextAlign.center,
@@ -82,9 +82,9 @@ class OnboardingInsightsScreen extends StatelessWidget {
               ),
             ),
             // Bottom button pinned to bottom
-            Positioned(
-              left: 0,
-              right: 0,
+            PositionedDirectional(
+              start: 0,
+              end: 0,
               bottom: 32 + MediaQuery.of(context).padding.bottom,
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
