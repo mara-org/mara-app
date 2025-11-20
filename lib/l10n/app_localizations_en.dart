@@ -653,4 +653,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get selectLanguage => 'Select Language';
+
+  @override
+  String welcomePersonalTitle(String name) {
+    return 'Welcome, $name 👋';
+  }
+
+  @override
+  String get welcomePersonalSubtitle =>
+      'Let\'s set up your health preferences to personalize your experience';
+
+  @override
+  String get startSetup => 'Start Setup';
 }

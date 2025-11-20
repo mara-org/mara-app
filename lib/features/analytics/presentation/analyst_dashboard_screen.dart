@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../../core/widgets/mara_logo.dart';
+
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/platform_utils.dart';
+import '../../../core/widgets/mara_logo.dart';
 import '../../../l10n/app_localizations.dart';
 
 class AnalystDashboardScreen extends StatefulWidget {
@@ -111,4 +112,3 @@ class _AnalystDashboardScreenState extends State<AnalystDashboardScreen> {
     );
   }
 }
-

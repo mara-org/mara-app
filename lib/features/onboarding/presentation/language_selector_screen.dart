@@ -77,6 +77,8 @@ class LanguageSelectorScreen extends ConsumerWidget {
                       text: 'العربية',
                       onPressed: () async {
                         await ref.read(appLocaleProvider.notifier).setLocale(const Locale('ar'));
+                        // Wait for multiple frames to ensure MaterialApp and all widgets rebuild
+                        await Future.delayed(const Duration(milliseconds: 50));
                         if (context.mounted) {
                           context.go('/welcome-intro');
                         }
@@ -88,6 +90,8 @@ class LanguageSelectorScreen extends ConsumerWidget {
                       text: 'English',
                       onPressed: () async {
                         await ref.read(appLocaleProvider.notifier).setLocale(const Locale('en'));
+                        // Wait for multiple frames to ensure MaterialApp and all widgets rebuild
+                        await Future.delayed(const Duration(milliseconds: 50));
                         if (context.mounted) {
                           context.go('/welcome-intro');
                         }

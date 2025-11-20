@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/widgets/primary_button.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../../core/providers/language_provider.dart';
 
-class WelcomeIntroScreen extends StatelessWidget {
+class WelcomeIntroScreen extends ConsumerWidget {
   const WelcomeIntroScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Watch locale to force rebuild when it changes
+    ref.watch(appLocaleProvider);
     final l10n = AppLocalizations.of(context)!;
     final h = MediaQuery.of(context).size.height;
     

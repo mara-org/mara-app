@@ -1315,6 +1315,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Select Language'**
   String get selectLanguage;
+
+  /// Welcome message with user's name
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome, {name} 👋'**
+  String welcomePersonalTitle(String name);
+
+  /// No description provided for @welcomePersonalSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Let\'s set up your health preferences to personalize your experience'**
+  String get welcomePersonalSubtitle;
+
+  /// No description provided for @startSetup.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Setup'**
+  String get startSetup;
 }
 
 class _AppLocalizationsDelegate

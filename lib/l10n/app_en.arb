@@ -231,6 +231,18 @@
   "detailedAnalyticsAboutYourHealth": "Detailed analytics about your health will be available here soon.",
   "allowCameraAccessTitle": "Allow Camera Access",
   "allowMicrophoneAccessTitle": "Allow Microphone Access",
-  "selectLanguage": "Select Language"
+  "selectLanguage": "Select Language",
+  "welcomePersonalTitle": "Welcome, {name} 👋",
+  "@welcomePersonalTitle": {
+    "description": "Welcome message with user's name",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "welcomePersonalSubtitle": "Let's set up your health preferences to personalize your experience",
+  "startSetup": "Start Setup",
+  "there": "there"
 }
 

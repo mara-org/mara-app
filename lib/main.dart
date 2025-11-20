@@ -41,6 +41,7 @@ class MaraApp extends ConsumerWidget {
     final locale = ref.watch(appLocaleProvider);
     
     return MaterialApp.router(
+      key: ValueKey(locale.languageCode), // Force rebuild when locale changes
       title: 'Mara',
       locale: locale,
       supportedLocales: const [

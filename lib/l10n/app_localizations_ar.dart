@@ -156,16 +156,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get whatsYourMainGoal => 'ما هدفك الصحي الرئيسي؟';
 
   @override
-  String get stayActive => '🏃‍♂️ البقاء نشطًا';
+  String get stayActive => ' البقاء نشطًا';
 
   @override
-  String get reduceStress => '😌 تقليل التوتر';
+  String get reduceStress => ' تقليل التوتر';
 
   @override
-  String get sleepBetter => '💤 النوم بشكل أفضل';
+  String get sleepBetter => ' النوم بشكل أفضل';
 
   @override
-  String get trackMyHealth => '❤️ تتبع صحتي';
+  String get trackMyHealth => ' تتبع صحتي';
 
   @override
   String get pleaseSelectValidDate => 'يرجى اختيار تاريخ صحيح';
@@ -646,4 +646,16 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get selectLanguage => 'اختر اللغة';
+
+  @override
+  String welcomePersonalTitle(String name) {
+    return 'مرحبًا، $name 👋';
+  }
+
+  @override
+  String get welcomePersonalSubtitle =>
+      'دعنا نعد تفضيلاتك الصحية لتخصيص تجربتك';
+
+  @override
+  String get startSetup => 'بدء الإعداد';
 }

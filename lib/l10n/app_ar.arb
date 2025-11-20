@@ -50,10 +50,10 @@
   "whatsYourWeight": "ما وزنك؟",
   "whatsYourBloodType": "ما فصيلة دمك؟",
   "whatsYourMainGoal": "ما هدفك الصحي الرئيسي؟",
-  "stayActive": "🏃‍♂️ البقاء نشطًا",
-  "reduceStress": "😌 تقليل التوتر",
-  "sleepBetter": "💤 النوم بشكل أفضل",
-  "trackMyHealth": "❤️ تتبع صحتي",
+  "stayActive": " البقاء نشطًا",
+  "reduceStress": " تقليل التوتر",
+  "sleepBetter": " النوم بشكل أفضل",
+  "trackMyHealth": " تتبع صحتي",
   "pleaseSelectValidDate": "يرجى اختيار تاريخ صحيح",
   "year": "السنة",
   "month": "الشهر",
@@ -231,6 +231,18 @@
   "detailedAnalyticsAboutYourHealth": "ستكون التحليلات التفصيلية حول صحتك متاحة هنا قريبًا.",
   "allowCameraAccessTitle": "السماح بالوصول إلى الكاميرا",
   "allowMicrophoneAccessTitle": "السماح بالوصول إلى الميكروفون",
-  "selectLanguage": "اختر اللغة"
+  "selectLanguage": "اختر اللغة",
+  "welcomePersonalTitle": "مرحبًا، {name} 👋",
+  "@welcomePersonalTitle": {
+    "description": "رسالة ترحيب مع اسم المستخدم",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "welcomePersonalSubtitle": "دعنا نعد تفضيلاتك الصحية لتخصيص تجربتك",
+  "startSetup": "بدء الإعداد",
+  "there": "هناك"
 }
 

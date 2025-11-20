@@ -6,14 +6,16 @@ import '../../../core/widgets/primary_button.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/platform_utils.dart';
 import '../../../core/providers/user_profile_provider.dart';
+import '../../../l10n/app_localizations.dart';
 
 class WelcomePersonalScreen extends ConsumerWidget {
   const WelcomePersonalScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final profile = ref.watch(userProfileProvider);
-    final name = profile.name ?? 'there';
+    final name = profile.name ?? l10n.there;
 
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
@@ -26,7 +28,7 @@ class WelcomePersonalScreen extends ConsumerWidget {
                 const SizedBox(height: 20),
                 // Back button
                 Align(
-                  alignment: Alignment.centerLeft,
+                  alignment: AlignmentDirectional.centerStart,
                   child: GestureDetector(
                     onTap: () => context.pop(),
                     child: Container(
@@ -55,7 +57,7 @@ class WelcomePersonalScreen extends ConsumerWidget {
                 const SizedBox(height: 40),
                 // Title
                 Text(
-                  'Welcome, $name 👋',
+                  l10n.welcomePersonalTitle(name),
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: AppColors.languageButtonColor,
@@ -69,7 +71,7 @@ class WelcomePersonalScreen extends ConsumerWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Text(
-                    "Let's set up your health preferences to personalize your experience",
+                    l10n.welcomePersonalSubtitle,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: AppColors.languageButtonColor,
@@ -82,7 +84,7 @@ class WelcomePersonalScreen extends ConsumerWidget {
                 const SizedBox(height: 60),
                 // Start Setup button
                 PrimaryButton(
-                  text: 'Start Setup',
+                  text: l10n.startSetup,
                   onPressed: () {
                     // Navigate to first permission screen
                     context.push('/camera-permission');
