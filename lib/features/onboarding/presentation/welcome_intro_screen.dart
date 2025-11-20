@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/widgets/primary_button.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class WelcomeIntroScreen extends StatelessWidget {
   const WelcomeIntroScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final h = MediaQuery.of(context).size.height;
     
     return Scaffold(
@@ -34,10 +36,10 @@ class WelcomeIntroScreen extends StatelessWidget {
             top: h * 0.38,
             left: 24,
             right: 24,
-            child: const Text(
-              'Welcome to Mara 👋',
+            child: Text(
+              l10n.welcomeTitle,
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 fontFamily: 'Roboto',
                 fontSize: 36,
                 fontWeight: FontWeight.w600,
@@ -50,10 +52,10 @@ class WelcomeIntroScreen extends StatelessWidget {
             top: h * 0.45,
             left: 24,
             right: 24,
-            child: const Text(
-              'Your AI-powered health companion is here to help you on your wellness journey.',
+            child: Text(
+              l10n.welcomeSubtitle,
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 fontFamily: 'Roboto',
                 fontSize: 15,
                 fontWeight: FontWeight.w400,
@@ -94,7 +96,7 @@ class WelcomeIntroScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     PrimaryButton(
-                      text: 'Continue',
+                      text: l10n.continueButton,
                       width: 324,
                       height: 52,
                       borderRadius: 20,

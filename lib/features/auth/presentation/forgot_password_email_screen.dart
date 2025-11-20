@@ -4,6 +4,7 @@ import '../../../core/widgets/mara_logo.dart';
 import '../../../core/widgets/mara_text_field.dart';
 import '../../../core/widgets/primary_button.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../l10n/app_localizations.dart';
 
 class ForgotPasswordEmailScreen extends StatefulWidget {
   const ForgotPasswordEmailScreen({super.key});
@@ -22,12 +23,12 @@ class _ForgotPasswordEmailScreenState extends State<ForgotPasswordEmailScreen> {
     super.dispose();
   }
 
-  String? _validateEmail(String? value) {
+  String? _validateEmail(String? value, AppLocalizations l10n) {
     if (value == null || value.isEmpty) {
-      return 'Please enter your email';
+      return l10n.pleaseEnterYourEmail;
     }
     if (!value.contains('@') || !value.contains('.')) {
-      return 'Please enter a valid email';
+      return l10n.pleaseEnterValidEmail;
     }
     return null;
   }
@@ -41,6 +42,7 @@ class _ForgotPasswordEmailScreenState extends State<ForgotPasswordEmailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final h = MediaQuery.of(context).size.height;
 
     return Scaffold(
@@ -50,7 +52,7 @@ class _ForgotPasswordEmailScreenState extends State<ForgotPasswordEmailScreen> {
           key: _formKey,
           child: SingleChildScrollView(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+              padding: const EdgeInsetsDirectional.symmetric(horizontal: 24),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -82,9 +84,9 @@ class _ForgotPasswordEmailScreenState extends State<ForgotPasswordEmailScreen> {
                   ),
                   SizedBox(height: h * 0.04),
                   // Title
-                  const Text(
-                    'Forgot Password',
-                    style: TextStyle(
+                  Text(
+                    l10n.forgotPasswordTitle,
+                    style: const TextStyle(
                       fontSize: 26,
                       fontWeight: FontWeight.w600,
                       color: AppColors.languageButtonColor,
@@ -94,7 +96,8 @@ class _ForgotPasswordEmailScreenState extends State<ForgotPasswordEmailScreen> {
                   const SizedBox(height: 16),
                   // Subtitle
                   Text(
-                    'Enter your email address and we\'ll send you a verification code to reset your password.',
+                    l10n.forgotPasswordSubtitle,
+                    textAlign: TextAlign.start,
                     style: TextStyle(
                       fontSize: 14,
                       color: AppColors.textSecondary,
@@ -105,11 +108,11 @@ class _ForgotPasswordEmailScreenState extends State<ForgotPasswordEmailScreen> {
                   const SizedBox(height: 32),
                   // Email field
                   MaraTextField(
-                    label: 'Email',
-                    hint: 'Enter your email',
+                    label: l10n.emailLabel,
+                    hint: l10n.enterYourEmail,
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
-                    validator: _validateEmail,
+                    validator: (value) => _validateEmail(value, l10n),
                   ),
                   const SizedBox(height: 32),
                   // Continue button
@@ -118,7 +121,7 @@ class _ForgotPasswordEmailScreenState extends State<ForgotPasswordEmailScreen> {
                       width: 320,
                       height: 52,
                       child: PrimaryButton(
-                        text: 'Continue',
+                        text: l10n.continueButton,
                         width: 320,
                         height: 52,
                         borderRadius: 20,

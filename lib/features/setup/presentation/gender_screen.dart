@@ -7,6 +7,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/platform_utils.dart';
 import '../../../core/providers/user_profile_provider.dart';
 import '../../../core/models/user_profile_setup.dart';
+import '../../../l10n/app_localizations.dart';
 
 class GenderScreen extends ConsumerStatefulWidget {
   final bool isFromProfile;
@@ -33,6 +34,7 @@ class _GenderScreenState extends ConsumerState<GenderScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
       body: SafeArea(
@@ -44,7 +46,7 @@ class _GenderScreenState extends ConsumerState<GenderScreen> {
                 const SizedBox(height: 20),
                 // Back button
                 Align(
-                  alignment: Alignment.centerLeft,
+                  alignment: AlignmentDirectional.centerStart,
                   child: GestureDetector(
                     onTap: () => context.pop(),
                     child: Container(
@@ -73,7 +75,7 @@ class _GenderScreenState extends ConsumerState<GenderScreen> {
                 const SizedBox(height: 40),
                 // Title
                 Text(
-                  'Tell us your gender?',
+                  l10n.tellUsYourGender,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: AppColors.languageButtonColor,
@@ -88,7 +90,7 @@ class _GenderScreenState extends ConsumerState<GenderScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     _GenderButton(
-                      text: 'Male 👨',
+                      text: l10n.male,
                       isSelected: _selectedGender == Gender.male,
                       isFemale: false,
                       onTap: () {
@@ -99,7 +101,7 @@ class _GenderScreenState extends ConsumerState<GenderScreen> {
                     ),
                     const SizedBox(width: 16),
                     _GenderButton(
-                      text: 'Female 👩',
+                      text: l10n.female,
                       isSelected: _selectedGender == Gender.female,
                       isFemale: true,
                       onTap: () {
@@ -113,7 +115,7 @@ class _GenderScreenState extends ConsumerState<GenderScreen> {
                 const SizedBox(height: 40),
                 // Continue button
                 PrimaryButton(
-                  text: 'Continue',
+                  text: l10n.continueButtonText,
                   width: 324,
                   height: 52,
                   borderRadius: 20,

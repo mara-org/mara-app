@@ -7,6 +7,7 @@ import '../../../core/widgets/primary_button.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/platform_utils.dart';
 import '../../../core/providers/user_profile_provider.dart';
+import '../../../l10n/app_localizations.dart';
 
 class NameInputScreen extends ConsumerStatefulWidget {
   final bool isFromProfile;
@@ -47,6 +48,7 @@ class _NameInputScreenState extends ConsumerState<NameInputScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     // Pre-populate with current name if coming from profile (only once)
     if (widget.isFromProfile && _nameController.text.isEmpty) {
       final currentName = ref.read(userProfileProvider).name ?? '';
@@ -69,7 +71,7 @@ class _NameInputScreenState extends ConsumerState<NameInputScreen> {
                 const SizedBox(height: 20),
                 // Back button
                 Align(
-                  alignment: Alignment.centerLeft,
+                  alignment: AlignmentDirectional.centerStart,
                   child: GestureDetector(
                     onTap: () => context.pop(),
                     child: Container(
@@ -98,12 +100,12 @@ class _NameInputScreenState extends ConsumerState<NameInputScreen> {
                 const SizedBox(height: 40),
                 // Title (positioned at x36)
                 Padding(
-                  padding: const EdgeInsets.only(left: 36),
+                  padding: const EdgeInsetsDirectional.only(start: 36),
                   child: Align(
-                    alignment: Alignment.centerLeft,
+                    alignment: AlignmentDirectional.centerStart,
                     child: Text(
-                      "What's your name?",
-                      textAlign: TextAlign.left,
+                      l10n.whatsYourName,
+                      textAlign: TextAlign.start,
                       style: TextStyle(
                         color: AppColors.languageButtonColor,
                         fontSize: 26,
@@ -116,7 +118,7 @@ class _NameInputScreenState extends ConsumerState<NameInputScreen> {
                 const SizedBox(height: 16),
                 // Subtitle
                 Text(
-                  "We'll use it to personalize your experience.",
+                  l10n.nameSubtitle,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: AppColors.textSecondary,
@@ -131,7 +133,7 @@ class _NameInputScreenState extends ConsumerState<NameInputScreen> {
                   child: SizedBox(
                     width: 324,
                     child: MaraTextField(
-                      hint: 'Enter your name',
+                      hint: l10n.enterYourName,
                       controller: _nameController,
                       onChanged: (_) => setState(() {}),
                     ),
@@ -140,7 +142,7 @@ class _NameInputScreenState extends ConsumerState<NameInputScreen> {
                 const SizedBox(height: 40),
                 // Continue button
                 PrimaryButton(
-                  text: 'Continue',
+                  text: l10n.continueButtonText,
                   width: 324,
                   height: 52,
                   borderRadius: 20,

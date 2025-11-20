@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/widgets/mara_logo.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/platform_utils.dart';
+import '../../../l10n/app_localizations.dart';
 
 class VerifyEmailScreen extends StatefulWidget {
   const VerifyEmailScreen({super.key});
@@ -33,6 +34,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
   }
 
   void _handleVerify() {
+    final l10n = AppLocalizations.of(context)!;
     final code = _controllers.map((c) => c.text).join();
     if (code.length == 6) {
       // For MVP, accept any 6-digit code
@@ -40,8 +42,8 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
       context.go('/ready');
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please enter the complete 6-digit code'),
+        SnackBar(
+          content: Text(l10n.verifyEmailError),
         ),
       );
     }
@@ -58,6 +60,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
       body: SafeArea(
@@ -100,7 +103,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                 const SizedBox(height: 40),
                 // Title
                 Text(
-                  'Verify your email',
+                  l10n.verifyEmailTitle,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: AppColors.languageButtonColor,
@@ -114,7 +117,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Text(
-                    "We've sent a 6-digit code to your email. Please enter it below",
+                    l10n.verifyEmailSubtitleFull,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: AppColors.textSecondary,
@@ -203,11 +206,11 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                     child: InkWell(
                       onTap: _handleVerify,
                       borderRadius: BorderRadius.circular(12),
-                      child: const Center(
+                      child: Center(
                         child: Text(
-                          'Verify',
+                          l10n.verify,
                           textAlign: TextAlign.center,
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 16,
                             fontWeight: FontWeight.normal,

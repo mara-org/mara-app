@@ -4,12 +4,14 @@ import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/platform_utils.dart';
 import '../../../core/widgets/mara_logo.dart';
+import '../../../l10n/app_localizations.dart';
 
 class SignUpChoicesScreen extends StatelessWidget {
   const SignUpChoicesScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
@@ -38,11 +40,11 @@ class SignUpChoicesScreen extends StatelessWidget {
               ),
             ),
             // Positioned "Join Mara" title at x33, y285
-            Positioned(
-              left: 33,
+            PositionedDirectional(
+              start: 33,
               top: 285,
               child: Text(
-                'Join Mara',
+                l10n.joinMara,
                 style: TextStyle(
                   color: AppColors.languageButtonColor,
                   fontSize: 26,
@@ -52,13 +54,13 @@ class SignUpChoicesScreen extends StatelessWidget {
               ),
             ),
             // Positioned subtitle at x24, y325
-            Positioned(
-              left: 24,
+            PositionedDirectional(
+              start: 24,
               top: 325,
               child: SizedBox(
                 width: screenWidth - 48,
                 child: Text(
-                  'Create your free account to start your health journey.',
+                  l10n.joinMaraSubtitle,
                   style: TextStyle(
                     color: AppColors.textSecondary,
                     fontSize: 13,
@@ -69,11 +71,11 @@ class SignUpChoicesScreen extends StatelessWidget {
               ),
             ),
             // Positioned "Continue with Google" button at x32, y365
-            Positioned(
-              left: 32,
+            PositionedDirectional(
+              start: 32,
               top: 365,
               child: _SocialButton(
-                text: 'Continue with Google',
+                text: l10n.continueWithGoogle,
                 iconImagePath: 'assets/icons/Sign in/Social media logo.png',
                 backgroundColor: Colors.white,
                 textColor: AppColors.textPrimary,
@@ -85,11 +87,11 @@ class SignUpChoicesScreen extends StatelessWidget {
               ),
             ),
             // Positioned "Continue with Apple" button at x32, y437
-            Positioned(
-              left: 32,
+            PositionedDirectional(
+              start: 32,
               top: 437,
               child: _SocialButton(
-                text: 'Continue with Apple',
+                text: l10n.continueWithApple,
                 iconImagePath: 'assets/icons/Sign in/Wrapper.png',
                 backgroundColor: AppColors.appleButtonColor,
                 textColor: Colors.white,
@@ -101,11 +103,11 @@ class SignUpChoicesScreen extends StatelessWidget {
               ),
             ),
             // Positioned "Sign up with Email" button at x32, y509
-            Positioned(
-              left: 32,
+            PositionedDirectional(
+              start: 32,
               top: 509,
               child: _SocialButton(
-                text: 'Sign up with Email',
+                text: l10n.signUpWithEmail,
                 iconImagePath: 'assets/icons/Sign in/mail.png',
                 backgroundColor: AppColors.languageButtonColor,
                 textColor: Colors.white,
@@ -117,8 +119,8 @@ class SignUpChoicesScreen extends StatelessWidget {
               ),
             ),
             // Positioned "Already a member ?" at x117, y740
-            Positioned(
-              left: 117,
+            PositionedDirectional(
+              start: 117,
               top: 740,
               child: GestureDetector(
                 onTap: () {
@@ -127,7 +129,7 @@ class SignUpChoicesScreen extends StatelessWidget {
                 child: Row(
                   children: [
                     Text(
-                      'Already a member? ',
+                      '${l10n.alreadyAMember} ',
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 15,
@@ -139,15 +141,15 @@ class SignUpChoicesScreen extends StatelessWidget {
               ),
             ),
             // Positioned "Sign in" at x265, y740
-            Positioned(
-              left: 265,
+            PositionedDirectional(
+              start: 265,
               top: 740,
               child: GestureDetector(
                 onTap: () {
                   context.go('/welcome-back');
                 },
                 child: Text(
-                  'Sign in',
+                  l10n.signIn,
                   style: TextStyle(
                     color: AppColors.languageButtonColor,
                     fontSize: 15,
@@ -225,7 +227,7 @@ class _SocialButton extends StatelessWidget {
             ],
             Text(
               text,
-              textAlign: TextAlign.center,
+              textAlign: TextAlign.start,
               style: TextStyle(
                 color: textColor,
                 fontSize: 16,

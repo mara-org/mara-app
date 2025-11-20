@@ -6,6 +6,7 @@ import '../../../core/utils/platform_utils.dart';
 import '../../../core/widgets/mara_logo.dart';
 import '../../../core/widgets/mara_text_field.dart';
 import '../../../core/widgets/primary_button.dart';
+import '../../../l10n/app_localizations.dart';
 
 class WelcomeBackScreen extends StatefulWidget {
   const WelcomeBackScreen({super.key});
@@ -27,19 +28,21 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen> {
     super.dispose();
   }
 
-  String? _validateEmail(String? value) {
+  String? _validateEmail(String? value, BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     if (value == null || value.isEmpty) {
-      return 'Please enter your email';
+      return l10n.pleaseEnterYourEmail;
     }
     if (!value.contains('@') || !value.contains('.')) {
-      return 'Please enter a valid email';
+      return l10n.pleaseEnterValidEmail;
     }
     return null;
   }
 
-  String? _validatePassword(String? value) {
+  String? _validatePassword(String? value, BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     if (value == null || value.isEmpty) {
-      return 'Please enter your password';
+      return l10n.pleaseEnterYourPassword;
     }
     return null;
   }
@@ -53,6 +56,7 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final screenWidth = MediaQuery.of(context).size.width;
     final buttonWidth = screenWidth - 56; // Same width as email and password fields
     
@@ -85,35 +89,35 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen> {
               ),
 
               // Positioned Email field at x28, y365
-              Positioned(
-                left: 28,
+              PositionedDirectional(
+                start: 28,
                 top: 365,
                 child: SizedBox(
                   width: MediaQuery.of(context).size.width -
                       56, // Full width minus left and right padding
                   child: MaraTextField(
-                    label: 'Email',
-                    hint: 'Enter your email',
+                    label: l10n.emailLabel,
+                    hint: l10n.enterYourEmail,
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
-                    validator: _validateEmail,
+                    validator: (value) => _validateEmail(value, context),
                   ),
                 ),
               ),
 
               // Positioned Password field at x28, y427
-              Positioned(
-                left: 28,
+              PositionedDirectional(
+                start: 28,
                 top: 427,
                 child: SizedBox(
                   width: MediaQuery.of(context).size.width -
                       56, // Full width minus left and right padding
                   child: MaraTextField(
-                    label: 'Password',
-                    hint: 'Enter your password',
+                    label: l10n.passwordLabel,
+                    hint: l10n.enterYourPassword,
                     controller: _passwordController,
                     obscureText: _obscurePassword,
-                    validator: _validatePassword,
+                    validator: (value) => _validatePassword(value, context),
                     suffixIcon: IconButton(
                       icon: Icon(
                         _obscurePassword
@@ -132,13 +136,13 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen> {
               ),
 
               // Positioned Verify button at x28, y511 (same width as email/password fields)
-              Positioned(
-                left: 28,
+              PositionedDirectional(
+                start: 28,
                 top: 511,
                 child: SizedBox(
                   width: buttonWidth,
                   child: PrimaryButton(
-                    text: 'Verify',
+                    text: l10n.verify,
                     width: buttonWidth,
                     height: 52,
                     borderRadius: 20,
@@ -148,13 +152,13 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen> {
               ),
 
               // Positioned "Continue with Google" button at x28, y576 (same width as email/password fields)
-              Positioned(
-                left: 28,
+              PositionedDirectional(
+                start: 28,
                 top: 576,
                 child: SizedBox(
                   width: buttonWidth,
                   child: _SocialButton(
-                    text: 'Continue with Google',
+                    text: l10n.continueWithGoogle,
                     iconImagePath: 'assets/icons/Sign in/Social media logo.png',
                     backgroundColor: Colors.white,
                     textColor: AppColors.textPrimary,
@@ -168,13 +172,13 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen> {
               ),
 
               // Positioned "Continue with Apple" button at x28, y640 (same width as email/password fields)
-              Positioned(
-                left: 28,
+              PositionedDirectional(
+                start: 28,
                 top: 640, // 576 + 52 (button height) + 12 (spacing)
                 child: SizedBox(
                   width: buttonWidth,
                   child: _SocialButton(
-                    text: 'Continue with Apple',
+                    text: l10n.continueWithApple,
                     iconImagePath: 'assets/icons/Sign in/Wrapper.png',
                     backgroundColor: AppColors.appleButtonColor,
                     textColor: Colors.white,
@@ -188,11 +192,11 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen> {
               ),
 
               // Positioned "Welcome back" title at x38, y285
-              Positioned(
-                left: 38,
+              PositionedDirectional(
+                start: 38,
                 top: 285,
                 child: Text(
-                  'Welcome back',
+                  l10n.welcomeBack,
                   style: TextStyle(
                     color: AppColors.languageButtonColor,
                     fontSize: 38,
@@ -204,11 +208,11 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen> {
               ),
 
               // Positioned "Happy to have you again" at x40, y331
-              Positioned(
-                left: 40,
+              PositionedDirectional(
+                start: 40,
                 top: 331,
                 child: Text(
-                  'Happy to have you again',
+                  l10n.welcomeBackSubtitle,
                   style: TextStyle(
                     color: AppColors.textSecondary,
                     fontSize: 16,
@@ -220,8 +224,8 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen> {
               ),
 
               // Positioned "Forget your password? Click here" at x193, y489
-              Positioned(
-                left: 193,
+              PositionedDirectional(
+                start: 193,
                 top: 489,
                 child: GestureDetector(
                   onTap: () {
@@ -237,9 +241,9 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen> {
                         decoration: TextDecoration.underline,
                       ),
                       children: [
-                        const TextSpan(text: 'Forget your password? '),
+                        TextSpan(text: '${l10n.forgotPassword} '),
                         TextSpan(
-                          text: 'Click here',
+                          text: l10n.clickHere,
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                           ),
@@ -251,8 +255,8 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen> {
               ),
 
               // Positioned "Don't have an account? Click here" at x87, y740
-              Positioned(
-                left: 87,
+              PositionedDirectional(
+                start: 87,
                 top: 740,
                 child: GestureDetector(
                   onTap: () {
@@ -267,9 +271,9 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen> {
                         fontFamily: 'Roboto',
                       ),
                       children: [
-                        const TextSpan(text: 'Don\'t have an account? '),
+                        TextSpan(text: '${l10n.dontHaveAccount} '),
                         TextSpan(
-                          text: 'Click here',
+                          text: l10n.signUp,
                           style: const TextStyle(
                             color: Color(0xFF0EA5C6), // #0EA5C6
                             fontWeight: FontWeight.normal,
@@ -351,7 +355,7 @@ class _SocialButton extends StatelessWidget {
             ],
             Text(
               text,
-              textAlign: TextAlign.center,
+              textAlign: TextAlign.start,
               style: TextStyle(
                 color: textColor,
                 fontSize: 16,

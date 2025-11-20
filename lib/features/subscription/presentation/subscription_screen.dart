@@ -6,6 +6,7 @@ import '../../../core/widgets/primary_button.dart';
 import '../../../core/providers/subscription_provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/platform_utils.dart';
+import '../../../l10n/app_localizations.dart';
 
 class SubscriptionScreen extends ConsumerStatefulWidget {
   const SubscriptionScreen({super.key});
@@ -19,6 +20,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
       appBar: AppBar(
@@ -31,7 +33,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
           onPressed: () => context.go('/profile'),
         ),
         title: Text(
-          'Mara Pro',
+          l10n.maraPro,
           style: TextStyle(
             color: AppColors.textPrimary,
             fontWeight: FontWeight.w600,
@@ -49,7 +51,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                 const SizedBox(height: 40),
                 // Big header
                 Text(
-                  'Mara Pro subscription',
+                  l10n.maraProSubscription,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: AppColors.textPrimary,
@@ -59,20 +61,20 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                 ),
                 const SizedBox(height: 40),
                 // Benefits list
-                _buildBenefitItem('High-quality health summaries.'),
+                _buildBenefitItem(l10n.highQualitySummaries),
                 const SizedBox(height: 16),
-                _buildBenefitItem('Deeper AI insights and trends.'),
+                _buildBenefitItem(l10n.deeperAIInsights),
                 const SizedBox(height: 16),
-                _buildBenefitItem('More reminders and customization.'),
+                _buildBenefitItem(l10n.moreReminders),
                 const SizedBox(height: 50),
                 // Pricing cards
                 Row(
                   children: [
                     Expanded(
                       child: _PricingCard(
-                        title: 'Monthly',
+                        title: l10n.monthly,
                         price: 'SAR 25',
-                        period: '/ month',
+                        period: l10n.pricePerMonth,
                         isSelected: !_selectedYearly,
                         onTap: () => setState(() => _selectedYearly = false),
                       ),
@@ -80,9 +82,9 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                     const SizedBox(width: 16),
                     Expanded(
                       child: _PricingCard(
-                        title: 'Yearly',
+                        title: l10n.yearly,
                         price: 'SAR 199',
-                        period: '/ year',
+                        period: l10n.pricePerYear,
                         isSelected: _selectedYearly,
                         onTap: () => setState(() => _selectedYearly = true),
                         isHighlighted: true,
@@ -93,7 +95,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                 const SizedBox(height: 40),
                 // Subscribe button
                 PrimaryButton(
-                  text: 'Subscribe with Apple / Google',
+                  text: l10n.subscribeWithAppleGoogle,
                   onPressed: () {
                     // Stub: Mark as subscribed
                     ref.read(subscriptionProvider.notifier).setPremium();
@@ -106,7 +108,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Text.rich(
                     TextSpan(
-                      text: 'By continuing, you agree to Mara\'s ',
+                      text: '${l10n.iAgreeToThe} ',
                       style: TextStyle(
                         color: AppColors.textSecondary,
                         fontSize: 12,
@@ -124,7 +126,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                               }
                             },
                             child: Text(
-                              'Terms of Service',
+                              l10n.termsOfServiceLink,
                               style: TextStyle(
                                 color: AppColors.languageButtonColor,
                                 fontSize: 12,
@@ -133,12 +135,12 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                             ),
                           ),
                         ),
-                        const TextSpan(text: ' and '),
+                        TextSpan(text: ' ${l10n.terms} '),
                         WidgetSpan(
                           child: GestureDetector(
                             onTap: () => context.push('/privacy-webview'),
                             child: Text(
-                              'Privacy Policy',
+                              l10n.privacyPolicyLink,
                               style: TextStyle(
                                 color: AppColors.languageButtonColor,
                                 fontSize: 12,

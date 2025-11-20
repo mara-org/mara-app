@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/widgets/primary_button.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class OnboardingPersonalizedScreen extends StatelessWidget {
   const OnboardingPersonalizedScreen({super.key});
@@ -24,6 +25,7 @@ class OnboardingPersonalizedScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final h = MediaQuery.of(context).size.height;
     
     return Scaffold(
@@ -55,7 +57,7 @@ class OnboardingPersonalizedScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Text(
-                  'Personalized health insights, made just for you',
+                  l10n.personalizedTitle,
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     fontFamily: 'Roboto',
@@ -72,7 +74,7 @@ class OnboardingPersonalizedScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 44),
                 child: Text(
-                  'Mara learns from your daily patterns to help you stay healthy, motivated, and consistent.',
+                  l10n.personalizedSubtitle,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontFamily: 'Roboto',
@@ -89,7 +91,7 @@ class OnboardingPersonalizedScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.fromLTRB(24, 0, 24, 16),
                 child: PrimaryButton(
-                  text: 'Continue',
+                  text: l10n.continueButton,
                   width: 324,
                   height: 52,
                   borderRadius: 20,
@@ -105,7 +107,7 @@ class OnboardingPersonalizedScreen extends StatelessWidget {
                   context.go('/welcome-back');
                 },
                 child: Text(
-                  'Already have an account?',
+                  l10n.alreadyHaveAccount,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontFamily: 'Roboto',

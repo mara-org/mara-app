@@ -75,22 +75,22 @@ class LanguageSelectorScreen extends ConsumerWidget {
                     // Arabic button
                     _LanguageButton(
                       text: 'العربية',
-                      onPressed: () {
-                        ref.read(languageProvider.notifier).setLanguage(
-                              AppLanguage.arabic,
-                            );
-                        context.go('/welcome-intro');
+                      onPressed: () async {
+                        await ref.read(appLocaleProvider.notifier).setLocale(const Locale('ar'));
+                        if (context.mounted) {
+                          context.go('/welcome-intro');
+                        }
                       },
                     ),
                     const SizedBox(height: 20),
                     // English button
                     _LanguageButton(
                       text: 'English',
-                      onPressed: () {
-                        ref.read(languageProvider.notifier).setLanguage(
-                              AppLanguage.english,
-                            );
-                        context.go('/welcome-intro');
+                      onPressed: () async {
+                        await ref.read(appLocaleProvider.notifier).setLocale(const Locale('en'));
+                        if (context.mounted) {
+                          context.go('/welcome-intro');
+                        }
                       },
                     ),
                   ],

@@ -6,6 +6,7 @@ import '../../../core/widgets/primary_button.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/platform_utils.dart';
 import '../../../core/providers/user_profile_provider.dart';
+import '../../../l10n/app_localizations.dart';
 
 class BloodTypeScreen extends ConsumerStatefulWidget {
   final bool isFromProfile;
@@ -43,6 +44,7 @@ class _BloodTypeScreenState extends ConsumerState<BloodTypeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
       body: SafeArea(
@@ -54,7 +56,7 @@ class _BloodTypeScreenState extends ConsumerState<BloodTypeScreen> {
                 const SizedBox(height: 20),
                 // Back button
                 Align(
-                  alignment: Alignment.centerLeft,
+                  alignment: AlignmentDirectional.centerStart,
                   child: GestureDetector(
                     onTap: () => context.pop(),
                     child: Container(
@@ -83,7 +85,7 @@ class _BloodTypeScreenState extends ConsumerState<BloodTypeScreen> {
                 const SizedBox(height: 40),
                 // Title
                 Text(
-                  "What's your blood type?",
+                  l10n.whatsYourBloodType,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: AppColors.languageButtonColor,
@@ -121,7 +123,7 @@ class _BloodTypeScreenState extends ConsumerState<BloodTypeScreen> {
                 const SizedBox(height: 40),
                 // Continue button
                 PrimaryButton(
-                  text: 'Continue',
+                  text: l10n.continueButtonText,
                   width: 324,
                   height: 52,
                   borderRadius: 20,

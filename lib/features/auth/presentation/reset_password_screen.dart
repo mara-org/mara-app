@@ -4,6 +4,7 @@ import '../../../core/widgets/mara_logo.dart';
 import '../../../core/widgets/mara_text_field.dart';
 import '../../../core/widgets/primary_button.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../l10n/app_localizations.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
   const ResetPasswordScreen({super.key});
@@ -62,22 +63,22 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
         _hasMaxLength;
   }
 
-  String? _validatePassword(String? value) {
+  String? _validatePassword(String? value, AppLocalizations l10n) {
     if (value == null || value.isEmpty) {
-      return 'Please enter your password';
+      return l10n.pleaseEnterYourPassword;
     }
     if (!_isPasswordValid) {
-      return 'Password does not meet all requirements';
+      return l10n.passwordDoesNotMeetRequirements;
     }
     return null;
   }
 
-  String? _validateConfirmPassword(String? value) {
+  String? _validateConfirmPassword(String? value, AppLocalizations l10n) {
     if (value == null || value.isEmpty) {
-      return 'Please confirm your password';
+      return l10n.pleaseConfirmYourPassword;
     }
     if (value != _passwordController.text) {
-      return 'Passwords do not match';
+      return l10n.passwordsDoNotMatch;
     }
     return null;
   }
@@ -91,6 +92,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final h = MediaQuery.of(context).size.height;
 
     return Scaffold(
@@ -100,7 +102,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
           key: _formKey,
           child: SingleChildScrollView(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+              padding: const EdgeInsetsDirectional.symmetric(horizontal: 24),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -132,9 +134,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   ),
                   SizedBox(height: h * 0.04),
                   // Title
-                  const Text(
-                    'Reset Password',
-                    style: TextStyle(
+                  Text(
+                    l10n.resetPasswordTitle,
+                    style: const TextStyle(
                       fontSize: 26,
                       fontWeight: FontWeight.w600,
                       color: AppColors.languageButtonColor,
@@ -144,7 +146,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   const SizedBox(height: 16),
                   // Subtitle
                   Text(
-                    'Enter your new password below',
+                    l10n.resetPasswordSubtitle,
+                    textAlign: TextAlign.start,
                     style: TextStyle(
                       fontSize: 14,
                       color: AppColors.textSecondary,
@@ -155,11 +158,11 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   const SizedBox(height: 24),
                   // Password field
                   MaraTextField(
-                    label: 'New Password',
-                    hint: 'Enter your new password',
+                    label: l10n.newPasswordLabel,
+                    hint: l10n.newPasswordHint,
                     controller: _passwordController,
                     obscureText: _obscurePassword,
-                    validator: _validatePassword,
+                    validator: (value) => _validatePassword(value, l10n),
                     onChanged: (_) => _checkPasswordRequirements(),
                     suffixIcon: IconButton(
                       icon: Icon(
@@ -178,6 +181,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   const SizedBox(height: 12),
                   // Password requirements
                   _PasswordRequirementsWidget(
+                    l10n: l10n,
                     hasUppercase: _hasUppercase,
                     hasLowercase: _hasLowercase,
                     hasNumeric: _hasNumeric,
@@ -188,11 +192,11 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   const SizedBox(height: 16),
                   // Confirm Password field
                   MaraTextField(
-                    label: 'Confirm Password',
-                    hint: 'Confirm your new password',
+                    label: l10n.confirmPasswordLabel,
+                    hint: l10n.confirmPasswordHint,
                     controller: _confirmPasswordController,
                     obscureText: _obscureConfirmPassword,
-                    validator: _validateConfirmPassword,
+                    validator: (value) => _validateConfirmPassword(value, l10n),
                     suffixIcon: IconButton(
                       icon: Icon(
                         _obscureConfirmPassword
@@ -214,7 +218,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                       width: 320,
                       height: 52,
                       child: PrimaryButton(
-                        text: 'Reset Password',
+                        text: l10n.resetPasswordButton,
                         width: 320,
                         height: 52,
                         borderRadius: 20,
@@ -234,6 +238,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 }
 
 class _PasswordRequirementsWidget extends StatelessWidget {
+  final AppLocalizations l10n;
   final bool hasUppercase;
   final bool hasLowercase;
   final bool hasNumeric;
@@ -242,6 +247,7 @@ class _PasswordRequirementsWidget extends StatelessWidget {
   final bool hasMaxLength;
 
   const _PasswordRequirementsWidget({
+    required this.l10n,
     required this.hasUppercase,
     required this.hasLowercase,
     required this.hasNumeric,
@@ -265,9 +271,9 @@ class _PasswordRequirementsWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Password Requirements',
-            style: TextStyle(
+          Text(
+            l10n.passwordRequirements,
+            style: const TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
               color: Color(0xFF0F172A),
@@ -276,27 +282,27 @@ class _PasswordRequirementsWidget extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           _RequirementItem(
-            text: 'At least one uppercase letter',
+            text: l10n.atLeastOneUppercase,
             isMet: hasUppercase,
           ),
           const SizedBox(height: 6),
           _RequirementItem(
-            text: 'At least one lowercase letter',
+            text: l10n.atLeastOneLowercase,
             isMet: hasLowercase,
           ),
           const SizedBox(height: 6),
           _RequirementItem(
-            text: 'At least one number',
+            text: l10n.atLeastOneNumber,
             isMet: hasNumeric,
           ),
           const SizedBox(height: 6),
           _RequirementItem(
-            text: 'At least one special character',
+            text: l10n.atLeastOneSpecialChar,
             isMet: hasSpecialChar,
           ),
           const SizedBox(height: 6),
           _RequirementItem(
-            text: 'Between 8 and 4096 characters',
+            text: l10n.between8And4096Chars,
             isMet: hasMinLength && hasMaxLength,
           ),
         ],

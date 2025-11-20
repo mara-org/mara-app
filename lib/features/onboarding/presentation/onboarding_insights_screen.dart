@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/widgets/primary_button.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class OnboardingInsightsScreen extends StatelessWidget {
   const OnboardingInsightsScreen({super.key});
@@ -21,6 +22,7 @@ class OnboardingInsightsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final h = MediaQuery.of(context).size.height;
 
     return Scaffold(
@@ -45,10 +47,10 @@ class OnboardingInsightsScreen extends StatelessWidget {
               top: h * (249 / 852),
               left: 24,
               right: 24,
-              child: const Text(
-                'Get instant, accurate medical insights',
+              child: Text(
+                l10n.onboardingInsightsTitle,
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   fontFamily: 'Roboto',
                   fontSize: 24,
                   fontWeight: FontWeight.w600,
@@ -68,10 +70,10 @@ class OnboardingInsightsScreen extends StatelessWidget {
               top: h * (390 / 852),
               left: 32,
               right: 32,
-              child: const Text(
-                'Powered by advanced AI trained on trusted health data from Mayo Clinic, WHO, and more.',
+              child: Text(
+                l10n.onboardingInsightsSubtitle,
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   fontFamily: 'Roboto',
                   fontSize: 16,
                   fontWeight: FontWeight.w400,
@@ -87,7 +89,7 @@ class OnboardingInsightsScreen extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: PrimaryButton(
-                  text: 'Continue',
+                  text: l10n.continueButton,
                   width: 324,
                   height: 52,
                   borderRadius: 20,

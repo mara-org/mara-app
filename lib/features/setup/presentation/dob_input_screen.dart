@@ -7,6 +7,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/platform_utils.dart';
 import '../../../core/widgets/mara_logo.dart';
 import '../../../core/widgets/primary_button.dart';
+import '../../../l10n/app_localizations.dart';
 
 class DobInputScreen extends ConsumerStatefulWidget {
   final bool isFromProfile;
@@ -48,6 +49,7 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
   }
 
   void _handleContinue() {
+    final l10n = AppLocalizations.of(context)!;
     if (_selectedYear == null ||
         _selectedMonth == null ||
         _selectedDay == null) {
@@ -67,8 +69,8 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
     } catch (e) {
       // Invalid date (e.g., Feb 30)
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please select a valid date'),
+        SnackBar(
+          content: Text(l10n.pleaseSelectValidDate),
         ),
       );
     }
@@ -87,6 +89,7 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
       body: SafeArea(
@@ -98,7 +101,7 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
                 const SizedBox(height: 20),
                 // Back button
                 Align(
-                  alignment: Alignment.centerLeft,
+                  alignment: AlignmentDirectional.centerStart,
                   child: GestureDetector(
                     onTap: () => context.pop(),
                     child: Container(
@@ -127,12 +130,12 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
                 const SizedBox(height: 40),
                 // Title (moved 4px to the right from previous position)
                 Padding(
-                  padding: const EdgeInsets.only(left: 1),
+                  padding: const EdgeInsetsDirectional.only(start: 1),
                   child: Align(
-                    alignment: Alignment.centerLeft,
+                    alignment: AlignmentDirectional.centerStart,
                     child: Text(
-                      'When were you born?',
-                      textAlign: TextAlign.left,
+                      l10n.whenWereYouBorn,
+                      textAlign: TextAlign.start,
                       style: TextStyle(
                         color: AppColors.languageButtonColor,
                         fontSize: 26,
@@ -151,7 +154,7 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
                       child: Column(
                         children: [
                           Text(
-                            'Year',
+                            l10n.year,
                             style: TextStyle(
                               color: AppColors.textSecondary,
                               fontSize: 14,
@@ -214,7 +217,7 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
                       child: Column(
                         children: [
                           Text(
-                            'Month',
+                            l10n.month,
                             style: TextStyle(
                               color: _selectedYear != null
                                   ? AppColors.textSecondary
@@ -286,7 +289,7 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
                       child: Column(
                         children: [
                           Text(
-                            'Day',
+                            l10n.day,
                             style: TextStyle(
                               color: _selectedYear != null &&
                                       _selectedMonth != null
@@ -364,7 +367,7 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
                 const SizedBox(height: 40),
                 // Continue button (disabled until all three are selected)
                 PrimaryButton(
-                  text: 'Continue',
+                  text: l10n.continueButtonText,
                   width: 324,
                   height: 52,
                   borderRadius: 20,

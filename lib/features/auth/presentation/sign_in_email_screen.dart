@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../core/widgets/mara_logo.dart';
 import '../../../core/widgets/mara_text_field.dart';
 import '../../../core/widgets/primary_button.dart';
+import '../../../l10n/app_localizations.dart';
 
 class SignInEmailScreen extends StatefulWidget {
   const SignInEmailScreen({super.key});
@@ -64,22 +65,24 @@ class _SignInEmailScreenState extends State<SignInEmailScreen> {
         _hasMaxLength;
   }
 
-  String? _validateEmail(String? value) {
+  String? _validateEmail(String? value, BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     if (value == null || value.isEmpty) {
-      return 'Please enter your email';
+      return l10n.pleaseEnterYourEmail;
     }
     if (!value.contains('@') || !value.contains('.')) {
-      return 'Please enter a valid email';
+      return l10n.pleaseEnterValidEmail;
     }
     return null;
   }
 
-  String? _validatePassword(String? value) {
+  String? _validatePassword(String? value, BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     if (value == null || value.isEmpty) {
-      return 'Please enter your password';
+      return l10n.pleaseEnterYourPassword;
     }
     if (!_isPasswordValid) {
-      return 'Password does not meet all requirements';
+      return l10n.pleaseEnterYourPassword; // Generic error
     }
     return null;
   }
@@ -93,6 +96,7 @@ class _SignInEmailScreenState extends State<SignInEmailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final h = MediaQuery.of(context).size.height;
 
     return Scaffold(
@@ -116,9 +120,9 @@ class _SignInEmailScreenState extends State<SignInEmailScreen> {
                   ),
                   SizedBox(height: h * 0.02),
                   // Title
-                  const Text(
-                    'Enter your email',
-                    style: TextStyle(
+                  Text(
+                    l10n.enterYourEmail,
+                    style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.w600,
                       color: Color(0xFF0EA5C6),
@@ -128,20 +132,20 @@ class _SignInEmailScreenState extends State<SignInEmailScreen> {
                   const SizedBox(height: 16),
                   // Email field
                   MaraTextField(
-                    label: 'Email',
-                    hint: 'Enter your email',
+                    label: l10n.emailLabel,
+                    hint: l10n.enterYourEmail,
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
-                    validator: _validateEmail,
+                    validator: (value) => _validateEmail(value, context),
                   ),
                   const SizedBox(height: 12),
                   // Password field
                   MaraTextField(
-                    label: 'Password',
-                    hint: 'Enter your password',
+                    label: l10n.passwordLabel,
+                    hint: l10n.enterYourPassword,
                     controller: _passwordController,
                     obscureText: _obscurePassword,
-                    validator: _validatePassword,
+                    validator: (value) => _validatePassword(value, context),
                     onChanged: (_) => _checkPasswordRequirements(),
                     suffixIcon: IconButton(
                       icon: Icon(
@@ -183,7 +187,7 @@ class _SignInEmailScreenState extends State<SignInEmailScreen> {
                       ),
                       Expanded(
                         child: Align(
-                          alignment: Alignment.centerLeft,
+                          alignment: AlignmentDirectional.centerStart,
                           child: RichText(
                             text: TextSpan(
                               style: const TextStyle(
@@ -192,9 +196,9 @@ class _SignInEmailScreenState extends State<SignInEmailScreen> {
                                 fontFamily: 'Roboto',
                               ),
                               children: [
-                                const TextSpan(text: 'I agree to the '),
+                                TextSpan(text: '${l10n.iAgreeToThe} '),
                                 TextSpan(
-                                  text: 'terms',
+                                  text: l10n.terms,
                                   style: const TextStyle(
                                     color: Color(0xFF0EA5C6),
                                     decoration: TextDecoration.underline,
@@ -226,7 +230,7 @@ class _SignInEmailScreenState extends State<SignInEmailScreen> {
                       width: 320,
                       height: 52,
                       child: PrimaryButton(
-                        text: 'Verify',
+                        text: l10n.verify,
                         width: 320,
                         height: 52,
                         borderRadius: 20,
@@ -245,17 +249,17 @@ class _SignInEmailScreenState extends State<SignInEmailScreen> {
                         context.push('/welcome-back');
                       },
                       child: RichText(
-                        text: const TextSpan(
-                          text: 'Already a member ? ',
-                          style: TextStyle(
+                        text: TextSpan(
+                          text: '${l10n.alreadyAMember} ',
+                          style: const TextStyle(
                             color: Color(0xFF64748B),
                             fontSize: 14,
                             fontFamily: 'Roboto',
                           ),
                           children: [
                             TextSpan(
-                              text: 'Login',
-                              style: TextStyle(
+                              text: l10n.login,
+                              style: const TextStyle(
                                 color: Color(0xFF0EA5C6),
                                 fontWeight: FontWeight.w600,
                                 fontFamily: 'Roboto',
@@ -296,6 +300,7 @@ class _PasswordRequirementsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -309,9 +314,9 @@ class _PasswordRequirementsWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Password Requirements',
-            style: TextStyle(
+          Text(
+            l10n.passwordRequirements,
+            style: const TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
               color: Color(0xFF0F172A),
@@ -320,27 +325,27 @@ class _PasswordRequirementsWidget extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           _RequirementItem(
-            text: 'At least one uppercase letter',
+            text: l10n.atLeastOneUppercase,
             isMet: hasUppercase,
           ),
           const SizedBox(height: 6),
           _RequirementItem(
-            text: 'At least one lowercase letter',
+            text: l10n.atLeastOneLowercase,
             isMet: hasLowercase,
           ),
           const SizedBox(height: 6),
           _RequirementItem(
-            text: 'At least one number',
+            text: l10n.atLeastOneNumber,
             isMet: hasNumeric,
           ),
           const SizedBox(height: 6),
           _RequirementItem(
-            text: 'At least one special character',
+            text: l10n.atLeastOneSpecialChar,
             isMet: hasSpecialChar,
           ),
           const SizedBox(height: 6),
           _RequirementItem(
-            text: 'Between 8 and 4096 characters',
+            text: l10n.between8And4096Chars,
             isMet: hasMinLength && hasMaxLength,
           ),
         ],

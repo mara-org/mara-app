@@ -6,6 +6,7 @@ import '../../../core/widgets/primary_button.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/platform_utils.dart';
 import '../../../core/providers/user_profile_provider.dart';
+import '../../../l10n/app_localizations.dart';
 
 class WeightScreen extends ConsumerStatefulWidget {
   final bool isFromProfile;
@@ -33,6 +34,7 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final weights = _selectedUnit == 'kg'
         ? List.generate(61, (i) => 40 + i) // 40-100 kg
         : List.generate(133, (i) => 88 + i); // 88-220 lbs
@@ -48,7 +50,7 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
                 const SizedBox(height: 20),
                 // Back button
                 Align(
-                  alignment: Alignment.centerLeft,
+                  alignment: AlignmentDirectional.centerStart,
                   child: GestureDetector(
                     onTap: () => context.pop(),
                     child: Container(
@@ -77,7 +79,7 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
                 const SizedBox(height: 40),
                 // Title
                 Text(
-                  "What's your weight?",
+                  l10n.whatsYourWeight,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: AppColors.languageButtonColor,
@@ -94,7 +96,7 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     _UnitToggle(
-                      text: 'Kg',
+                      text: l10n.kg,
                       isSelected: _selectedUnit == 'kg',
                       onTap: () {
                         setState(() {
@@ -105,7 +107,7 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
                     ),
                         const SizedBox(width: 96),
                     _UnitToggle(
-                      text: 'lb',
+                      text: l10n.lb,
                       isSelected: _selectedUnit == 'lb',
                       onTap: () {
                         setState(() {
@@ -178,7 +180,7 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
                 const SizedBox(height: 40),
                 // Continue button
                 PrimaryButton(
-                  text: 'Continue',
+                  text: l10n.continueButtonText,
                   width: 324,
                   height: 52,
                   borderRadius: 20,

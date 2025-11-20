@@ -3,12 +3,14 @@ import 'package:go_router/go_router.dart';
 import '../../../core/widgets/primary_button.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/platform_utils.dart';
+import '../../../l10n/app_localizations.dart';
 
 class ReadyScreen extends StatelessWidget {
   const ReadyScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -32,7 +34,7 @@ class ReadyScreen extends StatelessWidget {
                   const SizedBox(height: 100),
                   // Title
                   Text(
-                    'Are you ready?',
+                    l10n.areYouReady,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: AppColors.languageButtonColor,
@@ -65,7 +67,7 @@ class ReadyScreen extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Text(
-                      'To start your journey you need to answer few question',
+                      l10n.readySubtitleText,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: AppColors.textSecondary,
@@ -78,7 +80,7 @@ class ReadyScreen extends StatelessWidget {
                   const SizedBox(height: 60),
                   // Ready button
                   PrimaryButton(
-                    text: 'Ready!',
+                    text: l10n.readyButton,
                     onPressed: () {
                       context.push('/name-input');
                     },

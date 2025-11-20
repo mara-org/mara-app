@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import '../../l10n/app_localizations.dart';
 
 class AuthScreen extends StatelessWidget {
   const AuthScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    final l10n = AppLocalizations.of(context)!;
+    return Scaffold(
       body: Center(
-        child: Text('Auth Screen'),
+        child: Text(l10n.appTitle),
       ),
     );
   }

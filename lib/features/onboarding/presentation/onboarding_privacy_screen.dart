@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/widgets/primary_button.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class OnboardingPrivacyScreen extends StatelessWidget {
   const OnboardingPrivacyScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final h = MediaQuery.of(context).size.height;
     
     return Scaffold(
@@ -21,12 +23,12 @@ class OnboardingPrivacyScreen extends StatelessWidget {
               SizedBox(height: h * 0.18), // Top spacing similar to Figma
               
               // 1) Title
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Text(
-                  'Your data stays private',
+                  l10n.privacyTitle,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontFamily: 'Roboto',
                     fontSize: 22,
                     fontWeight: FontWeight.w600,
@@ -68,12 +70,12 @@ class OnboardingPrivacyScreen extends StatelessWidget {
               const SizedBox(height: 16),
               
               // 3) "Mara understands 100+ languages"
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 32),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: Text(
-                  'Mara understands 100+ languages',
+                  l10n.privacySubtitle1,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontFamily: 'Roboto',
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -85,12 +87,12 @@ class OnboardingPrivacyScreen extends StatelessWidget {
               const SizedBox(height: 8),
               
               // 4) Smaller description
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 32),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: Text(
-                  'Speak freely in your own language — Mara listens and keeps your health data 100% private.',
+                  l10n.privacySubtitle2,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontFamily: 'Roboto',
                     fontSize: 14,
                     fontWeight: FontWeight.w400,
@@ -105,7 +107,7 @@ class OnboardingPrivacyScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
                 child: PrimaryButton(
-                  text: 'Continue',
+                  text: l10n.continueButton,
                   width: 324,
                   height: 52,
                   borderRadius: 20,

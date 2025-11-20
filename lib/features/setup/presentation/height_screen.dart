@@ -6,6 +6,7 @@ import '../../../core/widgets/primary_button.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/platform_utils.dart';
 import '../../../core/providers/user_profile_provider.dart';
+import '../../../l10n/app_localizations.dart';
 
 class HeightScreen extends ConsumerStatefulWidget {
   final bool isFromProfile;
@@ -33,6 +34,7 @@ class _HeightScreenState extends ConsumerState<HeightScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final heights = _selectedUnit == 'cm'
         ? List.generate(61, (i) => 150 + i) // 150-210 cm
         : List.generate(25, (i) => 59 + i); // 59-83 inches
@@ -48,7 +50,7 @@ class _HeightScreenState extends ConsumerState<HeightScreen> {
                 const SizedBox(height: 20),
                 // Back button
                 Align(
-                  alignment: Alignment.centerLeft,
+                  alignment: AlignmentDirectional.centerStart,
                   child: GestureDetector(
                     onTap: () => context.pop(),
                     child: Container(
@@ -77,7 +79,7 @@ class _HeightScreenState extends ConsumerState<HeightScreen> {
                 const SizedBox(height: 40),
                 // Title
                 Text(
-                  "What's your height?",
+                  l10n.whatsYourHeight,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: AppColors.languageButtonColor,
@@ -94,7 +96,7 @@ class _HeightScreenState extends ConsumerState<HeightScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         _UnitToggle(
-                          text: 'cm',
+                          text: l10n.cm,
                           isSelected: _selectedUnit == 'cm',
                           onTap: () {
                             setState(() {
@@ -105,7 +107,7 @@ class _HeightScreenState extends ConsumerState<HeightScreen> {
                         ),
                         const SizedBox(width: 96),
                         _UnitToggle(
-                          text: 'in',
+                          text: l10n.inchUnit,
                           isSelected: _selectedUnit == 'in',
                           onTap: () {
                             setState(() {
@@ -178,7 +180,7 @@ class _HeightScreenState extends ConsumerState<HeightScreen> {
                 const SizedBox(height: 40),
                 // Continue button
                 PrimaryButton(
-                  text: 'Continue',
+                  text: l10n.continueButtonText,
                   onPressed: (_selectedHeight != null && _selectedHeight! > 0) ? _handleContinue : null,
                 ),
                 const SizedBox(height: 20),

@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/widgets/mara_logo.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/platform_utils.dart';
+import '../../../l10n/app_localizations.dart';
 
 class ForgotPasswordVerifyScreen extends StatefulWidget {
   const ForgotPasswordVerifyScreen({super.key});
@@ -32,15 +33,15 @@ class _ForgotPasswordVerifyScreenState extends State<ForgotPasswordVerifyScreen>
     super.dispose();
   }
 
-  void _handleVerify() {
+  void _handleVerify(AppLocalizations l10n) {
     final code = _controllers.map((c) => c.text).join();
     if (code.length == 6) {
       // Navigate to reset password screen
       context.push('/reset-password');
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please enter the complete 6-digit code'),
+        SnackBar(
+          content: Text(l10n.verifyEmailError),
         ),
       );
     }
@@ -57,6 +58,7 @@ class _ForgotPasswordVerifyScreenState extends State<ForgotPasswordVerifyScreen>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
       body: SafeArea(
@@ -99,7 +101,7 @@ class _ForgotPasswordVerifyScreenState extends State<ForgotPasswordVerifyScreen>
                 const SizedBox(height: 40),
                 // Title
                 Text(
-                  'Verify your email',
+                  l10n.verifyEmailTitle,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: AppColors.languageButtonColor,
@@ -113,7 +115,7 @@ class _ForgotPasswordVerifyScreenState extends State<ForgotPasswordVerifyScreen>
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Text(
-                    "We've sent a 6-digit code to your email. Please enter it below to reset your password",
+                    l10n.forgotPasswordVerifySubtitle,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: AppColors.textSecondary,
@@ -200,13 +202,13 @@ class _ForgotPasswordVerifyScreenState extends State<ForgotPasswordVerifyScreen>
                   child: Material(
                     color: Colors.transparent,
                     child: InkWell(
-                      onTap: _handleVerify,
+                      onTap: () => _handleVerify(l10n),
                       borderRadius: BorderRadius.circular(12),
-                      child: const Center(
+                      child: Center(
                         child: Text(
-                          'Verify',
+                          l10n.verify,
                           textAlign: TextAlign.center,
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 16,
                             fontWeight: FontWeight.normal,
