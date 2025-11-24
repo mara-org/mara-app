@@ -43,84 +43,115 @@ class OnboardingPersonalizedScreen extends StatelessWidget {
             ],
           ),
         ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              SizedBox(height: h * 0.18), // Top spacing
-              
-              // 1) Large blue heart icon
-              _buildHeartIcon(),
-              
-              const SizedBox(height: 16), // 16px spacing
-              
-              // 2) Title: "Personalized health insights, made just for you"
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Text(
-                  l10n.personalizedTitle,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontFamily: 'Roboto',
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF0F172A), // #0F172A
+        child: Stack(
+          children: [
+            SafeArea(
+              child: Column(
+                children: [
+                  SizedBox(height: h * 0.18), // Top spacing
+                  
+                  // 1) Large blue heart icon
+                  _buildHeartIcon(),
+                  
+                  const SizedBox(height: 16), // 16px spacing
+                  
+                  // 2) Title: "Personalized health insights, made just for you"
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Text(
+                      l10n.personalizedTitle,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontFamily: 'Roboto',
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF0F172A), // #0F172A
+                      ),
+                    ),
+                  ),
+                  
+                  const SizedBox(height: 12), // 8-12px spacing
+                  
+                  // 3) Description text
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 44),
+                    child: Text(
+                      l10n.personalizedSubtitle,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontFamily: 'Roboto',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                        color: const Color(0xFF0F172A).withOpacity(0.65), // 60-70% opacity
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // Bottom white card (fixed height ~22% of screen) - same as welcome screen
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                height: h * 0.22 + MediaQuery.of(context).padding.bottom,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(28),
+                    topRight: Radius.circular(28),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      offset: const Offset(0, -4),
+                      blurRadius: 20,
+                    ),
+                  ],
+                ),
+                child: Padding(
+                  padding: EdgeInsetsDirectional.only(
+                    start: 24,
+                    end: 24,
+                    top: 32,
+                    bottom: MediaQuery.of(context).padding.bottom + 20,
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      PrimaryButton(
+                        text: l10n.continueButton,
+                        width: 324,
+                        height: 52,
+                        borderRadius: 20,
+                        onPressed: () {
+                          context.go('/sign-up-choices');
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      // "Already have an account?" text
+                      GestureDetector(
+                        onTap: () {
+                          context.go('/welcome-back');
+                        },
+                        child: Text(
+                          l10n.alreadyHaveAccount,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontFamily: 'Roboto',
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.black.withOpacity(0.6),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-              
-              const SizedBox(height: 12), // 8-12px spacing
-              
-              // 3) Description text
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 44),
-                child: Text(
-                  l10n.personalizedSubtitle,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontFamily: 'Roboto',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
-                    color: const Color(0xFF0F172A).withOpacity(0.65), // 60-70% opacity
-                  ),
-                ),
-              ),
-              
-              const Spacer(),
-              
-              // 4) Continue button
-              Padding(
-                padding: const EdgeInsets.fromLTRB(24, 0, 24, 16),
-                child: PrimaryButton(
-                  text: l10n.continueButton,
-                  width: 324,
-                  height: 52,
-                  borderRadius: 20,
-                  onPressed: () {
-                    context.go('/sign-up-choices');
-                  },
-                ),
-              ),
-              
-              // 5) "Already have an account?" text
-              GestureDetector(
-                onTap: () {
-                  context.go('/welcome-back');
-                },
-                child: Text(
-                  l10n.alreadyHaveAccount,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontFamily: 'Roboto',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.white.withOpacity(0.8),
-                  ),
-                ),
-              ),
-              
-              SizedBox(height: 24 + MediaQuery.of(context).padding.bottom),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

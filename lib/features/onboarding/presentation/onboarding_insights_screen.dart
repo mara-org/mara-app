@@ -81,21 +81,48 @@ class OnboardingInsightsScreen extends StatelessWidget {
                 ),
               ),
             ),
-            // Bottom button pinned to bottom
-            PositionedDirectional(
-              start: 0,
-              end: 0,
-              bottom: 32 + MediaQuery.of(context).padding.bottom,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: PrimaryButton(
-                  text: l10n.continueButton,
-                  width: 324,
-                  height: 52,
-                  borderRadius: 20,
-                  onPressed: () {
-                    context.go('/onboarding-privacy');
-                  },
+            // Bottom white card (fixed height ~22% of screen) - same as welcome screen
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                height: h * 0.22 + MediaQuery.of(context).padding.bottom,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(28),
+                    topRight: Radius.circular(28),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      offset: const Offset(0, -4),
+                      blurRadius: 20,
+                    ),
+                  ],
+                ),
+                child: Padding(
+                  padding: EdgeInsetsDirectional.only(
+                    start: 24,
+                    end: 24,
+                    top: 32,
+                    bottom: MediaQuery.of(context).padding.bottom + 20,
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      PrimaryButton(
+                        text: l10n.continueButton,
+                        width: 324,
+                        height: 52,
+                        borderRadius: 20,
+                        onPressed: () {
+                          context.go('/onboarding-privacy');
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
