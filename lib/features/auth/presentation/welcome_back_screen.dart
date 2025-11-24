@@ -223,65 +223,79 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen> {
                 ),
               ),
 
-              // Positioned "Forget your password? Click here" at x193, y489
+              // Positioned "Forget your password? Click here" directly under password field, right-aligned
               PositionedDirectional(
-                start: 193,
-                top: 489,
-                child: GestureDetector(
-                  onTap: () {
-                    context.push('/forgot-password-email');
-                  },
-                  child: RichText(
-                    text: TextSpan(
-                      style: TextStyle(
-                        color: AppColors.textSecondary,
-                        fontSize: 11,
-                        fontWeight: FontWeight.normal,
-                        fontFamily: 'Roboto',
-                        decoration: TextDecoration.underline,
-                      ),
-                      children: [
-                        TextSpan(text: '${l10n.forgotPassword} '),
-                        TextSpan(
-                          text: l10n.clickHere,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
+                start: 28,
+                top: 427 + 56 + 5, // Password field top (427) + field height (~56) + margin (5px)
+                child: SizedBox(
+                  width: screenWidth - 56, // Same width as password field - full width
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 5),
+                      child: GestureDetector(
+                        onTap: () {
+                          context.push('/forgot-password-email');
+                        },
+                        child: RichText(
+                          textAlign: TextAlign.right,
+                          text: TextSpan(
+                            style: TextStyle(
+                              color: AppColors.textSecondary,
+                              fontSize: 11,
+                              fontWeight: FontWeight.normal,
+                              fontFamily: 'Roboto',
+                              decoration: TextDecoration.underline,
+                            ),
+                            children: [
+                              TextSpan(text: '${l10n.forgotPassword} '),
+                              TextSpan(
+                                text: l10n.clickHere,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ],
+                      ),
                     ),
                   ),
                 ),
               ),
 
-              // Positioned "Don't have an account? Click here" at x87, y740
+              // Positioned "Don't have an account? Click here" centered horizontally
               PositionedDirectional(
-                start: 87,
+                start: 0,
+                end: 0,
                 top: 740,
-                child: GestureDetector(
-                  onTap: () {
-                    context.go('/sign-up-choices');
-                  },
-                  child: RichText(
-                    text: TextSpan(
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 15,
-                        fontWeight: FontWeight.normal,
-                        fontFamily: 'Roboto',
-                      ),
-                      children: [
-                        TextSpan(text: '${l10n.dontHaveAccount} '),
-                        TextSpan(
-                          text: l10n.signUp,
-                          style: const TextStyle(
-                            color: Color(0xFF0EA5C6), // #0EA5C6
-                            fontWeight: FontWeight.normal,
-                            fontFamily: 'Roboto',
-                            decoration: TextDecoration.underline,
-                          ),
+                child: Center(
+                  child: GestureDetector(
+                    onTap: () {
+                      context.go('/sign-up-choices');
+                    },
+                    child: RichText(
+                      textAlign: TextAlign.center,
+                      text: TextSpan(
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 15,
+                          fontWeight: FontWeight.normal,
+                          fontFamily: 'Roboto',
                         ),
-                      ],
+                        children: [
+                          TextSpan(text: '${l10n.dontHaveAccount} '),
+                          TextSpan(
+                            text: l10n.signUp,
+                            style: const TextStyle(
+                              color: Color(0xFF0EA5C6), // #0EA5C6
+                              fontWeight: FontWeight.normal,
+                              fontFamily: 'Roboto',
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
