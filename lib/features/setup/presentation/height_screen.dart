@@ -181,6 +181,9 @@ class _HeightScreenState extends ConsumerState<HeightScreen> {
                 // Continue button
                 PrimaryButton(
                   text: l10n.continueButtonText,
+                  width: 324,
+                  height: 52,
+                  borderRadius: 20,
                   onPressed: (_selectedHeight != null && _selectedHeight! > 0) ? _handleContinue : null,
                 ),
                 const SizedBox(height: 20),

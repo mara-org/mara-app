@@ -223,14 +223,14 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen> {
                 ),
               ),
 
-              // Positioned "Forget your password? Click here" directly under password field, right-aligned
+              // Positioned "Forget your password? Click here" directly under password field, direction-aware alignment
               PositionedDirectional(
                 start: 28,
                 top: 427 + 56 + 5, // Password field top (427) + field height (~56) + margin (5px)
                 child: SizedBox(
                   width: screenWidth - 56, // Same width as password field - full width
                   child: Align(
-                    alignment: Alignment.centerRight,
+                    alignment: AlignmentDirectional.centerStart, // Left in LTR, right in RTL
                     child: Padding(
                       padding: const EdgeInsets.only(top: 5),
                       child: GestureDetector(
@@ -238,7 +238,7 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen> {
                           context.push('/forgot-password-email');
                         },
                         child: RichText(
-                          textAlign: TextAlign.right,
+                          textAlign: TextAlign.start, // Left in LTR, right in RTL
                           text: TextSpan(
                             style: TextStyle(
                               color: AppColors.textSecondary,

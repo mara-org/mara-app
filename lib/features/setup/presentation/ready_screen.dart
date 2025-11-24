@@ -81,6 +81,9 @@ class ReadyScreen extends StatelessWidget {
                   // Ready button
                   PrimaryButton(
                     text: l10n.readyButton,
+                    width: 324,
+                    height: 52,
+                    borderRadius: 20,
                     onPressed: () {
                       context.push('/name-input');
                     },
