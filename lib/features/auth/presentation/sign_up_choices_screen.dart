@@ -118,43 +118,45 @@ class SignUpChoicesScreen extends StatelessWidget {
                 },
               ),
             ),
-            // Positioned "Already a member ?" at x117, y740
+            // Positioned "Already a member? Sign in" at y740, centered horizontally
             PositionedDirectional(
-              start: 117,
+              start: 0,
+              end: 0,
               top: 740,
-              child: GestureDetector(
-                onTap: () {
-                  context.go('/welcome-back');
-                },
-                child: Row(
-                  children: [
-                    Text(
-                      '${l10n.alreadyAMember} ',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 15,
-                        fontWeight: FontWeight.normal,
+              child: Center(
+                child: GestureDetector(
+                  onTap: () {
+                    context.go('/welcome-back');
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.only(right: 12),
+                    child: RichText(
+                      textAlign: TextAlign.center,
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: l10n.alreadyAMember,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 15,
+                              fontWeight: FontWeight.normal,
+                            ),
+                          ),
+                          WidgetSpan(
+                            child: SizedBox(width: 4),
+                          ),
+                          TextSpan(
+                            text: l10n.signIn,
+                            style: TextStyle(
+                              color: AppColors.languageButtonColor,
+                              fontSize: 15,
+                              fontWeight: FontWeight.normal,
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
-              ),
-            ),
-            // Positioned "Sign in" at x265, y740
-            PositionedDirectional(
-              start: 265,
-              top: 740,
-              child: GestureDetector(
-                onTap: () {
-                  context.go('/welcome-back');
-                },
-                child: Text(
-                  l10n.signIn,
-                  style: TextStyle(
-                    color: AppColors.languageButtonColor,
-                    fontSize: 15,
-                    fontWeight: FontWeight.normal,
-                    decoration: TextDecoration.underline,
                   ),
                 ),
               ),

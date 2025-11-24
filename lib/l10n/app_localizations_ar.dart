@@ -9,10 +9,10 @@ class AppLocalizationsAr extends AppLocalizations {
   AppLocalizationsAr([String locale = 'ar']) : super(locale);
 
   @override
-  String get appTitle => 'مرا';
+  String get appTitle => 'مَرَا';
 
   @override
-  String get welcomeTitle => 'مرحبًا بك في مرا 👋';
+  String get welcomeTitle => 'مرحبًا بك في مَرَا 👋';
 
   @override
   String get welcomeSubtitle =>
@@ -22,34 +22,34 @@ class AppLocalizationsAr extends AppLocalizations {
   String get continueButton => 'استمرار';
 
   @override
-  String get onboardingInsightsTitle => 'احصل على رؤى طبية فورية ودقيقة';
+  String get onboardingInsightsTitle => 'احصل على إرشادات طبية فورية ودقيقة';
 
   @override
   String get onboardingInsightsSubtitle =>
-      'مدعوم بذكاء اصطناعي متقدم مُدرَّب على بيانات صحية موثوقة من Mayo Clinic ومنظمة الصحة العالمية وغيرها.';
+      'مدعوم بتقنيات ذكاء اصطناعي متقدمة تستند إلى بيانات صحية معتمدة من Mayo Clinic ومنظمة الصحة العالمية وجهات طبية أخرى.';
 
   @override
-  String get privacyTitle => 'بياناتك تبقى خاصة';
+  String get privacyTitle => 'بياناتك تظل خاصة وسرية';
 
   @override
-  String get privacySubtitle1 => 'مرا يفهم أكثر من 100 لغة';
+  String get privacySubtitle1 => 'مَرَا قادر على فهم أكثر من 100 لغة';
 
   @override
   String get privacySubtitle2 =>
-      'تحدث بحرية بلغتك — مرا يستمع ويحافظ على بياناتك الصحية خاصة 100%.';
+      'تواصل بسهولة وبكل حرية — مرا يراعي ويحافظ على بياناتك الصحية خاصة 100%.';
 
   @override
-  String get personalizedTitle => 'رؤى صحية مخصصة، مصممة خصيصًا لك';
+  String get personalizedTitle => 'إرشادات صحية مخصصة لك وتناسب احتياجاتك';
 
   @override
   String get personalizedSubtitle =>
-      'يتعلم مرا من أنماطك اليومية لمساعدتك على البقاء بصحة جيدة ومتحفزًا ومتسقًا.';
+      'يتعلم مرا من أنماطك اليومية لمساعدتك على البقاء بصحة مثالية.';
 
   @override
   String get alreadyHaveAccount => 'لديك حساب بالفعل؟';
 
   @override
-  String get joinMara => 'انضم إلى مرا';
+  String get joinMara => 'انضم إلى مَرَا';
 
   @override
   String get signInWithEmail => 'تسجيل الدخول بالبريد الإلكتروني';
@@ -80,11 +80,11 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get forgotPasswordSubtitle =>
-      'أدخل بريدك الإلكتروني وسنرسل لك رمز تحقق لإعادة تعيين كلمة المرور.';
+      'لإعادة تعيين كلمة المرور، الرجاء إدخال بريدك الإلكتروني لاستلام رمز التحقق.';
 
   @override
   String get forgotPasswordVerifySubtitle =>
-      'أرسلنا رمزًا مكونًا من 6 أرقام إلى بريدك الإلكتروني. الرجاء إدخاله أدناه لإعادة تعيين كلمة المرور.';
+      'يرجى إدخال الرمز المرسل إلى بريدك الإلكتروني لإعادة تعيين كلمة المرور.';
 
   @override
   String get login => 'تسجيل الدخول';
@@ -135,7 +135,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get whenWereYouBorn => 'متى ولدت؟';
 
   @override
-  String get tellUsYourGender => 'أخبرنا جنسك؟';
+  String get tellUsYourGender => 'الرجاء تحديد الجنس';
 
   @override
   String get male => 'ذكر 👨';
@@ -281,15 +281,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get selectGender => 'اختر الجنس';
 
   @override
-  String get cameraPermissionTitle => 'السماح لمرا بالوصول إلى الكاميرا';
+  String get cameraPermissionTitle => 'السماح لمَرَا بالوصول إلى الكاميرا';
 
   @override
   String get cameraPermissionSubtitle =>
-      'يستخدم مرا الكاميرا لتحليل تعابير الوجه واكتشاف التعب — كل ذلك معالج محليًا على جهازك.';
+      'مَرَا يعتمد على الكاميرا لتحليل تعابير الوجه وكشف علامات التعب — ويعالج البيانات عن طريق جهازك.';
 
   @override
   String get cameraPermissionPrivacy =>
-      'خصوصيتك مهمة. وصول الكاميرا يبقى محليًا على جهازك.';
+      'نحترم خصوصيتك، والوصول إلى الكاميرا يقتصر على جهازك.';
 
   @override
   String get allow => 'السماح';
@@ -298,18 +298,19 @@ class AppLocalizationsAr extends AppLocalizations {
   String get notNow => 'ليس الآن';
 
   @override
-  String get microphonePermissionTitle => 'السماح لمرا بالوصول إلى الميكروفون';
+  String get microphonePermissionTitle =>
+      'السماح لمَرَا بالوصول إلى الميكروفون';
 
   @override
   String get microphonePermissionSubtitle =>
-      'يستخدم مرا الميكروفون لفهم صوتك وتوفير محادثة طبيعية — كل ذلك معالج محليًا على جهازك.';
+      'يستخدم مرا الميكروفون لفهم صوتك وتوفير محادثة طبيعية — كل ذلك يتم معالجته عن طريق جهازك.';
 
   @override
   String get microphonePermissionPrivacy =>
-      'خصوصيتك مهمة. وصول صوتك يبقى محليًا في جهازك.';
+      'خصوصيتك مهمة. وصول صوتك يقتصر على جهازك فقط.';
 
   @override
-  String get notificationsPermissionTitle => 'السماح لمرا بإرسال الإشعارات';
+  String get notificationsPermissionTitle => 'السماح لمَرَا بإرسال الإشعارات';
 
   @override
   String get notificationsPermissionSubtitle =>
@@ -323,7 +324,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get healthDataPermissionSubtitle =>
-      'يمكن لمرا تتبع نشاطك ونومك ومعدل ضربات القلب لتوفير رؤى مخصصة.';
+      'يمكن لمَرَا مراقبة نشاطك ونومك ومعدل ضربات القلب لتقديم إرشادات صحية مخصصة.';
 
   @override
   String get healthDataPermissionPrivacy =>
@@ -333,11 +334,11 @@ class AppLocalizationsAr extends AppLocalizations {
   String get connectHealthData => 'ربط البيانات الصحية';
 
   @override
-  String get permissionsSummaryTitle => 'ملخص الأذونات';
+  String get permissionsSummaryTitle => 'قائمة الصلاحيات';
 
   @override
   String get permissionsSummarySubtitle =>
-      'إليك ما يمكن لمرا الوصول إليه لتخصيص تجربتك';
+      'إليك ما يمكن لمَرَا الوصول إليه لتخصيص تجربتك';
 
   @override
   String get camera => 'الكاميرا';
@@ -352,23 +353,23 @@ class AppLocalizationsAr extends AppLocalizations {
   String get healthData => 'البيانات الصحية';
 
   @override
-  String get upgradeYourMaraAccount => 'ترقية حساب مرا الخاص بك';
+  String get upgradeYourMaraAccount => 'ترقية حساب مَرَا الخاص بك';
 
   @override
   String get upgradeSubtitle =>
-      'افتح رؤى مميزة ومزيد من التذكيرات ودعم ذو أولوية.';
+      'احصل على تحليلات مميزة ومزيد من التذكيرات ودعم مباشر.';
 
   @override
-  String get maraPro => 'مرا برو';
+  String get maraPro => 'مَرَا برو';
 
   @override
-  String get maraProSubscription => 'اشتراك مرا برو';
+  String get maraProSubscription => 'اشتراك مَرَا برو';
 
   @override
   String get highQualitySummaries => 'ملخصات صحية عالية الجودة.';
 
   @override
-  String get deeperAIInsights => 'رؤى واتجاهات ذكاء اصطناعي أعمق.';
+  String get deeperAIInsights => 'تحليلات واتجاهات متقدمة في الذكاء الاصطناعي.';
 
   @override
   String get moreReminders => 'مزيد من التذكيرات والتخصيص.';
@@ -394,7 +395,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get privacyPolicyLink => 'سياسة الخصوصية';
 
   @override
-  String get youAreOnMaraPro => 'أنت على مرا برو';
+  String get youAreOnMaraPro => 'أنت على مَرَا برو';
 
   @override
   String get readyTitle => 'هل أنت مستعد للبدء؟';
@@ -544,7 +545,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get completeYourLastConversation => 'أكمل محادثتك الأخيرة';
 
   @override
-  String get yourDailyInsights => 'رؤىك اليومية';
+  String get yourDailyInsights => 'تقاريرك اليومية';
 
   @override
   String get mood => 'المزاج';
@@ -566,11 +567,11 @@ class AppLocalizationsAr extends AppLocalizations {
   String get summary => 'ملخص';
 
   @override
-  String get chatWithMara => 'تحدث مع مرا';
+  String get chatWithMara => 'تحدث مع مَرَا';
 
   @override
   String get drinkGlassOfWaterEveryMorning =>
-      'اشرب كوبًا من الماء كل صباح لتعزيز عملية الأيض لديك.';
+      'ابدأ يومك بكوب ماء لتحفيز حيوية جسمك.';
 
   @override
   String get home => 'الرئيسية';
@@ -579,21 +580,21 @@ class AppLocalizationsAr extends AppLocalizations {
   String get analyst => 'المحلل';
 
   @override
-  String get mara => 'مرا';
+  String get mara => 'مَرَا';
 
   @override
   String get allowCameraAccess => 'السماح بالوصول إلى الكاميرا';
 
   @override
   String get cameraAccessDescription =>
-      'يستخدم مرا الكاميرا لمساعدتك في تحليل تعابير وجهك واكتشاف التعب ودعم صحتك — مباشرة على جهازك. لا يتم تخزين أو مشاركة أي مقاطع فيديو أو صور. أبدًا.';
+      'يستخدم مَرَا الكاميرا لمساعدتك في تحليل تعابير وجهك واكتشاف التعب ودعم صحتك — مباشرة على جهازك. لا يتم تخزين أو مشاركة أي مقاطع فيديو أو صور. أبدًا.';
 
   @override
   String get allowMicrophoneAccess => 'السماح بالوصول إلى الميكروفون';
 
   @override
   String get microphoneAccessDescription =>
-      'يستمع مرا عندما تتحدث — حتى تتمكن من وصف أعراضك بشكل طبيعي، تمامًا مثل التحدث إلى صديق. يتم معالجة صوتك بأمان على جهازك ولا يتم تخزينه أو مشاركته أبدًا.';
+      'يستمع مَرَا عندما تتحدث — حتى تتمكن من وصف أعراضك بشكل طبيعي، تمامًا مثل التحدث إلى صديق. يتم معالجة صوتك بأمان على جهازك ولا يتم تخزينه أو مشاركته أبدًا.';
 
   @override
   String get enableNotifications => 'تفعيل الإشعارات';
@@ -610,7 +611,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get stayConnectedToYourHealth => 'ابق متصلًا بصحتك — بالطريقة الذكية.';
 
   @override
-  String get reviewPermissions => 'مراجعة الأذونات';
+  String get reviewPermissions => 'مراجعة الصلاحيات';
 
   @override
   String get startUsingMara => 'ابدأ استخدام مرا';
@@ -620,10 +621,10 @@ class AppLocalizationsAr extends AppLocalizations {
       'خصوصيتك دائمًا أولويتنا القصوى.';
 
   @override
-  String get maraChat => 'محادثة مرا';
+  String get maraChat => 'محادثة مَرَا';
 
   @override
-  String get whatsInYourHead => 'ماذا في رأسك؟';
+  String get whatsInYourHead => 'ما الذي ترغب في التحدث عنه؟';
 
   @override
   String get thanksForSharing => 'شكرًا للمشاركة، سأساعدك في تتبع هذا.';
