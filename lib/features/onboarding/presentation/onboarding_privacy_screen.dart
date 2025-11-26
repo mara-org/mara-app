@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../../core/widgets/primary_button.dart';
+
 import '../../../../l10n/app_localizations.dart';
+import '../../../core/widgets/primary_button.dart';
 
 class OnboardingPrivacyScreen extends StatelessWidget {
   const OnboardingPrivacyScreen({super.key});
@@ -10,7 +11,7 @@ class OnboardingPrivacyScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final h = MediaQuery.of(context).size.height;
-    
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Stack(
@@ -23,7 +24,7 @@ class OnboardingPrivacyScreen extends StatelessWidget {
               child: Column(
                 children: [
                   SizedBox(height: h * 0.18), // Top spacing similar to Figma
-                  
+
                   // 1) Title
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -38,9 +39,9 @@ class OnboardingPrivacyScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  
+
                   const SizedBox(height: 16),
-                  
+
                   // 2) Icons row (lock + globe)
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -68,9 +69,9 @@ class OnboardingPrivacyScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  
+
                   const SizedBox(height: 16),
-                  
+
                   // 3) "Mara understands 100+ languages"
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -85,9 +86,9 @@ class OnboardingPrivacyScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  
+
                   const SizedBox(height: 8),
-                  
+
                   // 4) Smaller description
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -106,48 +107,20 @@ class OnboardingPrivacyScreen extends StatelessWidget {
               ),
             ),
           ),
-          // Bottom white card (fixed height ~22% of screen) - same as welcome screen
+          // Continue button positioned at bottom
           Positioned(
-            bottom: 0,
+            bottom: MediaQuery.of(context).padding.bottom + 20,
             left: 0,
             right: 0,
-            child: Container(
-              height: h * 0.22 + MediaQuery.of(context).padding.bottom,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(28),
-                  topRight: Radius.circular(28),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    offset: const Offset(0, -4),
-                    blurRadius: 20,
-                  ),
-                ],
-              ),
-              child: Padding(
-                padding: EdgeInsetsDirectional.only(
-                  start: 24,
-                  end: 24,
-                  top: 32,
-                  bottom: MediaQuery.of(context).padding.bottom + 20,
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    PrimaryButton(
-                      text: l10n.continueButton,
-                      width: 324,
-                      height: 52,
-                      borderRadius: 20,
-                      onPressed: () {
-                        context.go('/onboarding-personalized');
-                      },
-                    ),
-                  ],
-                ),
+            child: Center(
+              child: PrimaryButton(
+                text: l10n.continueButton,
+                width: 324,
+                height: 52,
+                borderRadius: 20,
+                onPressed: () {
+                  context.go('/onboarding-personalized');
+                },
               ),
             ),
           ),
