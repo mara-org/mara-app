@@ -38,6 +38,19 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
     _yearController = FixedExtentScrollController();
     _monthController = FixedExtentScrollController();
     _dayController = FixedExtentScrollController();
+    
+    // Set default year to 1999
+    final defaultYear = 1999;
+    final yearIndex = _years.indexOf(defaultYear);
+    if (yearIndex != -1) {
+      _selectedYear = defaultYear;
+      // Scroll to 1999 after the first frame is rendered
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_yearController.hasClients) {
+          _yearController.jumpToItem(yearIndex);
+        }
+      });
+    }
   }
 
   @override
