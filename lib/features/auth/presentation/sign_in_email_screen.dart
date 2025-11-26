@@ -1,21 +1,23 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/widgets/mara_logo.dart';
 import '../../../core/widgets/mara_text_field.dart';
 import '../../../core/widgets/primary_button.dart';
+import '../../../core/providers/email_provider.dart';
 import '../../../l10n/app_localizations.dart';
 
-class SignInEmailScreen extends StatefulWidget {
+class SignInEmailScreen extends ConsumerStatefulWidget {
   const SignInEmailScreen({super.key});
 
   @override
-  State<SignInEmailScreen> createState() => _SignInEmailScreenState();
+  ConsumerState<SignInEmailScreen> createState() => _SignInEmailScreenState();
 }
 
-class _SignInEmailScreenState extends State<SignInEmailScreen> {
+class _SignInEmailScreenState extends ConsumerState<SignInEmailScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -89,6 +91,9 @@ class _SignInEmailScreenState extends State<SignInEmailScreen> {
 
   void _onVerifyPressed() {
     if (_formKey.currentState!.validate() && _agreedToTerms) {
+      // Save the email before navigating
+      final email = _emailController.text.trim();
+      ref.read(emailProvider.notifier).setEmail(email);
       // Navigate to verify email screen, then ready screen
       context.go('/verify-email');
     }

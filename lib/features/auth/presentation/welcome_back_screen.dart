@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/app_colors.dart';
@@ -6,16 +7,17 @@ import '../../../core/utils/platform_utils.dart';
 import '../../../core/widgets/mara_logo.dart';
 import '../../../core/widgets/mara_text_field.dart';
 import '../../../core/widgets/primary_button.dart';
+import '../../../core/providers/email_provider.dart';
 import '../../../l10n/app_localizations.dart';
 
-class WelcomeBackScreen extends StatefulWidget {
+class WelcomeBackScreen extends ConsumerStatefulWidget {
   const WelcomeBackScreen({super.key});
 
   @override
-  State<WelcomeBackScreen> createState() => _WelcomeBackScreenState();
+  ConsumerState<WelcomeBackScreen> createState() => _WelcomeBackScreenState();
 }
 
-class _WelcomeBackScreenState extends State<WelcomeBackScreen> {
+class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -49,6 +51,9 @@ class _WelcomeBackScreenState extends State<WelcomeBackScreen> {
 
   void _handleVerify() {
     if (_formKey.currentState!.validate()) {
+      // Save the email before navigating
+      final email = _emailController.text.trim();
+      ref.read(emailProvider.notifier).setEmail(email);
       // Navigate to Home screen
       context.go('/home');
     }

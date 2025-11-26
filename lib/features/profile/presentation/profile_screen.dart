@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/platform_utils.dart';
 import '../../../core/providers/subscription_provider.dart';
+import '../../../core/providers/email_provider.dart';
 import '../../../shared/system/system_providers.dart';
 import '../../../l10n/app_localizations.dart';
 import 'widgets/health_profile_section.dart';
@@ -18,7 +19,7 @@ class ProfileScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
-    final email = 'abdulaziz@example.com'; // Placeholder
+    final email = ref.watch(emailProvider) ?? 'No email'; // Get email from provider
 
     return Scaffold(
       backgroundColor: Colors.white, // Pure white background
