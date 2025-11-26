@@ -48,56 +48,55 @@ class _BloodTypeScreenState extends ConsumerState<BloodTypeScreen> {
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: PlatformUtils.getDefaultPadding(context),
-            child: Column(
-              children: [
-                const SizedBox(height: 20),
-                // Back button
-                Align(
-                  alignment: AlignmentDirectional.centerStart,
-                  child: GestureDetector(
-                    onTap: () => context.pop(),
-                    child: Container(
-                      width: 36,
-                      height: 36,
-                      decoration: BoxDecoration(
-                        color: AppColors.languageButtonColor.withOpacity(0.1),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.arrow_back,
-                        color: AppColors.languageButtonColor,
-                        size: 20,
-                      ),
+        child: Padding(
+          padding: PlatformUtils.getDefaultPadding(context),
+          child: Column(
+            children: [
+              const SizedBox(height: 20),
+              // Back button
+              Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: GestureDetector(
+                  onTap: () => context.pop(),
+                  child: Container(
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      color: AppColors.languageButtonColor.withOpacity(0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.arrow_back,
+                      color: AppColors.languageButtonColor,
+                      size: 20,
                     ),
                   ),
                 ),
-                const SizedBox(height: 20),
-                // Mara logo
-                const Center(
-                  child: MaraLogo(
-                    width: 258,
-                    height: 202,
-                  ),
+              ),
+              const SizedBox(height: 20),
+              // Mara logo
+              const Center(
+                child: MaraLogo(
+                  width: 258,
+                  height: 202,
                 ),
-                const SizedBox(height: 40),
-                // Title
-                Text(
-                  l10n.whatsYourBloodType,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: AppColors.languageButtonColor,
-                    fontSize: 26,
-                    fontWeight: FontWeight.normal,
-                    height: 1,
-                  ),
+              ),
+              const SizedBox(height: 24),
+              // Title
+              Text(
+                l10n.whatsYourBloodType,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: AppColors.languageButtonColor,
+                  fontSize: 26,
+                  fontWeight: FontWeight.normal,
+                  height: 1,
                 ),
-                const SizedBox(height: 40),
-                // Blood type grid
-                GridView.builder(
-                  shrinkWrap: true,
+              ),
+              const SizedBox(height: 24),
+              // Blood type grid (flexible to take remaining space)
+              Expanded(
+                child: GridView.builder(
                   physics: const NeverScrollableScrollPhysics(),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
@@ -120,18 +119,18 @@ class _BloodTypeScreenState extends ConsumerState<BloodTypeScreen> {
                     );
                   },
                 ),
-                const SizedBox(height: 40),
-                // Continue button
-                PrimaryButton(
-                  text: l10n.continueButtonText,
-                  width: 324,
-                  height: 52,
-                  borderRadius: 20,
-                  onPressed: _selectedBloodType != null ? _handleContinue : null,
-                ),
-                const SizedBox(height: 20),
-              ],
-            ),
+              ),
+              const SizedBox(height: 24),
+              // Continue button
+              PrimaryButton(
+                text: l10n.continueButtonText,
+                width: 324,
+                height: 52,
+                borderRadius: 20,
+                onPressed: _selectedBloodType != null ? _handleContinue : null,
+              ),
+              const SizedBox(height: 20),
+            ],
           ),
         ),
       ),

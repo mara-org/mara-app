@@ -141,21 +141,15 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
                   ),
                 ),
                 const SizedBox(height: 40),
-                // Title (moved 4px to the right from previous position)
-                Padding(
-                  padding: const EdgeInsetsDirectional.only(start: 1),
-                  child: Align(
-                    alignment: AlignmentDirectional.centerStart,
-                    child: Text(
-                      l10n.whenWereYouBorn,
-                      textAlign: TextAlign.start,
-                      style: TextStyle(
-                        color: AppColors.languageButtonColor,
-                        fontSize: 26,
-                        fontWeight: FontWeight.normal,
-                        height: 1,
-                      ),
-                    ),
+                // Title
+                Text(
+                  l10n.whenWereYouBorn,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: AppColors.languageButtonColor,
+                    fontSize: 26,
+                    fontWeight: FontWeight.normal,
+                    height: 1,
                   ),
                 ),
                 const SizedBox(height: 40),
