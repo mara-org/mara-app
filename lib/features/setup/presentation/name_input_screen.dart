@@ -98,21 +98,15 @@ class _NameInputScreenState extends ConsumerState<NameInputScreen> {
                   ),
                 ),
                 const SizedBox(height: 40),
-                // Title (positioned at x36)
-                Padding(
-                  padding: const EdgeInsetsDirectional.only(start: 36),
-                  child: Align(
-                    alignment: AlignmentDirectional.centerStart,
-                    child: Text(
-                      l10n.whatsYourName,
-                      textAlign: TextAlign.start,
-                      style: TextStyle(
-                        color: AppColors.languageButtonColor,
-                        fontSize: 26,
-                        fontWeight: FontWeight.normal,
-                        height: 1,
-                      ),
-                    ),
+                // Title
+                Text(
+                  l10n.whatsYourName,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: AppColors.languageButtonColor,
+                    fontSize: 26,
+                    fontWeight: FontWeight.normal,
+                    height: 1,
                   ),
                 ),
                 const SizedBox(height: 16),
