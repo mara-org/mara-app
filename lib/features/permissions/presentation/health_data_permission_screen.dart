@@ -30,85 +30,104 @@ class HealthDataPermissionScreen extends ConsumerWidget {
         child: SafeArea(
           child: Stack(
             children: [
-              SingleChildScrollView(
-                child: Padding(
-                  padding: PlatformUtils.getDefaultPadding(context),
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 40),
-                      // Spacer for image
-                      const SizedBox(height: 120),
-                      const SizedBox(height: 40),
-                  // Title
-                  Text(
-                    l10n.connectHealthData,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: AppColors.textPrimary,
-                      fontSize: 26,
-                      fontWeight: FontWeight.w600,
-                      height: 1,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  // Description
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Text(
-                      l10n.healthDataDescription,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: AppColors.textSecondary,
-                        fontSize: 16,
-                        fontWeight: FontWeight.normal,
-                        height: 1.5,
+              Column(
+                children: [
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Padding(
+                        padding: PlatformUtils.getDefaultPadding(context),
+                        child: Column(
+                          children: [
+                            const SizedBox(height: 40),
+                            // Spacer for image
+                            const SizedBox(height: 120),
+                            const SizedBox(height: 40),
+                            // Title
+                            Text(
+                              l10n.connectHealthData,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: AppColors.textPrimary,
+                                fontSize: 26,
+                                fontWeight: FontWeight.w600,
+                                height: 1,
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            // Description
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 20),
+                              child: Text(
+                                l10n.healthDataDescription,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: AppColors.textSecondary,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.normal,
+                                  height: 1.5,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 40),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 160),
-                  // Connect button
-                  PrimaryButton(
-                    text: l10n.connectHealthData,
-                    onPressed: () {
-                      ref.read(permissionsProvider.notifier).setHealthData(true);
-                      context.push('/permissions-summary');
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  // Not now button
-                  TextButton(
-                    onPressed: () {
-                      ref.read(permissionsProvider.notifier).setHealthData(false);
-                      context.push('/permissions-summary');
-                    },
-                    child: Text(
-                      l10n.notNow,
-                      style: TextStyle(
-                        color: AppColors.textSecondary,
-                        fontSize: 16,
-                        fontWeight: FontWeight.normal,
+                  // Buttons section - fixed at bottom with consistent height
+                  SizedBox(
+                    height: 220, // Fixed height to ensure buttons are at same position
+                    child: Padding(
+                      padding: PlatformUtils.getDefaultPadding(context),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // Connect button
+                          PrimaryButton(
+                            text: l10n.connectHealthData,
+                            onPressed: () {
+                              ref.read(permissionsProvider.notifier).setHealthData(true);
+                              context.push('/permissions-summary');
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                          // Not now button
+                          TextButton(
+                            onPressed: () {
+                              ref.read(permissionsProvider.notifier).setHealthData(false);
+                              context.push('/permissions-summary');
+                            },
+                            child: Text(
+                              l10n.notNow,
+                              style: TextStyle(
+                                color: AppColors.textSecondary,
+                                fontSize: 16,
+                                fontWeight: FontWeight.normal,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          // Privacy note
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: Text(
+                              l10n.stayConnectedToYourHealth,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: AppColors.textSecondary.withOpacity(0.7),
+                                fontSize: 13,
+                                fontWeight: FontWeight.normal,
+                                height: 1.5,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                        ],
                       ),
                     ),
                   ),
-                  const SizedBox(height: 40),
-                  // Privacy note
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Text(
-                      l10n.stayConnectedToYourHealth,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: AppColors.textSecondary.withOpacity(0.7),
-                        fontSize: 13,
-                        fontWeight: FontWeight.normal,
-                        height: 1.5,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                    ],
-                  ),
-                ),
+                ],
               ),
               // Health data image centered horizontally at y288
               Positioned(

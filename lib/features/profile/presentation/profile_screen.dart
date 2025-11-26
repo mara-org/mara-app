@@ -141,43 +141,32 @@ class ProfileScreen extends ConsumerWidget {
                                 width: 1,
                               ),
                             ),
-                            child: InkWell(
-                              onTap: () {
-                                // TODO: Implement edit profile
-                              },
-                              borderRadius: BorderRadius.circular(8),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          l10n.emailLabel,
-                                          style: TextStyle(
-                                            color: const Color(0xFF0F172A), // #0F172A
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w500,
-                                          ),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        l10n.emailLabel,
+                                        style: TextStyle(
+                                          color: const Color(0xFF0F172A), // #0F172A
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500,
                                         ),
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          email,
-                                          style: TextStyle(
-                                            color: const Color(0xFF64748B), // #64748B
-                                            fontSize: 14,
-                                          ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        email,
+                                        style: TextStyle(
+                                          color: const Color(0xFF64748B), // #64748B
+                                          fontSize: 14,
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
                                   ),
-                                  Icon(
-                                    Icons.arrow_forward_ios,
-                                    size: 16,
-                                    color: AppColors.textSecondary,
-                                  ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
                         ],

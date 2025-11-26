@@ -30,70 +30,92 @@ class NotificationsPermissionScreen extends ConsumerWidget {
         child: SafeArea(
           child: Stack(
             children: [
-              SingleChildScrollView(
-                child: Padding(
-                  padding: PlatformUtils.getDefaultPadding(context),
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 40),
-                      // Spacer for image
-                      const SizedBox(height: 120),
-                      const SizedBox(height: 40),
-                  // Title
-                  Text(
-                    l10n.enableNotifications,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: AppColors.textPrimary,
-                      fontSize: 26,
-                      fontWeight: FontWeight.w600,
-                      height: 1,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  // Description
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Text(
-                      l10n.notificationsDescription,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: AppColors.textSecondary,
-                        fontSize: 15,
-                        fontWeight: FontWeight.normal,
-                        height: 1.5,
+              Column(
+                children: [
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Padding(
+                        padding: PlatformUtils.getDefaultPadding(context),
+                        child: Column(
+                          children: [
+                            const SizedBox(height: 40),
+                            // Spacer for image
+                            const SizedBox(height: 120),
+                            const SizedBox(height: 40),
+                            // Title
+                            Text(
+                              l10n.enableNotifications,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: AppColors.textPrimary,
+                                fontSize: 26,
+                                fontWeight: FontWeight.w600,
+                                height: 1,
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            // Description
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 20),
+                              child: Text(
+                                l10n.notificationsDescription,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: AppColors.textSecondary,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.normal,
+                                  height: 1.5,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 40),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 160),
-                  // Allow button
-                  PrimaryButton(
-                    text: l10n.allowNotifications,
-                    onPressed: () {
-                      ref.read(permissionsProvider.notifier).setNotifications(true);
-                      context.push('/health-data-permission');
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  // Not now button
-                  TextButton(
-                    onPressed: () {
-                      ref.read(permissionsProvider.notifier).setNotifications(false);
-                      context.push('/health-data-permission');
-                    },
-                    child: Text(
-                      l10n.notNow,
-                      style: TextStyle(
-                        color: AppColors.textSecondary,
-                        fontSize: 16,
-                        fontWeight: FontWeight.normal,
+                  // Buttons section - fixed at bottom with consistent height
+                  SizedBox(
+                    height: 220, // Fixed height to ensure buttons are at same position
+                    child: Padding(
+                      padding: PlatformUtils.getDefaultPadding(context),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // Allow button
+                          PrimaryButton(
+                            text: l10n.allowNotifications,
+                            onPressed: () {
+                              ref.read(permissionsProvider.notifier).setNotifications(true);
+                              context.push('/health-data-permission');
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                          // Not now button
+                          TextButton(
+                            onPressed: () {
+                              ref.read(permissionsProvider.notifier).setNotifications(false);
+                              context.push('/health-data-permission');
+                            },
+                            child: Text(
+                              l10n.notNow,
+                              style: TextStyle(
+                                color: AppColors.textSecondary,
+                                fontSize: 16,
+                                fontWeight: FontWeight.normal,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          // Spacer to match privacy note height on other screens
+                          const SizedBox(height: 32),
+                          const SizedBox(height: 20),
+                        ],
                       ),
                     ),
                   ),
-                  const SizedBox(height: 20),
-                    ],
-                  ),
-                ),
+                ],
               ),
               // Notifications image centered horizontally at y288
               Positioned(
