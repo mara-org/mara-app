@@ -28,6 +28,7 @@ class NameInputScreen extends ConsumerStatefulWidget {
 
 class _NameInputScreenState extends ConsumerState<NameInputScreen> {
   late final TextEditingController _nameController;
+  bool _canContinue = false;
 
   TextInputFormatter _formatterForLanguage(String languageCode) {
     if (languageCode == 'en') {
@@ -46,12 +47,13 @@ class _NameInputScreenState extends ConsumerState<NameInputScreen> {
   void initState() {
     super.initState();
     _nameController = TextEditingController();
-    if (widget.isFromProfile) {
+    if (widget.isFromProfile && !widget.fromLanguageChange) {
       final currentName = ref.read(userProfileProvider).name ?? '';
       if (currentName.isNotEmpty) {
         _nameController.text = currentName;
       }
     }
+    _canContinue = _nameController.text.trim().isNotEmpty;
   }
 
   @override
@@ -75,17 +77,37 @@ class _NameInputScreenState extends ConsumerState<NameInputScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final languageCode = Localizations.localeOf(context).languageCode;
-    final nameFormatter = _formatterForLanguage(languageCode);
-    final formatters = <TextInputFormatter>[nameFormatter];
-    if (languageCode == 'ar') {
-      formatters.add(
-        FilteringTextInputFormatter.deny(RegExp(r'[0-9٠-٩۰-۹]')),
-      );
+    final resolvedLocale = Localizations.localeOf(context).languageCode;
+    final effectiveLanguage =
+        widget.languageCode ?? resolvedLocale;
+    final formatters = <TextInputFormatter>[];
+
+    if (widget.fromLanguageChange) {
+      if (effectiveLanguage == 'en') {
+        formatters.add(
+          FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z ]')),
+        );
+      } else if (effectiveLanguage == 'ar') {
+        formatters.add(
+          FilteringTextInputFormatter.allow(
+            RegExp(r'[\u0600-\u06FF ]'),
+          ),
+        );
+        formatters.add(
+          FilteringTextInputFormatter.deny(RegExp(r'[0-9٠-٩۰-۹]')),
+        );
+      } else {
+        formatters.add(_formatterForLanguage(effectiveLanguage));
+      }
+    } else {
+      final nameFormatter = _formatterForLanguage(effectiveLanguage);
+      formatters.add(nameFormatter);
+      if (effectiveLanguage == 'ar') {
+        formatters.add(
+          FilteringTextInputFormatter.deny(RegExp(r'[0-9٠-٩۰-۹]')),
+        );
+      }
     }
-    
-    final name = _nameController.text.trim();
-    final canContinue = name.isNotEmpty;
 
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
@@ -128,7 +150,9 @@ class _NameInputScreenState extends ConsumerState<NameInputScreen> {
                 // Title
                 Text(
                   widget.fromLanguageChange
-                      ? _languageChangeTitle(widget.languageCode ?? languageCode)
+                      ? _languageChangeTitle(
+                          widget.languageCode ?? resolvedLocale,
+                        )
                       : l10n.whatsYourName,
                   textAlign: TextAlign.center,
                   style: TextStyle(
@@ -158,7 +182,12 @@ class _NameInputScreenState extends ConsumerState<NameInputScreen> {
                     child: MaraTextField(
                       hint: l10n.enterYourName,
                       controller: _nameController,
-                      onChanged: (_) => setState(() {}),
+                      onChanged: (_) {
+                        setState(() {
+                          _canContinue =
+                              _nameController.text.trim().isNotEmpty;
+                        });
+                      },
                       inputFormatters: formatters,
                     ),
                   ),
@@ -170,7 +199,7 @@ class _NameInputScreenState extends ConsumerState<NameInputScreen> {
                   width: 324,
                   height: 52,
                   borderRadius: 20,
-                  onPressed: canContinue ? _handleContinue : null,
+                  onPressed: _canContinue ? _handleContinue : null,
                 ),
                 const SizedBox(height: 20),
               ],
