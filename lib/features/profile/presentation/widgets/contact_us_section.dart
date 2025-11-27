@@ -32,8 +32,7 @@ class ContactUsSection extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             _SocialIconButton(
-              assetPath: null, // Use Material icon for X/Twitter
-              icon: Icons.close_rounded, // X icon
+              assetPath: 'assets/socialMedia/logo-black.png',
               onTap: () => _openUrl('https://x.com/iamurmara?s=21'),
             ),
             const SizedBox(width: 12),
@@ -58,7 +57,7 @@ class ContactUsSection extends StatelessWidget {
             ),
             const SizedBox(width: 12),
             _SocialIconButton(
-              assetPath: 'assets/socialMedia/Discord-Symbol-Blurple.png',
+              assetPath: 'assets/socialMedia/Discord-Symbol-Blurple.PNG',
               onTap: () => _openUrl('https://discord.com/invite/hVxvU4ekhJ'),
             ),
           ],
