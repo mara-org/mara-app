@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
 import '../../../../core/providers/language_provider.dart';
 import '../../../../core/providers/settings_provider.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -40,7 +42,7 @@ class AppSettingsSection extends ConsumerWidget {
             ),
           ),
           child: InkWell(
-            onTap: () => _showLanguagePicker(context, ref),
+            onTap: () => context.push('/language-selector?from=profile'),
             borderRadius: BorderRadius.circular(12),
             child: Row(
               children: [
@@ -72,7 +74,9 @@ class AppSettingsSection extends ConsumerWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        language == AppLanguage.english ? l10n.english : l10n.arabic,
+                        language == AppLanguage.english
+                            ? l10n.english
+                            : l10n.arabic,
                         style: TextStyle(
                           color: const Color(0xFF64748B), // #64748B
                           fontSize: 14,
@@ -121,32 +125,30 @@ class AppSettingsSection extends ConsumerWidget {
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        l10n.healthReminders,
-                        style: TextStyle(
-                          color: const Color(0xFF0F172A), // #0F172A
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
+                  children: [
+                    Text(
+                      l10n.healthReminders,
+                      style: TextStyle(
+                        color: const Color(0xFF0F172A), // #0F172A
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        l10n.healthRemindersSubtitle,
-                        style: TextStyle(
-                          color: const Color(0xFF64748B), // #64748B
-                          fontSize: 14,
-                        ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      l10n.healthRemindersSubtitle,
+                      style: TextStyle(
+                        color: const Color(0xFF64748B), // #64748B
+                        fontSize: 14,
                       ),
-                    ],
+                    ),
+                  ],
                 ),
               ),
               Switch(
                 value: settings.healthReminders,
                 onChanged: (value) {
-                  ref
-                      .read(settingsProvider.notifier)
-                      .setHealthReminders(value);
+                  ref.read(settingsProvider.notifier).setHealthReminders(value);
                 },
                 activeColor: AppColors.languageButtonColor,
               ),
@@ -184,24 +186,24 @@ class AppSettingsSection extends ConsumerWidget {
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        l10n.emailNotifications,
-                        style: TextStyle(
-                          color: const Color(0xFF0F172A), // #0F172A
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
+                  children: [
+                    Text(
+                      l10n.emailNotifications,
+                      style: TextStyle(
+                        color: const Color(0xFF0F172A), // #0F172A
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        l10n.emailNotificationsSubtitle,
-                        style: TextStyle(
-                          color: const Color(0xFF64748B), // #64748B
-                          fontSize: 14,
-                        ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      l10n.emailNotificationsSubtitle,
+                      style: TextStyle(
+                        color: const Color(0xFF64748B), // #64748B
+                        fontSize: 14,
                       ),
-                    ],
+                    ),
+                  ],
                 ),
               ),
               Switch(
@@ -219,57 +221,4 @@ class AppSettingsSection extends ConsumerWidget {
       ],
     );
   }
-
-  void _showLanguagePicker(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) {
-        return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  l10n.selectLanguage,
-                  style: TextStyle(
-                    color: AppColors.textPrimary,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 20),
-                ListTile(
-                  title: Text(l10n.english),
-                  leading: const Icon(Icons.language),
-                  onTap: () {
-                    ref
-                        .read(languageProvider.notifier)
-                        .setLanguage(AppLanguage.english);
-                    Navigator.pop(context);
-                  },
-                ),
-                ListTile(
-                  title: Text(l10n.arabic),
-                  leading: const Icon(Icons.language),
-                  onTap: () {
-                    ref
-                        .read(languageProvider.notifier)
-                        .setLanguage(AppLanguage.arabic);
-                    Navigator.pop(context);
-                  },
-                ),
-                const SizedBox(height: 20),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
 }
-

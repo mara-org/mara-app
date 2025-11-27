@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../core/widgets/mara_logo.dart';
-import '../../../core/theme/app_colors.dart';
+
 import '../../../core/providers/language_provider.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/mara_logo.dart';
 
 class LanguageSelectorScreen extends ConsumerWidget {
-  const LanguageSelectorScreen({super.key});
+  final bool isFromProfile;
+
+  const LanguageSelectorScreen({super.key, this.isFromProfile = false});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -76,11 +79,21 @@ class LanguageSelectorScreen extends ConsumerWidget {
                     _LanguageButton(
                       text: 'العربية',
                       onPressed: () async {
-                        await ref.read(appLocaleProvider.notifier).setLocale(const Locale('ar'));
+                        await ref
+                            .read(appLocaleProvider.notifier)
+                            .setLocale(const Locale('ar'));
+                        // Update old language provider for backward compatibility
+                        ref
+                            .read(languageProvider.notifier)
+                            .setLanguage(AppLanguage.arabic);
                         // Wait for multiple frames to ensure MaterialApp and all widgets rebuild
                         await Future.delayed(const Duration(milliseconds: 50));
                         if (context.mounted) {
-                          context.go('/welcome-intro');
+                          if (isFromProfile) {
+                            context.go('/profile');
+                          } else {
+                            context.go('/welcome-intro');
+                          }
                         }
                       },
                     ),
@@ -89,11 +102,21 @@ class LanguageSelectorScreen extends ConsumerWidget {
                     _LanguageButton(
                       text: 'English',
                       onPressed: () async {
-                        await ref.read(appLocaleProvider.notifier).setLocale(const Locale('en'));
+                        await ref
+                            .read(appLocaleProvider.notifier)
+                            .setLocale(const Locale('en'));
+                        // Update old language provider for backward compatibility
+                        ref
+                            .read(languageProvider.notifier)
+                            .setLanguage(AppLanguage.english);
                         // Wait for multiple frames to ensure MaterialApp and all widgets rebuild
                         await Future.delayed(const Duration(milliseconds: 50));
                         if (context.mounted) {
-                          context.go('/welcome-intro');
+                          if (isFromProfile) {
+                            context.go('/profile');
+                          } else {
+                            context.go('/welcome-intro');
+                          }
                         }
                       },
                     ),
@@ -152,4 +175,3 @@ class _LanguageButton extends StatelessWidget {
     );
   }
 }
-

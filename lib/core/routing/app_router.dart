@@ -1,45 +1,46 @@
 import 'package:go_router/go_router.dart';
-import '../../features/splash/presentation/splash_screen.dart';
-import '../../features/onboarding/presentation/language_selector_screen.dart';
-import '../../features/onboarding/presentation/welcome_intro_screen.dart';
-import '../../features/onboarding/presentation/onboarding_insights_screen.dart';
-import '../../features/onboarding/presentation/onboarding_privacy_screen.dart';
-import '../../features/onboarding/presentation/onboarding_personalized_screen.dart';
-import '../../features/onboarding/onboarding_screen.dart';
-import '../../features/auth/presentation/sign_up_choices_screen.dart';
-import '../../features/auth/presentation/sign_in_email_screen.dart';
-import '../../features/auth/presentation/verify_email_screen.dart';
-import '../../features/auth/presentation/welcome_back_screen.dart';
+
+import '../../features/analytics/presentation/analyst_dashboard_screen.dart';
+import '../../features/auth/auth_screen.dart';
 import '../../features/auth/presentation/forgot_password_email_screen.dart';
 import '../../features/auth/presentation/forgot_password_verify_screen.dart';
 import '../../features/auth/presentation/reset_password_screen.dart';
-import '../../features/auth/auth_screen.dart';
-import '../../features/setup/presentation/ready_screen.dart';
-import '../../features/setup/presentation/name_input_screen.dart';
-import '../../features/setup/presentation/dob_input_screen.dart';
-import '../../features/setup/presentation/gender_screen.dart';
-import '../../features/setup/presentation/height_screen.dart';
-import '../../features/setup/presentation/weight_screen.dart';
-import '../../features/setup/presentation/blood_type_screen.dart';
-import '../../features/setup/presentation/goals_screen.dart';
-import '../../features/setup/presentation/welcome_personal_screen.dart';
-import '../../features/setup/setup_screen.dart';
+import '../../features/auth/presentation/sign_in_email_screen.dart';
+import '../../features/auth/presentation/sign_up_choices_screen.dart';
+import '../../features/auth/presentation/verify_email_screen.dart';
+import '../../features/auth/presentation/welcome_back_screen.dart';
+import '../../features/chat/presentation/mara_chat_screen.dart';
+import '../../features/home/presentation/home_screen.dart';
+import '../../features/onboarding/onboarding_screen.dart';
+import '../../features/onboarding/presentation/language_selector_screen.dart';
+import '../../features/onboarding/presentation/onboarding_insights_screen.dart';
+import '../../features/onboarding/presentation/onboarding_personalized_screen.dart';
+import '../../features/onboarding/presentation/onboarding_privacy_screen.dart';
+import '../../features/onboarding/presentation/welcome_intro_screen.dart';
+import '../../features/permissions/permissions_screen.dart';
 import '../../features/permissions/presentation/camera_permission_screen.dart';
+import '../../features/permissions/presentation/health_data_permission_screen.dart';
 import '../../features/permissions/presentation/microphone_permission_screen.dart';
 import '../../features/permissions/presentation/notifications_permission_screen.dart';
-import '../../features/permissions/presentation/health_data_permission_screen.dart';
 import '../../features/permissions/presentation/permissions_summary_screen.dart';
-import '../../features/permissions/permissions_screen.dart';
-import '../../features/home/presentation/home_screen.dart';
-import '../../features/analytics/presentation/analyst_dashboard_screen.dart';
-import '../../features/chat/presentation/mara_chat_screen.dart';
-import '../../features/profile/presentation/profile_screen.dart';
 import '../../features/profile/presentation/privacy_webview_screen.dart';
-import '../../features/subscription/presentation/subscription_screen.dart';
-import '../../features/settings/presentation/settings_screen.dart';
-import '../../features/settings/presentation/privacy_policy_screen.dart';
-import '../../features/settings/presentation/terms_of_service_screen.dart';
+import '../../features/profile/presentation/profile_screen.dart';
 import '../../features/settings/presentation/logout_confirmation_screen.dart';
+import '../../features/settings/presentation/privacy_policy_screen.dart';
+import '../../features/settings/presentation/settings_screen.dart';
+import '../../features/settings/presentation/terms_of_service_screen.dart';
+import '../../features/setup/presentation/blood_type_screen.dart';
+import '../../features/setup/presentation/dob_input_screen.dart';
+import '../../features/setup/presentation/gender_screen.dart';
+import '../../features/setup/presentation/goals_screen.dart';
+import '../../features/setup/presentation/height_screen.dart';
+import '../../features/setup/presentation/name_input_screen.dart';
+import '../../features/setup/presentation/ready_screen.dart';
+import '../../features/setup/presentation/weight_screen.dart';
+import '../../features/setup/presentation/welcome_personal_screen.dart';
+import '../../features/setup/setup_screen.dart';
+import '../../features/splash/presentation/splash_screen.dart';
+import '../../features/subscription/presentation/subscription_screen.dart';
 
 class AppRouter {
   AppRouter._();
@@ -53,7 +54,10 @@ class AppRouter {
       ),
       GoRoute(
         path: '/language-selector',
-        builder: (context, state) => const LanguageSelectorScreen(),
+        builder: (context, state) {
+          final isFromProfile = state.uri.queryParameters['from'] == 'profile';
+          return LanguageSelectorScreen(isFromProfile: isFromProfile);
+        },
       ),
       GoRoute(
         path: '/welcome-intro',
@@ -235,4 +239,3 @@ class AppRouter {
     ],
   );
 }
-
