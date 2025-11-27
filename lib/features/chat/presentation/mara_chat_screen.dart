@@ -310,29 +310,7 @@ class _MessageBubble extends StatelessWidget {
       child: Row(
         mainAxisAlignment:
             isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (!isUser) ...[
-            Container(
-              width: 32,
-              height: 32,
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [
-                    AppColors.gradientStart,
-                    AppColors.languageButtonColor,
-                  ],
-                ),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.smart_toy,
-                color: Colors.white,
-                size: 20,
-              ),
-            ),
-            const SizedBox(width: 8),
-          ],
           Flexible(
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -352,22 +330,6 @@ class _MessageBubble extends StatelessWidget {
               ),
             ),
           ),
-          if (isUser) ...[
-            const SizedBox(width: 8),
-            Container(
-              width: 32,
-              height: 32,
-              decoration: BoxDecoration(
-                color: AppColors.textSecondary.withOpacity(0.2),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.person,
-                color: AppColors.textSecondary,
-                size: 20,
-              ),
-            ),
-          ],
         ],
       ),
     );
