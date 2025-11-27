@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../theme/app_colors.dart';
 import '../utils/platform_utils.dart';
 
@@ -12,6 +13,7 @@ class MaraTextField extends StatelessWidget {
   final Widget? suffixIcon;
   final bool enabled;
   final void Function(String)? onChanged;
+  final List<TextInputFormatter>? inputFormatters;
 
   const MaraTextField({
     super.key,
@@ -24,6 +26,7 @@ class MaraTextField extends StatelessWidget {
     this.suffixIcon,
     this.enabled = true,
     this.onChanged,
+    this.inputFormatters,
   });
 
   @override
@@ -37,6 +40,7 @@ class MaraTextField extends StatelessWidget {
       validator: validator,
       enabled: enabled,
       onChanged: onChanged,
+      inputFormatters: inputFormatters,
       style: TextStyle(
         fontFamily: 'Roboto',
         fontSize: isIOS ? 17 : 16,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/widgets/mara_logo.dart';
@@ -20,6 +21,19 @@ class NameInputScreen extends ConsumerStatefulWidget {
 
 class _NameInputScreenState extends ConsumerState<NameInputScreen> {
   late final TextEditingController _nameController;
+
+  TextInputFormatter _formatterForLanguage(String languageCode) {
+    if (languageCode == 'en') {
+      return FilteringTextInputFormatter.allow(RegExp(r'^[a-zA-Z ]*$'));
+    }
+    if (languageCode == 'ar') {
+      return FilteringTextInputFormatter.allow(RegExp(r'^[\u0600-\u06FF ]*$'));
+    }
+    // Fallback to allow any Unicode letters plus spaces.
+    return FilteringTextInputFormatter.allow(
+      RegExp(r'^[\p{L} ]*$', unicode: true),
+    );
+  }
 
   @override
   void initState() {
@@ -49,6 +63,14 @@ class _NameInputScreenState extends ConsumerState<NameInputScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final languageCode = Localizations.localeOf(context).languageCode;
+    final nameFormatter = _formatterForLanguage(languageCode);
+    final formatters = <TextInputFormatter>[nameFormatter];
+    if (languageCode == 'ar') {
+      formatters.add(
+        FilteringTextInputFormatter.deny(RegExp(r'[0-9٠-٩۰-۹]')),
+      );
+    }
     // Pre-populate with current name if coming from profile (only once)
     if (widget.isFromProfile && _nameController.text.isEmpty) {
       final currentName = ref.read(userProfileProvider).name ?? '';
@@ -130,6 +152,7 @@ class _NameInputScreenState extends ConsumerState<NameInputScreen> {
                       hint: l10n.enterYourName,
                       controller: _nameController,
                       onChanged: (_) => setState(() {}),
+                      inputFormatters: formatters,
                     ),
                   ),
                 ),
