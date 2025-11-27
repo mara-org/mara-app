@@ -1136,6 +1136,30 @@ abstract class AppLocalizations {
   /// **'Mood'**
   String get mood;
 
+  /// No description provided for @steps.
+  ///
+  /// In en, this message translates to:
+  /// **'Steps'**
+  String get steps;
+
+  /// No description provided for @todaySteps.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s steps'**
+  String get todaySteps;
+
+  /// No description provided for @ofSteps.
+  ///
+  /// In en, this message translates to:
+  /// **'of {steps} steps'**
+  String ofSteps(int steps);
+
+  /// No description provided for @startWalkingToSeeProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Start walking to see your progress'**
+  String get startWalkingToSeeProgress;
+
   /// No description provided for @sleep.
   ///
   /// In en, this message translates to:

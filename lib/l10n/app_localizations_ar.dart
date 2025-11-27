@@ -551,6 +551,20 @@ class AppLocalizationsAr extends AppLocalizations {
   String get mood => 'المزاج';
 
   @override
+  String get steps => 'الخطوات';
+
+  @override
+  String get todaySteps => 'خطوات اليوم';
+
+  @override
+  String ofSteps(int steps) {
+    return 'من $steps خطوة';
+  }
+
+  @override
+  String get startWalkingToSeeProgress => 'ابدأ المشي لرؤية تقدمك';
+
+  @override
   String get sleep => 'النوم';
 
   @override

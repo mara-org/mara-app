@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
+import '../../../core/providers/steps_provider.dart';
 import '../../../core/providers/user_profile_provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/platform_utils.dart';
@@ -241,17 +242,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       Row(
                         children: [
                           Expanded(
-                            child: _InsightCard(
-                              label: l10n.mood,
-                              value: 'calm',
-                              icon: Icons.sentiment_satisfied,
-                            ),
+                            child: _StepsCard(),
                           ),
                           const SizedBox(width: 12),
                           Expanded(
                             child: _InsightCard(
                               label: l10n.sleep,
-                              value: '7h 25m',
+                              value: '0h',
                               icon: Icons.bedtime,
                             ),
                           ),
@@ -259,7 +256,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           Expanded(
                             child: _InsightCard(
                               label: l10n.water,
-                              value: '2.5L',
+                              value: '0L',
                               icon: Icons.water_drop,
                             ),
                           ),
@@ -459,6 +456,87 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             icon: const Icon(Icons.chat),
             label: l10n.mara,
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class _StepsCard extends ConsumerWidget {
+  const _StepsCard();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final steps = ref.watch(stepsProvider);
+    final stepsGoal = ref.watch(stepsGoalProvider);
+
+    // Format step count with commas
+    final formattedSteps = NumberFormat('#,###').format(steps);
+
+    // Determine what to display
+    final String displayValue;
+    final String? subtitle;
+
+    if (steps == 0) {
+      displayValue = '0';
+      subtitle = null;
+    } else {
+      displayValue = formattedSteps;
+      subtitle = l10n.ofSteps(stepsGoal);
+    }
+
+    return Container(
+      height: 100,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        color: AppColors.permissionCardBackground,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.25),
+            offset: const Offset(0, 4),
+            blurRadius: 4,
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            l10n.steps,
+            style: TextStyle(
+              color: AppColors.languageButtonColor,
+              fontSize: 15,
+              fontWeight: FontWeight.normal,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Icon(
+            Icons.directions_walk,
+            color: AppColors.languageButtonColor,
+            size: 32,
+          ),
+          const SizedBox(height: 4),
+          Text(
+            displayValue,
+            style: TextStyle(
+              color: AppColors.languageButtonColor,
+              fontSize: 13,
+              fontWeight: FontWeight.normal,
+            ),
+          ),
+          if (subtitle != null) ...[
+            const SizedBox(height: 2),
+            Text(
+              subtitle,
+              style: TextStyle(
+                color: AppColors.languageButtonColor.withOpacity(0.7),
+                fontSize: 10,
+                fontWeight: FontWeight.normal,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ],
       ),
     );

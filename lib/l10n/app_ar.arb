@@ -200,6 +200,17 @@
   "completeYourLastConversation": "أكمل محادثتك الأخيرة",
   "yourDailyInsights": "تقاريرك اليومية",
   "mood": "المزاج",
+  "steps": "الخطوات",
+  "todaySteps": "خطوات اليوم",
+  "ofSteps": "من {steps} خطوة",
+  "@ofSteps": {
+    "placeholders": {
+      "steps": {
+        "type": "int"
+      }
+    }
+  },
+  "startWalkingToSeeProgress": "ابدأ المشي لرؤية تقدمك",
   "sleep": "النوم",
   "water": "الماء",
   "vitalSigns": "العلامات الحيوية",

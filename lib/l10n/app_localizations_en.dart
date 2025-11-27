@@ -555,6 +555,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mood => 'Mood';
 
   @override
+  String get steps => 'Steps';
+
+  @override
+  String get todaySteps => 'Today\'s steps';
+
+  @override
+  String ofSteps(int steps) {
+    return 'of $steps steps';
+  }
+
+  @override
+  String get startWalkingToSeeProgress => 'Start walking to see your progress';
+
+  @override
   String get sleep => 'Sleep';
 
   @override

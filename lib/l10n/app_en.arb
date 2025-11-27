@@ -200,6 +200,17 @@
   "completeYourLastConversation": "complete your last conversation",
   "yourDailyInsights": "Your Daily Insights",
   "mood": "Mood",
+  "steps": "Steps",
+  "todaySteps": "Today's steps",
+  "ofSteps": "of {steps} steps",
+  "@ofSteps": {
+    "placeholders": {
+      "steps": {
+        "type": "int"
+      }
+    }
+  },
+  "startWalkingToSeeProgress": "Start walking to see your progress",
   "sleep": "Sleep",
   "water": "Water",
   "vitalSigns": "Vital signs",
