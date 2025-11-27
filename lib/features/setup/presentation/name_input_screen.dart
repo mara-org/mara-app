@@ -12,8 +12,15 @@ import '../../../l10n/app_localizations.dart';
 
 class NameInputScreen extends ConsumerStatefulWidget {
   final bool isFromProfile;
+  final bool fromLanguageChange;
+  final String? languageCode;
   
-  const NameInputScreen({super.key, this.isFromProfile = false});
+  const NameInputScreen({
+    super.key,
+    this.isFromProfile = false,
+    this.fromLanguageChange = false,
+    this.languageCode,
+  });
 
   @override
   ConsumerState<NameInputScreen> createState() => _NameInputScreenState();
@@ -57,7 +64,7 @@ class _NameInputScreenState extends ConsumerState<NameInputScreen> {
     final name = _nameController.text.trim();
     if (name.isNotEmpty) {
       ref.read(userProfileProvider.notifier).setName(name);
-      if (widget.isFromProfile) {
+      if (widget.fromLanguageChange || widget.isFromProfile) {
         context.go('/profile');
       } else {
         context.push('/dob-input');
@@ -120,7 +127,9 @@ class _NameInputScreenState extends ConsumerState<NameInputScreen> {
                 const SizedBox(height: 40),
                 // Title
                 Text(
-                  l10n.whatsYourName,
+                  widget.fromLanguageChange
+                      ? _languageChangeTitle(widget.languageCode ?? languageCode)
+                      : l10n.whatsYourName,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: AppColors.languageButtonColor,
@@ -171,5 +180,12 @@ class _NameInputScreenState extends ConsumerState<NameInputScreen> {
       ),
     );
   }
+}
+
+String _languageChangeTitle(String languageCode) {
+  if (languageCode == 'ar') {
+    return 'نعتذر، لكن يجب أن تُدخل اسمك بالعربية ليتطابق مع لغة التطبيق.';
+  }
+  return 'Sorry, but you have to re-enter your name in English to match the app language.';
 }
 

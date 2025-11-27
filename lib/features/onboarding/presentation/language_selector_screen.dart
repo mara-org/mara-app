@@ -90,7 +90,15 @@ class LanguageSelectorScreen extends ConsumerWidget {
                         await Future.delayed(const Duration(milliseconds: 50));
                         if (context.mounted) {
                           if (isFromProfile) {
-                            context.go('/profile');
+                            final uri = Uri(
+                              path: '/name-input',
+                              queryParameters: {
+                                'from': 'profile',
+                                'fromLanguageChange': 'true',
+                                'language': 'ar',
+                              },
+                            );
+                            context.go(uri.toString());
                           } else {
                             context.go('/welcome-intro');
                           }
@@ -113,7 +121,15 @@ class LanguageSelectorScreen extends ConsumerWidget {
                         await Future.delayed(const Duration(milliseconds: 50));
                         if (context.mounted) {
                           if (isFromProfile) {
-                            context.go('/profile');
+                            final uri = Uri(
+                              path: '/name-input',
+                              queryParameters: {
+                                'from': 'profile',
+                                'fromLanguageChange': 'true',
+                                'language': 'en',
+                              },
+                            );
+                            context.go(uri.toString());
                           } else {
                             context.go('/welcome-intro');
                           }

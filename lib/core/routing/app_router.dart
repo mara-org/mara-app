@@ -119,7 +119,14 @@ class AppRouter {
         path: '/name-input',
         builder: (context, state) {
           final isFromProfile = state.uri.queryParameters['from'] == 'profile';
-          return NameInputScreen(isFromProfile: isFromProfile);
+          final fromLanguageChange =
+              state.uri.queryParameters['fromLanguageChange'] == 'true';
+          final languageCode = state.uri.queryParameters['language'];
+          return NameInputScreen(
+            isFromProfile: isFromProfile,
+            fromLanguageChange: fromLanguageChange,
+            languageCode: languageCode,
+          );
         },
       ),
       GoRoute(
