@@ -7,6 +7,7 @@ import '../../../core/providers/steps_provider.dart';
 import '../../../core/providers/user_profile_provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/platform_utils.dart';
+import '../../../core/widgets/main_bottom_navigation.dart';
 import '../../../core/widgets/mara_logo.dart';
 import '../../../core/widgets/primary_button.dart';
 import '../../../l10n/app_localizations.dart';
@@ -19,7 +20,6 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  int _selectedIndex = 0;
   bool _isVitalSignsLoading = false;
   bool _isSummaryLoading = false;
 
@@ -49,22 +49,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         });
       }
     });
-  }
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-    switch (index) {
-      case 1:
-        context.go('/analytics');
-        break;
-      case 2:
-        context.go('/chat');
-        break;
-      default:
-        context.go('/home');
-    }
   }
 
   @override
@@ -438,26 +422,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        selectedItemColor: AppColors.languageButtonColor,
-        unselectedItemColor: AppColors.textSecondary,
-        items: [
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.home),
-            label: l10n.home,
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.bar_chart),
-            label: l10n.analyst,
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.chat),
-            label: l10n.mara,
-          ),
-        ],
-      ),
+      bottomNavigationBar: const MainBottomNavigation(currentIndex: 0),
     );
   }
 }

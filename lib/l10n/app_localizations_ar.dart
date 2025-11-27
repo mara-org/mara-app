@@ -36,14 +36,14 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get privacySubtitle2 =>
-      'تواصل بسهولة وبكل حرية — مرا يراعي ويحافظ على بياناتك الصحية خاصة 100%.';
+      'تواصل بسهولة وبكل حرية — مَرَا يراعي ويحافظ على بياناتك الصحية خاصة 100%.';
 
   @override
   String get personalizedTitle => 'إرشادات صحية مخصصة لك وتناسب احتياجاتك';
 
   @override
   String get personalizedSubtitle =>
-      'يتعلم مرا من أنماطك اليومية لمساعدتك على البقاء بصحة مثالية.';
+      'يتعلم مَرَا من أنماطك اليومية لمساعدتك على البقاء بصحة مثالية.';
 
   @override
   String get alreadyHaveAccount => 'لديك حساب بالفعل؟';

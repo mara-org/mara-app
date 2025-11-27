@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-import '../../../core/widgets/mara_logo.dart';
-import '../../../core/theme/app_colors.dart';
+
 import '../../../core/models/chat_message.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/main_bottom_navigation.dart';
+import '../../../core/widgets/mara_logo.dart';
 import '../../../l10n/app_localizations.dart';
 
 class ChatMessagesNotifier extends StateNotifier<List<ChatMessage>> {
@@ -18,7 +19,8 @@ class ChatMessagesNotifier extends StateNotifier<List<ChatMessage>> {
   }
 }
 
-final chatMessagesProvider = StateNotifierProvider<ChatMessagesNotifier, List<ChatMessage>>(
+final chatMessagesProvider =
+    StateNotifierProvider<ChatMessagesNotifier, List<ChatMessage>>(
   (ref) => ChatMessagesNotifier(),
 );
 
@@ -32,7 +34,6 @@ class MaraChatScreen extends ConsumerStatefulWidget {
 class _MaraChatScreenState extends ConsumerState<MaraChatScreen> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  int _selectedIndex = 2;
 
   @override
   void dispose() {
@@ -88,22 +89,6 @@ class _MaraChatScreenState extends ConsumerState<MaraChatScreen> {
           }
         });
       });
-    }
-  }
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-    switch (index) {
-      case 0:
-        context.go('/home');
-        break;
-      case 1:
-        context.go('/analytics');
-        break;
-      default:
-        context.go('/chat');
     }
   }
 
@@ -231,26 +216,7 @@ class _MaraChatScreenState extends ConsumerState<MaraChatScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        selectedItemColor: AppColors.languageButtonColor,
-        unselectedItemColor: AppColors.textSecondary,
-        items: [
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.home),
-            label: l10n.home,
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.bar_chart),
-            label: l10n.analyst,
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.chat),
-            label: l10n.mara,
-          ),
-        ],
-      ),
+      bottomNavigationBar: const MainBottomNavigation(currentIndex: 2),
     );
   }
 }
@@ -332,4 +298,3 @@ class _MessageBubble extends StatelessWidget {
     );
   }
 }
-
