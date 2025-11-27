@@ -696,4 +696,23 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get startSetup => 'Start Setup';
+
+  @override
+  String get chatHistory => 'Chat History';
+
+  @override
+  String get noConversationsYet => 'No conversations yet';
+
+  @override
+  String get deleteConversation => 'Delete Conversation';
+
+  @override
+  String get deleteConversationConfirmation =>
+      'Are you sure you want to delete this conversation? This action cannot be undone.';
+
+  @override
+  String get conversationDeleted => 'Conversation deleted';
+
+  @override
+  String get delete => 'Delete';
 }

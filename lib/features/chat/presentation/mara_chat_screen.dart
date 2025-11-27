@@ -1,32 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/models/chat_message.dart';
+import '../../../core/providers/chat_history_provider.dart';
+import '../../../core/providers/chat_messages_provider.dart';
 import '../../../core/providers/chat_topic_provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/main_bottom_navigation.dart';
 import '../../../core/widgets/mara_logo.dart';
 import '../../../l10n/app_localizations.dart';
 
-class ChatMessagesNotifier extends StateNotifier<List<ChatMessage>> {
-  ChatMessagesNotifier() : super([]);
-
-  void addMessage(ChatMessage message) {
-    state = [...state, message];
-  }
-
-  void clearMessages() {
-    state = [];
-  }
-}
-
-final chatMessagesProvider =
-    StateNotifierProvider<ChatMessagesNotifier, List<ChatMessage>>(
-  (ref) => ChatMessagesNotifier(),
-);
-
 class MaraChatScreen extends ConsumerStatefulWidget {
-  const MaraChatScreen({super.key});
+  final String? conversationId;
+
+  const MaraChatScreen({
+    super.key,
+    this.conversationId,
+  });
 
   @override
   ConsumerState<MaraChatScreen> createState() => _MaraChatScreenState();
@@ -36,9 +27,47 @@ class _MaraChatScreenState extends ConsumerState<MaraChatScreen> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
 
+  String? _currentConversationId;
+  bool _hasLoadedConversation = false;
+
   @override
   void initState() {
     super.initState();
+    _currentConversationId = widget.conversationId;
+    // Clear messages if starting a new conversation
+    if (widget.conversationId == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(chatMessagesProvider.notifier).clearMessages();
+      });
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Load conversation if conversationId is provided and not already loaded
+    if (_currentConversationId != null && !_hasLoadedConversation && mounted) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _loadConversation(_currentConversationId!);
+      });
+    }
+  }
+
+  void _loadConversation(String conversationId) {
+    if (_hasLoadedConversation) return;
+
+    final conversation =
+        ref.read(chatHistoryProvider.notifier).getConversation(conversationId);
+    if (conversation != null) {
+      ref
+          .read(chatMessagesProvider.notifier)
+          .loadMessages(conversation.messages);
+      if (conversation.topic != null) {
+        ref.read(lastConversationTopicProvider.notifier).state =
+            conversation.title;
+      }
+      _hasLoadedConversation = true;
+    }
   }
 
   @override
@@ -99,6 +128,22 @@ class _MaraChatScreenState extends ConsumerState<MaraChatScreen> {
               ),
             );
 
+        // Update or create conversation in history
+        final updatedMessages = ref.read(chatMessagesProvider);
+        if (_currentConversationId != null) {
+          // Update existing conversation
+          ref.read(chatHistoryProvider.notifier).updateConversation(
+                _currentConversationId!,
+                updatedMessages,
+              );
+        } else if (updatedMessages.length >= 2) {
+          // Create new conversation (at least user message + bot reply)
+          final conversation = ref
+              .read(chatHistoryProvider.notifier)
+              .createConversation(updatedMessages);
+          _currentConversationId = conversation.id;
+        }
+
         // Scroll to bottom again
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (_scrollController.hasClients) {
@@ -131,6 +176,15 @@ class _MaraChatScreenState extends ConsumerState<MaraChatScreen> {
         backgroundColor: AppColors.homeHeaderBackground,
         foregroundColor: Colors.white,
         elevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.history),
+            onPressed: () {
+              context.push('/chat-history');
+            },
+            tooltip: l10n.chatHistory,
+          ),
+        ],
       ),
       body: SafeArea(
         top: false,

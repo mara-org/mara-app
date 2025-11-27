@@ -690,4 +690,23 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get startSetup => 'بدء الإعداد';
+
+  @override
+  String get chatHistory => 'سجل المحادثات';
+
+  @override
+  String get noConversationsYet => 'لا توجد محادثات بعد';
+
+  @override
+  String get deleteConversation => 'حذف المحادثة';
+
+  @override
+  String get deleteConversationConfirmation =>
+      'هل أنت متأكد أنك تريد حذف هذه المحادثة؟ لا يمكن التراجع عن هذا الإجراء.';
+
+  @override
+  String get conversationDeleted => 'تم حذف المحادثة';
+
+  @override
+  String get delete => 'حذف';
 }

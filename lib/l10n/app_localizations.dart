@@ -1381,6 +1381,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Start Setup'**
   String get startSetup;
+
+  /// No description provided for @chatHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat History'**
+  String get chatHistory;
+
+  /// No description provided for @noConversationsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No conversations yet'**
+  String get noConversationsYet;
+
+  /// No description provided for @deleteConversation.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Conversation'**
+  String get deleteConversation;
+
+  /// No description provided for @deleteConversationConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this conversation? This action cannot be undone.'**
+  String get deleteConversationConfirmation;
+
+  /// No description provided for @conversationDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Conversation deleted'**
+  String get conversationDeleted;
+
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
 }
 
 class _AppLocalizationsDelegate

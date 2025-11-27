@@ -9,6 +9,7 @@ import '../../features/auth/presentation/sign_in_email_screen.dart';
 import '../../features/auth/presentation/sign_up_choices_screen.dart';
 import '../../features/auth/presentation/verify_email_screen.dart';
 import '../../features/auth/presentation/welcome_back_screen.dart';
+import '../../features/chat/presentation/mara_chat_history_screen.dart';
 import '../../features/chat/presentation/mara_chat_screen.dart';
 import '../../features/home/presentation/home_screen.dart';
 import '../../features/onboarding/onboarding_screen.dart';
@@ -213,7 +214,14 @@ class AppRouter {
       ),
       GoRoute(
         path: '/chat',
-        builder: (context, state) => const MaraChatScreen(),
+        builder: (context, state) {
+          final conversationId = state.uri.queryParameters['id'];
+          return MaraChatScreen(conversationId: conversationId);
+        },
+      ),
+      GoRoute(
+        path: '/chat-history',
+        builder: (context, state) => const MaraChatHistoryScreen(),
       ),
       GoRoute(
         path: '/profile',
