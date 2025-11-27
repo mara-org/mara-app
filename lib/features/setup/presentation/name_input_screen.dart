@@ -2,19 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
+import '../../../core/providers/user_profile_provider.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/utils/platform_utils.dart';
 import '../../../core/widgets/mara_logo.dart';
 import '../../../core/widgets/mara_text_field.dart';
 import '../../../core/widgets/primary_button.dart';
-import '../../../core/theme/app_colors.dart';
-import '../../../core/utils/platform_utils.dart';
-import '../../../core/providers/user_profile_provider.dart';
 import '../../../l10n/app_localizations.dart';
 
 class NameInputScreen extends ConsumerStatefulWidget {
   final bool isFromProfile;
   final bool fromLanguageChange;
   final String? languageCode;
-  
+
   const NameInputScreen({
     super.key,
     this.isFromProfile = false,
@@ -32,14 +33,16 @@ class _NameInputScreenState extends ConsumerState<NameInputScreen> {
 
   TextInputFormatter _formatterForLanguage(String languageCode) {
     if (languageCode == 'en') {
-      return FilteringTextInputFormatter.allow(RegExp(r'^[a-zA-Z ]*$'));
+      return FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z ]'));
     }
     if (languageCode == 'ar') {
-      return FilteringTextInputFormatter.allow(RegExp(r'^[\u0600-\u06FF ]*$'));
+      return FilteringTextInputFormatter.allow(
+        RegExp(r'[ء-ي ]'),
+      );
     }
     // Fallback to allow any Unicode letters plus spaces.
     return FilteringTextInputFormatter.allow(
-      RegExp(r'^[\p{L} ]*$', unicode: true),
+      RegExp(r'[\p{L} ]', unicode: true),
     );
   }
 
@@ -78,35 +81,17 @@ class _NameInputScreenState extends ConsumerState<NameInputScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final resolvedLocale = Localizations.localeOf(context).languageCode;
-    final effectiveLanguage =
-        widget.languageCode ?? resolvedLocale;
+    final effectiveLanguage = widget.languageCode ?? resolvedLocale;
     final formatters = <TextInputFormatter>[];
 
-    if (widget.fromLanguageChange) {
-      if (effectiveLanguage == 'en') {
-        formatters.add(
-          FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z ]')),
-        );
-      } else if (effectiveLanguage == 'ar') {
-        formatters.add(
-          FilteringTextInputFormatter.allow(
-            RegExp(r'[\u0600-\u06FF ]'),
-          ),
-        );
-        formatters.add(
-          FilteringTextInputFormatter.deny(RegExp(r'[0-9٠-٩۰-۹]')),
-        );
-      } else {
-        formatters.add(_formatterForLanguage(effectiveLanguage));
-      }
-    } else {
-      final nameFormatter = _formatterForLanguage(effectiveLanguage);
-      formatters.add(nameFormatter);
-      if (effectiveLanguage == 'ar') {
-        formatters.add(
-          FilteringTextInputFormatter.deny(RegExp(r'[0-9٠-٩۰-۹]')),
-        );
-      }
+    final nameFormatter = _formatterForLanguage(effectiveLanguage);
+    formatters.add(nameFormatter);
+    if (effectiveLanguage == 'ar') {
+      formatters.add(
+        FilteringTextInputFormatter.deny(
+          RegExp(r'[0-9٠-٩۰-۹]'),
+        ),
+      );
     }
 
     return Scaffold(
@@ -184,8 +169,7 @@ class _NameInputScreenState extends ConsumerState<NameInputScreen> {
                       controller: _nameController,
                       onChanged: (_) {
                         setState(() {
-                          _canContinue =
-                              _nameController.text.trim().isNotEmpty;
+                          _canContinue = _nameController.text.trim().isNotEmpty;
                         });
                       },
                       inputFormatters: formatters,
@@ -217,4 +201,3 @@ String _languageChangeTitle(String languageCode) {
   }
   return 'Sorry, but you have to re-enter your name in English to match the app language.';
 }
-
