@@ -38,8 +38,13 @@ class _NameInputScreenState extends ConsumerState<NameInputScreen> {
   @override
   void initState() {
     super.initState();
-    // Initialize controller - will be populated in build if needed
     _nameController = TextEditingController();
+    if (widget.isFromProfile) {
+      final currentName = ref.read(userProfileProvider).name ?? '';
+      if (currentName.isNotEmpty) {
+        _nameController.text = currentName;
+      }
+    }
   }
 
   @override
@@ -70,13 +75,6 @@ class _NameInputScreenState extends ConsumerState<NameInputScreen> {
       formatters.add(
         FilteringTextInputFormatter.deny(RegExp(r'[0-9٠-٩۰-۹]')),
       );
-    }
-    // Pre-populate with current name if coming from profile (only once)
-    if (widget.isFromProfile && _nameController.text.isEmpty) {
-      final currentName = ref.read(userProfileProvider).name ?? '';
-      if (currentName.isNotEmpty) {
-        _nameController.text = currentName;
-      }
     }
     
     final name = _nameController.text.trim();
