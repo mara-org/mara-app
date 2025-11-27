@@ -19,6 +19,22 @@ class DobInputScreen extends ConsumerStatefulWidget {
 }
 
 class _DobInputScreenState extends ConsumerState<DobInputScreen> {
+  static const int _minYear = 1900;
+  static const List<int> _allMonths = [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+  ];
+
   int? _selectedDay;
   int? _selectedMonth;
   int? _selectedYear;
@@ -26,24 +42,32 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
   late FixedExtentScrollController _monthController;
   late FixedExtentScrollController _dayController;
 
-  final List<int> _months = List.generate(12, (i) => i + 1); // 1-12
+  late final DateTime _maxAllowedDate;
   late final List<int> _years;
 
   @override
   void initState() {
     super.initState();
-    final currentYear = DateTime.now().year;
-    _years = List.generate(
-        currentYear - 1899, (i) => 1900 + i); // 1900 to current year
+    final now = DateTime.now();
+    _maxAllowedDate = DateTime(now.year - 13, now.month, now.day);
+    final maxYear = _maxAllowedDate.year;
+    if (maxYear >= _minYear) {
+      _years =
+          List.generate(maxYear - _minYear + 1, (i) => _minYear + i);
+    } else {
+      _years = [_minYear];
+    }
     _yearController = FixedExtentScrollController();
     _monthController = FixedExtentScrollController();
     _dayController = FixedExtentScrollController();
     
     // Set default year to 1999
     final defaultYear = 1999;
-    final yearIndex = _years.indexOf(defaultYear);
+    final initialYear =
+        _years.contains(defaultYear) ? defaultYear : _years.last;
+    final yearIndex = _years.indexOf(initialYear);
     if (yearIndex != -1) {
-      _selectedYear = defaultYear;
+      _selectedYear = initialYear;
       // Scroll to 1999 after the first frame is rendered
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (_yearController.hasClients) {
@@ -71,13 +95,19 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
     try {
       final dateOfBirth =
           DateTime(_selectedYear!, _selectedMonth!, _selectedDay!);
-      if (dateOfBirth.isBefore(DateTime.now())) {
+      if (!dateOfBirth.isAfter(_maxAllowedDate)) {
         ref.read(userProfileProvider.notifier).setDateOfBirth(dateOfBirth);
         if (widget.isFromProfile) {
           context.go('/profile');
         } else {
         context.push('/gender');
         }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.pleaseSelectValidDate),
+          ),
+        );
       }
     } catch (e) {
       // Invalid date (e.g., Feb 30)
@@ -96,13 +126,47 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
     if (_selectedYear == null || _selectedMonth == null) {
       return [];
     }
-    final daysInMonth = DateTime(_selectedYear!, _selectedMonth! + 1, 0).day;
-    return List.generate(daysInMonth, (i) => i + 1);
+    final isMaxYear = _selectedYear == _maxAllowedDate.year;
+    final isMaxMonth =
+        isMaxYear && _selectedMonth == _maxAllowedDate.month;
+    final daysInMonth =
+        DateTime(_selectedYear!, _selectedMonth! + 1, 0).day;
+    final allowedDays = isMaxMonth ? _maxAllowedDate.day : daysInMonth;
+    return List.generate(allowedDays, (i) => i + 1);
+  }
+
+  List<int> get _monthOptions {
+    if (_selectedYear == null) {
+      return _allMonths;
+    }
+    final isMaxYear = _selectedYear == _maxAllowedDate.year;
+    final maxMonth = isMaxYear ? _maxAllowedDate.month : 12;
+    if (maxMonth == 12) {
+      return _allMonths;
+    }
+    return _allMonths.take(maxMonth).toList();
+  }
+
+  void _resetMonthAndDayScroll() {
+    if (_monthController.hasClients) {
+      _monthController.jumpToItem(0);
+    }
+    if (_dayController.hasClients) {
+      _dayController.jumpToItem(0);
+    }
+  }
+
+  void _resetDayScroll() {
+    if (_dayController.hasClients) {
+      _dayController.jumpToItem(0);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final monthOptions = _monthOptions;
+    final validDays = _validDays;
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
       body: SafeArea(
@@ -182,6 +246,7 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
                                   _selectedMonth = null;
                                   _selectedDay = null;
                                 });
+                                _resetMonthAndDayScroll();
                               },
                               childDelegate: ListWheelChildBuilderDelegate(
                                 builder: (context, index) {
@@ -245,17 +310,20 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
                               onSelectedItemChanged: _selectedYear != null
                                   ? (index) {
                                       setState(() {
-                                        _selectedMonth = _months[index];
+                                        _selectedMonth = monthOptions[index];
                                         // Reset day when month changes
                                         _selectedDay = null;
                                       });
+                                      _resetDayScroll();
                                     }
                                   : null,
                               childDelegate: ListWheelChildBuilderDelegate(
                                 builder: (context, index) {
-                                  if (index < 0 || index >= _months.length)
+                                  if (index < 0 ||
+                                      index >= monthOptions.length) {
                                     return null;
-                                  final month = _months[index];
+                                  }
+                                  final month = monthOptions[index];
                                   final isSelected = month == _selectedMonth;
                                   final isEnabled = _selectedYear != null;
                                   return Opacity(
@@ -283,7 +351,7 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
                                     ),
                                   );
                                 },
-                                childCount: _months.length,
+                                childCount: monthOptions.length,
                               ),
                             ),
                           ),
@@ -320,19 +388,19 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
                                       _selectedMonth != null
                                   ? (index) {
                                       setState(() {
-                                        final validDays = _validDays;
+                                        final days = _validDays;
                                         if (index >= 0 &&
-                                            index < validDays.length) {
-                                          _selectedDay = validDays[index];
+                                            index < days.length) {
+                                          _selectedDay = days[index];
                                         }
                                       });
                                     }
                                   : null,
                               childDelegate: ListWheelChildBuilderDelegate(
                                 builder: (context, index) {
-                                  final validDays = _validDays;
-                                  if (index < 0 || index >= validDays.length)
+                                  if (index < 0 || index >= validDays.length) {
                                     return null;
+                                  }
                                   final day = validDays[index];
                                   final isSelected = day == _selectedDay;
                                   final isEnabled = _selectedYear != null &&
@@ -362,7 +430,7 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
                                     ),
                                   );
                                 },
-                                childCount: _validDays.length,
+                                childCount: validDays.length,
                               ),
                             ),
                           ),
