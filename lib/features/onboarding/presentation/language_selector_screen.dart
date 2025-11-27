@@ -13,6 +13,10 @@ class LanguageSelectorScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final currentLanguageCode = Localizations.localeOf(context).languageCode;
+    final disableArabic = isFromProfile && currentLanguageCode == 'ar';
+    final disableEnglish = isFromProfile && currentLanguageCode == 'en';
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       extendBody: true,
@@ -78,63 +82,73 @@ class LanguageSelectorScreen extends ConsumerWidget {
                     // Arabic button
                     _LanguageButton(
                       text: 'العربية',
-                      onPressed: () async {
-                        await ref
-                            .read(appLocaleProvider.notifier)
-                            .setLocale(const Locale('ar'));
-                        // Update old language provider for backward compatibility
-                        ref
-                            .read(languageProvider.notifier)
-                            .setLanguage(AppLanguage.arabic);
-                        // Wait for multiple frames to ensure MaterialApp and all widgets rebuild
-                        await Future.delayed(const Duration(milliseconds: 50));
-                        if (context.mounted) {
-                          if (isFromProfile) {
-                            final uri = Uri(
-                              path: '/name-input',
-                              queryParameters: {
-                                'from': 'profile',
-                                'fromLanguageChange': 'true',
-                                'language': 'ar',
-                              },
-                            );
-                            context.go(uri.toString());
-                          } else {
-                            context.go('/welcome-intro');
-                          }
-                        }
-                      },
+                      isDisabled: disableArabic,
+                      onPressed: disableArabic
+                          ? null
+                          : () async {
+                              await ref
+                                  .read(appLocaleProvider.notifier)
+                                  .setLocale(const Locale('ar'));
+                              // Update old language provider for backward compatibility
+                              ref
+                                  .read(languageProvider.notifier)
+                                  .setLanguage(AppLanguage.arabic);
+                              // Wait for multiple frames to ensure MaterialApp and all widgets rebuild
+                              await Future.delayed(
+                                const Duration(milliseconds: 50),
+                              );
+                              if (context.mounted) {
+                                if (isFromProfile) {
+                                  final uri = Uri(
+                                    path: '/name-input',
+                                    queryParameters: {
+                                      'from': 'profile',
+                                      'fromLanguageChange': 'true',
+                                      'language': 'ar',
+                                    },
+                                  );
+                                  context.go(uri.toString());
+                                } else {
+                                  context.go('/welcome-intro');
+                                }
+                              }
+                            },
                     ),
                     const SizedBox(height: 20),
                     // English button
                     _LanguageButton(
                       text: 'English',
-                      onPressed: () async {
-                        await ref
-                            .read(appLocaleProvider.notifier)
-                            .setLocale(const Locale('en'));
-                        // Update old language provider for backward compatibility
-                        ref
-                            .read(languageProvider.notifier)
-                            .setLanguage(AppLanguage.english);
-                        // Wait for multiple frames to ensure MaterialApp and all widgets rebuild
-                        await Future.delayed(const Duration(milliseconds: 50));
-                        if (context.mounted) {
-                          if (isFromProfile) {
-                            final uri = Uri(
-                              path: '/name-input',
-                              queryParameters: {
-                                'from': 'profile',
-                                'fromLanguageChange': 'true',
-                                'language': 'en',
-                              },
-                            );
-                            context.go(uri.toString());
-                          } else {
-                            context.go('/welcome-intro');
-                          }
-                        }
-                      },
+                      isDisabled: disableEnglish,
+                      onPressed: disableEnglish
+                          ? null
+                          : () async {
+                              await ref
+                                  .read(appLocaleProvider.notifier)
+                                  .setLocale(const Locale('en'));
+                              // Update old language provider for backward compatibility
+                              ref
+                                  .read(languageProvider.notifier)
+                                  .setLanguage(AppLanguage.english);
+                              // Wait for multiple frames to ensure MaterialApp and all widgets rebuild
+                              await Future.delayed(
+                                const Duration(milliseconds: 50),
+                              );
+                              if (context.mounted) {
+                                if (isFromProfile) {
+                                  final uri = Uri(
+                                    path: '/name-input',
+                                    queryParameters: {
+                                      'from': 'profile',
+                                      'fromLanguageChange': 'true',
+                                      'language': 'en',
+                                    },
+                                  );
+                                  context.go(uri.toString());
+                                } else {
+                                  context.go('/welcome-intro');
+                                }
+                              }
+                            },
                     ),
                   ],
                 ),
@@ -149,37 +163,45 @@ class LanguageSelectorScreen extends ConsumerWidget {
 
 class _LanguageButton extends StatelessWidget {
   final String text;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
+  final bool isDisabled;
 
   const _LanguageButton({
     required this.text,
     required this.onPressed,
+    this.isDisabled = false,
   });
 
   @override
   Widget build(BuildContext context) {
+    final backgroundColor =
+        isDisabled ? Colors.grey.shade300 : AppColors.languageButtonColor;
+    final textColor = isDisabled ? Colors.grey.shade600 : Colors.white;
+
     return GestureDetector(
-      onTap: onPressed,
+      onTap: isDisabled ? null : onPressed,
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.25),
+              color: Colors.black.withOpacity(
+                isDisabled ? 0.05 : 0.25,
+              ),
               offset: const Offset(0, 4),
               blurRadius: 4,
             ),
           ],
-          color: AppColors.languageButtonColor,
+          color: backgroundColor,
         ),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 15),
         child: Center(
           child: Text(
             text,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: Colors.white,
+            style: TextStyle(
+              color: textColor,
               fontSize: 24,
               fontWeight: FontWeight.bold,
               fontFamily: 'Roboto',
