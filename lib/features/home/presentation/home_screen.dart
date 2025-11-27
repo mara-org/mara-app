@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import '../../../core/widgets/mara_logo.dart';
-import '../../../core/widgets/primary_button.dart';
+
+import '../../../core/providers/user_profile_provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/platform_utils.dart';
-import '../../../core/providers/user_profile_provider.dart';
+import '../../../core/widgets/mara_logo.dart';
+import '../../../core/widgets/primary_button.dart';
 import '../../../l10n/app_localizations.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -104,7 +105,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ),
               ),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -196,14 +198,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Expanded(
-                                  child:                               Text(
-                                l10n.whatHappenedToYourCough,
-                                style: TextStyle(
-                                  color: AppColors.languageButtonColor,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.normal,
-                                ),
-                              ),
+                                  child: Text(
+                                    l10n.whatHappenedToYourCough,
+                                    style: TextStyle(
+                                      color: AppColors.languageButtonColor,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.normal,
+                                    ),
+                                  ),
                                 ),
                                 const Icon(
                                   Icons.arrow_forward_ios,
@@ -287,7 +289,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Row(
                                     children: [
@@ -479,11 +482,7 @@ class _InsightCard extends StatelessWidget {
       height: 100,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [AppColors.permissionCardBackground],
-        ),
+        color: AppColors.permissionCardBackground,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.25),
@@ -523,4 +522,3 @@ class _InsightCard extends StatelessWidget {
     );
   }
 }
-
