@@ -1124,6 +1124,30 @@ abstract class AppLocalizations {
   /// **'complete your last conversation'**
   String get completeYourLastConversation;
 
+  /// No description provided for @whatWouldYouLikeToAskMaraToday.
+  ///
+  /// In en, this message translates to:
+  /// **'What would you like to ask Mara today?'**
+  String get whatWouldYouLikeToAskMaraToday;
+
+  /// No description provided for @continueYourLastChatOrStartNew.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue your last chat or start a new question.'**
+  String get continueYourLastChatOrStartNew;
+
+  /// No description provided for @wantToContinueTalkingAbout.
+  ///
+  /// In en, this message translates to:
+  /// **'Want to continue talking about your {lastTopic}?'**
+  String wantToContinueTalkingAbout(String lastTopic);
+
+  /// No description provided for @tapToPickUpLastConversation.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to pick up your last conversation with Mara.'**
+  String get tapToPickUpLastConversation;
+
   /// No description provided for @yourDailyInsights.
   ///
   /// In en, this message translates to:

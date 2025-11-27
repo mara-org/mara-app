@@ -198,6 +198,17 @@
   "there": "هناك",
   "whatHappenedToYourCough": "ماذا حدث لسعالك؟",
   "completeYourLastConversation": "أكمل محادثتك الأخيرة",
+  "whatWouldYouLikeToAskMaraToday": "عن ماذا تحب أن تسأل مَرَا اليوم؟",
+  "continueYourLastChatOrStartNew": "أكمل حديثك الأخير أو ابدأ سؤالًا جديدًا.",
+  "wantToContinueTalkingAbout": "هل تريد متابعة الحديث عن {lastTopic}؟",
+  "@wantToContinueTalkingAbout": {
+    "placeholders": {
+      "lastTopic": {
+        "type": "String"
+      }
+    }
+  },
+  "tapToPickUpLastConversation": "اضغط هنا لتكمل محادثتك الأخيرة مع مَرَا.",
   "yourDailyInsights": "تقاريرك اليومية",
   "mood": "المزاج",
   "steps": "الخطوات",

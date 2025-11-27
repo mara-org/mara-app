@@ -198,6 +198,17 @@
   "there": "there",
   "whatHappenedToYourCough": "What happened to your cough?",
   "completeYourLastConversation": "complete your last conversation",
+  "whatWouldYouLikeToAskMaraToday": "What would you like to ask Mara today?",
+  "continueYourLastChatOrStartNew": "Continue your last chat or start a new question.",
+  "wantToContinueTalkingAbout": "Want to continue talking about your {lastTopic}?",
+  "@wantToContinueTalkingAbout": {
+    "placeholders": {
+      "lastTopic": {
+        "type": "String"
+      }
+    }
+  },
+  "tapToPickUpLastConversation": "Tap to pick up your last conversation with Mara.",
   "yourDailyInsights": "Your Daily Insights",
   "mood": "Mood",
   "steps": "Steps",

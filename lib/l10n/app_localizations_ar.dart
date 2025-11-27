@@ -545,6 +545,23 @@ class AppLocalizationsAr extends AppLocalizations {
   String get completeYourLastConversation => 'أكمل محادثتك الأخيرة';
 
   @override
+  String get whatWouldYouLikeToAskMaraToday =>
+      'عن ماذا تحب أن تسأل مَرَا اليوم؟';
+
+  @override
+  String get continueYourLastChatOrStartNew =>
+      'أكمل حديثك الأخير أو ابدأ سؤالًا جديدًا.';
+
+  @override
+  String wantToContinueTalkingAbout(String lastTopic) {
+    return 'هل تريد متابعة الحديث عن $lastTopic؟';
+  }
+
+  @override
+  String get tapToPickUpLastConversation =>
+      'اضغط هنا لتكمل محادثتك الأخيرة مع مَرَا.';
+
+  @override
   String get yourDailyInsights => 'تقاريرك اليومية';
 
   @override

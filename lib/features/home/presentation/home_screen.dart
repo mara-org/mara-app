@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
+import '../../../core/providers/chat_topic_provider.dart';
 import '../../../core/providers/steps_provider.dart';
 import '../../../core/providers/user_profile_provider.dart';
 import '../../../core/theme/app_colors.dart';
@@ -162,54 +163,79 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     children: [
                       const SizedBox(height: 20),
                       // Conversation resume card
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.1),
-                              offset: const Offset(0, 1),
-                              blurRadius: 13,
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    l10n.whatHappenedToYourCough,
+                      Consumer(
+                        builder: (context, ref, child) {
+                          final hasPrevious =
+                              ref.watch(hasPreviousConversationsProvider);
+                          final lastTopic =
+                              ref.watch(lastConversationTopicProvider);
+
+                          final String title;
+                          final String subtitle;
+
+                          if (hasPrevious && lastTopic != null) {
+                            title = l10n.wantToContinueTalkingAbout(lastTopic);
+                            subtitle = l10n.tapToPickUpLastConversation;
+                          } else {
+                            title = l10n.whatWouldYouLikeToAskMaraToday;
+                            subtitle = l10n.continueYourLastChatOrStartNew;
+                          }
+
+                          return GestureDetector(
+                            onTap: () => context.go('/chat'),
+                            child: Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.all(20),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                color: Colors.white,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.1),
+                                    offset: const Offset(0, 1),
+                                    blurRadius: 13,
+                                  ),
+                                ],
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          title,
+                                          style: TextStyle(
+                                            color:
+                                                AppColors.languageButtonColor,
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.normal,
+                                          ),
+                                        ),
+                                      ),
+                                      const Icon(
+                                        Icons.arrow_forward_ios,
+                                        size: 16,
+                                        color: AppColors.languageButtonColor,
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    subtitle,
                                     style: TextStyle(
                                       color: AppColors.languageButtonColor,
-                                      fontSize: 20,
+                                      fontSize: 10,
                                       fontWeight: FontWeight.normal,
                                     ),
                                   ),
-                                ),
-                                const Icon(
-                                  Icons.arrow_forward_ios,
-                                  size: 16,
-                                  color: AppColors.languageButtonColor,
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              l10n.completeYourLastConversation,
-                              style: TextStyle(
-                                color: AppColors.languageButtonColor,
-                                fontSize: 10,
-                                fontWeight: FontWeight.normal,
+                                ],
                               ),
                             ),
-                          ],
-                        ),
+                          );
+                        },
                       ),
                       const SizedBox(height: 24),
                       // Daily Insights section

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/models/chat_message.dart';
+import '../../../core/providers/chat_topic_provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/main_bottom_navigation.dart';
 import '../../../core/widgets/mara_logo.dart';
@@ -36,6 +37,11 @@ class _MaraChatScreenState extends ConsumerState<MaraChatScreen> {
   final ScrollController _scrollController = ScrollController();
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   void dispose() {
     _messageController.dispose();
     _scrollController.dispose();
@@ -46,6 +52,9 @@ class _MaraChatScreenState extends ConsumerState<MaraChatScreen> {
     final text = _messageController.text.trim();
     if (text.isEmpty) return;
 
+    final messages = ref.read(chatMessagesProvider);
+    final isFirstMessage = messages.isEmpty;
+
     // Add user message
     ref.read(chatMessagesProvider.notifier).addMessage(
           ChatMessage(
@@ -53,6 +62,18 @@ class _MaraChatScreenState extends ConsumerState<MaraChatScreen> {
             type: MessageType.user,
           ),
         );
+
+    // Save topic from first user message
+    if (isFirstMessage) {
+      // Extract topic: take first few words (up to 3-4 words) or first sentence
+      final words = text.split(' ');
+      final topic = words.length > 4
+          ? words.take(4).join(' ') + '...'
+          : text.length > 30
+              ? text.substring(0, 30) + '...'
+              : text;
+      ref.read(lastConversationTopicProvider.notifier).state = topic;
+    }
 
     _messageController.clear();
 

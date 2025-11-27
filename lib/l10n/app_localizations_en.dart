@@ -549,6 +549,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get completeYourLastConversation => 'complete your last conversation';
 
   @override
+  String get whatWouldYouLikeToAskMaraToday =>
+      'What would you like to ask Mara today?';
+
+  @override
+  String get continueYourLastChatOrStartNew =>
+      'Continue your last chat or start a new question.';
+
+  @override
+  String wantToContinueTalkingAbout(String lastTopic) {
+    return 'Want to continue talking about your $lastTopic?';
+  }
+
+  @override
+  String get tapToPickUpLastConversation =>
+      'Tap to pick up your last conversation with Mara.';
+
+  @override
   String get yourDailyInsights => 'Your Daily Insights';
 
   @override
