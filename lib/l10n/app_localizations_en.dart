@@ -265,6 +265,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loading => 'Loading...';
 
   @override
+  String get clearCache => 'Clear Cache';
+
+  @override
+  String get clearCacheDescription =>
+      'Tap to remove cached data from this device.';
+
+  @override
+  String get clearCacheConfirmation =>
+      'Are you sure you want to clear the app cache?';
+
+  @override
+  String get cacheClearedSuccess => 'Cache cleared successfully.';
+
+  @override
+  String get confirm => 'Confirm';
+
+  @override
   String get contactUs => 'Contact us';
 
   @override

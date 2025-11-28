@@ -15,7 +15,7 @@ class NameInputScreen extends ConsumerStatefulWidget {
   final bool isFromProfile;
   final bool fromLanguageChange;
   final String? languageCode;
-
+  
   const NameInputScreen({
     super.key,
     this.isFromProfile = false,

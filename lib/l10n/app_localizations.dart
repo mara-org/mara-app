@@ -590,6 +590,36 @@ abstract class AppLocalizations {
   /// **'Loading...'**
   String get loading;
 
+  /// No description provided for @clearCache.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Cache'**
+  String get clearCache;
+
+  /// No description provided for @clearCacheDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to remove cached data from this device.'**
+  String get clearCacheDescription;
+
+  /// No description provided for @clearCacheConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to clear the app cache?'**
+  String get clearCacheConfirmation;
+
+  /// No description provided for @cacheClearedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Cache cleared successfully.'**
+  String get cacheClearedSuccess;
+
+  /// No description provided for @confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get confirm;
+
   /// No description provided for @contactUs.
   ///
   /// In en, this message translates to:

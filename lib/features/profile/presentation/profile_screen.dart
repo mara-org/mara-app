@@ -1,17 +1,22 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../../../core/providers/email_provider.dart';
+import '../../../core/providers/subscription_provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/platform_utils.dart';
-import '../../../core/providers/subscription_provider.dart';
-import '../../../core/providers/email_provider.dart';
-import '../../../shared/system/system_providers.dart';
 import '../../../l10n/app_localizations.dart';
-import 'widgets/health_profile_section.dart';
+import '../../../shared/system/system_providers.dart';
 import 'widgets/app_settings_section.dart';
-import 'widgets/subscription_banner.dart';
 import 'widgets/contact_us_section.dart';
+import 'widgets/health_profile_section.dart';
+import 'widgets/subscription_banner.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -19,7 +24,8 @@ class ProfileScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
-    final email = ref.watch(emailProvider) ?? 'No email'; // Get email from provider
+    final email =
+        ref.watch(emailProvider) ?? 'No email'; // Get email from provider
 
     return Scaffold(
       backgroundColor: Colors.white, // Pure white background
@@ -80,8 +86,10 @@ class ProfileScreen extends ConsumerWidget {
                       // Subscription banner or premium status
                       Consumer(
                         builder: (context, ref, child) {
-                          final subscriptionStatus = ref.watch(subscriptionProvider);
-                          if (subscriptionStatus == SubscriptionStatus.premium) {
+                          final subscriptionStatus =
+                              ref.watch(subscriptionProvider);
+                          if (subscriptionStatus ==
+                              SubscriptionStatus.premium) {
                             return Container(
                               padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
@@ -122,7 +130,8 @@ class ProfileScreen extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Padding(
-                            padding: const EdgeInsetsDirectional.only(start: 4, bottom: 12),
+                            padding: const EdgeInsetsDirectional.only(
+                                start: 4, bottom: 12),
                             child: Text(
                               l10n.user,
                               style: TextStyle(
@@ -146,12 +155,14 @@ class ProfileScreen extends ConsumerWidget {
                               children: [
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         l10n.emailLabel,
                                         style: TextStyle(
-                                          color: const Color(0xFF0F172A), // #0F172A
+                                          color: const Color(
+                                              0xFF0F172A), // #0F172A
                                           fontSize: 16,
                                           fontWeight: FontWeight.w500,
                                         ),
@@ -160,7 +171,8 @@ class ProfileScreen extends ConsumerWidget {
                                       Text(
                                         email,
                                         style: TextStyle(
-                                          color: const Color(0xFF64748B), // #64748B
+                                          color: const Color(
+                                              0xFF64748B), // #64748B
                                           fontSize: 14,
                                         ),
                                       ),
@@ -229,7 +241,8 @@ class ProfileScreen extends ConsumerWidget {
                           },
                           style: TextButton.styleFrom(
                             foregroundColor: AppColors.error,
-                            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 24, vertical: 12),
                           ),
                           child: Text(
                             l10n.logOut,
@@ -376,25 +389,88 @@ class _DeveloperSettingsSection extends ConsumerWidget {
             error: (_, __) => '-',
           ),
         ),
+        const SizedBox(height: 16),
+        _DeveloperInfoItem(
+          title: l10n.clearCache,
+          icon: Icons.cleaning_services_outlined,
+          value: l10n.clearCacheDescription,
+          onTap: () => _showClearCacheDialog(context),
+        ),
       ],
     );
+  }
+
+  void _showClearCacheDialog(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.clearCache),
+        content: Text(l10n.clearCacheConfirmation),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(l10n.cancel),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.of(context).pop();
+              await _clearCache(context);
+            },
+            child: Text(l10n.confirm),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _clearCache(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.clear();
+
+      await _deleteDirectory(await getTemporaryDirectory());
+      await _deleteDirectory(await getApplicationSupportDirectory());
+      await _deleteDirectory(await getApplicationDocumentsDirectory());
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.cacheClearedSuccess)),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.cacheClearedSuccess)),
+        );
+      }
+    }
+  }
+
+  Future<void> _deleteDirectory(Directory directory) async {
+    if (await directory.exists()) {
+      await directory.delete(recursive: true);
+    }
   }
 }
 
 class _DeveloperInfoItem extends StatelessWidget {
   final String title;
   final IconData icon;
-  final String value;
+  final String? value;
+  final VoidCallback? onTap;
 
   const _DeveloperInfoItem({
     required this.title,
     required this.icon,
-    required this.value,
+    this.value,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    final card = Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -432,20 +508,34 @@ class _DeveloperInfoItem extends StatelessWidget {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  value,
-                  style: TextStyle(
-                    color: const Color(0xFF64748B), // #64748B
-                    fontSize: 14,
+                if (value != null) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    value!,
+                    style: TextStyle(
+                      color: const Color(0xFF64748B), // #64748B
+                      fontSize: 14,
+                    ),
                   ),
-                ),
+                ],
               ],
             ),
           ),
         ],
       ),
     );
+
+    if (onTap != null) {
+      return Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(12),
+          child: card,
+        ),
+      );
+    }
+
+    return card;
   }
 }
-

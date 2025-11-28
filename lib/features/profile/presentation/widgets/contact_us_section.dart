@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+
 import '../../../../core/theme/app_colors.dart';
 
 class ContactUsSection extends StatelessWidget {
@@ -28,44 +29,78 @@ class ContactUsSection extends StatelessWidget {
             ),
           ),
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            _SocialIconButton(
-              assetPath: 'assets/socialMedia/logo-black.png',
-              onTap: () => _openUrl('https://x.com/iamurmara?s=21'),
+        Center(
+          child: GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 4,
+              crossAxisSpacing: 16,
+              mainAxisSpacing: 16,
             ),
-            const SizedBox(width: 12),
-            _SocialIconButton(
-              assetPath: 'assets/socialMedia/Instagram_Glyph_Gradient.png',
-              onTap: () => _openUrl('https://www.instagram.com/iamurmara?igsh=MXVodWtjMHExcXFoOA=='),
-            ),
-            const SizedBox(width: 12),
-            _SocialIconButton(
-              assetPath: 'assets/socialMedia/threads-logo-black-01.png',
-              onTap: () => _openUrl('https://www.threads.com/@iamurmara?igshid=NTc4MTIwNjQ2YQ=='),
-            ),
-            const SizedBox(width: 12),
-            _SocialIconButton(
-              assetPath: 'assets/socialMedia/TikTok_Icon_Black_Square.png',
-              onTap: () => _openUrl('https://www.tiktok.com/@iamurmara'),
-            ),
-            const SizedBox(width: 12),
-            _SocialIconButton(
-              assetPath: 'assets/socialMedia/LI-In-Bug.png',
-              onTap: () => _openUrl('https://www.linkedin.com/company/yourmara/'),
-            ),
-            const SizedBox(width: 12),
-            _SocialIconButton(
-              assetPath: 'assets/socialMedia/Discord-Symbol-Blurple.PNG',
-              onTap: () => _openUrl('https://discord.com/invite/hVxvU4ekhJ'),
-            ),
-          ],
+            itemCount: _socialButtons.length,
+            itemBuilder: (context, index) {
+              final button = _socialButtons[index];
+              return _SocialIconButton(
+                assetPath: button.assetPath,
+                icon: button.icon,
+                onTap: () => _openUrl(button.url),
+              );
+            },
+          ),
         ),
       ],
     );
   }
 }
+
+class _SocialButtonData {
+  final String? assetPath;
+  final IconData? icon;
+  final String url;
+
+  const _SocialButtonData({
+    this.assetPath,
+    this.icon,
+    required this.url,
+  }) : assert(assetPath != null || icon != null,
+            'Either assetPath or icon must be provided');
+}
+
+const List<_SocialButtonData> _socialButtons = [
+  const _SocialButtonData(
+    assetPath: 'assets/socialMedia/logo-black.png',
+    url: 'https://x.com/iamurmara?s=21',
+  ),
+  const _SocialButtonData(
+    assetPath: 'assets/socialMedia/Instagram_Glyph_Gradient.png',
+    url: 'https://www.instagram.com/iamurmara?igsh=MXVodWtjMHExcXFoOA==',
+  ),
+  const _SocialButtonData(
+    assetPath: 'assets/socialMedia/threads-logo-black-01.png',
+    url: 'https://www.threads.com/@iamurmara?igshid=NTc4MTIwNjQ2YQ==',
+  ),
+  const _SocialButtonData(
+    assetPath: 'assets/socialMedia/TikTok_Icon_Black_Square.png',
+    url: 'https://www.tiktok.com/@iamurmara',
+  ),
+  const _SocialButtonData(
+    assetPath: 'assets/socialMedia/LI-In-Bug.png',
+    url: 'https://www.linkedin.com/company/yourmara/',
+  ),
+  const _SocialButtonData(
+    assetPath: 'assets/socialMedia/Discord-Symbol-Blurple.PNG',
+    url: 'https://discord.com/invite/hVxvU4ekhJ',
+  ),
+  const _SocialButtonData(
+    assetPath: 'assets/socialMedia/Digital_Glyph_Green.png',
+    url: 'https://whatsapp.com/channel/0029VbBvq5D9cDDgD72drm23',
+  ),
+  const _SocialButtonData(
+    icon: Icons.email_outlined,
+    url: 'mailto:contact@iammara.com',
+  ),
+];
 
 class _SocialIconButton extends StatelessWidget {
   final String? assetPath;
@@ -76,15 +111,16 @@ class _SocialIconButton extends StatelessWidget {
     this.assetPath,
     this.icon,
     required this.onTap,
-  }) : assert(assetPath != null || icon != null, 'Either assetPath or icon must be provided');
+  }) : assert(assetPath != null || icon != null,
+            'Either assetPath or icon must be provided');
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 52,
-        height: 52,
+        width: 45,
+        height: 45,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
@@ -118,4 +154,3 @@ class _SocialIconButton extends StatelessWidget {
     );
   }
 }
-

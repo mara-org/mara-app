@@ -263,6 +263,23 @@ class AppLocalizationsAr extends AppLocalizations {
   String get loading => 'جاري التحميل...';
 
   @override
+  String get clearCache => 'مسح الذاكرة المؤقتة';
+
+  @override
+  String get clearCacheDescription =>
+      'اضغط لإزالة بيانات الذاكرة المؤقتة من هذا الجهاز.';
+
+  @override
+  String get clearCacheConfirmation =>
+      'هل أنت متأكد أنك تريد مسح ذاكرة التطبيق المؤقتة؟';
+
+  @override
+  String get cacheClearedSuccess => 'تم مسح الذاكرة المؤقتة بنجاح.';
+
+  @override
+  String get confirm => 'تأكيد';
+
+  @override
   String get contactUs => 'تواصل معنا';
 
   @override
@@ -608,7 +625,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get home => 'الرئيسية';
 
   @override
-  String get analyst => 'المحلل';
+  String get analyst => 'التحليلات';
 
   @override
   String get mara => 'مَرَا';
