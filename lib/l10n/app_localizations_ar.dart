@@ -286,6 +286,72 @@ class AppLocalizationsAr extends AppLocalizations {
   String get logOut => 'تسجيل الخروج';
 
   @override
+  String get deleteAccount => 'حذف الحساب';
+
+  @override
+  String get deleteAccountDialogTitle => 'حذف حساب مرا؟';
+
+  @override
+  String get deleteAccountDialogBody =>
+      'سيؤدي ذلك إلى إزالة حسابك وجميع البيانات المرتبطة به بشكل دائم. لا يمكن التراجع عن هذا الإجراء.';
+
+  @override
+  String get deleteAccountEmailTitle => 'أكد بريدك الإلكتروني';
+
+  @override
+  String get deleteAccountEmailSubtitle =>
+      'يرجى كتابة بريدك الإلكتروني لتأكيد رغبتك في حذف حساب مرا.';
+
+  @override
+  String get deleteAccountEmailMismatchError =>
+      'هذا البريد الإلكتروني لا يطابق حسابك.';
+
+  @override
+  String get deleteAccountPhraseTitle => 'اكتب عبارة الحذف';
+
+  @override
+  String get deleteAccountPhrase => 'DELETE MY MARA ACCOUNT';
+
+  @override
+  String deleteAccountPhraseSubtitle(String phrase) {
+    return 'للتأكيد، يرجى كتابة: $phrase';
+  }
+
+  @override
+  String get deleteAccountPhraseError => 'يرجى كتابة العبارة تمامًا للمتابعة.';
+
+  @override
+  String get deleteAccountVerifyTitle => 'أدخل رمز التحقق';
+
+  @override
+  String get deleteAccountVerifySubtitle =>
+      'تحقق من بريدك الإلكتروني وأدخل الرمز لتأكيد الحذف.';
+
+  @override
+  String get deleteAccountCodeHelper =>
+      'أرسلنا رمز تحقق إلى بريدك الإلكتروني. أدخله أدناه لحذف حسابك نهائيًا.';
+
+  @override
+  String get deleteAccountResend => 'إعادة إرسال الرمز';
+
+  @override
+  String get deleteAccountResentMessage => 'تمت إعادة إرسال الرمز.';
+
+  @override
+  String get deleteAccountSendCodeError =>
+      'تعذر إرسال رمز التحقق. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get deleteAccountDeleteButton => 'حذف الحساب';
+
+  @override
+  String get deleteAccountVerificationError =>
+      'رمز غير صالح أو منتهي الصلاحية. حاول مرة أخرى.';
+
+  @override
+  String get deleteAccountSuccessMessage => 'تم حذف حسابك.';
+
+  @override
   String get editName => 'تعديل الاسم';
 
   @override

@@ -92,6 +92,32 @@
   "confirm": "تأكيد",
   "contactUs": "تواصل معنا",
   "logOut": "تسجيل الخروج",
+  "deleteAccount": "حذف الحساب",
+  "deleteAccountDialogTitle": "حذف حساب مرا؟",
+  "deleteAccountDialogBody": "سيؤدي ذلك إلى إزالة حسابك وجميع البيانات المرتبطة به بشكل دائم. لا يمكن التراجع عن هذا الإجراء.",
+  "deleteAccountEmailTitle": "أكد بريدك الإلكتروني",
+  "deleteAccountEmailSubtitle": "يرجى كتابة بريدك الإلكتروني لتأكيد رغبتك في حذف حساب مرا.",
+  "deleteAccountEmailMismatchError": "هذا البريد الإلكتروني لا يطابق حسابك.",
+  "deleteAccountPhraseTitle": "اكتب عبارة الحذف",
+  "deleteAccountPhrase": "DELETE MY MARA ACCOUNT",
+  "deleteAccountPhraseSubtitle": "للتأكيد، يرجى كتابة: {phrase}",
+  "@deleteAccountPhraseSubtitle": {
+    "placeholders": {
+      "phrase": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteAccountPhraseError": "يرجى كتابة العبارة تمامًا للمتابعة.",
+  "deleteAccountVerifyTitle": "أدخل رمز التحقق",
+  "deleteAccountVerifySubtitle": "تحقق من بريدك الإلكتروني وأدخل الرمز لتأكيد الحذف.",
+  "deleteAccountCodeHelper": "أرسلنا رمز تحقق إلى بريدك الإلكتروني. أدخله أدناه لحذف حسابك نهائيًا.",
+  "deleteAccountResend": "إعادة إرسال الرمز",
+  "deleteAccountResentMessage": "تمت إعادة إرسال الرمز.",
+  "deleteAccountSendCodeError": "تعذر إرسال رمز التحقق. يرجى المحاولة مرة أخرى.",
+  "deleteAccountDeleteButton": "حذف الحساب",
+  "deleteAccountVerificationError": "رمز غير صالح أو منتهي الصلاحية. حاول مرة أخرى.",
+  "deleteAccountSuccessMessage": "تم حذف حسابك.",
   "editName": "تعديل الاسم",
   "save": "حفظ",
   "cancel": "إلغاء",

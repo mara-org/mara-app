@@ -92,6 +92,32 @@
   "confirm": "Confirm",
   "contactUs": "Contact us",
   "logOut": "Log out",
+  "deleteAccount": "Delete account",
+  "deleteAccountDialogTitle": "Delete your Mara account?",
+  "deleteAccountDialogBody": "This will permanently remove your account and all associated data. This action cannot be undone.",
+  "deleteAccountEmailTitle": "Confirm your email",
+  "deleteAccountEmailSubtitle": "Please type your email address to confirm you want to delete your Mara account.",
+  "deleteAccountEmailMismatchError": "This email doesn’t match your account.",
+  "deleteAccountPhraseTitle": "Type the delete phrase",
+  "deleteAccountPhrase": "DELETE MY MARA ACCOUNT",
+  "deleteAccountPhraseSubtitle": "To confirm, please type: {phrase}",
+  "@deleteAccountPhraseSubtitle": {
+    "placeholders": {
+      "phrase": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteAccountPhraseError": "Please type the phrase exactly to continue.",
+  "deleteAccountVerifyTitle": "Enter verification code",
+  "deleteAccountVerifySubtitle": "Check your email and enter the code to confirm deletion.",
+  "deleteAccountCodeHelper": "We’ve sent a verification code to your email. Enter it below to permanently delete your account.",
+  "deleteAccountResend": "Resend code",
+  "deleteAccountResentMessage": "Code resent.",
+  "deleteAccountSendCodeError": "Could not send the verification code. Please try again.",
+  "deleteAccountDeleteButton": "Delete account",
+  "deleteAccountVerificationError": "Invalid or expired code. Please try again.",
+  "deleteAccountSuccessMessage": "Your account has been deleted.",
   "editName": "Edit Name",
   "save": "Save",
   "cancel": "Cancel",

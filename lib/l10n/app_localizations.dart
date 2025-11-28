@@ -632,6 +632,120 @@ abstract class AppLocalizations {
   /// **'Log out'**
   String get logOut;
 
+  /// No description provided for @deleteAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account'**
+  String get deleteAccount;
+
+  /// No description provided for @deleteAccountDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete your Mara account?'**
+  String get deleteAccountDialogTitle;
+
+  /// No description provided for @deleteAccountDialogBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This will permanently remove your account and all associated data. This action cannot be undone.'**
+  String get deleteAccountDialogBody;
+
+  /// No description provided for @deleteAccountEmailTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm your email'**
+  String get deleteAccountEmailTitle;
+
+  /// No description provided for @deleteAccountEmailSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Please type your email address to confirm you want to delete your Mara account.'**
+  String get deleteAccountEmailSubtitle;
+
+  /// No description provided for @deleteAccountEmailMismatchError.
+  ///
+  /// In en, this message translates to:
+  /// **'This email doesn’t match your account.'**
+  String get deleteAccountEmailMismatchError;
+
+  /// No description provided for @deleteAccountPhraseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Type the delete phrase'**
+  String get deleteAccountPhraseTitle;
+
+  /// No description provided for @deleteAccountPhrase.
+  ///
+  /// In en, this message translates to:
+  /// **'DELETE MY MARA ACCOUNT'**
+  String get deleteAccountPhrase;
+
+  /// No description provided for @deleteAccountPhraseSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'To confirm, please type: {phrase}'**
+  String deleteAccountPhraseSubtitle(String phrase);
+
+  /// No description provided for @deleteAccountPhraseError.
+  ///
+  /// In en, this message translates to:
+  /// **'Please type the phrase exactly to continue.'**
+  String get deleteAccountPhraseError;
+
+  /// No description provided for @deleteAccountVerifyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter verification code'**
+  String get deleteAccountVerifyTitle;
+
+  /// No description provided for @deleteAccountVerifySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your email and enter the code to confirm deletion.'**
+  String get deleteAccountVerifySubtitle;
+
+  /// No description provided for @deleteAccountCodeHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'We’ve sent a verification code to your email. Enter it below to permanently delete your account.'**
+  String get deleteAccountCodeHelper;
+
+  /// No description provided for @deleteAccountResend.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend code'**
+  String get deleteAccountResend;
+
+  /// No description provided for @deleteAccountResentMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Code resent.'**
+  String get deleteAccountResentMessage;
+
+  /// No description provided for @deleteAccountSendCodeError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not send the verification code. Please try again.'**
+  String get deleteAccountSendCodeError;
+
+  /// No description provided for @deleteAccountDeleteButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account'**
+  String get deleteAccountDeleteButton;
+
+  /// No description provided for @deleteAccountVerificationError.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid or expired code. Please try again.'**
+  String get deleteAccountVerificationError;
+
+  /// No description provided for @deleteAccountSuccessMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account has been deleted.'**
+  String get deleteAccountSuccessMessage;
+
   /// No description provided for @editName.
   ///
   /// In en, this message translates to:

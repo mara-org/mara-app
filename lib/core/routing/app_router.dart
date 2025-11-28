@@ -26,6 +26,9 @@ import '../../features/permissions/presentation/notifications_permission_screen.
 import '../../features/permissions/presentation/permissions_summary_screen.dart';
 import '../../features/profile/presentation/privacy_webview_screen.dart';
 import '../../features/profile/presentation/profile_screen.dart';
+import '../../features/settings/presentation/delete_account/delete_account_code_screen.dart';
+import '../../features/settings/presentation/delete_account/delete_account_email_screen.dart';
+import '../../features/settings/presentation/delete_account/delete_account_verify_screen.dart';
 import '../../features/settings/presentation/logout_confirmation_screen.dart';
 import '../../features/settings/presentation/privacy_policy_screen.dart';
 import '../../features/settings/presentation/settings_screen.dart';
@@ -250,6 +253,18 @@ class AppRouter {
       GoRoute(
         path: '/logout-confirmation',
         builder: (context, state) => const LogoutConfirmationScreen(),
+      ),
+      GoRoute(
+        path: '/delete-account/email',
+        builder: (context, state) => const DeleteAccountEmailScreen(),
+      ),
+      GoRoute(
+        path: '/delete-account/code',
+        builder: (context, state) => const DeleteAccountCodeScreen(),
+      ),
+      GoRoute(
+        path: '/delete-account/verify',
+        builder: (context, state) => const DeleteAccountVerifyScreen(),
       ),
     ],
   );

@@ -1,15 +1,12 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/providers/email_provider.dart';
 import '../../../core/providers/subscription_provider.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/utils/cache_utils.dart';
 import '../../../core/utils/platform_utils.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/system/system_providers.dart';
@@ -20,6 +17,33 @@ import 'widgets/subscription_banner.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
+
+  void _showDeleteAccountDialog(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.deleteAccountDialogTitle),
+        content: Text(l10n.deleteAccountDialogBody),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: Text(l10n.cancel),
+          ),
+          TextButton(
+            style: TextButton.styleFrom(
+              foregroundColor: AppColors.error,
+            ),
+            onPressed: () {
+              Navigator.of(ctx).pop();
+              context.push('/delete-account/email');
+            },
+            child: Text(l10n.continueButton),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -254,6 +278,20 @@ class ProfileScreen extends ConsumerWidget {
                         ),
                       ),
                       const SizedBox(height: 20),
+                      Center(
+                        child: TextButton(
+                          onPressed: () => _showDeleteAccountDialog(context),
+                          child: Text(
+                            l10n.deleteAccount,
+                            style: TextStyle(
+                              color: AppColors.error,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
                     ],
                   ),
                 ),
@@ -427,12 +465,7 @@ class _DeveloperSettingsSection extends ConsumerWidget {
   Future<void> _clearCache(BuildContext context) async {
     final l10n = AppLocalizations.of(context)!;
     try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.clear();
-
-      await _deleteDirectory(await getTemporaryDirectory());
-      await _deleteDirectory(await getApplicationSupportDirectory());
-      await _deleteDirectory(await getApplicationDocumentsDirectory());
+      await CacheUtils.clearLocalCaches();
 
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -445,12 +478,6 @@ class _DeveloperSettingsSection extends ConsumerWidget {
           SnackBar(content: Text(l10n.cacheClearedSuccess)),
         );
       }
-    }
-  }
-
-  Future<void> _deleteDirectory(Directory directory) async {
-    if (await directory.exists()) {
-      await directory.delete(recursive: true);
     }
   }
 }

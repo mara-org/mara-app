@@ -14,6 +14,7 @@ class MaraTextField extends StatelessWidget {
   final bool enabled;
   final void Function(String)? onChanged;
   final List<TextInputFormatter>? inputFormatters;
+  final bool enableContextMenu;
 
   const MaraTextField({
     super.key,
@@ -27,6 +28,7 @@ class MaraTextField extends StatelessWidget {
     this.enabled = true,
     this.onChanged,
     this.inputFormatters,
+    this.enableContextMenu = true,
   });
 
   @override
@@ -41,6 +43,10 @@ class MaraTextField extends StatelessWidget {
       enabled: enabled,
       onChanged: onChanged,
       inputFormatters: inputFormatters,
+      enableInteractiveSelection: enableContextMenu,
+      contextMenuBuilder: enableContextMenu
+          ? null
+          : (context, editableTextState) => const SizedBox.shrink(),
       style: TextStyle(
         fontFamily: 'Roboto',
         fontSize: isIOS ? 17 : 16,

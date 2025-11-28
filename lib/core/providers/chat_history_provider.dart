@@ -76,6 +76,10 @@ class ChatHistoryNotifier extends StateNotifier<List<Conversation>> {
     state = state.where((conv) => conv.id != conversationId).toList();
   }
 
+  void reset() {
+    state = [];
+  }
+
   /// Get a conversation by ID
   Conversation? getConversation(String conversationId) {
     try {

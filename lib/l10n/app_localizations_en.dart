@@ -288,6 +288,73 @@ class AppLocalizationsEn extends AppLocalizations {
   String get logOut => 'Log out';
 
   @override
+  String get deleteAccount => 'Delete account';
+
+  @override
+  String get deleteAccountDialogTitle => 'Delete your Mara account?';
+
+  @override
+  String get deleteAccountDialogBody =>
+      'This will permanently remove your account and all associated data. This action cannot be undone.';
+
+  @override
+  String get deleteAccountEmailTitle => 'Confirm your email';
+
+  @override
+  String get deleteAccountEmailSubtitle =>
+      'Please type your email address to confirm you want to delete your Mara account.';
+
+  @override
+  String get deleteAccountEmailMismatchError =>
+      'This email doesn’t match your account.';
+
+  @override
+  String get deleteAccountPhraseTitle => 'Type the delete phrase';
+
+  @override
+  String get deleteAccountPhrase => 'DELETE MY MARA ACCOUNT';
+
+  @override
+  String deleteAccountPhraseSubtitle(String phrase) {
+    return 'To confirm, please type: $phrase';
+  }
+
+  @override
+  String get deleteAccountPhraseError =>
+      'Please type the phrase exactly to continue.';
+
+  @override
+  String get deleteAccountVerifyTitle => 'Enter verification code';
+
+  @override
+  String get deleteAccountVerifySubtitle =>
+      'Check your email and enter the code to confirm deletion.';
+
+  @override
+  String get deleteAccountCodeHelper =>
+      'We’ve sent a verification code to your email. Enter it below to permanently delete your account.';
+
+  @override
+  String get deleteAccountResend => 'Resend code';
+
+  @override
+  String get deleteAccountResentMessage => 'Code resent.';
+
+  @override
+  String get deleteAccountSendCodeError =>
+      'Could not send the verification code. Please try again.';
+
+  @override
+  String get deleteAccountDeleteButton => 'Delete account';
+
+  @override
+  String get deleteAccountVerificationError =>
+      'Invalid or expired code. Please try again.';
+
+  @override
+  String get deleteAccountSuccessMessage => 'Your account has been deleted.';
+
+  @override
   String get editName => 'Edit Name';
 
   @override
