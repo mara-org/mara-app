@@ -19,6 +19,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
   final GlobalKey<MaraCodeInputState> _codeInputKey =
       GlobalKey<MaraCodeInputState>();
   String _code = '';
+  bool _isResending = false;
 
   bool get _isCodeComplete => _code.length == _codeLength;
 
@@ -33,6 +34,22 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
         ),
       );
     }
+  }
+
+  Future<void> _resendCode() async {
+    if (_isResending) return;
+    final l10n = AppLocalizations.of(context)!;
+    setState(() {
+      _isResending = true;
+    });
+    await Future.delayed(const Duration(seconds: 1));
+    if (!mounted) return;
+    setState(() {
+      _isResending = false;
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(l10n.resendCodeSuccess)),
+    );
   }
 
   @override
@@ -122,6 +139,23 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                       });
                     },
                   ),
+                ),
+                TextButton(
+                  onPressed: _isResending ? null : _resendCode,
+                  child: _isResending
+                      ? SizedBox(
+                          width: 16,
+                          height: 16,
+                          child:
+                              const CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : Text(
+                          l10n.resendCodeButton,
+                          style: TextStyle(
+                            color: AppColors.languageButtonColor,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                 ),
                 const SizedBox(height: 40),
                 // Verify button with gradient

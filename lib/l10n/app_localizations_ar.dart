@@ -352,6 +352,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get deleteAccountSuccessMessage => 'تم حذف حسابك.';
 
   @override
+  String get resendCodeButton => 'إعادة إرسال الرمز';
+
+  @override
+  String get resendCodeSuccess => 'أرسلنا لك رمز تحقق جديد.';
+
+  @override
   String get editName => 'تعديل الاسم';
 
   @override

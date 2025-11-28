@@ -97,7 +97,7 @@ const List<_SocialButtonData> _socialButtons = [
     url: 'https://whatsapp.com/channel/0029VbBvq5D9cDDgD72drm23',
   ),
   const _SocialButtonData(
-    icon: Icons.email_outlined,
+    assetPath: 'assets/socialMedia/email.png',
     url: 'mailto:contact@iammara.com',
   ),
 ];

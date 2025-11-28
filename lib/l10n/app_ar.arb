@@ -118,6 +118,8 @@
   "deleteAccountDeleteButton": "حذف الحساب",
   "deleteAccountVerificationError": "رمز غير صالح أو منتهي الصلاحية. حاول مرة أخرى.",
   "deleteAccountSuccessMessage": "تم حذف حسابك.",
+  "resendCodeButton": "إعادة إرسال الرمز",
+  "resendCodeSuccess": "أرسلنا لك رمز تحقق جديد.",
   "editName": "تعديل الاسم",
   "save": "حفظ",
   "cancel": "إلغاء",

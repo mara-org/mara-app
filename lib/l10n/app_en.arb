@@ -118,6 +118,8 @@
   "deleteAccountDeleteButton": "Delete account",
   "deleteAccountVerificationError": "Invalid or expired code. Please try again.",
   "deleteAccountSuccessMessage": "Your account has been deleted.",
+  "resendCodeButton": "Re-send the code",
+  "resendCodeSuccess": "We’ve sent you a new verification code.",
   "editName": "Edit Name",
   "save": "Save",
   "cancel": "Cancel",

@@ -746,6 +746,18 @@ abstract class AppLocalizations {
   /// **'Your account has been deleted.'**
   String get deleteAccountSuccessMessage;
 
+  /// No description provided for @resendCodeButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Re-send the code'**
+  String get resendCodeButton;
+
+  /// No description provided for @resendCodeSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'We’ve sent you a new verification code.'**
+  String get resendCodeSuccess;
+
   /// No description provided for @editName.
   ///
   /// In en, this message translates to:

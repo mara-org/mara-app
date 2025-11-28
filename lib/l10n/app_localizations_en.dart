@@ -355,6 +355,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deleteAccountSuccessMessage => 'Your account has been deleted.';
 
   @override
+  String get resendCodeButton => 'Re-send the code';
+
+  @override
+  String get resendCodeSuccess => 'We’ve sent you a new verification code.';
+
+  @override
   String get editName => 'Edit Name';
 
   @override
