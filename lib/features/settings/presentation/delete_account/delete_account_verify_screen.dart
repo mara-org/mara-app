@@ -9,11 +9,11 @@ import '../../../../core/providers/permissions_provider.dart';
 import '../../../../core/providers/user_profile_provider.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/cache_utils.dart';
-import '../../../../core/widgets/mara_text_field.dart';
+import '../../../../core/widgets/mara_code_input.dart';
 import '../../../../core/widgets/primary_button.dart';
 import '../../../../l10n/app_localizations.dart';
-import '../../providers/delete_account_providers.dart';
 import '../../data/delete_account_service.dart';
+import '../../providers/delete_account_providers.dart';
 import 'delete_account_scaffold.dart';
 
 class DeleteAccountVerifyScreen extends ConsumerStatefulWidget {
@@ -26,7 +26,10 @@ class DeleteAccountVerifyScreen extends ConsumerStatefulWidget {
 
 class _DeleteAccountVerifyScreenState
     extends ConsumerState<DeleteAccountVerifyScreen> {
-  final _codeController = TextEditingController();
+  static const int _codeLength = 6;
+  final GlobalKey<MaraCodeInputState> _codeInputKey =
+      GlobalKey<MaraCodeInputState>();
+  String _currentCode = '';
   bool _isSending = false;
   bool _isDeleting = false;
   String? _errorMessage;
@@ -39,12 +42,6 @@ class _DeleteAccountVerifyScreenState
     });
   }
 
-  @override
-  void dispose() {
-    _codeController.dispose();
-    super.dispose();
-  }
-
   Future<void> _sendCode({bool isResend = false}) async {
     if (_isSending) return;
     final email = ref.read(emailProvider);
@@ -54,6 +51,8 @@ class _DeleteAccountVerifyScreenState
       }
       return;
     }
+
+    _resetCodeFields();
 
     setState(() {
       _isSending = true;
@@ -82,8 +81,15 @@ class _DeleteAccountVerifyScreenState
     }
   }
 
+  void _resetCodeFields() {
+    _codeInputKey.currentState?.clear();
+    setState(() {
+      _currentCode = '';
+    });
+  }
+
   Future<void> _handleDelete() async {
-    final code = _codeController.text.trim();
+    final code = _currentCode.trim();
     if (code.isEmpty || _isDeleting) return;
 
     final email = ref.read(emailProvider);
@@ -139,7 +145,7 @@ class _DeleteAccountVerifyScreenState
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final isButtonEnabled = _codeController.text.trim().isNotEmpty && !_isDeleting;
+    final isButtonEnabled = _currentCode.length == _codeLength && !_isDeleting;
 
     return DeleteAccountScaffold(
       onBack: () => context.pop(),
@@ -160,17 +166,21 @@ class _DeleteAccountVerifyScreenState
           ),
         ),
         const SizedBox(height: 16),
-        MaraTextField(
-          label: l10n.deleteAccountVerifyTitle,
-          controller: _codeController,
-          keyboardType: TextInputType.text,
-          onChanged: (_) {
-            if (_errorMessage != null) {
-              setState(() {
+        MaraCodeInput(
+          key: _codeInputKey,
+          length: _codeLength,
+          onChanged: (value) {
+            setState(() {
+              _currentCode = value;
+              if (_errorMessage != null && value.isNotEmpty) {
                 _errorMessage = null;
-              });
+              }
+            });
+          },
+          onCompleted: (_) {
+            if (!_isDeleting) {
+              _handleDelete();
             }
-            setState(() {});
           },
         ),
         if (_errorMessage != null)
@@ -214,4 +224,3 @@ class _DeleteAccountVerifyScreenState
     );
   }
 }
-
