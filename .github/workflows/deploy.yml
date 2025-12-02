@@ -23,8 +23,11 @@ jobs:
           if [ -z "$DISCORD_WEBHOOK" ]; then
             echo "ERROR: DISCORD_WEBHOOK_FRONTEND secret is NOT set or is empty."
             exit 1
+          elif [[ ! "$DISCORD_WEBHOOK" =~ ^https://discord\.com/api/webhooks/ ]]; then
+            echo "WARNING: Discord webhook URL format may be incorrect."
+            echo "Expected format: https://discord.com/api/webhooks/..."
           else
-            echo "Discord webhook secret is set."
+            echo "✅ Discord webhook secret is set and format looks correct."
           fi
 
       - name: Set up Flutter
@@ -82,19 +85,39 @@ jobs:
             TITLE="Mara Frontend Build or Deploy FAILED"
           fi
 
-          MESSAGE="${ICON} **${TITLE}**\n\
-Status: \`${STATUS}\`\n\
-Environment: \`${ENVIRONMENT}\`\n\
-Version: \`${APP_VERSION:-unknown}\`\n\
-Repo: \`${GITHUB_REPOSITORY}\`\n\
-Branch: \`${GITHUB_REF_NAME}\`\n\
-Actor: \`${GITHUB_ACTOR}\`\n\
-Commit: [\`${GITHUB_SHA::7}\`](${COMMIT_URL})\n\
-Total time (if computed): \`${DEPLOY_DURATION:-unknown}s\`\n\
-Workflow: ${RUN_URL}"
+          # Build message
+          MESSAGE="${ICON} **${TITLE}**
+          Status: \`${STATUS}\`
+          Environment: \`${ENVIRONMENT}\`
+          Version: \`${APP_VERSION:-unknown}\`
+          Repo: \`${GITHUB_REPOSITORY}\`
+          Branch: \`${GITHUB_REF_NAME}\`
+          Actor: \`${GITHUB_ACTOR}\`
+          Commit: [\`${GITHUB_SHA::7}\`](${COMMIT_URL})
+          Total time: \`${DEPLOY_DURATION:-unknown}s\`
+          Workflow: ${RUN_URL}"
 
-          PAYLOAD=$(printf '{"content": "%s"}' "$MESSAGE")
+          # Properly escape JSON using Python
+          echo "$MESSAGE" > /tmp/discord_msg.txt
+          PAYLOAD=$(python3 -c "import json; f=open('/tmp/discord_msg.txt'); msg=f.read(); f.close(); print(json.dumps({'content': msg}))")
 
-          curl -H "Content-Type: application/json" \
-               -d "$PAYLOAD" \
-               -X POST "$DISCORD_WEBHOOK"
+          # Send to Discord with error handling
+          echo "Sending notification to Discord..."
+          echo "Webhook URL: ${DISCORD_WEBHOOK:0:50}..." # Show first 50 chars for debugging
+          
+          HTTP_CODE=$(curl -s -o /tmp/discord_response.txt -w "%{http_code}" \
+            -H "Content-Type: application/json" \
+            -d "$PAYLOAD" \
+            -X POST "$DISCORD_WEBHOOK")
+          
+          if [ "$HTTP_CODE" -eq 200 ] || [ "$HTTP_CODE" -eq 204 ]; then
+            echo "✅ Discord notification sent successfully (HTTP $HTTP_CODE)"
+          else
+            echo "❌ Failed to send Discord notification (HTTP $HTTP_CODE)"
+            echo "Response:"
+            cat /tmp/discord_response.txt
+            echo ""
+            echo "Payload preview (first 200 chars):"
+            echo "$PAYLOAD" | head -c 200
+            exit 1
+          fi
