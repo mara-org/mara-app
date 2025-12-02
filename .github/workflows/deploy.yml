@@ -33,7 +33,7 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.30.0"  # Updated to support intl ^0.20.2
+          flutter-version: "stable"  # Use latest stable version that supports intl ^0.20.2
 
       - name: Flutter pub get
         run: flutter pub get
