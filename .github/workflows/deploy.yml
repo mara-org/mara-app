@@ -1,0 +1,47 @@
+name: Deploy App
+
+on:
+  push:
+    branches:
+      - main   # Deployment runs only when pushing to main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # ------------------------------
+      # Your actual deployment steps
+      # For example: building, uploading, restarting server...
+      # ------------------------------
+      - name: Run deployment script
+        run: |
+          echo "Deploying application..."
+          # your deployment commands here
+          # Example:
+          # ssh user@server "cd /app && git pull && docker-compose up -d"
+
+      # ------------------------------
+      # Notify Discord on success
+      # ------------------------------
+      - name: Notify Discord - Success
+        if: success()
+        run: |
+          curl -H "Content-Type: application/json" \
+          -X POST \
+          -d '{"content": "✅ Deployment succeeded on branch `main`"}' \
+          ${{ secrets.DISCORD_WEBHOOK }}
+
+      # ------------------------------
+      # Notify Discord on failure
+      # ------------------------------
+      - name: Notify Discord - Failure
+        if: failure()
+        run: |
+          curl -H "Content-Type: application/json" \
+          -X POST \
+          -d '{"content": "❌ Deployment FAILED! Check GitHub Actions logs immediately."}' \
+          ${{ secrets.DISCORD_WEBHOOK }}
