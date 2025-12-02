@@ -25,6 +25,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          cd mara-app
           npm install
 
       - name: Extract frontend version
