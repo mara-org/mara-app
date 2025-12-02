@@ -1,79 +1,63 @@
-name: Mara Mobile - Build & Deploy
+name: Mara Frontend - Build & Deploy
 
 on:
   push:
     branches:
-      - main  # Run on main pushes
-  workflow_dispatch:  # Allow manual trigger
+      - main        # Change this if you deploy from a different branch
+  workflow_dispatch: # Allow manual trigger from the Actions tab
 
 jobs:
-  build-and-deploy-mobile:
+  build-and-deploy-frontend:
     runs-on: ubuntu-latest
 
     env:
-      DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_MOBILE }}
-      ENVIRONMENT: production  # Change to "staging" for test builds
+      DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_FRONTEND }}
+      ENVIRONMENT: production  # Change to "staging" if needed
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          flutter-version: "3.22.0"  # Set your Flutter version ...
+          node-version: "20"
 
-      - name: Flutter pub get
-        run: flutter pub get
-
-      - name: Extract mobile app version
+      - name: Install dependencies
         run: |
-          # Extract version from pubspec.yaml (line starting with 'version:')
-          if grep -q '^version:' pubspec.yaml; then
-            VERSION_LINE=$(grep '^version:' pubspec.yaml | head -n 1)
-            # Assuming format: version: 1.2.3+4
-            VERSION_VALUE=$(echo "$VERSION_LINE" | awk '{print $2}')
+          npm install
+
+      - name: Extract frontend version
+        run: |
+          # Read version from package.json (fallback to 'unknown')
+          if [ -f "package.json" ]; then
+            VERSION_VALUE=$(node -p "require('./package.json').version || 'unknown'")
           else
             VERSION_VALUE="unknown"
           fi
           echo "APP_VERSION=${VERSION_VALUE}" >> $GITHUB_ENV
-          echo "Mobile app version detected: ${VERSION_VALUE}"
+          echo "Frontend version detected: ${VERSION_VALUE}"
 
       - name: Mark build/deploy start time
         run: |
-          # Store start time for build + deploy
+          # Store start time (seconds since epoch)
           echo "DEPLOY_START_TIME=$(date +%s)" >> $GITHUB_ENV
 
-      - name: Run Flutter tests
+      - name: Build frontend
         run: |
-          # Optional: run widget/unit tests
-          flutter test || echo "Tests failed but continuing for demo"
+          echo "Building frontend for ${ENVIRONMENT}..."
+          npm run build
 
-      - name: Build Android APK
+      - name: Deploy frontend
         run: |
-          echo "Building Android APK for ${ENVIRONMENT}..."
-          flutter build apk --release
-
-      # Optional: Add iOS build if you have macOS runners
-      # - name: Build iOS IPA
-      #   runs-on: macos-latest
-      #   run: |
-      #     echo "Building iOS IPA for ${ENVIRONMENT}..."
-      #     flutter build ipa --release
-
-      - name: Deploy Mobile App
-        run: |
-          echo "Deploying mobile build..."
-          # TODO: Replace with your real deployment step
-          # Example: upload to Firebase App Distribution:
-          # firebase appdistribution:distribute build/app/outputs/flutter-apk/app-release.apk \
-          #   --app <APP_ID> \
-          #   --groups "internal-testers"
-          echo "Mobile deployment script finished."
+          echo "Deploying frontend..."
+          # TODO: Replace this with your real deployment commands
+          # Example: rsync build folder to your server:
+          # rsync -avz build/ user@server:/var/www/mara-frontend
+          echo "Frontend deployment script finished."
 
       - name: Compute deploy duration
         run: |
-          # Compute total duration (build + deploy)
           END_TIME=$(date +%s)
           START_TIME=${DEPLOY_START_TIME:-$END_TIME}
           DURATION=$((END_TIME - START_TIME))
@@ -81,7 +65,12 @@ jobs:
             DURATION=0
           fi
           echo "DEPLOY_DURATION=${DURATION}" >> $GITHUB_ENV
-          echo "Mobile build + deploy duration: ${DURATION} seconds"
+          echo "Frontend build + deploy duration: ${DURATION} seconds"
+
+      - name: Install jq
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq
 
       - name: Notify Discord - Success
         if: success()
@@ -90,7 +79,7 @@ jobs:
           COMMIT_URL="https://github.com/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}"
           RUN_URL="https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
 
-          MESSAGE="✅ **Mara Mobile Build & Deploy Succeeded**
+          MESSAGE="✅ **Mara Frontend Build & Deploy Succeeded**
 Environment: \`${ENVIRONMENT}\`
 Version: \`${APP_VERSION}\`
 Repo: \`${GITHUB_REPOSITORY}\`
@@ -113,7 +102,7 @@ Workflow Run: ${RUN_URL}"
           COMMIT_URL="https://github.com/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}"
           RUN_URL="https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
 
-          MESSAGE="❌ **Mara Mobile Build or Deploy FAILED**
+          MESSAGE="❌ **Mara Frontend Build or Deploy FAILED**
 Environment: \`${ENVIRONMENT}\`
 Version: \`${APP_VERSION}\`
 Repo: \`${GITHUB_REPOSITORY}\`
@@ -122,7 +111,7 @@ Actor: \`${GITHUB_ACTOR}\`
 Commit: [\`${GITHUB_SHA::7}\`](${COMMIT_URL})
 Total time (if computed): \`${DEPLOY_DURATION:-unknown}s\`
 Workflow Run: ${RUN_URL}
-> Please check the mobile CI/CD logs."
+> Please check the frontend CI/CD logs."
 
           PAYLOAD=$(jq -n --arg content "$MESSAGE" '{content: $content}')
           curl -H "Content-Type: application/json" \
