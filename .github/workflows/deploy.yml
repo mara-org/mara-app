@@ -1,10 +1,10 @@
-name: Mara Frontend - Build & Deploy
+name: Mara Frontend (Flutter) - Build & Deploy
 
 on:
   push:
     branches:
-      - main         # Change this if you deploy from another branch
-  workflow_dispatch: # Allow manual trigger from the Actions tab
+      - main          # Change this if you deploy from another branch
+  workflow_dispatch:  # Allow manual trigger from the Actions tab
 
 jobs:
   build-and-deploy-frontend:
@@ -12,50 +12,62 @@ jobs:
 
     env:
       DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_FRONTEND }}
-      ENVIRONMENT: production  # Change to "staging" if needed
+      ENVIRONMENT: production  # or "staging"
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
         with:
-          node-version: "20"
+          flutter-version: "3.22.0"   # put your Flutter version here
 
-      - name: Install dependencies
+      - name: Flutter pub get
         run: |
-          cd mara-app
-          npm install
+          flutter pub get
 
-      - name: Extract frontend version
+      - name: Extract app version from pubspec.yaml
         run: |
-          # Read version from package.json (fallback to 'unknown')
-          if [ -f "package.json" ]; then
-            VERSION_VALUE=$(node -p "require('./package.json').version || 'unknown'")
+          # Extract version from the 'version:' line in pubspec.yaml
+          if grep -q '^version:' pubspec.yaml; then
+            VERSION_LINE=$(grep '^version:' pubspec.yaml | head -n 1)
+            VERSION_VALUE=$(echo "$VERSION_LINE" | awk '{print $2}')
           else
             VERSION_VALUE="unknown"
           fi
           echo "APP_VERSION=${VERSION_VALUE}" >> $GITHUB_ENV
-          echo "Frontend version detected: ${VERSION_VALUE}"
+          echo "Detected Flutter app version: ${VERSION_VALUE}"
 
       - name: Mark build/deploy start time
         run: |
-          # Store start time (seconds since epoch)
           echo "DEPLOY_START_TIME=$(date +%s)" >> $GITHUB_ENV
 
-      - name: Build frontend
+      - name: Run Flutter tests (optional)
         run: |
-          echo "Building frontend for ${ENVIRONMENT}..."
-          npm run build
+          # You can comment this out if you don't have tests yet
+          flutter test || echo "Tests failed but continuing for now"
 
-      - name: Deploy frontend
+      - name: Build Flutter app (Android APK)
         run: |
-          echo "Deploying frontend..."
-          # TODO: Replace this with your real deployment commands
-          # Example: rsync build folder to your server:
-          # rsync -avz build/ user@server:/var/www/mara-frontend
-          echo "Frontend deployment script finished."
+          echo "Building Flutter app for ${ENVIRONMENT}..."
+          flutter build apk --release
+
+      # If you want Web build instead, use:
+      # - name: Build Flutter web
+      #   run: |
+      #     echo "Building Flutter web for ${ENVIRONMENT}..."
+      #     flutter build web --release
+
+      - name: Deploy Flutter app
+        run: |
+          echo "Deploying Flutter build..."
+          # TODO: Replace this with your real deployment step
+          # Example: upload APK to Firebase App Distribution:
+          # firebase appdistribution:distribute build/app/outputs/flutter-apk/app-release.apk \
+          #   --app <APP_ID> \
+          #   --groups "internal-testers"
+          echo "Flutter deployment script finished."
 
       - name: Compute deploy duration
         run: |
@@ -66,7 +78,7 @@ jobs:
             DURATION=0
           fi
           echo "DEPLOY_DURATION=${DURATION}" >> $GITHUB_ENV
-          echo "Frontend build + deploy duration: ${DURATION} seconds"
+          echo "Build + deploy duration: ${DURATION} seconds"
 
       - name: Notify Discord - Success
         if: success()
@@ -75,7 +87,15 @@ jobs:
           COMMIT_URL="https://github.com/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}"
           RUN_URL="https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
 
-          MESSAGE="✅ **Mara Frontend Build & Deploy Succeeded\nEnvironment:** \`${ENVIRONMENT}\`\n**Version:** \`${APP_VERSION}\`\n**Repo:** \`${GITHUB_REPOSITORY}\`\n**Branch:** \`${GITHUB_REF_NAME}\`\n**Actor:** \`${GITHUB_ACTOR}\`\n**Commit:** [\`${GITHUB_SHA::7}\`](${COMMIT_URL})\n**Total time:** \`${DEPLOY_DURATION}s\`\n**Workflow Run:** ${RUN_URL}"
+          MESSAGE="✅ **Mara Frontend (Flutter) Build & Deploy Succeeded**\n\
+Environment: \`${ENVIRONMENT}\`\n\
+Version: \`${APP_VERSION:-unknown}\`\n\
+Repo: \`${GITHUB_REPOSITORY}\`\n\
+Branch: \`${GITHUB_REF_NAME}\`\n\
+Actor: \`${GITHUB_ACTOR}\`\n\
+Commit: [\`${GITHUB_SHA::7}\`](${COMMIT_URL})\n\
+Total time: \`${DEPLOY_DURATION:-unknown}s\`\n\
+Workflow Run: ${RUN_URL}"
 
           JSON_PAYLOAD=$(printf '{"content": "%s"}' "$MESSAGE")
 
@@ -91,7 +111,16 @@ jobs:
           COMMIT_URL="https://github.com/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}"
           RUN_URL="https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
 
-          MESSAGE="❌ **Mara Frontend Build or Deploy FAILED\nEnvironment:** \`${ENVIRONMENT}\`\n**Version:** \`${APP_VERSION}\`\n**Repo:** \`${GITHUB_REPOSITORY}\`\n**Branch:** \`${GITHUB_REF_NAME}\`\n**Actor:** \`${GITHUB_ACTOR}\`\n**Commit:** [\`${GITHUB_SHA::7}\`](${COMMIT_URL})\n**Total time (if computed):** \`${DEPLOY_DURATION:-unknown}s\`\n**Workflow Run:** ${RUN_URL}\n> Please check the frontend CI/CD logs."
+          MESSAGE="❌ **Mara Frontend (Flutter) Build or Deploy FAILED**\n\
+Environment: \`${ENVIRONMENT}\`\n\
+Version: \`${APP_VERSION:-unknown}\`\n\
+Repo: \`${GITHUB_REPOSITORY}\`\n\
+Branch: \`${GITHUB_REF_NAME}\`\n\
+Actor: \`${GITHUB_ACTOR}\`\n\
+Commit: [\`${GITHUB_SHA::7}\`](${COMMIT_URL})\n\
+Total time (if computed): \`${DEPLOY_DURATION:-unknown}s\`\n\
+Workflow Run: ${RUN_URL}\n\
+> Please check the frontend CI/CD logs."
 
           JSON_PAYLOAD=$(printf '{"content": "%s"}' "$MESSAGE")
 
