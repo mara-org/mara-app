@@ -3,8 +3,8 @@ name: Mara Frontend (Flutter) - Build & Deploy
 on:
   push:
     branches:
-      - main          # Change this if you deploy from a different branch
-  workflow_dispatch:  # Allow manual trigger from the Actions tab
+      - main
+  workflow_dispatch:
 
 jobs:
   build-and-deploy-frontend:
@@ -12,7 +12,7 @@ jobs:
 
     env:
       DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_FRONTEND }}
-      ENVIRONMENT: production  # or "staging"
+      ENVIRONMENT: production
 
     steps:
       - name: Checkout code
@@ -21,111 +21,84 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.22.0"   # Set your Flutter version here
+          flutter-version: "3.22.0"
 
       - name: Flutter pub get
-        run: |
-          flutter pub get
+        run: flutter pub get
 
-      - name: Extract app version from pubspec.yaml
+      - name: Extract app version
         run: |
-          # Extract version from the 'version:' line in pubspec.yaml
           if grep -q '^version:' pubspec.yaml; then
             VERSION_LINE=$(grep '^version:' pubspec.yaml | head -n 1)
             VERSION_VALUE=$(echo "$VERSION_LINE" | awk '{print $2}')
           else
             VERSION_VALUE="unknown"
           fi
-          echo "APP_VERSION=${VERSION_VALUE}" >> $GITHUB_ENV
-          echo "Detected Flutter app version: ${VERSION_VALUE}"
+          echo "APP_VERSION=$VERSION_VALUE" >> $GITHUB_ENV
 
-      - name: Mark build/deploy start time
-        run: |
-          echo "DEPLOY_START_TIME=$(date +%s)" >> $GITHUB_ENV
+      - name: Mark start time
+        run: echo "DEPLOY_START_TIME=$(date +%s)" >> $GITHUB_ENV
 
-      - name: Run Flutter tests (optional)
-        run: |
-          # You can comment this out if you don't have tests yet
-          flutter test || echo "Tests failed but continuing for now"
+      - name: Build Flutter APK
+        run: flutter build apk --release
 
-      - name: Build Flutter app (Android APK)
-        run: |
-          echo "Building Flutter app for ${ENVIRONMENT}..."
-          flutter build apk --release
+      # - name: Build Flutter Web
+      #   run: flutter build web --release
 
-      # If you want to build Flutter Web instead, comment the APK step above
-      # and use this:
-      # - name: Build Flutter web
-      #   run: |
-      #     echo "Building Flutter web for ${ENVIRONMENT}..."
-      #     flutter build web --release
-
-      - name: Deploy Flutter app
+      - name: Deploy Flutter build
         run: |
           echo "Deploying Flutter build..."
-          # TODO: Replace this with your real deployment step
-          # Example: upload APK to Firebase App Distribution:
-          # firebase appdistribution:distribute build/app/outputs/flutter-apk/app-release.apk \
-          #   --app <APP_ID> \
-          #   --groups "internal-testers"
-          echo "Flutter deployment script finished."
+          # TODO: add your deploy command here
+          echo "Done."
 
       - name: Compute deploy duration
         run: |
           END_TIME=$(date +%s)
           START_TIME=${DEPLOY_START_TIME:-$END_TIME}
           DURATION=$((END_TIME - START_TIME))
-          if [ "$DURATION" -lt 0 ]; then
-            DURATION=0
-          fi
-          echo "DEPLOY_DURATION=${DURATION}" >> $GITHUB_ENV
-          echo "Build + deploy duration: ${DURATION} seconds"
+          echo "DEPLOY_DURATION=$DURATION" >> $GITHUB_ENV
 
       - name: Notify Discord - Success
         if: success()
         run: |
-          echo "Sending success notification to Discord..."
           COMMIT_URL="https://github.com/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}"
           RUN_URL="https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
 
-          MESSAGE="✅ **Mara Frontend (Flutter) Build & Deploy Succeeded**\n\
+          MESSAGE="✅ **Mara Frontend Build & Deploy Succeeded**\n\
 Environment: \`${ENVIRONMENT}\`\n\
-Version: \`${APP_VERSION:-unknown}\`\n\
+Version: \`${APP_VERSION}\`\n\
 Repo: \`${GITHUB_REPOSITORY}\`\n\
 Branch: \`${GITHUB_REF_NAME}\`\n\
 Actor: \`${GITHUB_ACTOR}\`\n\
 Commit: [\`${GITHUB_SHA::7}\`](${COMMIT_URL})\n\
-Total time: \`${DEPLOY_DURATION:-unknown}s\`\n\
-Workflow Run: ${RUN_URL}"
+Total time: \`${DEPLOY_DURATION}s\`\n\
+Workflow: ${RUN_URL}"
 
-          JSON_PAYLOAD=$(printf '{"content": "%s"}' "$MESSAGE")
+          PAYLOAD=$(printf '{"content": "%s"}' "$MESSAGE")
 
           curl -H "Content-Type: application/json" \
-               -X POST \
-               -d "$JSON_PAYLOAD" \
-               "$DISCORD_WEBHOOK"
+               -d "$PAYLOAD" \
+               -X POST "$DISCORD_WEBHOOK"
 
       - name: Notify Discord - Failure
         if: failure()
         run: |
-          echo "Sending failure notification to Discord..."
           COMMIT_URL="https://github.com/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}"
           RUN_URL="https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
 
-          MESSAGE="❌ **Mara Frontend (Flutter) Build or Deploy FAILED**\n\
+          MESSAGE="❌ **Mara Frontend Build or Deploy FAILED**\n\
 Environment: \`${ENVIRONMENT}\`\n\
-Version: \`${APP_VERSION:-unknown}\`\n\
+Version: \`${APP_VERSION}\`\n\
 Repo: \`${GITHUB_REPOSITORY}\`\n\
 Branch: \`${GITHUB_REF_NAME}\`\n\
 Actor: \`${GITHUB_ACTOR}\`\n\
 Commit: [\`${GITHUB_SHA::7}\`](${COMMIT_URL})\n\
 Total time (if computed): \`${DEPLOY_DURATION:-unknown}s\`\n\
-Workflow Run: ${RUN_URL}\n\
-> Please check the frontend CI/CD logs."
+Workflow: ${RUN_URL}\n\
+> Check the CI/CD logs."
 
-          JSON_PAYLOAD=$(printf '{"content": "%s"}' "$MESSAGE")
+          PAYLOAD=$(printf '{"content": "%s"}' "$MESSAGE")
 
           curl -H "Content-Type: application/json" \
-               -X POST \
-               -d "$JSON_PAYLOAD" \
-               "$DISCORD_WEBHOOK"
+               -d "$PAYLOAD" \
+               -X POST "$DISCORD_WEBHOOK"
