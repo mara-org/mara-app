@@ -3,7 +3,7 @@ name: Mara Frontend - Build & Deploy
 on:
   push:
     branches:
-      - main        # Change this if you deploy from a different branch
+      - main         # Change this if you deploy from another branch
   workflow_dispatch: # Allow manual trigger from the Actions tab
 
 jobs:
@@ -67,11 +67,6 @@ jobs:
           echo "DEPLOY_DURATION=${DURATION}" >> $GITHUB_ENV
           echo "Frontend build + deploy duration: ${DURATION} seconds"
 
-      - name: Install jq
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y jq
-
       - name: Notify Discord - Success
         if: success()
         run: |
@@ -79,20 +74,13 @@ jobs:
           COMMIT_URL="https://github.com/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}"
           RUN_URL="https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
 
-          MESSAGE="✅ **Mara Frontend Build & Deploy Succeeded**
-Environment: \`${ENVIRONMENT}\`
-Version: \`${APP_VERSION}\`
-Repo: \`${GITHUB_REPOSITORY}\`
-Branch: \`${GITHUB_REF_NAME}\`
-Actor: \`${GITHUB_ACTOR}\`
-Commit: [\`${GITHUB_SHA::7}\`](${COMMIT_URL})
-Total time: \`${DEPLOY_DURATION}s\`
-Workflow Run: ${RUN_URL}"
+          MESSAGE="✅ **Mara Frontend Build & Deploy Succeeded\nEnvironment:** \`${ENVIRONMENT}\`\n**Version:** \`${APP_VERSION}\`\n**Repo:** \`${GITHUB_REPOSITORY}\`\n**Branch:** \`${GITHUB_REF_NAME}\`\n**Actor:** \`${GITHUB_ACTOR}\`\n**Commit:** [\`${GITHUB_SHA::7}\`](${COMMIT_URL})\n**Total time:** \`${DEPLOY_DURATION}s\`\n**Workflow Run:** ${RUN_URL}"
 
-          PAYLOAD=$(jq -n --arg content "$MESSAGE" '{content: $content}')
+          JSON_PAYLOAD=$(printf '{"content": "%s"}' "$MESSAGE")
+
           curl -H "Content-Type: application/json" \
                -X POST \
-               -d "$PAYLOAD" \
+               -d "$JSON_PAYLOAD" \
                "$DISCORD_WEBHOOK"
 
       - name: Notify Discord - Failure
@@ -102,19 +90,11 @@ Workflow Run: ${RUN_URL}"
           COMMIT_URL="https://github.com/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}"
           RUN_URL="https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
 
-          MESSAGE="❌ **Mara Frontend Build or Deploy FAILED**
-Environment: \`${ENVIRONMENT}\`
-Version: \`${APP_VERSION}\`
-Repo: \`${GITHUB_REPOSITORY}\`
-Branch: \`${GITHUB_REF_NAME}\`
-Actor: \`${GITHUB_ACTOR}\`
-Commit: [\`${GITHUB_SHA::7}\`](${COMMIT_URL})
-Total time (if computed): \`${DEPLOY_DURATION:-unknown}s\`
-Workflow Run: ${RUN_URL}
-> Please check the frontend CI/CD logs."
+          MESSAGE="❌ **Mara Frontend Build or Deploy FAILED\nEnvironment:** \`${ENVIRONMENT}\`\n**Version:** \`${APP_VERSION}\`\n**Repo:** \`${GITHUB_REPOSITORY}\`\n**Branch:** \`${GITHUB_REF_NAME}\`\n**Actor:** \`${GITHUB_ACTOR}\`\n**Commit:** [\`${GITHUB_SHA::7}\`](${COMMIT_URL})\n**Total time (if computed):** \`${DEPLOY_DURATION:-unknown}s\`\n**Workflow Run:** ${RUN_URL}\n> Please check the frontend CI/CD logs."
 
-          PAYLOAD=$(jq -n --arg content "$MESSAGE" '{content: $content}')
+          JSON_PAYLOAD=$(printf '{"content": "%s"}' "$MESSAGE")
+
           curl -H "Content-Type: application/json" \
                -X POST \
-               -d "$PAYLOAD" \
+               -d "$JSON_PAYLOAD" \
                "$DISCORD_WEBHOOK"
