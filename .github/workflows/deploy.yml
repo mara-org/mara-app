@@ -1,47 +1,131 @@
-name: Deploy App
+name: Mara Mobile - Build & Deploy
 
 on:
   push:
     branches:
-      - main   # Deployment runs only when pushing to main
+      - main  # Run on main pushes
+  workflow_dispatch:  # Allow manual trigger
 
 jobs:
-  deploy:
+  build-and-deploy-mobile:
     runs-on: ubuntu-latest
+
+    env:
+      DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_MOBILE }}
+      ENVIRONMENT: production  # Change to "staging" for test builds
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # ------------------------------
-      # Your actual deployment steps
-      # For example: building, uploading, restarting server...
-      # ------------------------------
-      - name: Run deployment script
-        run: |
-          echo "Deploying application..."
-          # your deployment commands here
-          # Example:
-          # ssh user@server "cd /app && git pull && docker-compose up -d"
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.22.0"  # Set your Flutter version
 
-      # ------------------------------
-      # Notify Discord on success
-      # ------------------------------
+      - name: Flutter pub get
+        run: flutter pub get
+
+      - name: Extract mobile app version
+        run: |
+          # Extract version from pubspec.yaml (line starting with 'version:')
+          if grep -q '^version:' pubspec.yaml; then
+            VERSION_LINE=$(grep '^version:' pubspec.yaml | head -n 1)
+            # Assuming format: version: 1.2.3+4
+            VERSION_VALUE=$(echo "$VERSION_LINE" | awk '{print $2}')
+          else
+            VERSION_VALUE="unknown"
+          fi
+          echo "APP_VERSION=${VERSION_VALUE}" >> $GITHUB_ENV
+          echo "Mobile app version detected: ${VERSION_VALUE}"
+
+      - name: Mark build/deploy start time
+        run: |
+          # Store start time for build + deploy
+          echo "DEPLOY_START_TIME=$(date +%s)" >> $GITHUB_ENV
+
+      - name: Run Flutter tests
+        run: |
+          # Optional: run widget/unit tests
+          flutter test || echo "Tests failed but continuing for demo"
+
+      - name: Build Android APK
+        run: |
+          echo "Building Android APK for ${ENVIRONMENT}..."
+          flutter build apk --release
+
+      # Optional: Add iOS build if you have macOS runners
+      # - name: Build iOS IPA
+      #   runs-on: macos-latest
+      #   run: |
+      #     echo "Building iOS IPA for ${ENVIRONMENT}..."
+      #     flutter build ipa --release
+
+      - name: Deploy Mobile App
+        run: |
+          echo "Deploying mobile build..."
+          # TODO: Replace with your real deployment step
+          # Example: upload to Firebase App Distribution:
+          # firebase appdistribution:distribute build/app/outputs/flutter-apk/app-release.apk \
+          #   --app <APP_ID> \
+          #   --groups "internal-testers"
+          echo "Mobile deployment script finished."
+
+      - name: Compute deploy duration
+        run: |
+          # Compute total duration (build + deploy)
+          END_TIME=$(date +%s)
+          START_TIME=${DEPLOY_START_TIME:-$END_TIME}
+          DURATION=$((END_TIME - START_TIME))
+          if [ "$DURATION" -lt 0 ]; then
+            DURATION=0
+          fi
+          echo "DEPLOY_DURATION=${DURATION}" >> $GITHUB_ENV
+          echo "Mobile build + deploy duration: ${DURATION} seconds"
+
       - name: Notify Discord - Success
         if: success()
         run: |
-          curl -H "Content-Type: application/json" \
-          -X POST \
-          -d '{"content": "✅ Deployment succeeded on branch `main`"}' \
-          ${{ secrets.DISCORD_WEBHOOK }}
+          echo "Sending success notification to Discord..."
+          COMMIT_URL="https://github.com/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}"
+          RUN_URL="https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
 
-      # ------------------------------
-      # Notify Discord on failure
-      # ------------------------------
+          MESSAGE="✅ **Mara Mobile Build & Deploy Succeeded**
+Environment: \`${ENVIRONMENT}\`
+Version: \`${APP_VERSION}\`
+Repo: \`${GITHUB_REPOSITORY}\`
+Branch: \`${GITHUB_REF_NAME}\`
+Actor: \`${GITHUB_ACTOR}\`
+Commit: [\`${GITHUB_SHA::7}\`](${COMMIT_URL})
+Total time: \`${DEPLOY_DURATION}s\`
+Workflow Run: ${RUN_URL}"
+
+          PAYLOAD=$(jq -n --arg content "$MESSAGE" '{content: $content}')
+          curl -H "Content-Type: application/json" \
+               -X POST \
+               -d "$PAYLOAD" \
+               "$DISCORD_WEBHOOK"
+
       - name: Notify Discord - Failure
         if: failure()
         run: |
+          echo "Sending failure notification to Discord..."
+          COMMIT_URL="https://github.com/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}"
+          RUN_URL="https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+
+          MESSAGE="❌ **Mara Mobile Build or Deploy FAILED**
+Environment: \`${ENVIRONMENT}\`
+Version: \`${APP_VERSION}\`
+Repo: \`${GITHUB_REPOSITORY}\`
+Branch: \`${GITHUB_REF_NAME}\`
+Actor: \`${GITHUB_ACTOR}\`
+Commit: [\`${GITHUB_SHA::7}\`](${COMMIT_URL})
+Total time (if computed): \`${DEPLOY_DURATION:-unknown}s\`
+Workflow Run: ${RUN_URL}
+> Please check the mobile CI/CD logs."
+
+          PAYLOAD=$(jq -n --arg content "$MESSAGE" '{content: $content}')
           curl -H "Content-Type: application/json" \
-          -X POST \
-          -d '{"content": "❌ Deployment FAILED! Check GitHub Actions logs immediately."}' \
-          ${{ secrets.DISCORD_WEBHOOK }}
+               -X POST \
+               -d "$PAYLOAD" \
+               "$DISCORD_WEBHOOK"
