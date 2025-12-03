@@ -16,68 +16,92 @@ jobs:
       DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_EVENTS }}
 
     steps:
-      - name: Ensure webhook exists
+      - name: Ensure Discord webhook is set
         run: |
           if [ -z "$DISCORD_WEBHOOK" ]; then
-            echo "❌ ERROR: DISCORD_WEBHOOK_EVENTS secret not set"
+            echo "ERROR: DISCORD_WEBHOOK_EVENTS secret is NOT set or is empty."
             exit 1
+          elif [[ ! "$DISCORD_WEBHOOK" =~ ^https://discord\.com/api/webhooks/ ]]; then
+            echo "WARNING: Discord webhook URL format may be incorrect."
+            echo "Expected format: https://discord.com/api/webhooks/..."
+          else
+            echo "✅ Discord webhook secret is set and format looks correct."
           fi
-          echo "Webhook OK."
 
       - name: Send GitHub event to Discord
         run: |
-          EVENT="${{ github.event_name }}"
+          EVENT_NAME="${{ github.event_name }}"
           ACTION="${{ github.event.action }}"
-          MESSAGE=""
 
-          # Pull Requests
-          if [ "$EVENT" = "pull_request" ]; then
-            PR_NUM=${{ github.event.pull_request.number }}
+          # Default message fallback
+          MESSAGE="ℹ️ Event: ${EVENT_NAME} / ${ACTION} in repo \`${GITHUB_REPOSITORY}\` by \`${GITHUB_ACTOR}\`."
+
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            PR_NUMBER=${{ github.event.pull_request.number }}
             PR_TITLE="${{ github.event.pull_request.title }}"
             PR_URL="${{ github.event.pull_request.html_url }}"
             MERGED="${{ github.event.pull_request.merged }}"
 
-            LABEL="$ACTION"
+            ACTION_LABEL="$ACTION"
             if [ "$ACTION" = "closed" ] && [ "$MERGED" = "true" ]; then
-              LABEL="merged"
+              ACTION_LABEL="merged"
             fi
 
-            MESSAGE="🔀 **PR #${PR_NUM}** \`${LABEL}\`
+            MESSAGE="🔀 **Pull Request #${PR_NUMBER}** \`${ACTION_LABEL}\`
 Title: *${PR_TITLE}*
 Repo: \`${GITHUB_REPOSITORY}\`
 Actor: \`${GITHUB_ACTOR}\`
 URL: ${PR_URL}"
 
-          # Issues
-          elif [ "$EVENT" = "issues" ]; then
-            ISSUE_NUM=${{ github.event.issue.number }}
+          elif [ "$EVENT_NAME" = "issues" ]; then
+            ISSUE_NUMBER=${{ github.event.issue.number }}
             ISSUE_TITLE="${{ github.event.issue.title }}"
             ISSUE_URL="${{ github.event.issue.html_url }}"
 
-            MESSAGE="🐛 **Issue #${ISSUE_NUM}** \`${ACTION}\`
+            MESSAGE="🐛 **Issue #${ISSUE_NUMBER}** \`${ACTION}\`
 Title: *${ISSUE_TITLE}*
 Repo: \`${GITHUB_REPOSITORY}\`
 Actor: \`${GITHUB_ACTOR}\`
 URL: ${ISSUE_URL}"
 
-          # Releases
-          elif [ "$EVENT" = "release" ]; then
-            TAG="${{ github.event.release.tag_name }}"
-            NAME="${{ github.event.release.name }}"
-            URL="${{ github.event.release.html_url }}"
+          elif [ "$EVENT_NAME" = "release" ]; then
+            RELEASE_TAG="${{ github.event.release.tag_name }}"
+            RELEASE_NAME="${{ github.event.release.name }}"
+            RELEASE_URL="${{ github.event.release.html_url }}"
 
-            TEXT="$TAG"
-            if [ -n "$NAME" ]; then TEXT="$NAME ($TAG)"; fi
+            NAME_OR_TAG="$RELEASE_TAG"
+            if [ -n "$RELEASE_NAME" ]; then
+              NAME_OR_TAG="$RELEASE_NAME ($RELEASE_TAG)"
+            fi
 
-            MESSAGE="🏷️ **Release \`${TEXT}\` published**
+            MESSAGE="🏷️ **Release \`${NAME_OR_TAG}\` \`${ACTION}\`**
 Repo: \`${GITHUB_REPOSITORY}\`
 Actor: \`${GITHUB_ACTOR}\`
-URL: ${URL}"
+URL: ${RELEASE_URL}"
           fi
 
-          echo "$MESSAGE" > /tmp/msg.txt
-          PAYLOAD=$(python3 -c "import json;print(json.dumps({'content':open('/tmp/msg.txt').read()}))")
+          echo "$MESSAGE" > /tmp/discord_msg.txt
 
-          curl -H "Content-Type: application/json" \
+          # Properly escape JSON using Python
+          PAYLOAD=$(python3 -c "import json; f=open('/tmp/discord_msg.txt'); msg=f.read(); f.close(); print(json.dumps({'content': msg}))")
+
+          # Send to Discord with error handling
+          echo "Sending notification to Discord..."
+          echo "Webhook URL: ${DISCORD_WEBHOOK:0:50}..." # Show first 50 chars for debugging
+          
+          HTTP_CODE=$(curl -s -o /tmp/discord_response.txt -w "%{http_code}" \
+            -H "Content-Type: application/json" \
             -d "$PAYLOAD" \
-            -X POST "$DISCORD_WEBHOOK"
+            -X POST "$DISCORD_WEBHOOK")
+          
+          if [ "$HTTP_CODE" -eq 200 ] || [ "$HTTP_CODE" -eq 204 ]; then
+            echo "✅ Discord notification sent successfully (HTTP $HTTP_CODE)"
+          else
+            echo "❌ Failed to send Discord notification (HTTP $HTTP_CODE)"
+            echo "Response:"
+            cat /tmp/discord_response.txt
+            echo ""
+            echo "Payload preview (first 200 chars):"
+            echo "$PAYLOAD" | head -c 200
+            exit 1
+          fi
