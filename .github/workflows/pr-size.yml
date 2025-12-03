@@ -40,6 +40,14 @@ jobs:
           echo "Changed lines: $CHANGED_LINES"
           echo "changed_lines=$CHANGED_LINES" >> $GITHUB_OUTPUT
           
+          # Warn if PR is very large
+          if [ "$CHANGED_LINES" -gt 1000 ]; then
+            echo "⚠️ WARNING: PR is very large ($CHANGED_LINES lines). Consider splitting into smaller PRs."
+            echo "large_pr_warning=true" >> $GITHUB_OUTPUT
+          else
+            echo "large_pr_warning=false" >> $GITHUB_OUTPUT
+          fi
+          
           # Determine size label
           if [ "$CHANGED_LINES" -lt 50 ]; then
             LABEL="XS"
@@ -85,6 +93,15 @@ jobs:
         run: |
           PR_NUMBER="${{ github.event.pull_request.number }}"
           COMMENT="⚠️ **PR Description Missing**\n\nPlease add a description to this PR explaining:\n- What changes were made\n- Why these changes were made\n- How to test the changes\n\nThis helps reviewers understand the context of your changes."
+          
+          gh pr comment "$PR_NUMBER" --body "$COMMENT" || echo "Failed to add comment"
+
+      - name: Comment on PR if too large
+        if: steps.pr_size.outputs.large_pr_warning == 'true'
+        run: |
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+          CHANGED_LINES="${{ steps.pr_size.outputs.changed_lines }}"
+          COMMENT="⚠️ **Large PR Detected**\n\nThis PR contains **${CHANGED_LINES} lines** of changes, which is quite large.\n\n💡 **Consider splitting this PR into smaller, focused PRs:**\n- Easier to review\n- Faster to merge\n- Lower risk of conflicts\n- Better for code quality\n\nIf this PR must be large, please ensure:\n- Clear description of all changes\n- Good test coverage\n- All CI checks pass"
           
           gh pr comment "$PR_NUMBER" --body "$COMMENT" || echo "Failed to add comment"
 

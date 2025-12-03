@@ -12,6 +12,24 @@
 @import device_info_plus;
 #endif
 
+#if __has_include(<firebase_analytics/FirebaseAnalyticsPlugin.h>)
+#import <firebase_analytics/FirebaseAnalyticsPlugin.h>
+#else
+@import firebase_analytics;
+#endif
+
+#if __has_include(<firebase_core/FLTFirebaseCorePlugin.h>)
+#import <firebase_core/FLTFirebaseCorePlugin.h>
+#else
+@import firebase_core;
+#endif
+
+#if __has_include(<firebase_crashlytics/FLTFirebaseCrashlyticsPlugin.h>)
+#import <firebase_crashlytics/FLTFirebaseCrashlyticsPlugin.h>
+#else
+@import firebase_crashlytics;
+#endif
+
 #if __has_include(<package_info_plus/FPPPackageInfoPlusPlugin.h>)
 #import <package_info_plus/FPPPackageInfoPlusPlugin.h>
 #else
@@ -22,6 +40,12 @@
 #import <path_provider_foundation/PathProviderPlugin.h>
 #else
 @import path_provider_foundation;
+#endif
+
+#if __has_include(<sentry_flutter/SentryFlutterPlugin.h>)
+#import <sentry_flutter/SentryFlutterPlugin.h>
+#else
+@import sentry_flutter;
 #endif
 
 #if __has_include(<shared_preferences_foundation/SharedPreferencesPlugin.h>)
@@ -46,8 +70,12 @@
 
 + (void)registerWithRegistry:(NSObject<FlutterPluginRegistry>*)registry {
   [FPPDeviceInfoPlusPlugin registerWithRegistrar:[registry registrarForPlugin:@"FPPDeviceInfoPlusPlugin"]];
+  [FirebaseAnalyticsPlugin registerWithRegistrar:[registry registrarForPlugin:@"FirebaseAnalyticsPlugin"]];
+  [FLTFirebaseCorePlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseCorePlugin"]];
+  [FLTFirebaseCrashlyticsPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseCrashlyticsPlugin"]];
   [FPPPackageInfoPlusPlugin registerWithRegistrar:[registry registrarForPlugin:@"FPPPackageInfoPlusPlugin"]];
   [PathProviderPlugin registerWithRegistrar:[registry registrarForPlugin:@"PathProviderPlugin"]];
+  [SentryFlutterPlugin registerWithRegistrar:[registry registrarForPlugin:@"SentryFlutterPlugin"]];
   [SharedPreferencesPlugin registerWithRegistrar:[registry registrarForPlugin:@"SharedPreferencesPlugin"]];
   [URLLauncherPlugin registerWithRegistrar:[registry registrarForPlugin:@"URLLauncherPlugin"]];
   [WebViewFlutterPlugin registerWithRegistrar:[registry registrarForPlugin:@"WebViewFlutterPlugin"]];

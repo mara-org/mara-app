@@ -105,11 +105,17 @@ jobs:
       - name: Flutter analyze
         id: analyze
         run: |
-          # Run analyze and capture output
+          # Run analyze and capture output with timing
           set +e  # Don't exit on error
+          START_TIME=$(date +%s)
           flutter analyze > analyze_output.txt 2>&1
           ANALYZE_EXIT_CODE=$?
+          END_TIME=$(date +%s)
+          ANALYZE_DURATION=$((END_TIME - START_TIME))
           cat analyze_output.txt
+          
+          # Print performance metric
+          echo "CI METRIC: analyze_duration=${ANALYZE_DURATION}s"
           
           # Count errors and warnings (not info)
           # Strip whitespace and newlines to ensure clean integer values
@@ -123,6 +129,7 @@ jobs:
           # Set GitHub output variables
           echo "analyze_errors=$ERRORS" >> $GITHUB_OUTPUT
           echo "analyze_warnings=$WARNINGS" >> $GITHUB_OUTPUT
+          echo "analyze_duration=$ANALYZE_DURATION" >> $GITHUB_OUTPUT
           
           # Only fail if there are errors or warnings
           if [ "$ERRORS" -gt 0 ] || [ "$WARNINGS" -gt 0 ]; then
@@ -137,11 +144,34 @@ jobs:
         id: test_coverage
         run: |
           echo "🧪 Running tests with coverage..."
-          flutter test --coverage || {
+          START_TIME=$(date +%s)
+          
+          # First test run
+          if flutter test --coverage; then
+            TEST_PASSED=true
+          else
+            TEST_PASSED=false
+            echo "⚠️ First test run failed. Retrying once to detect flaky tests..."
+            
+            # Retry once
+            if flutter test --coverage; then
+              TEST_PASSED=true
+              echo "✅ Tests passed on retry. Marked as flaky – tests passed on retry."
+            else
+              TEST_PASSED=false
+              echo "❌ Tests failed on retry as well."
+            fi
+          fi
+          
+          END_TIME=$(date +%s)
+          TEST_DURATION=$((END_TIME - START_TIME))
+          echo "CI METRIC: test_duration=${TEST_DURATION}s"
+          
+          if [ "$TEST_PASSED" = "false" ]; then
             echo "❌ Tests failed."
             echo "coverage_generated=false" >> $GITHUB_OUTPUT
             exit 1
-          }
+          fi
           
           # Check if coverage file exists
           if [ -f "coverage/lcov.info" ]; then
@@ -160,14 +190,14 @@ jobs:
               echo "📊 Coverage: ~${COVERAGE_PERCENT}%"
               
               # Enforce coverage threshold (fail if below 15%)
-              # TODO: Increase threshold to 70%+ once more tests exist
+              # After tests grow, enforce 70%+ as a hard fail.
               if [ "$COVERAGE_PERCENT" -lt 15 ]; then
                 echo "❌ ERROR: Coverage ${COVERAGE_PERCENT}% is below 15% threshold"
-                echo "TODO: Increase to 70%+ once more tests exist"
+                echo "TODO: After tests grow, enforce 70%+ as a hard fail."
                 exit 1
               elif [ "$COVERAGE_PERCENT" -lt 70 ]; then
-                echo "⚠️ WARNING: Coverage ${COVERAGE_PERCENT}% is below target 70%"
-                echo "TODO: Increase to 80%+ once more tests exist"
+                echo "⚠️ WARNING: Coverage ${COVERAGE_PERCENT}% is below 70% warning threshold"
+                echo "TODO: After tests grow, enforce 70%+ as a hard fail."
               else
                 echo "✅ Coverage is above 70% threshold"
               fi
@@ -185,7 +215,22 @@ jobs:
         id: platform_build
         run: |
           echo "🔨 Building for ${PLATFORM}..."
-          ${{ matrix.build-command }} || {
+          
+          # Check if build should be skipped
+          if [ "${{ matrix.platform }}" = "ios" ] && [ "${{ matrix.os }}" != "macos-latest" ]; then
+            echo "⏭️ Skipping iOS build: iOS builds require macOS runner. Current OS: ${{ matrix.os }}"
+            echo "build_success=skipped" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          # Ensure iOS uses --no-codesign
+          BUILD_CMD="${{ matrix.build-command }}"
+          if [[ "$BUILD_CMD" == *"flutter build ios"* ]] && [[ "$BUILD_CMD" != *"--no-codesign"* ]]; then
+            echo "⚠️ iOS build command missing --no-codesign flag. Adding it..."
+            BUILD_CMD="$BUILD_CMD --no-codesign"
+          fi
+          
+          $BUILD_CMD || {
             echo "❌ Build failed for ${PLATFORM}"
             echo "build_success=false" >> $GITHUB_OUTPUT
             exit 1

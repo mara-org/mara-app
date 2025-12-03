@@ -36,9 +36,15 @@ jobs:
         continue-on-error: true
         run: |
           echo "🖼️ Running golden tests..."
-          flutter test test/ui/example_golden_test.dart || {
+          # Run all golden test files
+          flutter test test/ui/example_golden_test.dart test/ui/welcome_golden_test.dart || {
             echo "❌ Golden tests failed"
             echo "tests_passed=false" >> $GITHUB_OUTPUT
+            echo "⚠️ Golden test failure detected. Check artifacts for diffs."
+            echo "💡 To download and debug:"
+            echo "   1. Go to workflow run artifacts"
+            echo "   2. Download 'golden-diffs' artifact"
+            echo "   3. Compare .diff.png files to see visual changes"
             exit 1
           }
           echo "✅ Golden tests passed"
@@ -50,10 +56,20 @@ jobs:
         with:
           name: golden-diffs
           path: |
-            test/ui/goldens/*.png
-            test/ui/goldens/*.diff.png
+            test/ui/goldens/**/*.png
+            test/ui/goldens/**/*.diff.png
           retention-days: 7
           if-no-files-found: ignore
+
+      - name: Display debug instructions
+        if: failure() && steps.golden_tests.outcome == 'failure'
+        run: |
+          echo "📋 How to debug golden test failures:"
+          echo "1. Download the 'golden-diffs' artifact from this workflow run"
+          echo "2. Extract and examine .diff.png files to see visual changes"
+          echo "3. If changes are intentional, update golden files:"
+          echo "   flutter test --update-goldens test/ui/welcome_golden_test.dart"
+          echo "4. Commit the updated golden files"
 
       - name: Notify Discord (golden test results)
         if: always()

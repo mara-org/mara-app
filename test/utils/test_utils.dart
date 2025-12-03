@@ -26,6 +26,20 @@ Widget createTestWidget(Widget child) {
   );
 }
 
+/// Standard function to pump Mara app widget for testing
+/// This is the recommended way to set up widgets in tests
+Future<void> pumpMaraApp(
+  WidgetTester tester,
+  Widget widget, {
+  Locale? locale,
+}) async {
+  final testWidget = locale != null
+      ? createTestWidgetWithLocale(widget, locale)
+      : createTestWidget(widget);
+  await tester.pumpWidget(testWidget);
+  await tester.pumpAndSettle();
+}
+
 /// Creates a test widget with custom locale
 Widget createTestWidgetWithLocale(Widget child, Locale locale) {
   return ProviderScope(

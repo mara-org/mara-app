@@ -118,6 +118,51 @@ lib/
 └── main.dart                # App entry point
 ```
 
+## 🏗️ Architecture & Repositories
+
+**Important:** This repository (`mara-app`) contains **only** the Flutter mobile client and its CI/CD infrastructure.
+
+### Repository Separation
+
+- **`mara-app` (this repo)**: Flutter client + mobile CI/CD
+  - Mobile app code (Flutter/Dart)
+  - Client-side observability (Sentry/Firebase)
+  - Mobile testing and QA
+  - GitHub Actions workflows for mobile CI/CD
+  - SBOM generation for mobile dependencies
+
+- **Backend/API (separate repository)**: Owned by another engineer
+  - API endpoints
+  - Backend services
+  - Server-side observability
+  - Backend SBOM generation
+  - Database and infrastructure
+
+**This repo is intentionally backend-agnostic.** No backend code, API endpoints, or `/health` endpoints exist in this repository by design.
+
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for detailed architecture documentation.
+
+## 🔒 Security & SBOM
+
+### Software Bill of Materials (SBOM)
+
+This repository generates SBOMs for the Flutter mobile app dependencies:
+
+- **Generation**: Automated via `.github/workflows/sbom-generation.yml`
+- **Trigger**: On push to `main` and release tags (`v*`)
+- **Output**: `sbom.json` (uploaded as artifact)
+- **Location**: Generated in CI, available as workflow artifact
+
+**Note**: Backend SBOM will be generated in a separate repository.
+
+### Security Scanning
+
+- **CodeQL**: Static analysis for security vulnerabilities
+- **TruffleHog**: Secrets scanning
+- **Dependabot**: Dependency updates and security advisories
+
+See `.github/workflows/security-scan.yml` and `.github/workflows/codeql-analysis.yml` for details.
+
 ## 🚀 Getting Started
 
 ### Prerequisites
@@ -410,26 +455,45 @@ The **Dev Events** workflow (`.github/workflows/dev-events.yml`) handles:
   - `fix/*` → `bug` label
   - `chore/*` → `chore` label
 
-## 🐛 Crash Reporting
+## 🐛 Crash Reporting & Observability
 
-The app includes crash reporting infrastructure (`lib/core/utils/crash_reporter.dart`) that:
+The app includes comprehensive observability infrastructure:
+
+### Crash Reporting
+
+**Implementation**: `lib/core/utils/crash_reporter.dart`
+
+**Features**:
 - ✅ Catches Flutter framework errors
 - ✅ Handles async errors outside the Flutter framework
-- ✅ Logs errors to console
-- ✅ Includes device info and app version collection
+- ✅ Logs errors to console (debug mode)
+- ✅ Sends to Sentry (release mode, if configured)
+- ✅ Sends to Firebase Crashlytics (if enabled)
 - ✅ Determines crash severity automatically
-- ⚠️ Backend integration ready (needs backend endpoint)
 
-**Current Status:**
-- Crash detection: ✅ Fully implemented
-- Crash reporting: ⚠️ Ready for backend integration (logs locally for now)
+**Configuration**:
+- Sentry: Set `SENTRY_DSN` environment variable or configure at runtime
+- Firebase: Requires `Firebase.initializeApp()` at startup
 
-**Future Implementation:**
-- Send crashes to backend endpoint (code structure ready)
-- Backend forwards critical crashes to Discord webhook (`DISCORD_WEBHOOK_ALERTS` or `DISCORD_WEBHOOK_CRASHES`)
-- Crash aggregation and deduplication
+**No backend needed**: Crashes go directly to Sentry/Firebase SaaS services.
 
-The crash reporter is initialized in `main.dart` and wraps the entire app in a crash-handling zone.
+### Analytics
+
+**Implementation**: `lib/core/analytics/analytics_service.dart`
+
+**Features**:
+- Screen view tracking
+- Custom event tracking
+- User property tracking
+- Firebase Analytics integration (if configured)
+
+**Usage**:
+```dart
+AnalyticsService.logScreenView('home_screen');
+AnalyticsService.logEvent('button_clicked', {'button_name': 'chat'});
+```
+
+**No backend needed**: Analytics go directly to Firebase Analytics.
 
 ## 🚨 Incident Response & SRE
 
@@ -472,7 +536,7 @@ The `main` branch is protected and requires:
 - Required reviews from code owners
 - Force pushes and direct pushes are disabled
 
-**TODO:** Configure branch protection in GitHub Settings:
+**Branch protection must require CODEOWNERS review** – configure in GitHub Settings manually:
 1. Go to `Settings` → `Branches` → `Branch protection rules`
 2. Add rule for `main` branch
 3. Enable:

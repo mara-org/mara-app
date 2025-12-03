@@ -47,7 +47,7 @@ class WelcomeIntroScreen extends ConsumerWidget {
                 fontFamily: 'Roboto',
                 fontSize: 36,
                 fontWeight: FontWeight.w600,
-                color: Color(0xFF0EA5C6), // #0EA5C6
+                color: Colors.white,
               ),
             ),
           ),
@@ -63,7 +63,7 @@ class WelcomeIntroScreen extends ConsumerWidget {
                 fontFamily: 'Roboto',
                 fontSize: 15,
                 fontWeight: FontWeight.w400,
-                color: Color(0xFF10A9CC), // #10A9CC
+                color: Colors.white,
                 height: 1.5,
               ),
             ),

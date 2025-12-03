@@ -1,24 +1,54 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-// TODO: Uncomment when backend is available
-// import 'package:http/http.dart' as http;
-// import 'dart:convert';
-import 'platform_utils.dart';
-import '../../shared/system/system_info_service.dart';
+
+// Observability imports - Sentry and Firebase Crashlytics
+// These are optional dependencies - app will work without them if not configured
+// Configure via environment variables or runtime config
+import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
 /// Crash reporter for Mara app
 ///
-/// Currently logs errors to console. When backend is available, this will:
-/// - Send crashes to backend endpoint (configured via environment variable)
-/// - Backend forwards critical crashes to Discord webhook (DISCORD_WEBHOOK_ALERTS or DISCORD_WEBHOOK_CRASHES)
-/// - Include device info, stack trace, and app version
+/// Integrates with Sentry and/or Firebase Crashlytics for crash reporting.
+/// In debug mode: logs to console
+/// In release mode: sends to Sentry/Firebase (if configured)
+/// 
+/// Configuration:
+/// - Set SENTRY_DSN environment variable or configure at runtime
+/// - Firebase is initialized separately via Firebase.initializeApp()
+/// 
+/// Note: No backend endpoint needed - crashes go directly to SaaS observability tools
 class CrashReporter {
-  // TODO: Set this via environment variable or config when backend is available
-  static const String? _backendCrashEndpoint =
-      null; // e.g., 'https://api.mara.app/crashes'
+  static bool _initialized = false;
+  static String? _sentryDsn;
+  static bool _useFirebase = false;
 
-  static final SystemInfoService _systemInfo = SystemInfoService();
+  /// Initialize crash reporting
+  /// 
+  /// [sentryDsn] - Sentry DSN (optional, can be set via environment variable)
+  /// [useFirebase] - Whether to use Firebase Crashlytics (requires Firebase.initializeApp() first)
+  static Future<void> init({
+    String? sentryDsn,
+    bool useFirebase = false,
+  }) async {
+    if (_initialized) return;
+    
+    _sentryDsn = sentryDsn ?? const String.fromEnvironment('SENTRY_DSN');
+    _useFirebase = useFirebase;
+    
+    _initialized = true;
+    
+    if (kDebugMode) {
+      debugPrint('CrashReporter initialized');
+      if (_sentryDsn != null && _sentryDsn!.isNotEmpty) {
+        debugPrint('Sentry enabled (DSN configured)');
+      }
+      if (_useFirebase) {
+        debugPrint('Firebase Crashlytics enabled');
+      }
+    }
+  }
 
   /// Initialize crash handling for the app
   ///
@@ -63,12 +93,27 @@ class CrashReporter {
     );
   }
 
-  /// Log error to console (and eventually to backend)
-  static void _logError({
+  /// Record an error
+  /// 
+  /// Public method to record errors manually
+  static Future<void> recordError(
+    Object error,
+    StackTrace? stackTrace, {
+    String? context,
+  }) async {
+    await _logError(
+      error: error,
+      stackTrace: stackTrace,
+      context: context ?? 'Manual error report',
+    );
+  }
+
+  /// Log error to console and send to observability services
+  static Future<void> _logError({
     required Object error,
     StackTrace? stackTrace,
     required String context,
-  }) {
+  }) async {
     // Always log to console for debugging
     if (kDebugMode) {
       debugPrint('=== CRASH REPORT ===');
@@ -80,74 +125,39 @@ class CrashReporter {
       debugPrint('===================');
     }
 
-    // Send to backend if endpoint is configured
-    if (_backendCrashEndpoint != null) {
-      _sendToBackend(
-        error: error,
-        stackTrace: stackTrace,
-        context: context,
-      ).catchError((e) {
-        // Silently fail - don't crash the app if crash reporting fails
-        debugPrint('Failed to send crash report to backend: $e');
-      });
-    }
-  }
-
-  /// Send crash report to backend endpoint
-  ///
-  /// Backend should:
-  /// 1. Store crash report in database
-  /// 2. Forward critical crashes to DISCORD_WEBHOOK_ALERTS or DISCORD_WEBHOOK_CRASHES
-  /// 3. Aggregate and deduplicate crashes
-  static Future<void> _sendToBackend({
-    required Object error,
-    StackTrace? stackTrace,
-    required String context,
-  }) async {
-    if (_backendCrashEndpoint == null) {
-      return; // Backend not configured yet
-    }
-
-    try {
-      // Collect device and app info
-      final deviceInfo = await _systemInfo.getDeviceInfo();
-      final appVersion = await _systemInfo.getAppVersion();
-      final platform = PlatformUtils.getPlatformName();
-
-      // Build crash report payload
-      final crashReport = {
-        'error': error.toString(),
-        'stackTrace': stackTrace?.toString(),
-        'context': context,
-        'deviceInfo': deviceInfo,
-        'appVersion': appVersion,
-        'platform': platform,
-        'timestamp': DateTime.now().toIso8601String(),
-        'severity': _determineSeverity(error, context),
-      };
-
-      // TODO: Uncomment when http package is added and backend is available
-      // final response = await http.post(
-      //   Uri.parse(_backendCrashEndpoint!),
-      //   headers: {'Content-Type': 'application/json'},
-      //   body: jsonEncode(crashReport),
-      // ).timeout(const Duration(seconds: 5));
-      //
-      // if (response.statusCode != 200 && response.statusCode != 201) {
-      //   debugPrint('Backend returned error: ${response.statusCode}');
-      // }
-
-      // For now, just log what would be sent
-      if (kDebugMode) {
-        debugPrint('Would send crash report to backend:');
-        debugPrint('Endpoint: $_backendCrashEndpoint');
-        debugPrint('Payload: $crashReport');
+    // In release mode, send to observability services
+    if (!kDebugMode) {
+      // Send to Sentry if configured
+      if (_sentryDsn != null && _sentryDsn!.isNotEmpty) {
+        try {
+          await Sentry.captureException(
+            error,
+            stackTrace: stackTrace,
+            hint: Hint.withMap({'context': context}),
+          );
+        } catch (e) {
+          // Silently fail - don't crash the app if crash reporting fails
+          debugPrint('Failed to send to Sentry: $e');
+        }
       }
-    } catch (e) {
-      // Silently fail - don't crash the app if crash reporting fails
-      debugPrint('Error sending crash report: $e');
+
+      // Send to Firebase Crashlytics if enabled
+      if (_useFirebase) {
+        try {
+          await FirebaseCrashlytics.instance.recordError(
+            error,
+            stackTrace,
+            reason: context,
+            fatal: _determineSeverity(error, context) == 'critical',
+          );
+        } catch (e) {
+          // Silently fail
+          debugPrint('Failed to send to Firebase: $e');
+        }
+      }
     }
   }
+
 
   /// Determine crash severity based on error type and context
   static String _determineSeverity(Object error, String context) {

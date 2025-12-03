@@ -1,0 +1,58 @@
+# Mara Automation – SBOM Generation
+# Generates Software Bill of Materials (SBOM) for the Flutter app
+# Runs on push to main and on release tags
+# Uploads SBOM as a build artifact
+
+name: Mara Automation – SBOM Generation
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  generate-sbom:
+    name: Generate SBOM
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.27.0"
+
+      - name: Generate SBOM
+        run: |
+          echo "📦 Generating Software Bill of Materials..."
+          bash tool/generate_sbom.sh
+
+      - name: Upload SBOM artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: sbom-json
+          path: sbom.json
+          retention-days: 90
+          if-no-files-found: error
+
+      - name: Display SBOM summary
+        run: |
+          if [ -f "sbom.json" ]; then
+            echo "✅ SBOM generated successfully"
+            if command -v jq &> /dev/null; then
+              echo "📊 SBOM Summary:"
+              jq '{name, version, timestamp, dependencyCount: (.dependencies | length)}' sbom.json
+            else
+              echo "📄 SBOM file: sbom.json"
+              echo "💡 Install 'jq' for better JSON viewing"
+            fi
+          else
+            echo "❌ Error: SBOM file not generated"
+            exit 1
+          fi
+

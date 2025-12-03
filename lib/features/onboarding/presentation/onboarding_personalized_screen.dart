@@ -45,6 +45,7 @@ class OnboardingPersonalizedScreen extends StatelessWidget {
           children: [
             SafeArea(
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   SizedBox(height: h * 0.18), // Top spacing
                   // 1) Large blue heart icon
