@@ -3,6 +3,7 @@
 // TODO: Set up proper golden testing tool (e.g., golden_toolkit package)
 // TODO: Add golden tests for all screens and components
 
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mara_app/features/home/presentation/home_screen.dart';

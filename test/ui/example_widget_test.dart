@@ -2,10 +2,10 @@
 // This demonstrates how to test UI components and screens
 // TODO: Add more widget tests for all screens and components
 
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mara_app/features/home/presentation/home_screen.dart';
-import 'package:mara_app/main.dart';
 
 void main() {
   group('Home Screen Widget Tests', () {
