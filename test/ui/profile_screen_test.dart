@@ -2,16 +2,50 @@
 // Tests the profile screen rendering and user information display
 
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mara_app/features/profile/presentation/profile_screen.dart';
-import '../utils/test_utils.dart';
+import 'package:mara_app/l10n/app_localizations.dart';
 
 void main() {
   group('Profile Screen Widget Tests', () {
     testWidgets('Profile screen renders correctly',
         (WidgetTester tester) async {
-      // Build the profile screen
-      await tester.pumpWidget(createTestWidget(const ProfileScreen()));
+      // Build the profile screen with ProviderScope and GoRouter
+      // ProfileScreen requires GoRouter for context.go() calls
+      await tester.pumpWidget(
+        ProviderScope(
+          child: MaterialApp.router(
+            routerConfig: GoRouter(
+              initialLocation: '/profile',
+              routes: [
+                GoRoute(
+                  path: '/profile',
+                  builder: (context, state) => const ProfileScreen(),
+                ),
+                GoRoute(
+                  path: '/home',
+                  builder: (context, state) => const Scaffold(
+                    body: Center(child: Text('Home')),
+                  ),
+                ),
+              ],
+            ),
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: const [
+              Locale('en'),
+              Locale('ar'),
+            ],
+          ),
+        ),
+      );
 
       // Wait for the widget tree to settle
       await tester.pumpAndSettle();
@@ -33,7 +67,31 @@ void main() {
 
     testWidgets('Profile screen has correct structure',
         (WidgetTester tester) async {
-      await tester.pumpWidget(createTestWidget(const ProfileScreen()));
+      await tester.pumpWidget(
+        ProviderScope(
+          child: MaterialApp.router(
+            routerConfig: GoRouter(
+              initialLocation: '/profile',
+              routes: [
+                GoRoute(
+                  path: '/profile',
+                  builder: (context, state) => const ProfileScreen(),
+                ),
+              ],
+            ),
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: const [
+              Locale('en'),
+              Locale('ar'),
+            ],
+          ),
+        ),
+      );
       await tester.pumpAndSettle();
 
       // Verify basic structure
