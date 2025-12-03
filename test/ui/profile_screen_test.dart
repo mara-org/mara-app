@@ -6,8 +6,12 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mara_app/core/providers/email_provider.dart';
+import 'package:mara_app/core/providers/subscription_provider.dart';
+import 'package:mara_app/core/providers/user_profile_provider.dart';
 import 'package:mara_app/features/profile/presentation/profile_screen.dart';
 import 'package:mara_app/l10n/app_localizations.dart';
+import 'package:mara_app/shared/system/system_providers.dart';
 
 void main() {
   group('Profile Screen Widget Tests', () {
@@ -15,8 +19,21 @@ void main() {
         (WidgetTester tester) async {
       // Build the profile screen with ProviderScope and GoRouter
       // ProfileScreen requires GoRouter for context.go() calls
+      // Mock providers to avoid platform-specific failures
       await tester.pumpWidget(
         ProviderScope(
+          overrides: [
+            // Mock email provider (avoid SharedPreferences access)
+            emailProvider.overrideWith(() => _MockEmailNotifier()),
+            // Mock subscription provider
+            subscriptionProvider.overrideWith(() => SubscriptionNotifier()),
+            // Mock user profile provider
+            userProfileProvider.overrideWith(() => UserProfileNotifier()),
+            // Mock system info providers (avoid platform-specific calls)
+            appVersionProvider.overrideWith((ref) => Future.value('1.0.0 (1)')),
+            deviceInfoProvider
+                .overrideWith((ref) => Future.value('Test Device')),
+          ],
           child: MaterialApp.router(
             routerConfig: GoRouter(
               initialLocation: '/profile',
@@ -69,6 +86,15 @@ void main() {
         (WidgetTester tester) async {
       await tester.pumpWidget(
         ProviderScope(
+          overrides: [
+            // Mock providers to avoid platform-specific failures
+            emailProvider.overrideWith(() => _MockEmailNotifier()),
+            subscriptionProvider.overrideWith(() => SubscriptionNotifier()),
+            userProfileProvider.overrideWith(() => UserProfileNotifier()),
+            appVersionProvider.overrideWith((ref) => Future.value('1.0.0 (1)')),
+            deviceInfoProvider
+                .overrideWith((ref) => Future.value('Test Device')),
+          ],
           child: MaterialApp.router(
             routerConfig: GoRouter(
               initialLocation: '/profile',
@@ -113,4 +139,11 @@ void main() {
     // - Test different user profiles
     // - Test empty state
   });
+}
+
+// Mock EmailNotifier that doesn't access SharedPreferences
+class _MockEmailNotifier extends EmailNotifier {
+  _MockEmailNotifier() : super() {
+    state = 'test@example.com';
+  }
 }
