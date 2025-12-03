@@ -1,0 +1,83 @@
+name: Notify Discord on PR / Issues / Releases
+
+on:
+  pull_request:
+    types: [opened, reopened, closed]
+  issues:
+    types: [opened, reopened, closed]
+  release:
+    types: [published]
+
+jobs:
+  notify-discord:
+    runs-on: ubuntu-latest
+
+    env:
+      DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_EVENTS }}
+
+    steps:
+      - name: Ensure webhook exists
+        run: |
+          if [ -z "$DISCORD_WEBHOOK" ]; then
+            echo "❌ ERROR: DISCORD_WEBHOOK_EVENTS secret not set"
+            exit 1
+          fi
+          echo "Webhook OK."
+
+      - name: Send GitHub event to Discord
+        run: |
+          EVENT="${{ github.event_name }}"
+          ACTION="${{ github.event.action }}"
+          MESSAGE=""
+
+          # Pull Requests
+          if [ "$EVENT" = "pull_request" ]; then
+            PR_NUM=${{ github.event.pull_request.number }}
+            PR_TITLE="${{ github.event.pull_request.title }}"
+            PR_URL="${{ github.event.pull_request.html_url }}"
+            MERGED="${{ github.event.pull_request.merged }}"
+
+            LABEL="$ACTION"
+            if [ "$ACTION" = "closed" ] && [ "$MERGED" = "true" ]; then
+              LABEL="merged"
+            fi
+
+            MESSAGE="🔀 **PR #${PR_NUM}** \`${LABEL}\`
+Title: *${PR_TITLE}*
+Repo: \`${GITHUB_REPOSITORY}\`
+Actor: \`${GITHUB_ACTOR}\`
+URL: ${PR_URL}"
+
+          # Issues
+          elif [ "$EVENT" = "issues" ]; then
+            ISSUE_NUM=${{ github.event.issue.number }}
+            ISSUE_TITLE="${{ github.event.issue.title }}"
+            ISSUE_URL="${{ github.event.issue.html_url }}"
+
+            MESSAGE="🐛 **Issue #${ISSUE_NUM}** \`${ACTION}\`
+Title: *${ISSUE_TITLE}*
+Repo: \`${GITHUB_REPOSITORY}\`
+Actor: \`${GITHUB_ACTOR}\`
+URL: ${ISSUE_URL}"
+
+          # Releases
+          elif [ "$EVENT" = "release" ]; then
+            TAG="${{ github.event.release.tag_name }}"
+            NAME="${{ github.event.release.name }}"
+            URL="${{ github.event.release.html_url }}"
+
+            TEXT="$TAG"
+            if [ -n "$NAME" ]; then TEXT="$NAME ($TAG)"; fi
+
+            MESSAGE="🏷️ **Release \`${TEXT}\` published**
+Repo: \`${GITHUB_REPOSITORY}\`
+Actor: \`${GITHUB_ACTOR}\`
+URL: ${URL}"
+          fi
+
+          echo "$MESSAGE" > /tmp/msg.txt
+          PAYLOAD=$(python3 -c "import json;print(json.dumps({'content':open('/tmp/msg.txt').read()}))")
+
+          curl -H "Content-Type: application/json" \
+            -d "$PAYLOAD" \
+            -X POST "$DISCORD_WEBHOOK"
