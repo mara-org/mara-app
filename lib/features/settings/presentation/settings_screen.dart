@@ -61,9 +61,8 @@ class SettingsScreen extends ConsumerWidget {
                 // App language
                 _SettingsRow(
                   title: 'App language',
-                  subtitle: language == AppLanguage.english
-                      ? 'English'
-                      : 'العربية',
+                  subtitle:
+                      language == AppLanguage.english ? 'English' : 'العربية',
                   icon: Icons.language,
                   onTap: () {
                     _showLanguagePicker(context, ref);

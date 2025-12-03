@@ -60,10 +60,10 @@ class _SocialButtonData {
   final String url;
 
   const _SocialButtonData({this.assetPath, this.icon, required this.url})
-    : assert(
-        assetPath != null || icon != null,
-        'Either assetPath or icon must be provided',
-      );
+      : assert(
+          assetPath != null || icon != null,
+          'Either assetPath or icon must be provided',
+        );
 }
 
 const List<_SocialButtonData> _socialButtons = [
@@ -107,10 +107,10 @@ class _SocialIconButton extends StatelessWidget {
   final VoidCallback onTap;
 
   const _SocialIconButton({this.assetPath, this.icon, required this.onTap})
-    : assert(
-        assetPath != null || icon != null,
-        'Either assetPath or icon must be provided',
-      );
+      : assert(
+          assetPath != null || icon != null,
+          'Either assetPath or icon must be provided',
+        );
 
   @override
   Widget build(BuildContext context) {

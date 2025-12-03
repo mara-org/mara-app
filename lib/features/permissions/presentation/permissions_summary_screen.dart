@@ -128,9 +128,8 @@ class _PermissionItem extends StatelessWidget {
           title,
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: isEnabled
-                ? const Color(0xFF10A9CC)
-                : const Color(0xFFFCFEFF),
+            color:
+                isEnabled ? const Color(0xFF10A9CC) : const Color(0xFFFCFEFF),
             fontSize: isEnabled ? 20 : 16,
             fontWeight: FontWeight.normal,
             height: 1,

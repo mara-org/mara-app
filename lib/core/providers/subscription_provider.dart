@@ -16,5 +16,5 @@ class SubscriptionNotifier extends StateNotifier<SubscriptionStatus> {
 
 final subscriptionProvider =
     StateNotifierProvider<SubscriptionNotifier, SubscriptionStatus>(
-      (ref) => SubscriptionNotifier(),
-    );
+  (ref) => SubscriptionNotifier(),
+);

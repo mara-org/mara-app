@@ -212,8 +212,8 @@ class _PricingCard extends StatelessWidget {
           border: Border.all(
             color: isSelected
                 ? (isHighlighted
-                      ? AppColors.languageButtonColor
-                      : AppColors.languageButtonColor)
+                    ? AppColors.languageButtonColor
+                    : AppColors.languageButtonColor)
                 : Colors.grey.shade300,
             width: isSelected ? 2 : 1,
           ),
@@ -226,9 +226,8 @@ class _PricingCard extends StatelessWidget {
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color: isSelected
-                    ? AppColors.languageButtonColor
-                    : Colors.black87,
+                color:
+                    isSelected ? AppColors.languageButtonColor : Colors.black87,
               ),
             ),
             const SizedBox(height: 8),

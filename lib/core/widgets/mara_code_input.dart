@@ -120,9 +120,9 @@ class MaraCodeInputState extends State<MaraCodeInput> {
                 child: Text(
                   digit,
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    color: AppColors.textPrimary,
-                    fontWeight: FontWeight.w600,
-                  ),
+                        color: AppColors.textPrimary,
+                        fontWeight: FontWeight.w600,
+                      ),
                 ),
               );
             }),

@@ -49,9 +49,8 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
 
     // Set default year to 1999
     final defaultYear = 1999;
-    final initialYear = _years.contains(defaultYear)
-        ? defaultYear
-        : _years.last;
+    final initialYear =
+        _years.contains(defaultYear) ? defaultYear : _years.last;
     final yearIndex = _years.indexOf(initialYear);
     if (yearIndex != -1) {
       _selectedYear = initialYear;
@@ -238,7 +237,7 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
                                     decoration: BoxDecoration(
                                       color: isSelected
                                           ? AppColors.languageButtonColor
-                                                .withOpacity(0.4)
+                                              .withOpacity(0.4)
                                           : Colors.transparent,
                                       borderRadius: BorderRadius.circular(19),
                                     ),
@@ -248,7 +247,7 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
                                         color: isSelected
                                             ? AppColors.languageButtonColor
                                             : AppColors.textSecondary
-                                                  .withOpacity(0.66),
+                                                .withOpacity(0.66),
                                         fontSize: 20,
                                         fontWeight: FontWeight.normal,
                                       ),
@@ -312,7 +311,7 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
                                       decoration: BoxDecoration(
                                         color: isSelected
                                             ? AppColors.languageButtonColor
-                                                  .withOpacity(0.4)
+                                                .withOpacity(0.4)
                                             : Colors.transparent,
                                         borderRadius: BorderRadius.circular(19),
                                       ),
@@ -322,7 +321,7 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
                                           color: isSelected
                                               ? AppColors.languageButtonColor
                                               : AppColors.textSecondary
-                                                    .withOpacity(0.66),
+                                                  .withOpacity(0.66),
                                           fontSize: 20,
                                           fontWeight: FontWeight.normal,
                                         ),
@@ -345,8 +344,7 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
                           Text(
                             l10n.day,
                             style: TextStyle(
-                              color:
-                                  _selectedYear != null &&
+                              color: _selectedYear != null &&
                                       _selectedMonth != null
                                   ? AppColors.textSecondary
                                   : AppColors.textSecondary.withOpacity(0.5),
@@ -359,14 +357,12 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
                             child: ListWheelScrollView.useDelegate(
                               itemExtent: 50,
                               diameterRatio: 1.5,
-                              physics:
-                                  _selectedYear != null &&
+                              physics: _selectedYear != null &&
                                       _selectedMonth != null
                                   ? const FixedExtentScrollPhysics()
                                   : const NeverScrollableScrollPhysics(),
                               controller: _dayController,
-                              onSelectedItemChanged:
-                                  _selectedYear != null &&
+                              onSelectedItemChanged: _selectedYear != null &&
                                       _selectedMonth != null
                                   ? (index) {
                                       setState(() {
@@ -384,8 +380,7 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
                                   }
                                   final day = validDays[index];
                                   final isSelected = day == _selectedDay;
-                                  final isEnabled =
-                                      _selectedYear != null &&
+                                  final isEnabled = _selectedYear != null &&
                                       _selectedMonth != null;
                                   return Opacity(
                                     opacity: isEnabled ? 1.0 : 0.5,
@@ -394,7 +389,7 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
                                       decoration: BoxDecoration(
                                         color: isSelected
                                             ? AppColors.languageButtonColor
-                                                  .withOpacity(0.4)
+                                                .withOpacity(0.4)
                                             : Colors.transparent,
                                         borderRadius: BorderRadius.circular(19),
                                       ),
@@ -404,7 +399,7 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
                                           color: isSelected
                                               ? AppColors.languageButtonColor
                                               : AppColors.textSecondary
-                                                    .withOpacity(0.66),
+                                                  .withOpacity(0.66),
                                           fontSize: 20,
                                           fontWeight: FontWeight.normal,
                                         ),

@@ -171,9 +171,8 @@ class _LanguageButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final backgroundColor = isDisabled
-        ? Colors.grey.shade300
-        : AppColors.languageButtonColor;
+    final backgroundColor =
+        isDisabled ? Colors.grey.shade300 : AppColors.languageButtonColor;
     final textColor = isDisabled ? Colors.grey.shade600 : Colors.white;
 
     return GestureDetector(

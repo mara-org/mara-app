@@ -53,9 +53,8 @@ class _MaraChatScreenState extends ConsumerState<MaraChatScreen> {
   void _loadConversation(String conversationId) {
     if (_hasLoadedConversation) return;
 
-    final conversation = ref
-        .read(chatHistoryProvider.notifier)
-        .getConversation(conversationId);
+    final conversation =
+        ref.read(chatHistoryProvider.notifier).getConversation(conversationId);
     if (conversation != null) {
       ref
           .read(chatMessagesProvider.notifier)
@@ -94,8 +93,8 @@ class _MaraChatScreenState extends ConsumerState<MaraChatScreen> {
       final topic = words.length > 4
           ? words.take(4).join(' ') + '...'
           : text.length > 30
-          ? text.substring(0, 30) + '...'
-          : text;
+              ? text.substring(0, 30) + '...'
+              : text;
       ref.read(lastConversationTopicProvider.notifier).state = topic;
     }
 
@@ -116,9 +115,7 @@ class _MaraChatScreenState extends ConsumerState<MaraChatScreen> {
     final l10n = AppLocalizations.of(context);
     if (l10n != null) {
       Future.delayed(const Duration(milliseconds: 500), () {
-        ref
-            .read(chatMessagesProvider.notifier)
-            .addMessage(
+        ref.read(chatMessagesProvider.notifier).addMessage(
               ChatMessage(text: l10n.thanksForSharing, type: MessageType.bot),
             );
 
@@ -301,9 +298,8 @@ class _MessageBubble extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: Row(
-        mainAxisAlignment: isUser
-            ? MainAxisAlignment.end
-            : MainAxisAlignment.start,
+        mainAxisAlignment:
+            isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
         children: [
           Flexible(
             child: Container(

@@ -44,9 +44,9 @@ class _DeleteAccountCodeScreenState
         .toLowerCase()
         .replaceAll(RegExp(r'\s+'), ' ');
     final normalizedPhrase = phrase.trim().toLowerCase().replaceAll(
-      RegExp(r'\s+'),
-      ' ',
-    );
+          RegExp(r'\s+'),
+          ' ',
+        );
     final matchesPhrase =
         normalizedInput.isNotEmpty && normalizedInput == normalizedPhrase;
     final shouldShowError =

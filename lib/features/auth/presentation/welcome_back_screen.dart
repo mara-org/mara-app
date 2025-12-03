@@ -95,8 +95,7 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
                 start: 28,
                 top: 365,
                 child: SizedBox(
-                  width:
-                      MediaQuery.of(context).size.width -
+                  width: MediaQuery.of(context).size.width -
                       56, // Full width minus left and right padding
                   child: MaraTextField(
                     label: l10n.emailLabel,
@@ -113,8 +112,7 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
                 start: 28,
                 top: 427,
                 child: SizedBox(
-                  width:
-                      MediaQuery.of(context).size.width -
+                  width: MediaQuery.of(context).size.width -
                       56, // Full width minus left and right padding
                   child: MaraTextField(
                     label: l10n.passwordLabel,
@@ -230,13 +228,11 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
               // Positioned "Forget your password? Click here" directly under password field, direction-aware alignment
               PositionedDirectional(
                 start: 28,
-                top:
-                    427 +
+                top: 427 +
                     56 +
                     5, // Password field top (427) + field height (~56) + margin (5px)
                 child: SizedBox(
-                  width:
-                      screenWidth -
+                  width: screenWidth -
                       56, // Same width as password field - full width
                   child: Align(
                     alignment: AlignmentDirectional

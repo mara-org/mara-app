@@ -151,5 +151,5 @@ class ChatHistoryNotifier extends StateNotifier<List<Conversation>> {
 
 final chatHistoryProvider =
     StateNotifierProvider<ChatHistoryNotifier, List<Conversation>>(
-      (ref) => ChatHistoryNotifier(),
-    );
+  (ref) => ChatHistoryNotifier(),
+);

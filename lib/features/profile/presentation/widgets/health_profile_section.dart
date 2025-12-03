@@ -72,8 +72,8 @@ class HealthProfileSection extends ConsumerWidget {
                 label: l10n.genderField,
                 value: profile.gender != null
                     ? profile.gender == Gender.male
-                          ? l10n.male
-                          : l10n.female
+                        ? l10n.male
+                        : l10n.female
                     : l10n.notSet,
                 onTap: () => context.push('/gender?from=profile'),
               ),

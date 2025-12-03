@@ -15,9 +15,11 @@ import '../../shared/system/system_info_service.dart';
 /// - Include device info, stack trace, and app version
 class CrashReporter {
   // TODO: Set this via environment variable or config when backend is available
-  static const String? _backendCrashEndpoint = null; // e.g., 'https://api.mara.app/crashes'
-  
+  static const String? _backendCrashEndpoint =
+      null; // e.g., 'https://api.mara.app/crashes'
+
   static final SystemInfoService _systemInfo = SystemInfoService();
+
   /// Initialize crash handling for the app
   ///
   /// This should be called before runApp() in main.dart
@@ -92,7 +94,7 @@ class CrashReporter {
   }
 
   /// Send crash report to backend endpoint
-  /// 
+  ///
   /// Backend should:
   /// 1. Store crash report in database
   /// 2. Forward critical crashes to DISCORD_WEBHOOK_ALERTS or DISCORD_WEBHOOK_CRASHES
@@ -150,7 +152,7 @@ class CrashReporter {
   /// Determine crash severity based on error type and context
   static String _determineSeverity(Object error, String context) {
     final errorString = error.toString().toLowerCase();
-    
+
     // Critical errors
     if (errorString.contains('outofmemory') ||
         errorString.contains('nullpointer') ||
@@ -158,14 +160,14 @@ class CrashReporter {
         context.contains('framework')) {
       return 'critical';
     }
-    
+
     // High severity
     if (errorString.contains('network') ||
         errorString.contains('timeout') ||
         errorString.contains('connection')) {
       return 'high';
     }
-    
+
     // Default to medium
     return 'medium';
   }

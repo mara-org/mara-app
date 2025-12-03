@@ -52,8 +52,7 @@ class _DeleteAccountEmailScreenState
       return;
     }
 
-    final matches =
-        _emailController.text.trim().toLowerCase() ==
+    final matches = _emailController.text.trim().toLowerCase() ==
         currentEmail.trim().toLowerCase();
     if (!matches) {
       setState(() {

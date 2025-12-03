@@ -27,5 +27,5 @@ class PermissionsNotifier extends StateNotifier<PermissionsState> {
 
 final permissionsProvider =
     StateNotifierProvider<PermissionsNotifier, PermissionsState>(
-      (ref) => PermissionsNotifier(),
-    );
+  (ref) => PermissionsNotifier(),
+);
