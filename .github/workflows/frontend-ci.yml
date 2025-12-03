@@ -77,9 +77,15 @@ jobs:
           cat analyze_output.txt
           
           # Count errors and warnings (not info)
-          ERRORS=$(grep -c "error •" analyze_output.txt 2>/dev/null || echo "0")
-          WARNINGS=$(grep -c "warning •" analyze_output.txt 2>/dev/null || echo "0")
+          # Strip whitespace and newlines to ensure clean integer values
+          ERRORS=$(grep -c "error •" analyze_output.txt 2>/dev/null | tr -d '[:space:]' || echo "0")
+          WARNINGS=$(grep -c "warning •" analyze_output.txt 2>/dev/null | tr -d '[:space:]' || echo "0")
           
+          # Ensure we have valid integers (default to 0 if empty)
+          ERRORS=${ERRORS:-0}
+          WARNINGS=${WARNINGS:-0}
+          
+          # Set GitHub output variables
           echo "analyze_errors=$ERRORS" >> $GITHUB_OUTPUT
           echo "analyze_warnings=$WARNINGS" >> $GITHUB_OUTPUT
           
