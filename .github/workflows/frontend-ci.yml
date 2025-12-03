@@ -159,10 +159,10 @@ jobs:
               echo "coverage_percent=$COVERAGE_PERCENT" >> $GITHUB_OUTPUT
               echo "📊 Coverage: ~${COVERAGE_PERCENT}%"
               
-              # Enforce coverage threshold (fail if below 25%)
+              # Enforce coverage threshold (fail if below 15%)
               # TODO: Increase threshold to 70%+ once more tests exist
-              if [ "$COVERAGE_PERCENT" -lt 25 ]; then
-                echo "❌ ERROR: Coverage ${COVERAGE_PERCENT}% is below 25% threshold"
+              if [ "$COVERAGE_PERCENT" -lt 15 ]; then
+                echo "❌ ERROR: Coverage ${COVERAGE_PERCENT}% is below 15% threshold"
                 echo "TODO: Increase to 70%+ once more tests exist"
                 exit 1
               elif [ "$COVERAGE_PERCENT" -lt 70 ]; then

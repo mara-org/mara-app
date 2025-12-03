@@ -64,8 +64,10 @@ void main() {
         ),
       );
 
-      // Wait for the widget tree to settle
-      await tester.pumpAndSettle();
+      // Wait for the widget tree to settle (with longer timeout for async providers)
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
+      await tester.pumpAndSettle(const Duration(seconds: 5));
 
       // Verify that the ProfileScreen widget exists
       expect(find.byType(ProfileScreen), findsOneWidget);
@@ -118,7 +120,10 @@ void main() {
           ),
         ),
       );
-      await tester.pumpAndSettle();
+      // Wait for the widget tree to settle (with longer timeout for async providers)
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
+      await tester.pumpAndSettle(const Duration(seconds: 5));
 
       // Verify basic structure
       expect(find.byType(Scaffold), findsOneWidget);
