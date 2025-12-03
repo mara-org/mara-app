@@ -138,6 +138,14 @@ class _SocialIconButton extends StatelessWidget {
                   width: 28,
                   height: 28,
                   fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) {
+                    // Fallback to icon if asset fails to load
+                    return Icon(
+                      icon ?? Icons.link,
+                      size: 28,
+                      color: AppColors.textPrimary,
+                    );
+                  },
                 )
               : Icon(icon, size: 28, color: AppColors.textPrimary),
         ),
