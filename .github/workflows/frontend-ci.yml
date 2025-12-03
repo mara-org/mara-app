@@ -52,7 +52,10 @@ jobs:
 
       - name: Notify Discord (final status)
         if: always()
+        continue-on-error: true
         run: |
+          set +e  # Don't exit on error
+          
           STATUS="${{ job.status }}"
           COMMIT_URL="https://github.com/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}"
           RUN_URL="https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
@@ -71,9 +74,15 @@ jobs:
           Run: ${RUN_URL}"
           fi
 
+          # Check if webhook is set
+          if [ -z "$DISCORD_WEBHOOK" ]; then
+            echo "⚠️ DISCORD_WEBHOOK_FRONTEND secret is not set. Skipping notification."
+            exit 0
+          fi
+
           # Properly escape JSON using Python
-          echo "$MESSAGE" > /tmp/discord_msg.txt
-          PAYLOAD=$(python3 -c "import json; f=open('/tmp/discord_msg.txt'); msg=f.read(); f.close(); print(json.dumps({'content': msg}))")
+          echo "$MESSAGE" > /tmp/discord_msg.txt || exit 0
+          PAYLOAD=$(python3 -c "import json; f=open('/tmp/discord_msg.txt'); msg=f.read(); f.close(); print(json.dumps({'content': msg}))") || exit 0
 
           # Send to Discord with error handling
           echo "Sending notification to Discord..."
@@ -82,20 +91,21 @@ jobs:
           HTTP_CODE=$(curl -s -o /tmp/discord_response.txt -w "%{http_code}" \
             -H "Content-Type: application/json" \
             -d "$PAYLOAD" \
-            -X POST "$DISCORD_WEBHOOK")
+            -X POST "$DISCORD_WEBHOOK" 2>&1) || HTTP_CODE="000"
           
-          if [ "$HTTP_CODE" -eq 200 ] || [ "$HTTP_CODE" -eq 204 ]; then
+          if [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "204" ]; then
             echo "✅ Discord notification sent successfully (HTTP $HTTP_CODE)"
           else
             echo "⚠️ Failed to send Discord notification (HTTP $HTTP_CODE)"
             echo "Response:"
-            cat /tmp/discord_response.txt || echo "No response body"
+            cat /tmp/discord_response.txt 2>/dev/null || echo "No response body"
             echo ""
             echo "Payload preview (first 200 chars):"
-            echo "$PAYLOAD" | head -c 200 || echo "Could not preview payload"
+            echo "$PAYLOAD" | head -c 200 2>/dev/null || echo "Could not preview payload"
             echo ""
             echo "Note: Discord notification failure does not affect CI status."
-            # Don't exit with error - we don't want to fail the CI job if Discord notification fails
-            exit 0
           fi
+          
+          # Always exit successfully to not fail the CI job
+          exit 0
 
