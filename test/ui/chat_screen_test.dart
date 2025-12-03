@@ -31,7 +31,8 @@ void main() {
       // - Test loading state
     });
 
-    testWidgets('Chat screen has correct structure', (WidgetTester tester) async {
+    testWidgets('Chat screen has correct structure',
+        (WidgetTester tester) async {
       await tester.pumpWidget(createTestWidget(const MaraChatScreen()));
       await tester.pumpAndSettle();
 
@@ -55,4 +56,3 @@ void main() {
     // - Test empty conversation state
   });
 }
-

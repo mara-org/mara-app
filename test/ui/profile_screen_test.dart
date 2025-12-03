@@ -8,7 +8,8 @@ import '../../utils/test_utils.dart';
 
 void main() {
   group('Profile Screen Widget Tests', () {
-    testWidgets('Profile screen renders correctly', (WidgetTester tester) async {
+    testWidgets('Profile screen renders correctly',
+        (WidgetTester tester) async {
       // Build the profile screen
       await tester.pumpWidget(createTestWidget(const ProfileScreen()));
 
@@ -30,7 +31,8 @@ void main() {
       // - Test settings interactions
     });
 
-    testWidgets('Profile screen has correct structure', (WidgetTester tester) async {
+    testWidgets('Profile screen has correct structure',
+        (WidgetTester tester) async {
       await tester.pumpWidget(createTestWidget(const ProfileScreen()));
       await tester.pumpAndSettle();
 
@@ -54,4 +56,3 @@ void main() {
     // - Test empty state
   });
 }
-

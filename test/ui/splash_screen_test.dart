@@ -29,7 +29,8 @@ void main() {
       // - Test different screen sizes
     });
 
-    testWidgets('Splash screen has correct structure', (WidgetTester tester) async {
+    testWidgets('Splash screen has correct structure',
+        (WidgetTester tester) async {
       await tester.pumpWidget(createTestWidget(const SplashScreen()));
       await tester.pump();
 
@@ -53,4 +54,3 @@ void main() {
     // - Test dark mode (when implemented)
   });
 }
-
