@@ -1,8 +1,8 @@
-# Security scanning workflow for Mara app
+# Mara Security – Dependency Scan
 # Runs dependency vulnerability scanning and basic secrets detection
-# TODO: Integrate proper secrets scanning tool (e.g., TruffleHog, GitGuardian) when available
+# Note: For secrets scanning, see secrets-scan.yml workflow
 
-name: Security Scan
+name: Mara Security – Dependency Scan
 
 on:
   push:

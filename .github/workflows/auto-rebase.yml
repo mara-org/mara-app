@@ -1,0 +1,127 @@
+# Mara Automation – Auto Rebase
+# Automatically rebases open PRs when main branch changes
+# Only rebases if conflict-free
+# Leaves comment on PR if rebase fails
+
+name: Mara Automation – Auto Rebase
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  auto-rebase:
+    name: Auto Rebase PRs
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Get open PRs
+        id: get_prs
+        run: |
+          # Get list of open PRs targeting main
+          PR_LIST=$(gh pr list --base main --state open --json number,headRefName --jq '.[] | "\(.number):\(.headRefName)"' || echo "")
+          
+          if [ -z "$PR_LIST" ]; then
+            echo "No open PRs found"
+            echo "prs=[]" >> $GITHUB_OUTPUT
+          else
+            echo "Found PRs: $PR_LIST"
+            echo "prs<<EOF" >> $GITHUB_OUTPUT
+            echo "$PR_LIST" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Rebase PRs
+        id: rebase_prs
+        continue-on-error: true
+        run: |
+          PR_LIST="${{ steps.get_prs.outputs.prs }}"
+          
+          if [ -z "$PR_LIST" ]; then
+            echo "No PRs to rebase"
+            exit 0
+          fi
+          
+          SUCCESS_COUNT=0
+          FAIL_COUNT=0
+          
+          while IFS= read -r PR_INFO; do
+            if [ -z "$PR_INFO" ]; then
+              continue
+            fi
+            
+            PR_NUMBER=$(echo "$PR_INFO" | cut -d: -f1)
+            BRANCH_NAME=$(echo "$PR_INFO" | cut -d: -f2)
+            
+            echo "Attempting to rebase PR #$PR_NUMBER (branch: $BRANCH_NAME)"
+            
+            # Fetch the branch
+            git fetch origin "$BRANCH_NAME:$BRANCH_NAME" || {
+              echo "Failed to fetch branch $BRANCH_NAME"
+              FAIL_COUNT=$((FAIL_COUNT + 1))
+              continue
+            }
+            
+            # Checkout the branch
+            git checkout "$BRANCH_NAME" || {
+              echo "Failed to checkout branch $BRANCH_NAME"
+              FAIL_COUNT=$((FAIL_COUNT + 1))
+              continue
+            }
+            
+            # Attempt rebase
+            git rebase origin/main || {
+              echo "Rebase failed for PR #$PR_NUMBER"
+              FAIL_COUNT=$((FAIL_COUNT + 1))
+              
+              # Comment on PR about rebase failure
+              COMMENT="⚠️ **Auto-rebase failed**\n\nThis PR could not be automatically rebased due to conflicts.\nPlease rebase manually:\n\`\`\`bash\ngit checkout $BRANCH_NAME\ngit rebase origin/main\n\`\`\`"
+              gh pr comment "$PR_NUMBER" --body "$COMMENT" || true
+              
+              # Abort rebase
+              git rebase --abort || true
+              git checkout main || true
+              continue
+            }
+            
+            # Force push (this requires write permissions)
+            git push origin "$BRANCH_NAME" --force-with-lease || {
+              echo "Failed to push rebased branch $BRANCH_NAME"
+              FAIL_COUNT=$((FAIL_COUNT + 1))
+              continue
+            }
+            
+            echo "Successfully rebased PR #$PR_NUMBER"
+            SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
+            
+            # Comment on PR about successful rebase
+            COMMENT="✅ **Auto-rebase successful**\n\nThis PR has been automatically rebased onto the latest main branch."
+            gh pr comment "$PR_NUMBER" --body "$COMMENT" || true
+            
+            # Return to main
+            git checkout main || true
+            
+          done <<< "$PR_LIST"
+          
+          echo "Rebase summary: $SUCCESS_COUNT succeeded, $FAIL_COUNT failed"
+          echo "success_count=$SUCCESS_COUNT" >> $GITHUB_OUTPUT
+          echo "fail_count=$FAIL_COUNT" >> $GITHUB_OUTPUT
+

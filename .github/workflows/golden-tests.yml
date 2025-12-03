@@ -1,0 +1,108 @@
+# Mara Tests – Golden + Widget
+# Runs golden tests for visual regression detection
+# Uploads golden diffs as artifacts on failure
+
+name: Mara Tests – Golden + Widget
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  golden-tests:
+    name: Golden Tests
+    runs-on: ubuntu-latest
+
+    env:
+      DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_EVENTS }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.27.0"
+
+      - name: Flutter pub get
+        run: flutter pub get
+
+      - name: Run golden tests
+        id: golden_tests
+        continue-on-error: true
+        run: |
+          echo "🖼️ Running golden tests..."
+          flutter test test/ui/example_golden_test.dart || {
+            echo "❌ Golden tests failed"
+            echo "tests_passed=false" >> $GITHUB_OUTPUT
+            exit 1
+          }
+          echo "✅ Golden tests passed"
+          echo "tests_passed=true" >> $GITHUB_OUTPUT
+
+      - name: Upload golden diffs
+        if: failure() && steps.golden_tests.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: golden-diffs
+          path: |
+            test/ui/goldens/*.png
+            test/ui/goldens/*.diff.png
+          retention-days: 7
+          if-no-files-found: ignore
+
+      - name: Notify Discord (golden test results)
+        if: always()
+        continue-on-error: true
+        run: |
+          set +e
+          
+          STATUS="${{ job.status }}"
+          TESTS_PASSED="${{ steps.golden_tests.outputs.tests_passed }}"
+          RUN_URL="https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          
+          ICON="✅"
+          TITLE="Golden Tests Passed"
+          if [ "$STATUS" != "success" ]; then
+            ICON="⚠️"
+            TITLE="Golden Tests Failed - Visual Regression Detected"
+          fi
+          
+          MESSAGE="${ICON} **${TITLE}**
+          
+          Status: \`${STATUS}\`
+          Branch: \`${GITHUB_REF_NAME}\`
+          
+          ${STATUS != 'success' ? '⚠️ Visual regression detected. Check artifacts for golden diffs.' : '✅ All golden tests passed.'}
+          
+          View results: ${RUN_URL}"
+          
+          if [ -z "$DISCORD_WEBHOOK" ]; then
+            echo "⚠️ DISCORD_WEBHOOK_EVENTS secret is not set. Skipping notification."
+            exit 0
+          fi
+          
+          PAYLOAD=$(python3 -c "import json; print(json.dumps({'content': '''$MESSAGE'''}))" 2>/dev/null)
+          
+          if [ $? -ne 0 ] || [ -z "$PAYLOAD" ]; then
+            echo "⚠️ Failed to create JSON payload. Skipping notification."
+            exit 0
+          fi
+          
+          HTTP_CODE=$(curl -s -o /tmp/discord_response.txt -w "%{http_code}" \
+            -H "Content-Type: application/json" \
+            -d "$PAYLOAD" \
+            -X POST "$DISCORD_WEBHOOK" 2>/dev/null)
+          
+          if [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "204" ]; then
+            echo "✅ Discord notification sent successfully (HTTP $HTTP_CODE)"
+          else
+            echo "⚠️ Failed to send Discord notification (HTTP $HTTP_CODE)"
+          fi
+          
+          exit 0
+

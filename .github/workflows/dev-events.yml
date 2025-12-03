@@ -1,8 +1,8 @@
-# Dev events notification workflow for Mara app
+# Mara Automation – Dev Events
 # Sends Discord notifications for PRs, issues, and releases
 # Also auto-labels PRs based on branch name patterns
 
-name: Dev Events
+name: Mara Automation – Dev Events
 
 on:
   pull_request:

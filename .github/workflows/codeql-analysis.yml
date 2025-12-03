@@ -1,0 +1,106 @@
+# Mara Security – CodeQL
+# Static Application Security Testing (SAST) using GitHub CodeQL
+# Scans code for security vulnerabilities
+# Runs on PRs and weekly schedule
+
+name: Mara Security – CodeQL
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    # Run weekly on Mondays at 2 AM UTC
+    - cron: '0 2 * * 1'
+  workflow_dispatch:
+
+jobs:
+  analyze:
+    name: CodeQL Analysis
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    env:
+      DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_EVENTS }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: ['javascript', 'swift', 'kotlin']
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          # Use generic mode for Flutter since native CodeQL support is limited
+          # This scans JavaScript (for Flutter Web), Swift (for iOS), and Kotlin (for Android)
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+        # CodeQL will attempt to build the code automatically
+        # For Flutter projects, this may not work perfectly, but it will scan what it can
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{ matrix.language }}"
+
+      - name: Notify Discord (CodeQL results)
+        if: always()
+        continue-on-error: true
+        run: |
+          set +e
+          
+          STATUS="${{ job.status }}"
+          LANGUAGE="${{ matrix.language }}"
+          RUN_URL="https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          
+          ICON="✅"
+          TITLE="CodeQL Analysis Completed"
+          if [ "$STATUS" != "success" ]; then
+            ICON="⚠️"
+            TITLE="CodeQL Analysis Issues Found"
+          fi
+          
+          MESSAGE="${ICON} **${TITLE}** (${LANGUAGE})
+          
+          Language: \`${LANGUAGE}\`
+          Status: \`${STATUS}\`
+          
+          View results: ${RUN_URL}
+          
+          Check the Security tab for detailed findings."
+          
+          if [ -z "$DISCORD_WEBHOOK" ]; then
+            echo "⚠️ DISCORD_WEBHOOK_EVENTS secret is not set. Skipping notification."
+            exit 0
+          fi
+          
+          PAYLOAD=$(python3 -c "import json; print(json.dumps({'content': '''$MESSAGE'''}))" 2>/dev/null)
+          
+          if [ $? -ne 0 ] || [ -z "$PAYLOAD" ]; then
+            echo "⚠️ Failed to create JSON payload. Skipping notification."
+            exit 0
+          fi
+          
+          HTTP_CODE=$(curl -s -o /tmp/discord_response.txt -w "%{http_code}" \
+            -H "Content-Type: application/json" \
+            -d "$PAYLOAD" \
+            -X POST "$DISCORD_WEBHOOK" 2>/dev/null)
+          
+          if [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "204" ]; then
+            echo "✅ Discord notification sent successfully (HTTP $HTTP_CODE)"
+          else
+            echo "⚠️ Failed to send Discord notification (HTTP $HTTP_CODE)"
+          fi
+          
+          exit 0
+

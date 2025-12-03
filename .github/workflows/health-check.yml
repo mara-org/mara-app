@@ -1,8 +1,8 @@
-# Health check monitoring workflow for Mara app
+# Mara SRE – Health Check Monitor
 # Runs scheduled health checks and alerts on failures
 # TODO: Implement actual backend health endpoint checks - see enterprise audit
 
-name: Health Check Monitor
+name: Mara SRE – Health Check Monitor
 
 on:
   schedule:

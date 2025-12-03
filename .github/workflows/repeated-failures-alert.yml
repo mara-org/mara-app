@@ -1,12 +1,12 @@
-# Repeated failures detection workflow for Mara app
+# Mara SRE – Repeated Failures Alert
 # Monitors CI/CD workflows and alerts when failures occur repeatedly
 # Alerts if 3+ failures in recent runs OR 2+ consecutive failures
 
-name: Repeated Failures Alert
+name: Mara SRE – Repeated Failures Alert
 
 on:
   workflow_run:
-    workflows: ["Flutter CI", "Build & Deploy"]
+    workflows: ["Mara CI – Multi Platform", "Mara CD – Deploy APK"]
     types:
       - completed
 

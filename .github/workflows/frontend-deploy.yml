@@ -1,11 +1,11 @@
-# Frontend deployment workflow for Mara Flutter app
+# Mara CD – Deploy APK
 # Builds and deploys the Flutter app to production
 # TODO: Add staging environment deployment - see enterprise audit
 # TODO: Add preview deployments for PRs - see enterprise audit
 # TODO: Add rollback mechanism - see enterprise audit
 # TODO: Add build signing for production - see enterprise audit
 
-name: Build & Deploy
+name: Mara CD – Deploy APK
 
 on:
   push:

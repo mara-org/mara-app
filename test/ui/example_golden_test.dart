@@ -1,20 +1,20 @@
-// Example golden test for Mara app
+// Golden tests for Mara app
 // Golden tests capture widget snapshots and detect visual regressions
-// TODO: Set up proper golden testing tool (e.g., golden_toolkit package)
-// TODO: Add golden tests for all screens and components
+// Uses golden_toolkit for enhanced golden testing capabilities
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:golden_toolkit/golden_toolkit.dart';
 import 'package:mara_app/features/home/presentation/home_screen.dart';
 import 'package:mara_app/l10n/app_localizations.dart';
 
 void main() {
   group('Golden Tests', () {
-    testWidgets('Home screen golden test', (WidgetTester tester) async {
+    testGoldens('Home screen golden test', (WidgetTester tester) async {
       // Build the widget with localization delegates
-      await tester.pumpWidget(
+      await tester.pumpWidgetBuilder(
         const ProviderScope(
           child: MaterialApp(
             localizationsDelegates: [
@@ -30,26 +30,22 @@ void main() {
             home: HomeScreen(),
           ),
         ),
+        surfaceSize: const Size(400, 800), // Standard mobile size
       );
 
       // Wait for the widget tree to settle
       await tester.pumpAndSettle();
 
-      // TODO: Uncomment and configure when golden_toolkit is set up
-      // await expectLater(
-      //   find.byType(HomeScreen),
-      //   matchesGoldenFile('golden/home_screen.png'),
-      // );
-
-      // For now, just verify the widget renders
-      expect(find.byType(HomeScreen), findsOneWidget);
+      // Compare against golden file
+      await screenMatchesGolden(tester, 'home_screen');
     });
 
     // TODO: Add more golden tests:
     // - Test all screens (splash, auth, profile, settings, etc.)
-    // - Test different screen sizes
-    // - Test dark mode (if implemented)
+    // - Test different screen sizes (tablet, desktop)
+    // - Test dark mode (when implemented)
     // - Test different locales (English, Arabic)
+    // - Test different states (loading, error, empty)
   });
 }
 

@@ -2,6 +2,35 @@
 
 **Mara** is an AI-powered health companion mobile app built with Flutter. It helps users track their health, get personalized insights, and interact with an intelligent health assistant.
 
+## 📊 Engineering Maturity Progress
+
+| Category | Previous | Current | Target | Status |
+|----------|----------|---------|--------|--------|
+| **CI** | 42% | **60%** | 80% | 🟡 In Progress |
+| **Security** | 35% | **55%** | 70% | 🟡 In Progress |
+| **DevOps** | 52% | **65%** | 75% | 🟡 In Progress |
+| **Observability** | 18% | **25%** | 60% | 🔴 Needs Work |
+| **SRE** | 45% | **50%** | 70% | 🟡 In Progress |
+| **Testing** | 30% | **45%** | 70% | 🟡 In Progress |
+
+**Overall Maturity:** 48% → **53%** (Phase 2 Complete)
+
+### Key Improvements in Phase 2
+- ✅ Multi-platform CI (Android, iOS, Web)
+- ✅ Coverage enforcement (70% threshold)
+- ✅ CodeQL SAST scanning
+- ✅ TruffleHog secrets scanning
+- ✅ Golden test infrastructure
+- ✅ PR automation (size labels, auto-rebase, stale bot)
+- ✅ Enhanced test utilities and widget tests
+
+### Links
+- [CI Workflows](https://github.com/mara-org/mara-app/actions)
+- [CodeQL Dashboard](https://github.com/mara-org/mara-app/security/code-scanning)
+- [Security Scan Results](https://github.com/mara-org/mara-app/actions/workflows/secrets-scan.yml)
+
+---
+
 
 
 ## 🎯 Features

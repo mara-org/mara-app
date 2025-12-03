@@ -1,0 +1,106 @@
+# Mara Automation – Stale Bot
+# Marks stale issues after 30 days
+# Marks stale PRs after 14 days
+# Closes after 7 days of inactivity
+# Notifies Discord when PRs/issues are closed
+
+name: Mara Automation – Stale Bot
+
+on:
+  schedule:
+    # Run daily at 3 AM UTC
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+
+jobs:
+  stale:
+    name: Mark Stale Issues and PRs
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+
+    env:
+      DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_EVENTS }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Mark stale issues
+        uses: actions/stale@v9
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          stale-issue-message: |
+            This issue has been automatically marked as stale because it has not had recent activity.
+            It will be closed if no further activity occurs within 7 days.
+            Thank you for your contributions.
+          close-issue-message: |
+            This issue was automatically closed due to inactivity.
+            If you believe this issue should remain open, please comment or reopen it.
+          stale-issue-label: 'stale'
+          days-before-issue-stale: 30
+          days-before-issue-close: 7
+          exempt-issue-labels: 'pinned,security'
+          operations-per-run: 30
+
+      - name: Mark stale PRs
+        uses: actions/stale@v9
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          stale-pr-message: |
+            This pull request has been automatically marked as stale because it has not had recent activity.
+            It will be closed if no further activity occurs within 7 days.
+            Please update the PR or it will be automatically closed.
+          close-pr-message: |
+            This pull request was automatically closed due to inactivity.
+            If you want to continue working on this PR, please reopen it.
+          stale-pr-label: 'stale'
+          days-before-pr-stale: 14
+          days-before-pr-close: 7
+          exempt-pr-labels: 'pinned,security,work-in-progress'
+          operations-per-run: 30
+
+      - name: Notify Discord about closed items
+        if: always()
+        continue-on-error: true
+        run: |
+          set +e
+          
+          # Get recently closed stale items (this is a simplified version)
+          # In a real implementation, you'd query the GitHub API for items closed in the last run
+          
+          MESSAGE="🧹 **Stale Bot Run Completed**
+          
+          The stale bot has processed issues and PRs.
+          Check the repository for items marked as stale or closed.
+          
+          Run: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          
+          if [ -z "$DISCORD_WEBHOOK" ]; then
+            echo "⚠️ DISCORD_WEBHOOK_EVENTS secret is not set. Skipping notification."
+            exit 0
+          fi
+          
+          PAYLOAD=$(python3 -c "import json; print(json.dumps({'content': '''$MESSAGE'''}))" 2>/dev/null)
+          
+          if [ $? -ne 0 ] || [ -z "$PAYLOAD" ]; then
+            echo "⚠️ Failed to create JSON payload. Skipping notification."
+            exit 0
+          fi
+          
+          HTTP_CODE=$(curl -s -o /tmp/discord_response.txt -w "%{http_code}" \
+            -H "Content-Type: application/json" \
+            -d "$PAYLOAD" \
+            -X POST "$DISCORD_WEBHOOK" 2>/dev/null)
+          
+          if [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "204" ]; then
+            echo "✅ Discord notification sent successfully (HTTP $HTTP_CODE)"
+          else
+            echo "⚠️ Failed to send Discord notification (HTTP $HTTP_CODE)"
+          fi
+          
+          exit 0
+

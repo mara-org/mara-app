@@ -1,0 +1,138 @@
+# Mara Automation – PR Size Labels
+# Automatically labels PRs based on size (XS, S, M, L, XL)
+# Warns if PR description is missing
+# Sends summary to Discord
+
+name: Mara Automation – PR Size Labels
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  label-pr:
+    name: Label PR by Size
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+
+    env:
+      DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_EVENTS }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Calculate PR size
+        id: pr_size
+        run: |
+          BASE_SHA="${{ github.event.pull_request.base.sha }}"
+          HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+          
+          # Get changed lines count
+          CHANGED_LINES=$(git diff --shortstat "$BASE_SHA".."$HEAD_SHA" | awk '{print $4+$6}' || echo "0")
+          
+          echo "Changed lines: $CHANGED_LINES"
+          echo "changed_lines=$CHANGED_LINES" >> $GITHUB_OUTPUT
+          
+          # Determine size label
+          if [ "$CHANGED_LINES" -lt 50 ]; then
+            LABEL="XS"
+          elif [ "$CHANGED_LINES" -lt 200 ]; then
+            LABEL="S"
+          elif [ "$CHANGED_LINES" -lt 500 ]; then
+            LABEL="M"
+          elif [ "$CHANGED_LINES" -lt 1000 ]; then
+            LABEL="L"
+          else
+            LABEL="XL"
+          fi
+          
+          echo "label=$LABEL" >> $GITHUB_OUTPUT
+          echo "Size label: $LABEL"
+
+      - name: Apply size label
+        run: |
+          LABEL="${{ steps.pr_size.outputs.label }}"
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+          
+          # Remove existing size labels
+          gh pr edit "$PR_NUMBER" --remove-label "XS,S,M,L,XL" 2>/dev/null || true
+          
+          # Add new size label
+          gh pr edit "$PR_NUMBER" --add-label "$LABEL" || echo "Failed to add label"
+
+      - name: Check PR description
+        id: check_description
+        run: |
+          PR_BODY="${{ github.event.pull_request.body }}"
+          
+          if [ -z "$PR_BODY" ] || [ "$PR_BODY" = "null" ]; then
+            echo "has_description=false" >> $GITHUB_OUTPUT
+            echo "⚠️ PR description is missing"
+          else
+            echo "has_description=true" >> $GITHUB_OUTPUT
+            echo "✅ PR description exists"
+          fi
+
+      - name: Comment on PR if description missing
+        if: steps.check_description.outputs.has_description == 'false'
+        run: |
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+          COMMENT="⚠️ **PR Description Missing**\n\nPlease add a description to this PR explaining:\n- What changes were made\n- Why these changes were made\n- How to test the changes\n\nThis helps reviewers understand the context of your changes."
+          
+          gh pr comment "$PR_NUMBER" --body "$COMMENT" || echo "Failed to add comment"
+
+      - name: Notify Discord
+        if: always()
+        continue-on-error: true
+        run: |
+          set +e
+          
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          PR_URL="${{ github.event.pull_request.html_url }}"
+          PR_AUTHOR="${{ github.event.pull_request.user.login }}"
+          LABEL="${{ steps.pr_size.outputs.label }}"
+          CHANGED_LINES="${{ steps.pr_size.outputs.changed_lines }}"
+          HAS_DESCRIPTION="${{ steps.check_description.outputs.has_description }}"
+          
+          MESSAGE="📏 **PR Size Labeled**
+          
+          PR #${PR_NUMBER}: *${PR_TITLE}*
+          Author: \`${PR_AUTHOR}\`
+          Size: \`${LABEL}\` (${CHANGED_LINES} lines changed)
+          Description: ${HAS_DESCRIPTION == 'true' ? '✅' : '❌ Missing'}
+          
+          ${PR_URL}"
+          
+          if [ -z "$DISCORD_WEBHOOK" ]; then
+            echo "⚠️ DISCORD_WEBHOOK_EVENTS secret is not set. Skipping notification."
+            exit 0
+          fi
+          
+          PAYLOAD=$(python3 -c "import json; print(json.dumps({'content': '''$MESSAGE'''}))" 2>/dev/null)
+          
+          if [ $? -ne 0 ] || [ -z "$PAYLOAD" ]; then
+            echo "⚠️ Failed to create JSON payload. Skipping notification."
+            exit 0
+          fi
+          
+          HTTP_CODE=$(curl -s -o /tmp/discord_response.txt -w "%{http_code}" \
+            -H "Content-Type: application/json" \
+            -d "$PAYLOAD" \
+            -X POST "$DISCORD_WEBHOOK" 2>/dev/null)
+          
+          if [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "204" ]; then
+            echo "✅ Discord notification sent successfully (HTTP $HTTP_CODE)"
+          else
+            echo "⚠️ Failed to send Discord notification (HTTP $HTTP_CODE)"
+          fi
+          
+          exit 0
+
