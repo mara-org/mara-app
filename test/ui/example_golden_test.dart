@@ -12,6 +12,8 @@ import 'package:mara_app/l10n/app_localizations.dart';
 
 void main() {
   group('Golden Tests', () {
+    // TODO: Generate golden files first by running: flutter test --update-goldens
+    // Then remove skip: true below
     testGoldens(
       'Home screen golden test',
       (WidgetTester tester) async {
@@ -42,8 +44,7 @@ void main() {
         // Note: First run will fail - use 'flutter test --update-goldens' to generate golden files
         await screenMatchesGolden(tester, 'home_screen');
       },
-      skip:
-          'Golden files need to be generated first. Run: flutter test --update-goldens',
+      skip: true, // Skip until golden files are generated
     );
 
     // TODO: Add more golden tests:
