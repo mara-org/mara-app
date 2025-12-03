@@ -1,8 +1,10 @@
 // Widget tests for Profile Screen
 // Tests the profile screen rendering and user information display
 
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -14,6 +16,19 @@ import 'package:mara_app/features/profile/presentation/profile_screen.dart';
 import 'package:mara_app/l10n/app_localizations.dart';
 import 'package:mara_app/shared/system/system_providers.dart';
 
+// Custom asset bundle that returns empty data for missing assets
+class TestAssetBundle extends CachingAssetBundle {
+  @override
+  Future<ByteData> load(String key) async {
+    try {
+      return await rootBundle.load(key);
+    } catch (e) {
+      // Return empty data for missing assets
+      return ByteData(0);
+    }
+  }
+}
+
 void main() {
   // Suppress asset loading errors in tests
   setUpAll(() {
@@ -22,7 +37,8 @@ void main() {
       // Only suppress asset loading errors, let other errors through
       final errorString = details.exception.toString();
       if (errorString.contains('Unable to load asset') ||
-          errorString.contains('asset does not exist')) {
+          errorString.contains('asset does not exist') ||
+          errorString.contains('EXCEPTION CAUGHT BY IMAGE RESOURCE SERVICE')) {
         // Silently ignore asset loading errors in tests
         return;
       }
@@ -55,32 +71,35 @@ void main() {
             deviceInfoProvider
                 .overrideWith((ref) => Future.value('Test Device')),
           ],
-          child: MaterialApp.router(
-            routerConfig: GoRouter(
-              initialLocation: '/profile',
-              routes: [
-                GoRoute(
-                  path: '/profile',
-                  builder: (context, state) => const ProfileScreen(),
-                ),
-                GoRoute(
-                  path: '/home',
-                  builder: (context, state) => const Scaffold(
-                    body: Center(child: Text('Home')),
+          child: DefaultAssetBundle(
+            bundle: TestAssetBundle(),
+            child: MaterialApp.router(
+              routerConfig: GoRouter(
+                initialLocation: '/profile',
+                routes: [
+                  GoRoute(
+                    path: '/profile',
+                    builder: (context, state) => const ProfileScreen(),
                   ),
-                ),
+                  GoRoute(
+                    path: '/home',
+                    builder: (context, state) => const Scaffold(
+                      body: Center(child: Text('Home')),
+                    ),
+                  ),
+                ],
+              ),
+              localizationsDelegates: const [
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              supportedLocales: const [
+                Locale('en'),
+                Locale('ar'),
               ],
             ),
-            localizationsDelegates: const [
-              AppLocalizations.delegate,
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
-            supportedLocales: const [
-              Locale('en'),
-              Locale('ar'),
-            ],
           ),
         ),
       );
