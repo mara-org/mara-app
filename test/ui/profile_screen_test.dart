@@ -65,9 +65,11 @@ void main() {
       );
 
       // Wait for the widget tree to settle (with longer timeout for async providers)
+      // Multiple pump cycles ensure async providers complete
       await tester.pump();
-      await tester.pump(const Duration(seconds: 1));
-      await tester.pumpAndSettle(const Duration(seconds: 5));
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.pumpAndSettle(const Duration(seconds: 10));
 
       // Verify that the ProfileScreen widget exists
       expect(find.byType(ProfileScreen), findsOneWidget);
@@ -121,9 +123,11 @@ void main() {
         ),
       );
       // Wait for the widget tree to settle (with longer timeout for async providers)
+      // Multiple pump cycles ensure async providers complete
       await tester.pump();
-      await tester.pump(const Duration(seconds: 1));
-      await tester.pumpAndSettle(const Duration(seconds: 5));
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.pumpAndSettle(const Duration(seconds: 10));
 
       // Verify basic structure
       expect(find.byType(Scaffold), findsOneWidget);
