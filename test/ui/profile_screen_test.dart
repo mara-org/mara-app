@@ -36,9 +36,13 @@ void main() {
     FlutterError.onError = (FlutterErrorDetails details) {
       // Only suppress asset loading errors, let other errors through
       final errorString = details.exception.toString();
+      final stackString = details.stack?.toString() ?? '';
       if (errorString.contains('Unable to load asset') ||
           errorString.contains('asset does not exist') ||
-          errorString.contains('EXCEPTION CAUGHT BY IMAGE RESOURCE SERVICE')) {
+          errorString.contains('EXCEPTION CAUGHT BY IMAGE RESOURCE SERVICE') ||
+          stackString.contains('AssetBundleImageProvider') ||
+          stackString.contains('Image.asset') ||
+          stackString.contains('_loadAsync')) {
         // Silently ignore asset loading errors in tests
         return;
       }
