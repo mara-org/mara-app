@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_FRONTEND }}
+      DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_EVENTS }}
 
     steps:
       - name: Checkout code
@@ -76,7 +76,7 @@ jobs:
 
           # Check if webhook is set
           if [ -z "$DISCORD_WEBHOOK" ]; then
-            echo "⚠️ DISCORD_WEBHOOK_FRONTEND secret is not set. Skipping notification."
+            echo "⚠️ DISCORD_WEBHOOK_EVENTS secret is not set. Skipping notification."
             exit 0
           fi
 
