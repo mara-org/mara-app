@@ -1,0 +1,130 @@
+name: Dev Events Notifications
+
+on:
+  pull_request:
+    types: [opened, reopened, closed]
+  issues:
+    types: [opened, reopened, closed]
+  release:
+    types: [published]
+
+jobs:
+  notify-discord:
+    runs-on: ubuntu-latest
+
+    env:
+      DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_FRONTEND }}
+
+    steps:
+      - name: Ensure Discord webhook is set
+        run: |
+          if [ -z "$DISCORD_WEBHOOK" ]; then
+            echo "ERROR: DISCORD_WEBHOOK_FRONTEND secret is NOT set or is empty."
+            exit 1
+          elif [[ ! "$DISCORD_WEBHOOK" =~ ^https://discord\.com/api/webhooks/ ]]; then
+            echo "WARNING: Discord webhook URL format may be incorrect."
+            echo "Expected format: https://discord.com/api/webhooks/..."
+          else
+            echo "✅ Discord webhook secret is set and format looks correct."
+          fi
+
+      - name: Send GitHub event to Discord
+        run: |
+          EVENT_NAME="${{ github.event_name }}"
+          ACTION="${{ github.event.action }}"
+
+          # Default message fallback
+          MESSAGE="ℹ️ Event: ${EVENT_NAME} / ${ACTION} in repo \`${GITHUB_REPOSITORY}\` by \`${GITHUB_ACTOR}\`."
+
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            PR_NUMBER=${{ github.event.pull_request.number }}
+            PR_TITLE="${{ github.event.pull_request.title }}"
+            PR_URL="${{ github.event.pull_request.html_url }}"
+            MERGED="${{ github.event.pull_request.merged }}"
+
+            ACTION_LABEL="$ACTION"
+            if [ "$ACTION" = "closed" ] && [ "$MERGED" = "true" ]; then
+              ACTION_LABEL="merged"
+            fi
+
+            MESSAGE="🔀 **Pull Request #${PR_NUMBER}** \`${ACTION_LABEL}\` - *${PR_TITLE}* - \`${GITHUB_ACTOR}\` - ${PR_URL}"
+
+          elif [ "$EVENT_NAME" = "issues" ]; then
+            ISSUE_NUMBER=${{ github.event.issue.number }}
+            ISSUE_TITLE="${{ github.event.issue.title }}"
+            ISSUE_URL="${{ github.event.issue.html_url }}"
+
+            MESSAGE="🐛 **Issue #${ISSUE_NUMBER}** \`${ACTION}\` - *${ISSUE_TITLE}* - \`${GITHUB_ACTOR}\` - ${ISSUE_URL}"
+
+          elif [ "$EVENT_NAME" = "release" ]; then
+            RELEASE_TAG="${{ github.event.release.tag_name }}"
+            RELEASE_NAME="${{ github.event.release.name }}"
+            RELEASE_URL="${{ github.event.release.html_url }}"
+
+            NAME_OR_TAG="$RELEASE_TAG"
+            if [ -n "$RELEASE_NAME" ]; then
+              NAME_OR_TAG="$RELEASE_NAME ($RELEASE_TAG)"
+            fi
+
+            MESSAGE="🏷️ **Release \`${NAME_OR_TAG}\` published** - \`${GITHUB_ACTOR}\` - ${RELEASE_URL}"
+          fi
+
+          echo "$MESSAGE" > /tmp/discord_msg.txt
+
+          # Properly escape JSON using Python
+          PAYLOAD=$(python3 -c "import json; f=open('/tmp/discord_msg.txt'); msg=f.read(); f.close(); print(json.dumps({'content': msg}))")
+
+          # Send to Discord with error handling
+          echo "Sending notification to Discord..."
+          echo "Webhook URL: ${DISCORD_WEBHOOK:0:50}..." # Show first 50 chars for debugging
+          
+          HTTP_CODE=$(curl -s -o /tmp/discord_response.txt -w "%{http_code}" \
+            -H "Content-Type: application/json" \
+            -d "$PAYLOAD" \
+            -X POST "$DISCORD_WEBHOOK")
+          
+          if [ "$HTTP_CODE" -eq 200 ] || [ "$HTTP_CODE" -eq 204 ]; then
+            echo "✅ Discord notification sent successfully (HTTP $HTTP_CODE)"
+          else
+            echo "❌ Failed to send Discord notification (HTTP $HTTP_CODE)"
+            echo "Response:"
+            cat /tmp/discord_response.txt
+            echo ""
+            echo "Payload preview (first 200 chars):"
+            echo "$PAYLOAD" | head -c 200
+            exit 1
+          fi
+
+  auto-label-pr:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Auto-label PR based on branch name
+        run: |
+          BRANCH_NAME="${{ github.head_ref }}"
+          LABEL=""
+
+          if [[ "$BRANCH_NAME" == feat/* ]]; then
+            LABEL="feature"
+          elif [[ "$BRANCH_NAME" == fix/* ]]; then
+            LABEL="bug"
+          elif [[ "$BRANCH_NAME" == chore/* ]]; then
+            LABEL="chore"
+          fi
+
+          if [ -n "$LABEL" ]; then
+            echo "Adding label: $LABEL"
+            gh pr edit "${{ github.event.pull_request.number }}" --add-label "$LABEL" || echo "Failed to add label (may already exist or insufficient permissions)"
+          else
+            echo "No label to add for branch: $BRANCH_NAME"
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+

@@ -1,0 +1,80 @@
+name: Frontend CI
+
+on:
+  push:
+    branches: ['**']  # Trigger on push to any branch
+  pull_request:
+    branches:
+      - main  # Trigger on PR to main
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+
+    env:
+      DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_FRONTEND }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.27.0"
+
+      - name: Flutter pub get
+        run: flutter pub get
+
+      - name: Flutter analyze
+        run: flutter analyze
+
+      - name: Flutter test
+        run: flutter test
+
+      - name: Notify Discord (final status)
+        if: always()
+        run: |
+          STATUS="${{ job.status }}"
+          COMMIT_URL="https://github.com/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}"
+          RUN_URL="https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+
+          if [ "$STATUS" = "success" ]; then
+            MESSAGE="✅ **Mara Frontend CI passed**
+          Branch: \`${GITHUB_REF_NAME}\`
+          Actor: \`${GITHUB_ACTOR}\`
+          Commit: [\`${GITHUB_SHA::7}\`](${COMMIT_URL})
+          Run: ${RUN_URL}"
+          else
+            MESSAGE="❌ **Mara Frontend CI failed**
+          Branch: \`${GITHUB_REF_NAME}\`
+          Actor: \`${GITHUB_ACTOR}\`
+          Commit: [\`${GITHUB_SHA::7}\`](${COMMIT_URL})
+          Run: ${RUN_URL}"
+          fi
+
+          # Properly escape JSON using Python
+          echo "$MESSAGE" > /tmp/discord_msg.txt
+          PAYLOAD=$(python3 -c "import json; f=open('/tmp/discord_msg.txt'); msg=f.read(); f.close(); print(json.dumps({'content': msg}))")
+
+          # Send to Discord with error handling
+          echo "Sending notification to Discord..."
+          echo "Webhook URL: ${DISCORD_WEBHOOK:0:50}..." # Show first 50 chars for debugging
+          
+          HTTP_CODE=$(curl -s -o /tmp/discord_response.txt -w "%{http_code}" \
+            -H "Content-Type: application/json" \
+            -d "$PAYLOAD" \
+            -X POST "$DISCORD_WEBHOOK")
+          
+          if [ "$HTTP_CODE" -eq 200 ] || [ "$HTTP_CODE" -eq 204 ]; then
+            echo "✅ Discord notification sent successfully (HTTP $HTTP_CODE)"
+          else
+            echo "❌ Failed to send Discord notification (HTTP $HTTP_CODE)"
+            echo "Response:"
+            cat /tmp/discord_response.txt
+            echo ""
+            echo "Payload preview (first 200 chars):"
+            echo "$PAYLOAD" | head -c 200
+            # Don't exit 1 here - we don't want to fail the CI job if Discord notification fails
+          fi
+

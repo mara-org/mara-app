@@ -6,9 +6,13 @@ import 'l10n/app_localizations.dart';
 import 'core/routing/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'core/providers/language_provider.dart';
+import 'core/utils/crash_reporter.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize crash reporting
+  CrashReporter.initialize();
   
   // Set system UI overlay style for both platforms
   SystemChrome.setSystemUIOverlayStyle(
@@ -26,7 +30,8 @@ void main() {
     SystemUiMode.edgeToEdge,
   );
 
-  runApp(
+  // Run app with crash handling
+  CrashReporter.runAppWithCrashHandling(
     const ProviderScope(
       child: MaraApp(),
     ),

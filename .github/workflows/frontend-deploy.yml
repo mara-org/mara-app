@@ -1,0 +1,111 @@
+name: Frontend Deploy
+
+on:
+  push:
+    branches:
+      - main  # Trigger on main branch pushes
+  workflow_dispatch:  # Allow manual trigger from the Actions tab
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_FRONTEND }}
+      ENVIRONMENT: production
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.27.0"
+
+      - name: Flutter pub get
+        run: flutter pub get
+
+      - name: Extract app version
+        run: |
+          if grep -q '^version:' pubspec.yaml; then
+            VERSION_LINE=$(grep '^version:' pubspec.yaml | head -n 1)
+            VERSION_VALUE=$(echo "$VERSION_LINE" | awk '{print $2}')
+          else
+            VERSION_VALUE="unknown"
+          fi
+          echo "APP_VERSION=$VERSION_VALUE" >> $GITHUB_ENV
+
+      - name: Mark start time
+        run: echo "DEPLOY_START_TIME=$(date +%s)" >> $GITHUB_ENV
+
+      - name: Build Flutter APK
+        run: flutter build apk --release
+
+      # If you use web instead of APK, comment the step above and use:
+      # - name: Build Flutter Web
+      #   run: flutter build web --release
+
+      - name: Deploy Flutter build
+        run: |
+          echo "TODO: add real deploy (Firebase App Distribution / Play Store / Web hosting) later"
+          echo "Build artifacts are available in build/app/outputs/flutter-apk/"
+
+      - name: Compute deploy duration
+        run: |
+          END_TIME=$(date +%s)
+          START_TIME=${DEPLOY_START_TIME:-$END_TIME}
+          DURATION=$((END_TIME - START_TIME))
+          echo "DEPLOY_DURATION=$DURATION" >> $GITHUB_ENV
+
+      - name: Notify Discord (final status)
+        if: always()
+        run: |
+          STATUS="${{ job.status }}"
+          COMMIT_URL="https://github.com/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}"
+          RUN_URL="https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+
+          ICON="✅"
+          TITLE="Mara Frontend Build & Deploy Succeeded"
+          if [ "$STATUS" != "success" ]; then
+            ICON="❌"
+            TITLE="Mara Frontend Build or Deploy FAILED"
+          fi
+
+          # Build message
+          MESSAGE="${ICON} **${TITLE}**
+          Status: \`${STATUS}\`
+          Environment: \`${ENVIRONMENT}\`
+          Version: \`${APP_VERSION:-unknown}\`
+          Repo: \`${GITHUB_REPOSITORY}\`
+          Branch: \`${GITHUB_REF_NAME}\`
+          Actor: \`${GITHUB_ACTOR}\`
+          Commit: [\`${GITHUB_SHA::7}\`](${COMMIT_URL})
+          Total time: \`${DEPLOY_DURATION:-unknown}s\`
+          Workflow: ${RUN_URL}"
+
+          # Properly escape JSON using Python
+          echo "$MESSAGE" > /tmp/discord_msg.txt
+          PAYLOAD=$(python3 -c "import json; f=open('/tmp/discord_msg.txt'); msg=f.read(); f.close(); print(json.dumps({'content': msg}))")
+
+          # Send to Discord with error handling
+          echo "Sending notification to Discord..."
+          echo "Webhook URL: ${DISCORD_WEBHOOK:0:50}..." # Show first 50 chars for debugging
+          
+          HTTP_CODE=$(curl -s -o /tmp/discord_response.txt -w "%{http_code}" \
+            -H "Content-Type: application/json" \
+            -d "$PAYLOAD" \
+            -X POST "$DISCORD_WEBHOOK")
+          
+          if [ "$HTTP_CODE" -eq 200 ] || [ "$HTTP_CODE" -eq 204 ]; then
+            echo "✅ Discord notification sent successfully (HTTP $HTTP_CODE)"
+          else
+            echo "❌ Failed to send Discord notification (HTTP $HTTP_CODE)"
+            echo "Response:"
+            cat /tmp/discord_response.txt
+            echo ""
+            echo "Payload preview (first 200 chars):"
+            echo "$PAYLOAD" | head -c 200
+            exit 1
+          fi
+

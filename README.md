@@ -2,6 +2,8 @@
 
 **Mara** is an AI-powered health companion mobile app built with Flutter. It helps users track their health, get personalized insights, and interact with an intelligent health assistant.
 
+> **Note**: This is currently a Flutter frontend-only app. Backend services will be added in the future.
+
 ## 🎯 Features
 
 ### Core Functionality
@@ -115,6 +117,40 @@ lib/
    flutter run
    ```
 
+### Common Commands
+
+```bash
+# Install dependencies
+flutter pub get
+
+# Run the app
+flutter run
+
+# Run tests
+flutter test
+
+# Build Android APK
+flutter build apk --release
+
+# Build Android App Bundle
+flutter build appbundle --release
+
+# Build iOS (requires macOS and Xcode)
+flutter build ios --release
+
+# Build Web
+flutter build web --release
+
+# Format code
+dart format .
+
+# Analyze code
+flutter analyze
+
+# Format and lint (recommended before committing)
+sh tool/format_and_lint.sh
+```
+
 ### Building for Production
 
 #### Android
@@ -216,6 +252,161 @@ Run tests with:
 ```bash
 flutter test
 ```
+
+## 🔧 Code Quality & Formatting
+
+### Formatting and Linting
+
+Before committing, run the format and lint script:
+
+```bash
+sh tool/format_and_lint.sh
+```
+
+This script will:
+- Format all Dart code using `dart format .`
+- Run static analysis using `flutter analyze`
+
+The script will exit with a non-zero code if analysis fails, preventing commits with linting errors.
+
+### Pre-commit Hook (Optional)
+
+To automatically run formatting and linting before each commit:
+
+1. Copy the pre-commit hook:
+   ```bash
+   cp tool/hooks/pre-commit .git/hooks/pre-commit
+   ```
+
+2. Make it executable:
+   ```bash
+   chmod +x .git/hooks/pre-commit
+   ```
+
+Now, every time you commit, the hook will automatically:
+- Format your code
+- Run Flutter analyze
+- Prevent the commit if any issues are found
+
+You can bypass the hook with `git commit --no-verify` if needed, but this is not recommended.
+
+## 🚀 CI/CD Pipeline
+
+### Continuous Integration (CI)
+
+The **Frontend CI** workflow (`.github/workflows/frontend-ci.yml`) runs automatically on:
+- Push to any branch
+- Pull request to `main`
+
+It performs:
+1. Code checkout
+2. Flutter setup (version 3.27.0)
+3. Dependency installation (`flutter pub get`)
+4. Static analysis (`flutter analyze`)
+5. Test execution (`flutter test`)
+
+Results are sent to Discord via the `DISCORD_WEBHOOK_FRONTEND` secret.
+
+### Continuous Deployment (CD)
+
+The **Frontend Deploy** workflow (`.github/workflows/frontend-deploy.yml`) runs on:
+- Push to `main` branch
+- Manual trigger via `workflow_dispatch`
+
+It performs:
+1. Code checkout
+2. Flutter setup
+3. Dependency installation
+4. Version extraction from `pubspec.yaml`
+5. Android APK build (`flutter build apk --release`)
+6. Placeholder deploy step (ready for Firebase App Distribution / Play Store / Web hosting)
+
+Deployment notifications are sent to Discord with details including:
+- Build status (success/failure)
+- Environment (production)
+- App version
+- Commit hash
+- Total build time
+- Link to workflow run
+
+### Discord Notifications
+
+All workflows use the `DISCORD_WEBHOOK_FRONTEND` GitHub secret to send notifications to Discord.
+
+**Setup Instructions:**
+1. Create a Discord webhook in your server
+2. Add the webhook URL as a GitHub secret named `DISCORD_WEBHOOK_FRONTEND`
+3. Go to: `Settings` → `Secrets and variables` → `Actions` → `New repository secret`
+
+Notifications are sent for:
+- ✅ CI pass/fail status
+- 🚀 Deploy success/failure
+- 🔀 Pull request events (opened, reopened, closed, merged)
+- 🐛 Issue events (opened, reopened, closed)
+- 🏷️ Release publications
+
+### Dev Events Workflow
+
+The **Dev Events** workflow (`.github/workflows/dev-events.yml`) handles:
+- Pull request notifications (with merge detection)
+- Issue notifications
+- Release notifications
+- Automatic PR labeling based on branch name:
+  - `feat/*` → `feature` label
+  - `fix/*` → `bug` label
+  - `chore/*` → `chore` label
+
+## 🐛 Crash Reporting
+
+The app includes crash reporting infrastructure (`lib/core/utils/crash_reporter.dart`) that:
+- Catches Flutter framework errors
+- Handles async errors outside the Flutter framework
+- Logs errors to console (currently)
+
+**Future Implementation:**
+- Send crashes to backend endpoint
+- Backend forwards critical crashes to Discord webhook (`DISCORD_WEBHOOK_ALERTS`)
+- Include device info, stack trace, and app version
+
+The crash reporter is initialized in `main.dart` and wraps the entire app in a crash-handling zone.
+
+## 📋 Pull Requests & Issues
+
+### Pull Request Template
+
+When creating a PR, use the template that includes:
+- Summary
+- Changes list
+- Screenshots (for UI changes)
+- Testing checklist
+- Code quality checklist
+
+### Issue Templates
+
+Two issue templates are available:
+
+1. **Bug Report** (`.github/ISSUE_TEMPLATE/bug_report.md`):
+   - Description
+   - Steps to reproduce
+   - Expected vs actual behavior
+   - Screenshots
+   - Device/OS info
+
+2. **Feature Request** (`.github/ISSUE_TEMPLATE/feature_request.md`):
+   - Problem/context
+   - Proposed solution
+   - Alternatives considered
+   - Additional context
+
+## 🔄 Dependency Updates
+
+Dependabot is configured (`.github/dependabot.yml`) to:
+- Check GitHub Actions dependencies weekly
+- Check Dart/Flutter pub dependencies weekly
+- Create PRs with `dependencies` label
+- Limit to 10 open PRs at a time
+
+Review and merge dependency updates regularly to keep dependencies secure and up-to-date.
 
 ## 📝 Version
 
