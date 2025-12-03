@@ -13,7 +13,8 @@ import '../utils/test_utils.dart';
 
 void main() {
   group('Welcome Intro Screen Widget Tests', () {
-    testWidgets('Welcome screen renders correctly', (WidgetTester tester) async {
+    testWidgets('Welcome screen renders correctly',
+        (WidgetTester tester) async {
       await pumpMaraApp(
         tester,
         MaterialApp.router(
@@ -134,4 +135,3 @@ void main() {
     });
   });
 }
-

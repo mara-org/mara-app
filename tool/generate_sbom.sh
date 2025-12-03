@@ -34,71 +34,94 @@ APP_VERSION=$(grep "^version:" pubspec.yaml | sed 's/^version: *//' | tr -d ' ')
 # Generate timestamp
 TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
-# Start building JSON SBOM
-cat > "$OUTPUT_FILE" <<EOF
+# Start building JSON SBOM header
 {
-  "sbomVersion": "1.0",
-  "format": "mara-sbom-v1",
-  "name": "$APP_NAME",
-  "version": "$APP_VERSION",
-  "timestamp": "$TIMESTAMP",
-  "tool": "generate_sbom.sh",
-  "note": "This is a simplified SBOM. For production use, consider using CycloneDX or SPDX format.",
-  "dependencies": [
-EOF
+  echo "{"
+  echo "  \"sbomVersion\": \"1.0\","
+  echo "  \"format\": \"mara-sbom-v1\","
+  echo "  \"name\": \"$APP_NAME\","
+  echo "  \"version\": \"$APP_VERSION\","
+  echo "  \"timestamp\": \"$TIMESTAMP\","
+  echo "  \"tool\": \"generate_sbom.sh\","
+  echo "  \"note\": \"This is a simplified SBOM. For production use, consider using CycloneDX or SPDX format.\","
+  echo "  \"dependencies\": ["
+} > "$OUTPUT_FILE"
 
 # Extract dependencies from pubspec.lock
-# Parse the lock file to get package names and versions
+# Use a simpler parsing approach
 FIRST=true
-while IFS= read -r line; do
-  # Match package entries in pubspec.lock
-  if [[ $line =~ ^[[:space:]]*([a-zA-Z0-9_-]+):[[:space:]]*$ ]]; then
-    PACKAGE_NAME="${BASH_REMATCH[1]}"
-    
-    # Skip if it's a description or other metadata
-    if [[ "$PACKAGE_NAME" == "packages" ]] || [[ "$PACKAGE_NAME" == "sdks" ]] || [[ "$PACKAGE_NAME" == "dependency_graph" ]]; then
-      continue
-    fi
-    
-    # Read next few lines to find version
-    VERSION=""
-    SOURCE=""
-    while IFS= read -r next_line; do
-      if [[ $next_line =~ version:[[:space:]]*(.+) ]]; then
-        VERSION="${BASH_REMATCH[1]}"
-        VERSION=$(echo "$VERSION" | tr -d ' ')
-      elif [[ $next_line =~ source:[[:space:]]*(.+) ]]; then
-        SOURCE="${BASH_REMATCH[1]}"
-        SOURCE=$(echo "$SOURCE" | tr -d ' ')
-      elif [[ $next_line =~ ^[[:space:]]*[a-zA-Z] ]] && [[ ! $next_line =~ ^[[:space:]]*(version|source|description): ]]; then
-        break
-      fi
-    done
-    
-    # Only add if we found a version
-    if [ -n "$VERSION" ]; then
+
+# Parse pubspec.lock line by line
+PACKAGE_NAME=""
+VERSION=""
+SOURCE="unknown"
+
+while IFS= read -r line || [ -n "$line" ]; do
+  # Match package name (format: "  package_name:")
+  if [[ $line =~ ^[[:space:]]+([a-zA-Z0-9_-]+):[[:space:]]*$ ]]; then
+    # Save previous package if we have one
+    if [ -n "$PACKAGE_NAME" ] && [ -n "$VERSION" ]; then
       if [ "$FIRST" = true ]; then
         FIRST=false
       else
         echo "," >> "$OUTPUT_FILE"
       fi
-      
-      cat >> "$OUTPUT_FILE" <<DEPEOF
-    {
-      "name": "$PACKAGE_NAME",
-      "version": "$VERSION",
-      "source": "${SOURCE:-unknown}"
-    }DEPEOF
+      {
+        echo "    {"
+        echo "      \"name\": \"$PACKAGE_NAME\","
+        echo "      \"version\": \"$VERSION\","
+        echo "      \"source\": \"$SOURCE\""
+        echo -n "    }"
+      } >> "$OUTPUT_FILE"
     fi
+    
+    # Start new package
+    PACKAGE_NAME="${BASH_REMATCH[1]}"
+    VERSION=""
+    SOURCE="unknown"
+    
+    # Skip metadata sections
+    if [[ "$PACKAGE_NAME" == "packages" ]] || [[ "$PACKAGE_NAME" == "sdks" ]] || [[ "$PACKAGE_NAME" == "dependency_graph" ]]; then
+      PACKAGE_NAME=""
+      continue
+    fi
+  fi
+  
+  # Extract version
+  if [ -n "$PACKAGE_NAME" ] && [[ $line =~ version:[[:space:]]*(.+) ]]; then
+    VERSION="${BASH_REMATCH[1]}"
+    VERSION=$(echo "$VERSION" | tr -d ' ')
+  fi
+  
+  # Extract source
+  if [ -n "$PACKAGE_NAME" ] && [[ $line =~ source:[[:space:]]*(.+) ]]; then
+    SOURCE="${BASH_REMATCH[1]}"
+    SOURCE=$(echo "$SOURCE" | tr -d ' ')
   fi
 done < pubspec.lock
 
-# Close JSON
-cat >> "$OUTPUT_FILE" <<EOF
+# Add last package if exists
+if [ -n "$PACKAGE_NAME" ] && [ -n "$VERSION" ]; then
+  if [ "$FIRST" = true ]; then
+    FIRST=false
+  else
+    echo "," >> "$OUTPUT_FILE"
+  fi
+  {
+    echo "    {"
+    echo "      \"name\": \"$PACKAGE_NAME\","
+    echo "      \"version\": \"$VERSION\","
+    echo "      \"source\": \"$SOURCE\""
+    echo -n "    }"
+  } >> "$OUTPUT_FILE"
+fi
 
-  ]
-}
-EOF
+# Close JSON
+{
+  echo ""
+  echo "  ]"
+  echo "}"
+} >> "$OUTPUT_FILE"
 
 # Validate JSON (if jq is available)
 if command -v jq &> /dev/null; then
@@ -121,4 +144,3 @@ echo "Note: This is a simplified SBOM format. For production use, consider:"
 echo "  - CycloneDX format (cyclonedx-dart)"
 echo "  - SPDX format (spdx-tools)"
 echo "  - Backend SBOM will be generated in a separate repository"
-

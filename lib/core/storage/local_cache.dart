@@ -196,4 +196,3 @@ class LocalCache {
     return _prefs!.containsKey(key);
   }
 }
-

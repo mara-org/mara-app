@@ -38,7 +38,8 @@ class RetryInterceptor extends Interceptor {
 
     if (retryCount >= maxRetries) {
       if (kDebugMode) {
-        debugPrint('Max retries ($maxRetries) reached for ${err.requestOptions.path}');
+        debugPrint(
+            'Max retries ($maxRetries) reached for ${err.requestOptions.path}');
       }
       return handler.reject(err);
     }
@@ -99,4 +100,3 @@ class RetryInterceptor extends Interceptor {
     return false;
   }
 }
-

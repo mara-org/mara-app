@@ -13,11 +13,11 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 /// Integrates with Sentry and/or Firebase Crashlytics for crash reporting.
 /// In debug mode: logs to console
 /// In release mode: sends to Sentry/Firebase (if configured)
-/// 
+///
 /// Configuration:
 /// - Set SENTRY_DSN environment variable or configure at runtime
 /// - Firebase is initialized separately via Firebase.initializeApp()
-/// 
+///
 /// Note: No backend endpoint needed - crashes go directly to SaaS observability tools
 class CrashReporter {
   static bool _initialized = false;
@@ -25,7 +25,7 @@ class CrashReporter {
   static bool _useFirebase = false;
 
   /// Initialize crash reporting
-  /// 
+  ///
   /// [sentryDsn] - Sentry DSN (optional, can be set via environment variable)
   /// [useFirebase] - Whether to use Firebase Crashlytics (requires Firebase.initializeApp() first)
   static Future<void> init({
@@ -33,12 +33,12 @@ class CrashReporter {
     bool useFirebase = false,
   }) async {
     if (_initialized) return;
-    
+
     _sentryDsn = sentryDsn ?? const String.fromEnvironment('SENTRY_DSN');
     _useFirebase = useFirebase;
-    
+
     _initialized = true;
-    
+
     if (kDebugMode) {
       debugPrint('CrashReporter initialized');
       if (_sentryDsn != null && _sentryDsn!.isNotEmpty) {
@@ -94,7 +94,7 @@ class CrashReporter {
   }
 
   /// Record an error
-  /// 
+  ///
   /// Public method to record errors manually
   static Future<void> recordError(
     Object error,
@@ -157,7 +157,6 @@ class CrashReporter {
       }
     }
   }
-
 
   /// Determine crash severity based on error type and context
   static String _determineSeverity(Object error, String context) {
