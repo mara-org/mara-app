@@ -45,7 +45,7 @@ jobs:
           else
             echo "Only info-level linting suggestions found. Build continues."
             exit 0
-          fi --no-fatal-infos
+          fi
 
       - name: Flutter test
         run: flutter test
