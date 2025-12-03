@@ -1,0 +1,97 @@
+name: Health Check Monitor
+
+on:
+  schedule:
+    # Run every 5 minutes
+    - cron: '*/5 * * * *'
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  health-check:
+    runs-on: ubuntu-latest
+    
+    env:
+      DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_ALERTS }}
+      # TODO: Set these when backend is available
+      # HEALTH_CHECK_URL: ${{ secrets.HEALTH_CHECK_URL }}
+      # API_BASE_URL: ${{ secrets.API_BASE_URL }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Health Check
+        id: health_check
+        continue-on-error: true
+        run: |
+          # TODO: Replace with actual health check endpoint when backend is available
+          # For now, this is a placeholder that checks if the app builds successfully
+          
+          echo "⚠️ Health check endpoint not yet configured."
+          echo "Current status: Frontend-only app (no backend yet)"
+          echo ""
+          echo "When backend is available, this workflow should:"
+          echo "1. Check health endpoint: GET /health"
+          echo "2. Verify response status 200"
+          echo "3. Check response time < 1s"
+          echo "4. Verify database connectivity (if applicable)"
+          echo "5. Alert to Discord if any check fails"
+          
+          # Placeholder: For now, just verify the repo is accessible
+          if [ -f "pubspec.yaml" ]; then
+            echo "health_status=ok" >> $GITHUB_OUTPUT
+            echo "health_message=Repository accessible" >> $GITHUB_OUTPUT
+          else
+            echo "health_status=failed" >> $GITHUB_OUTPUT
+            echo "health_message=Repository not accessible" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+          
+          # Example future implementation:
+          # HEALTH_URL="${HEALTH_CHECK_URL:-${API_BASE_URL}/health}"
+          # RESPONSE=$(curl -s -w "\n%{http_code}" "$HEALTH_URL" || echo "000")
+          # HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+          # BODY=$(echo "$RESPONSE" | head -n-1)
+          # 
+          # if [ "$HTTP_CODE" != "200" ]; then
+          #   echo "health_status=failed" >> $GITHUB_OUTPUT
+          #   echo "health_message=Health check returned HTTP $HTTP_CODE" >> $GITHUB_OUTPUT
+          #   exit 1
+          # fi
+
+      - name: Alert on health check failure
+        if: failure() && steps.health_check.outcome == 'failure'
+        run: |
+          MESSAGE="🚨 **Health Check Failed**
+          
+          Status: \`${{ steps.health_check.outputs.health_status }}\`
+          Message: ${{ steps.health_check.outputs.health_message }}
+          Time: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          
+          The health check has failed. Please investigate immediately.
+          
+          Run: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          
+          # Check if webhook is set
+          if [ -z "$DISCORD_WEBHOOK" ]; then
+            echo "⚠️ DISCORD_WEBHOOK_ALERTS secret is not set. Skipping alert."
+            exit 0
+          fi
+          
+          # Create JSON payload
+          echo "$MESSAGE" > /tmp/health_alert.txt
+          PAYLOAD=$(python3 -c "import json; f=open('/tmp/health_alert.txt'); msg=f.read(); f.close(); print(json.dumps({'content': msg}))")
+          
+          # Send to Discord
+          HTTP_CODE=$(curl -s -o /tmp/discord_response.txt -w "%{http_code}" \
+            -H "Content-Type: application/json" \
+            -d "$PAYLOAD" \
+            -X POST "$DISCORD_WEBHOOK" 2>/dev/null)
+          
+          if [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "204" ]; then
+            echo "✅ Health check alert sent successfully (HTTP $HTTP_CODE)"
+          else
+            echo "⚠️ Failed to send health check alert (HTTP $HTTP_CODE)"
+            cat /tmp/discord_response.txt 2>/dev/null || echo "No response"
+          fi
+

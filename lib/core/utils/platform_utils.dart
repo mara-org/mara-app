@@ -44,4 +44,16 @@ class PlatformUtils {
   static bool isLargeScreen(BuildContext context) {
     return getScreenWidth(context) > 600;
   }
+
+  static String getPlatformName() {
+    if (kIsWeb) {
+      return 'Web';
+    } else if (Platform.isIOS) {
+      return 'iOS';
+    } else if (Platform.isAndroid) {
+      return 'Android';
+    } else {
+      return 'Unknown';
+    }
+  }
 }

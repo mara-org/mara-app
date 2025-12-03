@@ -1,0 +1,102 @@
+name: Repeated Failures Alert
+
+on:
+  workflow_run:
+    workflows: ["Frontend CI", "Frontend Deploy"]
+    types:
+      - completed
+
+jobs:
+  detect-repeated-failures:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+    
+    env:
+      DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_ALERTS }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Detect repeated failures
+        id: check_failures
+        run: |
+          WORKFLOW_NAME="${{ github.event.workflow_run.name }}"
+          BRANCH="${{ github.event.workflow_run.head_branch }}"
+          
+          echo "Checking for repeated failures in workflow: $WORKFLOW_NAME"
+          echo "Branch: $BRANCH"
+          
+          # Get recent workflow runs for this workflow and branch
+          # Check last 5 runs to detect patterns
+          FAILURE_COUNT=0
+          CONSECUTIVE_FAILURES=0
+          
+          # Use GitHub API to check recent runs
+          RUNS=$(gh api repos/${{ github.repository }}/actions/workflows/${{ github.event.workflow_run.workflow_id }}/runs \
+            --jq '.workflow_runs[] | select(.head_branch == "'"$BRANCH"'") | {conclusion: .conclusion, created_at: .created_at}' \
+            --paginate | head -20)
+          
+          # Count failures in recent runs
+          FAILURE_COUNT=$(echo "$RUNS" | grep -c '"conclusion":"failure"' || echo "0")
+          
+          # Check if last 3 runs all failed (consecutive failures)
+          LAST_3=$(echo "$RUNS" | head -3)
+          CONSECUTIVE_FAILURES=$(echo "$LAST_3" | grep -c '"conclusion":"failure"' || echo "0")
+          
+          echo "failure_count=$FAILURE_COUNT" >> $GITHUB_OUTPUT
+          echo "consecutive_failures=$CONSECUTIVE_FAILURES" >> $GITHUB_OUTPUT
+          
+          # Alert if 3+ failures in recent runs OR 2+ consecutive failures
+          if [ "$FAILURE_COUNT" -ge 3 ] || [ "$CONSECUTIVE_FAILURES" -ge 2 ]; then
+            echo "should_alert=true" >> $GITHUB_OUTPUT
+            echo "alert_reason=repeated_failures" >> $GITHUB_OUTPUT
+          else
+            echo "should_alert=false" >> $GITHUB_OUTPUT
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Send alert for repeated failures
+        if: steps.check_failures.outputs.should_alert == 'true'
+        run: |
+          WORKFLOW_NAME="${{ github.event.workflow_run.name }}"
+          BRANCH="${{ github.event.workflow_run.head_branch }}"
+          RUN_URL="${{ github.event.workflow_run.html_url }}"
+          FAILURE_COUNT="${{ steps.check_failures.outputs.failure_count }}"
+          CONSECUTIVE="${{ steps.check_failures.outputs.consecutive_failures }}"
+          
+          MESSAGE="🚨 **Repeated Failure Alert**
+          
+          Workflow: \`${WORKFLOW_NAME}\`
+          Branch: \`${BRANCH}\`
+          Recent failures: \`${FAILURE_COUNT}\`
+          Consecutive failures: \`${CONSECUTIVE}\`
+          
+          This workflow has failed multiple times recently. Please investigate.
+          
+          Latest run: ${RUN_URL}"
+          
+          # Check if webhook is set
+          if [ -z "$DISCORD_WEBHOOK" ]; then
+            echo "⚠️ DISCORD_WEBHOOK_ALERTS secret is not set. Skipping alert."
+            exit 0
+          fi
+          
+          # Create JSON payload
+          echo "$MESSAGE" > /tmp/alert_msg.txt
+          PAYLOAD=$(python3 -c "import json; f=open('/tmp/alert_msg.txt'); msg=f.read(); f.close(); print(json.dumps({'content': msg}))")
+          
+          # Send to Discord
+          HTTP_CODE=$(curl -s -o /tmp/discord_response.txt -w "%{http_code}" \
+            -H "Content-Type: application/json" \
+            -d "$PAYLOAD" \
+            -X POST "$DISCORD_WEBHOOK" 2>/dev/null)
+          
+          if [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "204" ]; then
+            echo "✅ Alert sent successfully (HTTP $HTTP_CODE)"
+          else
+            echo "⚠️ Failed to send alert (HTTP $HTTP_CODE)"
+            cat /tmp/discord_response.txt 2>/dev/null || echo "No response"
+          fi
+

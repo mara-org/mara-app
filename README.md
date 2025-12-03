@@ -359,16 +359,54 @@ The **Dev Events** workflow (`.github/workflows/dev-events.yml`) handles:
 ## 🐛 Crash Reporting
 
 The app includes crash reporting infrastructure (`lib/core/utils/crash_reporter.dart`) that:
-- Catches Flutter framework errors
-- Handles async errors outside the Flutter framework
-- Logs errors to console (currently)
+- ✅ Catches Flutter framework errors
+- ✅ Handles async errors outside the Flutter framework
+- ✅ Logs errors to console
+- ✅ Includes device info and app version collection
+- ✅ Determines crash severity automatically
+- ⚠️ Backend integration ready (needs backend endpoint)
+
+**Current Status:**
+- Crash detection: ✅ Fully implemented
+- Crash reporting: ⚠️ Ready for backend integration (logs locally for now)
 
 **Future Implementation:**
-- Send crashes to backend endpoint
-- Backend forwards critical crashes to Discord webhook (`DISCORD_WEBHOOK_ALERTS`)
-- Include device info, stack trace, and app version
+- Send crashes to backend endpoint (code structure ready)
+- Backend forwards critical crashes to Discord webhook (`DISCORD_WEBHOOK_ALERTS` or `DISCORD_WEBHOOK_CRASHES`)
+- Crash aggregation and deduplication
 
 The crash reporter is initialized in `main.dart` and wraps the entire app in a crash-handling zone.
+
+## 🚨 Incident Response & SRE
+
+### Monitoring & Alerting
+
+**Current Monitoring:**
+- ✅ CI/CD pipeline status (Discord `#mara-dev-events`)
+- ✅ Deployment status (Discord `#mara-deploys`)
+- ✅ Repeated failure detection (Discord `#mara-alerts`)
+- ⚠️ Health checks (placeholder - needs backend)
+- ⚠️ Crash reports (detection ready - needs backend integration)
+
+**Workflows:**
+- `frontend-ci.yml` - CI with failure notifications
+- `frontend-deploy.yml` - Deployment with failure notifications
+- `dev-events.yml` - PR/Issue/Release notifications
+- `repeated-failures-alert.yml` - Detects and alerts on repeated failures
+- `health-check.yml` - Health check monitoring (ready for backend)
+
+**Discord Channels:**
+- `#mara-deploys` - Deployment notifications
+- `#mara-dev-events` - CI, PR, issue notifications
+- `#mara-alerts` - Critical alerts and incidents
+- `#mara-crashes` - Crash reports (when backend is integrated)
+
+### Documentation
+
+- **Incident Response Runbook:** `docs/INCIDENT_RESPONSE.md`
+- **SRE Audit Report:** `SRE_AUDIT_REPORT.md`
+
+See the [Incident Response Runbook](docs/INCIDENT_RESPONSE.md) for detailed procedures on handling incidents, escalation, and post-mortems.
 
 ## 📋 Pull Requests & Issues
 
