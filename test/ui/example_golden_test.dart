@@ -12,36 +12,39 @@ import 'package:mara_app/l10n/app_localizations.dart';
 
 void main() {
   group('Golden Tests', () {
-    testGoldens('Home screen golden test', (WidgetTester tester) async {
-      // Build the widget with localization delegates
-      await tester.pumpWidgetBuilder(
-        const ProviderScope(
-          child: MaterialApp(
-            localizationsDelegates: [
-              AppLocalizations.delegate,
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
-            supportedLocales: [
-              Locale('en'),
-              Locale('ar'),
-            ],
-            home: HomeScreen(),
+    testGoldens(
+      'Home screen golden test',
+      (WidgetTester tester) async {
+        // Build the widget with localization delegates
+        await tester.pumpWidgetBuilder(
+          const ProviderScope(
+            child: MaterialApp(
+              localizationsDelegates: [
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              supportedLocales: [
+                Locale('en'),
+                Locale('ar'),
+              ],
+              home: HomeScreen(),
+            ),
           ),
-        ),
-        surfaceSize: const Size(400, 800), // Standard mobile size
-      );
+          surfaceSize: const Size(400, 800), // Standard mobile size
+        );
 
-      // Wait for the widget tree to settle
-      await tester.pumpAndSettle();
+        // Wait for the widget tree to settle
+        await tester.pumpAndSettle();
 
-      // Compare against golden file
-      // Note: First run will fail - use 'flutter test --update-goldens' to generate golden files
-      await screenMatchesGolden(tester, 'home_screen');
-    },
-        skip:
-            'Golden files need to be generated first. Run: flutter test --update-goldens');
+        // Compare against golden file
+        // Note: First run will fail - use 'flutter test --update-goldens' to generate golden files
+        await screenMatchesGolden(tester, 'home_screen');
+      },
+      skip:
+          'Golden files need to be generated first. Run: flutter test --update-goldens',
+    );
 
     // TODO: Add more golden tests:
     // - Test all screens (splash, auth, profile, settings, etc.)
