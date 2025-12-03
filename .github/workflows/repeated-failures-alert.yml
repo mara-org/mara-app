@@ -23,26 +23,30 @@ jobs:
         run: |
           WORKFLOW_NAME="${{ github.event.workflow_run.name }}"
           BRANCH="${{ github.event.workflow_run.head_branch }}"
+          WORKFLOW_ID="${{ github.event.workflow_run.workflow_id }}"
           
           echo "Checking for repeated failures in workflow: $WORKFLOW_NAME"
           echo "Branch: $BRANCH"
+          echo "Workflow ID: $WORKFLOW_ID"
           
-          # Get recent workflow runs for this workflow and branch
-          # Check last 5 runs to detect patterns
-          FAILURE_COUNT=0
-          CONSECUTIVE_FAILURES=0
+          # Use GitHub API to get recent workflow runs
+          API_URL="https://api.github.com/repos/${{ github.repository }}/actions/workflows/${WORKFLOW_ID}/runs?branch=${BRANCH}&per_page=5"
           
-          # Use GitHub API to check recent runs
-          RUNS=$(gh api repos/${{ github.repository }}/actions/workflows/${{ github.event.workflow_run.workflow_id }}/runs \
-            --jq '.workflow_runs[] | select(.head_branch == "'"$BRANCH"'") | {conclusion: .conclusion, created_at: .created_at}' \
-            --paginate | head -20)
+          echo "Fetching recent runs from: $API_URL"
           
-          # Count failures in recent runs
-          FAILURE_COUNT=$(echo "$RUNS" | grep -c '"conclusion":"failure"' || echo "0")
+          # Get workflow runs using curl
+          RESPONSE=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "$API_URL")
           
-          # Check if last 3 runs all failed (consecutive failures)
-          LAST_3=$(echo "$RUNS" | head -3)
-          CONSECUTIVE_FAILURES=$(echo "$LAST_3" | grep -c '"conclusion":"failure"' || echo "0")
+          # Count failures using jq (available in GitHub Actions)
+          FAILURE_COUNT=$(echo "$RESPONSE" | jq '[.workflow_runs[] | select(.conclusion == "failure")] | length' || echo "0")
+          
+          # Check consecutive failures (first 2 runs)
+          CONSECUTIVE_FAILURES=$(echo "$RESPONSE" | jq '[.workflow_runs[0:2][] | select(.conclusion == "failure")] | length' || echo "0")
+          
+          echo "Failure count: $FAILURE_COUNT"
+          echo "Consecutive failures: $CONSECUTIVE_FAILURES"
           
           echo "failure_count=$FAILURE_COUNT" >> $GITHUB_OUTPUT
           echo "consecutive_failures=$CONSECUTIVE_FAILURES" >> $GITHUB_OUTPUT
@@ -54,8 +58,6 @@ jobs:
           else
             echo "should_alert=false" >> $GITHUB_OUTPUT
           fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Send alert for repeated failures
         if: steps.check_failures.outputs.should_alert == 'true'
