@@ -248,10 +248,29 @@ The app uses GoRouter for navigation. Key routes include:
 
 ## 🧪 Testing
 
-Run tests with:
+### Running Tests
+
+Run all tests with:
 ```bash
 flutter test
 ```
+
+### Test Types
+
+- **Unit Tests**: Test individual functions and classes
+- **Widget Tests**: Test UI components and screens (see `test/ui/example_widget_test.dart`)
+- **Golden Tests**: Visual regression tests (see `test/ui/example_golden_test.dart`)
+  - TODO: Set up `golden_toolkit` package for proper golden testing
+  - Golden tests capture widget snapshots and detect visual regressions
+
+### Test Coverage
+
+Test coverage is collected during CI runs. Coverage reports are available as artifacts in GitHub Actions.
+
+**Current Coverage Goal:** 60%+ (warning threshold)  
+**Future Goal:** 80%+ (enforcement threshold)
+
+See the CI workflow for coverage collection and reporting.
 
 ## 🔧 Code Quality & Formatting
 
@@ -269,26 +288,32 @@ This script will:
 
 The script will exit with a non-zero code if analysis fails, preventing commits with linting errors.
 
-### Pre-commit Hook (Optional)
+### Git Hooks
 
-To automatically run formatting and linting before each commit:
+Git hooks automatically run code quality checks before each commit. All contributors are expected to install the hooks.
 
-1. Copy the pre-commit hook:
-   ```bash
-   cp tool/hooks/pre-commit .git/hooks/pre-commit
-   ```
+**Installation:**
 
-2. Make it executable:
-   ```bash
-   chmod +x .git/hooks/pre-commit
-   ```
+Run the installation script:
+```bash
+sh tool/install_hooks.sh
+```
 
-Now, every time you commit, the hook will automatically:
-- Format your code
-- Run Flutter analyze
-- Prevent the commit if any issues are found
+This will:
+- Copy the pre-commit hook to `.git/hooks/pre-commit`
+- Make it executable
+- Set up automatic formatting and linting checks
 
-You can bypass the hook with `git commit --no-verify` if needed, but this is not recommended.
+**What the hook does:**
+
+The pre-commit hook automatically:
+- Formats code with `dart format .`
+- Analyzes code with `flutter analyze`
+- Prevents the commit if any issues are found
+
+**Bypassing the hook:**
+
+You can bypass the hook with `git commit --no-verify` if needed, but this is **not recommended**. The hook ensures code quality and consistency across the project.
 
 ## 🚀 CI/CD Pipeline
 
@@ -407,6 +432,42 @@ The crash reporter is initialized in `main.dart` and wraps the entire app in a c
 - **SRE Audit Report:** `SRE_AUDIT_REPORT.md`
 
 See the [Incident Response Runbook](docs/INCIDENT_RESPONSE.md) for detailed procedures on handling incidents, escalation, and post-mortems.
+
+## 🔒 Branch Protection & Code Owners
+
+### Branch Protection
+
+The `main` branch is protected and requires:
+- All changes must go through pull requests
+- Required status checks must pass before merging
+- Required reviews from code owners
+- Force pushes and direct pushes are disabled
+
+**TODO:** Configure branch protection in GitHub Settings:
+1. Go to `Settings` → `Branches` → `Branch protection rules`
+2. Add rule for `main` branch
+3. Enable:
+   - ✅ Require status checks to pass before merging
+   - ✅ Require pull request reviews before merging (at least 1 approval)
+   - ✅ Require review from code owners
+   - ✅ Do not allow bypassing the above settings
+   - ✅ Restrict pushes that create files larger than 100 MB
+   - ✅ Do not allow force pushes
+   - ✅ Do not allow deletions
+
+### Code Owners
+
+The `.github/CODEOWNERS` file automatically assigns reviewers for pull requests based on file paths.
+
+**Current Code Owners:**
+- `@justAbdulaziz10` and `@gqnxx` are owners for:
+  - `/lib/**` - All application code
+  - `/test/**` - All test files
+  - `/.github/**` - GitHub workflows and configuration
+
+**Adding More Owners:**
+
+To add more owners, edit `.github/CODEOWNERS` and add GitHub usernames (without @) to the appropriate paths. See the file header for instructions.
 
 ## 📋 Pull Requests & Issues
 

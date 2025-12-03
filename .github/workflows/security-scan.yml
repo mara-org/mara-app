@@ -1,0 +1,143 @@
+# Security scanning workflow for Mara app
+# Runs dependency vulnerability scanning and basic secrets detection
+# TODO: Integrate proper secrets scanning tool (e.g., TruffleHog, GitGuardian) when available
+
+name: Security Scan
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  schedule:
+    # Run daily at 2 AM UTC
+    - cron: '0 2 * * *'
+
+jobs:
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+
+    env:
+      DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_EVENTS }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch full history for secrets scanning
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.27.0"
+
+      - name: Check for outdated dependencies
+        id: outdated_check
+        run: |
+          echo "🔍 Checking for outdated dependencies..."
+          flutter pub outdated --json > outdated.json 2>&1 || true
+          
+          if [ -s outdated.json ]; then
+            echo "⚠️ Some dependencies may be outdated. Review outdated.json for details."
+            cat outdated.json
+            echo "has_outdated=true" >> $GITHUB_OUTPUT
+          else
+            echo "✅ All dependencies are up to date."
+            echo "has_outdated=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Basic secrets scan (placeholder)
+        id: secrets_scan
+        continue-on-error: true
+        run: |
+          echo "🔐 Running basic secrets scan..."
+          echo ""
+          echo "⚠️ TODO: Integrate proper secrets scanning tool"
+          echo "Recommended tools:"
+          echo "  - TruffleHog: https://github.com/trufflesecurity/trufflehog"
+          echo "  - GitGuardian: https://www.gitguardian.com/"
+          echo "  - Gitleaks: https://github.com/gitleaks/gitleaks"
+          echo ""
+          echo "For now, performing basic pattern checks..."
+          
+          # Basic pattern check for common secrets (very basic, not comprehensive)
+          SECRETS_FOUND=0
+          
+          # Check for potential API keys (basic pattern)
+          if grep -r -i -E "(api[_-]?key|apikey)\s*[:=]\s*['\"][a-zA-Z0-9]{20,}" --include="*.dart" --include="*.yaml" --include="*.yml" . 2>/dev/null; then
+            echo "⚠️ Potential API keys found in code"
+            SECRETS_FOUND=1
+          fi
+          
+          # Check for potential passwords
+          if grep -r -i -E "password\s*[:=]\s*['\"][^'\"]{8,}" --include="*.dart" . 2>/dev/null; then
+            echo "⚠️ Potential passwords found in code"
+            SECRETS_FOUND=1
+          fi
+          
+          if [ $SECRETS_FOUND -eq 0 ]; then
+            echo "✅ No obvious secrets found in code (basic check)"
+            echo "secrets_found=false" >> $GITHUB_OUTPUT
+          else
+            echo "⚠️ Potential secrets detected. Please review manually."
+            echo "secrets_found=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Notify Discord
+        if: always()
+        continue-on-error: true
+        run: |
+          set +e
+          
+          STATUS="${{ job.status }}"
+          HAS_OUTDATED="${{ steps.outdated_check.outputs.has_outdated }}"
+          SECRETS_FOUND="${{ steps.secrets_scan.outputs.secrets_found }}"
+          
+          COMMIT_URL="https://github.com/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}"
+          RUN_URL="https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          
+          ICON="✅"
+          TITLE="Security Scan Completed"
+          if [ "$STATUS" != "success" ]; then
+            ICON="❌"
+            TITLE="Security Scan Failed"
+          fi
+          
+          MESSAGE="${ICON} **${TITLE}**
+          
+          Status: \`${STATUS}\`
+          Outdated dependencies: \`${HAS_OUTDATED}\`
+          Secrets detected: \`${SECRETS_FOUND:-false}\`
+          
+          Commit: [\`${GITHUB_SHA::7}\`](${COMMIT_URL})
+          Run: ${RUN_URL}"
+          
+          if [ -z "$DISCORD_WEBHOOK" ]; then
+            echo "⚠️ DISCORD_WEBHOOK_EVENTS secret is not set. Skipping notification."
+            exit 0
+          fi
+          
+          echo "$MESSAGE" > /tmp/security_msg.txt
+          PAYLOAD=$(python3 -c "import json; f=open('/tmp/security_msg.txt'); msg=f.read(); f.close(); print(json.dumps({'content': msg}))" 2>/dev/null)
+          
+          if [ $? -ne 0 ] || [ -z "$PAYLOAD" ]; then
+            echo "⚠️ Failed to create JSON payload. Skipping notification."
+            exit 0
+          fi
+          
+          HTTP_CODE=$(curl -s -o /tmp/discord_response.txt -w "%{http_code}" \
+            -H "Content-Type: application/json" \
+            -d "$PAYLOAD" \
+            -X POST "$DISCORD_WEBHOOK" 2>/dev/null)
+          
+          if [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "204" ]; then
+            echo "✅ Discord notification sent successfully (HTTP $HTTP_CODE)"
+          else
+            echo "⚠️ Failed to send Discord notification (HTTP $HTTP_CODE)"
+          fi
+          
+          exit 0
+

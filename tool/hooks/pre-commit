@@ -1,26 +1,27 @@
 #!/bin/bash
 
 # Pre-commit hook for Mara Flutter app
-# This hook runs flutter analyze and dart format before allowing a commit
+# This hook runs dart format and flutter analyze before allowing a commit
 #
-# To enable this hook:
-# 1. Copy this file to .git/hooks/pre-commit:
-#    cp tool/hooks/pre-commit .git/hooks/pre-commit
-# 2. Make it executable:
-#    chmod +x .git/hooks/pre-commit
+# To install this hook, run: sh tool/install_hooks.sh
+
+set -e
 
 echo "🔍 Running pre-commit checks..."
 
 # Run dart format
-echo "Formatting code..."
+echo "📝 Formatting code..."
 dart format . || {
-    echo "❌ Code formatting failed. Please run 'dart format .' manually."
+    echo ""
+    echo "❌ Code formatting failed."
+    echo "Please run 'dart format .' manually and commit again."
     exit 1
 }
 
 # Run flutter analyze
-echo "Analyzing code..."
+echo "🔎 Analyzing code..."
 flutter analyze || {
+    echo ""
     echo "❌ Code analysis failed. Please fix the issues above."
     exit 1
 }

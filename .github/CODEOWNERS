@@ -1,0 +1,20 @@
+# CODEOWNERS file for Mara App
+# This file defines code owners who will be automatically requested for review on pull requests.
+#
+# To add more owners:
+# 1. Add GitHub usernames (without @) to the appropriate paths below
+# 2. Use @username format for GitHub users
+# 3. Use #team-name for GitHub teams
+# 4. Paths use gitignore-style patterns
+#
+# Documentation: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Core application code
+/lib/ @justAbdulaziz10 @gqnxx
+
+# Test files
+/test/ @justAbdulaziz10 @gqnxx
+
+# GitHub workflows and configuration
+/.github/ @justAbdulaziz10 @gqnxx
+

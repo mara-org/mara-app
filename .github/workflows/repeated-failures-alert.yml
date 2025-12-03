@@ -1,13 +1,18 @@
+# Repeated failures detection workflow for Mara app
+# Monitors CI/CD workflows and alerts when failures occur repeatedly
+# Alerts if 3+ failures in recent runs OR 2+ consecutive failures
+
 name: Repeated Failures Alert
 
 on:
   workflow_run:
-    workflows: ["Frontend CI", "Frontend Deploy"]
+    workflows: ["Flutter CI", "Build & Deploy"]
     types:
       - completed
 
 jobs:
   detect-repeated-failures:
+    name: Detect Repeated Failures
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'failure' }}
     

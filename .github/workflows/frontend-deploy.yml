@@ -1,4 +1,11 @@
-name: Frontend Deploy
+# Frontend deployment workflow for Mara Flutter app
+# Builds and deploys the Flutter app to production
+# TODO: Add staging environment deployment - see enterprise audit
+# TODO: Add preview deployments for PRs - see enterprise audit
+# TODO: Add rollback mechanism - see enterprise audit
+# TODO: Add build signing for production - see enterprise audit
+
+name: Build & Deploy
 
 on:
   push:
@@ -8,6 +15,7 @@ on:
 
 jobs:
   deploy:
+    name: Build & Deploy
     runs-on: ubuntu-latest
 
     env:

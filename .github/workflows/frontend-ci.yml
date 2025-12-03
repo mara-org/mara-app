@@ -1,4 +1,10 @@
-name: Frontend CI
+# Frontend CI workflow for Mara Flutter app
+# Runs code formatting checks, static analysis, tests, and coverage collection
+# TODO: Add multi-platform testing (iOS, Android, Web) - see enterprise audit
+# TODO: Add integration tests - see enterprise audit
+# TODO: Enforce 80%+ coverage threshold (currently warning at 60%)
+
+name: Flutter CI
 
 on:
   push:
@@ -9,6 +15,7 @@ on:
 
 jobs:
   ci:
+    name: Flutter CI
     runs-on: ubuntu-latest
 
     env:
@@ -23,10 +30,45 @@ jobs:
         with:
           flutter-version: "3.27.0"
 
+      - name: Cache Flutter pub dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.pub-cache
+            ${{ github.workspace }}/.dart_tool
+          key: ${{ runner.os }}-flutter-pub-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-flutter-pub-
+
+      - name: Cache Gradle dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            android/.gradle
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/gradle-wrapper.properties', '**/build.gradle.kts', '**/build.gradle') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
       - name: Flutter pub get
         run: flutter pub get
 
+      - name: Check code formatting
+        id: format_check
+        run: |
+          echo "📝 Checking code formatting..."
+          dart format --output=none --set-exit-if-changed . || {
+            echo "❌ Code formatting check failed."
+            echo "Please run 'dart format .' to fix formatting issues."
+            echo "format_passed=false" >> $GITHUB_OUTPUT
+            exit 1
+          }
+          echo "✅ Code formatting check passed."
+          echo "format_passed=true" >> $GITHUB_OUTPUT
+
       - name: Flutter analyze
+        id: analyze
         run: |
           # Run analyze and capture output
           set +e  # Don't exit on error
@@ -38,6 +80,9 @@ jobs:
           ERRORS=$(grep -c "error •" analyze_output.txt 2>/dev/null || echo "0")
           WARNINGS=$(grep -c "warning •" analyze_output.txt 2>/dev/null || echo "0")
           
+          echo "analyze_errors=$ERRORS" >> $GITHUB_OUTPUT
+          echo "analyze_warnings=$WARNINGS" >> $GITHUB_OUTPUT
+          
           # Only fail if there are errors or warnings
           if [ "$ERRORS" -gt 0 ] || [ "$WARNINGS" -gt 0 ]; then
             echo "Found $ERRORS errors and $WARNINGS warnings. Failing build."
@@ -47,8 +92,56 @@ jobs:
             exit 0
           fi
 
-      - name: Flutter test
-        run: flutter test
+      - name: Run tests with coverage
+        id: test_coverage
+        run: |
+          echo "🧪 Running tests with coverage..."
+          flutter test --coverage || {
+            echo "❌ Tests failed."
+            echo "coverage_generated=false" >> $GITHUB_OUTPUT
+            exit 1
+          }
+          
+          # Check if coverage file exists
+          if [ -f "coverage/lcov.info" ]; then
+            echo "✅ Coverage file generated."
+            echo "coverage_generated=true" >> $GITHUB_OUTPUT
+            
+            # Try to parse coverage percentage (approximate)
+            # This is a simple approach - for more accurate parsing, use lcov tools
+            TOTAL_LINES=$(grep -c "^DA:" coverage/lcov.info 2>/dev/null || echo "0")
+            HIT_LINES=$(grep "^DA:" coverage/lcov.info | grep -v ",0$" | wc -l || echo "0")
+            
+            if [ "$TOTAL_LINES" -gt 0 ]; then
+              # Calculate percentage (approximate)
+              COVERAGE_PERCENT=$((HIT_LINES * 100 / TOTAL_LINES))
+              echo "coverage_percent=$COVERAGE_PERCENT" >> $GITHUB_OUTPUT
+              echo "📊 Coverage: ~${COVERAGE_PERCENT}%"
+              
+              # Check coverage threshold (warning at 60%, TODO: enforce 80%+)
+              if [ "$COVERAGE_PERCENT" -lt 60 ]; then
+                echo "⚠️ WARNING: Coverage is below 60% (currently ~${COVERAGE_PERCENT}%)"
+                echo "TODO: Enforce 80%+ coverage threshold in future"
+              else
+                echo "✅ Coverage is above 60% threshold"
+              fi
+            else
+              echo "⚠️ Could not parse coverage percentage"
+              echo "coverage_percent=unknown" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "⚠️ Coverage file not found"
+            echo "coverage_generated=false" >> $GITHUB_OUTPUT
+            echo "coverage_percent=unknown" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Upload coverage artifact
+        if: steps.test_coverage.outputs.coverage_generated == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/lcov.info
+          retention-days: 7
 
       - name: Notify Discord (final status)
         if: always()
@@ -57,22 +150,54 @@ jobs:
           set +e  # Don't exit on error
           
           STATUS="${{ job.status }}"
+          FORMAT_PASSED="${{ steps.format_check.outputs.format_passed }}"
+          COVERAGE_GENERATED="${{ steps.test_coverage.outputs.coverage_generated }}"
+          COVERAGE_PERCENT="${{ steps.test_coverage.outputs.coverage_percent }}"
+          ANALYZE_ERRORS="${{ steps.analyze.outputs.analyze_errors }}"
+          ANALYZE_WARNINGS="${{ steps.analyze.outputs.analyze_warnings }}"
+          
           COMMIT_URL="https://github.com/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}"
           RUN_URL="https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
 
+          # Build status message
           if [ "$STATUS" = "success" ]; then
-            MESSAGE="✅ **Mara Frontend CI passed**
-          Branch: \`${GITHUB_REF_NAME}\`
-          Actor: \`${GITHUB_ACTOR}\`
-          Commit: [\`${GITHUB_SHA::7}\`](${COMMIT_URL})
-          Run: ${RUN_URL}"
+            ICON="✅"
+            TITLE="Mara Frontend CI passed"
           else
-            MESSAGE="❌ **Mara Frontend CI failed**
+            ICON="❌"
+            TITLE="Mara Frontend CI failed"
+          fi
+          
+          # Format status
+          if [ "$FORMAT_PASSED" = "true" ]; then
+            FORMAT_STATUS="✅ Passed"
+          else
+            FORMAT_STATUS="❌ Failed"
+          fi
+          
+          # Coverage status
+          if [ "$COVERAGE_GENERATED" = "true" ]; then
+            if [ "$COVERAGE_PERCENT" != "unknown" ]; then
+              COVERAGE_STATUS="✅ Generated (~${COVERAGE_PERCENT}%)"
+            else
+              COVERAGE_STATUS="✅ Generated (percentage unknown)"
+            fi
+          else
+            COVERAGE_STATUS="❌ Not generated"
+          fi
+          
+          MESSAGE="${ICON} **${TITLE}**
+
           Branch: \`${GITHUB_REF_NAME}\`
           Actor: \`${GITHUB_ACTOR}\`
           Commit: [\`${GITHUB_SHA::7}\`](${COMMIT_URL})
+          
+          **Checks:**
+          Format: ${FORMAT_STATUS}
+          Analyze: ${ANALYZE_ERRORS} errors, ${ANALYZE_WARNINGS} warnings
+          Coverage: ${COVERAGE_STATUS}
+          
           Run: ${RUN_URL}"
-          fi
 
           # Check if webhook is set
           if [ -z "$DISCORD_WEBHOOK" ]; then
@@ -124,4 +249,3 @@ jobs:
           
           # Always exit successfully to not fail the CI job
           exit 0
-

@@ -1,4 +1,8 @@
-name: Dev Events Notifications
+# Dev events notification workflow for Mara app
+# Sends Discord notifications for PRs, issues, and releases
+# Also auto-labels PRs based on branch name patterns
+
+name: Dev Events
 
 on:
   pull_request:
@@ -10,6 +14,7 @@ on:
 
 jobs:
   notify-discord:
+    name: Notify Discord
     runs-on: ubuntu-latest
 
     env:
@@ -96,6 +101,7 @@ jobs:
           fi
 
   auto-label-pr:
+    name: Auto-Label PR
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     permissions:
