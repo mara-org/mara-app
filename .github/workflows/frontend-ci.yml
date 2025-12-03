@@ -87,12 +87,15 @@ jobs:
           if [ "$HTTP_CODE" -eq 200 ] || [ "$HTTP_CODE" -eq 204 ]; then
             echo "✅ Discord notification sent successfully (HTTP $HTTP_CODE)"
           else
-            echo "❌ Failed to send Discord notification (HTTP $HTTP_CODE)"
+            echo "⚠️ Failed to send Discord notification (HTTP $HTTP_CODE)"
             echo "Response:"
-            cat /tmp/discord_response.txt
+            cat /tmp/discord_response.txt || echo "No response body"
             echo ""
             echo "Payload preview (first 200 chars):"
-            echo "$PAYLOAD" | head -c 200
-            # Don't exit 1 here - we don't want to fail the CI job if Discord notification fails
+            echo "$PAYLOAD" | head -c 200 || echo "Could not preview payload"
+            echo ""
+            echo "Note: Discord notification failure does not affect CI status."
+            # Don't exit with error - we don't want to fail the CI job if Discord notification fails
+            exit 0
           fi
 
