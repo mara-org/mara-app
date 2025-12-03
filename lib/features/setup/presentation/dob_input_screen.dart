@@ -20,20 +20,7 @@ class DobInputScreen extends ConsumerStatefulWidget {
 
 class _DobInputScreenState extends ConsumerState<DobInputScreen> {
   static const int _minYear = 1900;
-  static const List<int> _allMonths = [
-    1,
-    2,
-    3,
-    4,
-    5,
-    6,
-    7,
-    8,
-    9,
-    10,
-    11,
-    12,
-  ];
+  static const List<int> _allMonths = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
   int? _selectedDay;
   int? _selectedMonth;
@@ -52,19 +39,19 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
     _maxAllowedDate = DateTime(now.year - 13, now.month, now.day);
     final maxYear = _maxAllowedDate.year;
     if (maxYear >= _minYear) {
-      _years =
-          List.generate(maxYear - _minYear + 1, (i) => _minYear + i);
+      _years = List.generate(maxYear - _minYear + 1, (i) => _minYear + i);
     } else {
       _years = [_minYear];
     }
     _yearController = FixedExtentScrollController();
     _monthController = FixedExtentScrollController();
     _dayController = FixedExtentScrollController();
-    
+
     // Set default year to 1999
     final defaultYear = 1999;
-    final initialYear =
-        _years.contains(defaultYear) ? defaultYear : _years.last;
+    final initialYear = _years.contains(defaultYear)
+        ? defaultYear
+        : _years.last;
     final yearIndex = _years.indexOf(initialYear);
     if (yearIndex != -1) {
       _selectedYear = initialYear;
@@ -93,44 +80,41 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
       return;
     }
     try {
-      final dateOfBirth =
-          DateTime(_selectedYear!, _selectedMonth!, _selectedDay!);
+      final dateOfBirth = DateTime(
+        _selectedYear!,
+        _selectedMonth!,
+        _selectedDay!,
+      );
       if (!dateOfBirth.isAfter(_maxAllowedDate)) {
         ref.read(userProfileProvider.notifier).setDateOfBirth(dateOfBirth);
         if (widget.isFromProfile) {
           context.go('/profile');
         } else {
-        context.push('/gender');
+          context.push('/gender');
         }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.pleaseSelectValidDate),
-          ),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l10n.pleaseSelectValidDate)));
       }
     } catch (e) {
       // Invalid date (e.g., Feb 30)
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.pleaseSelectValidDate),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.pleaseSelectValidDate)));
     }
   }
 
   bool get _canContinue =>
       _selectedYear != null && _selectedMonth != null && _selectedDay != null;
-  
+
   List<int> get _validDays {
     if (_selectedYear == null || _selectedMonth == null) {
       return [];
     }
     final isMaxYear = _selectedYear == _maxAllowedDate.year;
-    final isMaxMonth =
-        isMaxYear && _selectedMonth == _maxAllowedDate.month;
-    final daysInMonth =
-        DateTime(_selectedYear!, _selectedMonth! + 1, 0).day;
+    final isMaxMonth = isMaxYear && _selectedMonth == _maxAllowedDate.month;
+    final daysInMonth = DateTime(_selectedYear!, _selectedMonth! + 1, 0).day;
     final allowedDays = isMaxMonth ? _maxAllowedDate.day : daysInMonth;
     return List.generate(allowedDays, (i) => i + 1);
   }
@@ -198,12 +182,7 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
                 ),
                 const SizedBox(height: 20),
                 // Mara logo
-                const Center(
-                  child: MaraLogo(
-                    width: 258,
-                    height: 202,
-                  ),
-                ),
+                const Center(child: MaraLogo(width: 258, height: 202)),
                 const SizedBox(height: 40),
                 // Title
                 Text(
@@ -259,7 +238,7 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
                                     decoration: BoxDecoration(
                                       color: isSelected
                                           ? AppColors.languageButtonColor
-                                              .withOpacity(0.4)
+                                                .withOpacity(0.4)
                                           : Colors.transparent,
                                       borderRadius: BorderRadius.circular(19),
                                     ),
@@ -269,7 +248,7 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
                                         color: isSelected
                                             ? AppColors.languageButtonColor
                                             : AppColors.textSecondary
-                                                .withOpacity(0.66),
+                                                  .withOpacity(0.66),
                                         fontSize: 20,
                                         fontWeight: FontWeight.normal,
                                       ),
@@ -291,8 +270,8 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
                           Text(
                             l10n.month,
                             style: TextStyle(
-                              color: _selectedYear != null 
-                                  ? AppColors.textSecondary 
+                              color: _selectedYear != null
+                                  ? AppColors.textSecondary
                                   : AppColors.textSecondary.withOpacity(0.5),
                               fontSize: 14,
                             ),
@@ -333,7 +312,7 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
                                       decoration: BoxDecoration(
                                         color: isSelected
                                             ? AppColors.languageButtonColor
-                                                .withOpacity(0.4)
+                                                  .withOpacity(0.4)
                                             : Colors.transparent,
                                         borderRadius: BorderRadius.circular(19),
                                       ),
@@ -343,7 +322,7 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
                                           color: isSelected
                                               ? AppColors.languageButtonColor
                                               : AppColors.textSecondary
-                                                  .withOpacity(0.66),
+                                                    .withOpacity(0.66),
                                           fontSize: 20,
                                           fontWeight: FontWeight.normal,
                                         ),
@@ -366,9 +345,10 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
                           Text(
                             l10n.day,
                             style: TextStyle(
-                              color: _selectedYear != null &&
+                              color:
+                                  _selectedYear != null &&
                                       _selectedMonth != null
-                                  ? AppColors.textSecondary 
+                                  ? AppColors.textSecondary
                                   : AppColors.textSecondary.withOpacity(0.5),
                               fontSize: 14,
                             ),
@@ -379,18 +359,19 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
                             child: ListWheelScrollView.useDelegate(
                               itemExtent: 50,
                               diameterRatio: 1.5,
-                              physics: _selectedYear != null &&
+                              physics:
+                                  _selectedYear != null &&
                                       _selectedMonth != null
                                   ? const FixedExtentScrollPhysics()
                                   : const NeverScrollableScrollPhysics(),
                               controller: _dayController,
-                              onSelectedItemChanged: _selectedYear != null &&
+                              onSelectedItemChanged:
+                                  _selectedYear != null &&
                                       _selectedMonth != null
                                   ? (index) {
                                       setState(() {
                                         final days = _validDays;
-                                        if (index >= 0 &&
-                                            index < days.length) {
+                                        if (index >= 0 && index < days.length) {
                                           _selectedDay = days[index];
                                         }
                                       });
@@ -403,7 +384,8 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
                                   }
                                   final day = validDays[index];
                                   final isSelected = day == _selectedDay;
-                                  final isEnabled = _selectedYear != null &&
+                                  final isEnabled =
+                                      _selectedYear != null &&
                                       _selectedMonth != null;
                                   return Opacity(
                                     opacity: isEnabled ? 1.0 : 0.5,
@@ -412,7 +394,7 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
                                       decoration: BoxDecoration(
                                         color: isSelected
                                             ? AppColors.languageButtonColor
-                                                .withOpacity(0.4)
+                                                  .withOpacity(0.4)
                                             : Colors.transparent,
                                         borderRadius: BorderRadius.circular(19),
                                       ),
@@ -422,7 +404,7 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
                                           color: isSelected
                                               ? AppColors.languageButtonColor
                                               : AppColors.textSecondary
-                                                  .withOpacity(0.66),
+                                                    .withOpacity(0.66),
                                           fontSize: 20,
                                           fontWeight: FontWeight.normal,
                                         ),

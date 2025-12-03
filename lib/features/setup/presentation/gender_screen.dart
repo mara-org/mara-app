@@ -11,7 +11,7 @@ import '../../../l10n/app_localizations.dart';
 
 class GenderScreen extends ConsumerStatefulWidget {
   final bool isFromProfile;
-  
+
   const GenderScreen({super.key, this.isFromProfile = false});
 
   @override
@@ -66,12 +66,7 @@ class _GenderScreenState extends ConsumerState<GenderScreen> {
                 ),
                 const SizedBox(height: 20),
                 // Mara logo
-                const Center(
-                  child: MaraLogo(
-                    width: 258,
-                    height: 202,
-                  ),
-                ),
+                const Center(child: MaraLogo(width: 258, height: 202)),
                 const SizedBox(height: 40),
                 // Title
                 Text(
@@ -149,11 +144,11 @@ class _GenderButton extends StatelessWidget {
     final selectedColor = isFemale
         ? AppColors.languageButtonColor
         : AppColors.languageButtonColor;
-    
+
     // Female button colors when selected
     final femaleSelectedBackground = const Color(0xFFFFDADA); // #FFDADA
     final femaleSelectedBorder = const Color(0xFFD49AD0); // #D49AD0
-    
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -189,4 +184,3 @@ class _GenderButton extends StatelessWidget {
     );
   }
 }
-

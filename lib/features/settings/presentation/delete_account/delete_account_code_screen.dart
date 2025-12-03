@@ -39,10 +39,14 @@ class _DeleteAccountCodeScreenState
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final phrase = l10n.deleteAccountPhrase;
-    final normalizedInput =
-        _phraseController.text.trim().toLowerCase().replaceAll(RegExp(r'\s+'), ' ');
-    final normalizedPhrase =
-        phrase.trim().toLowerCase().replaceAll(RegExp(r'\s+'), ' ');
+    final normalizedInput = _phraseController.text
+        .trim()
+        .toLowerCase()
+        .replaceAll(RegExp(r'\s+'), ' ');
+    final normalizedPhrase = phrase.trim().toLowerCase().replaceAll(
+      RegExp(r'\s+'),
+      ' ',
+    );
     final matchesPhrase =
         normalizedInput.isNotEmpty && normalizedInput == normalizedPhrase;
     final shouldShowError =
@@ -74,10 +78,7 @@ class _DeleteAccountCodeScreenState
                 padding: const EdgeInsets.only(top: 8),
                 child: Text(
                   l10n.deleteAccountPhraseError,
-                  style: const TextStyle(
-                    color: AppColors.error,
-                    fontSize: 13,
-                  ),
+                  style: const TextStyle(color: AppColors.error, fontSize: 13),
                 ),
               ),
             const SizedBox(height: 32),
@@ -86,8 +87,9 @@ class _DeleteAccountCodeScreenState
                 width: 320,
                 child: PrimaryButton(
                   text: l10n.continueButton,
-                  onPressed:
-                      matchesPhrase ? () => context.push('/delete-account/verify') : null,
+                  onPressed: matchesPhrase
+                      ? () => context.push('/delete-account/verify')
+                      : null,
                 ),
               ),
             ),
@@ -97,4 +99,3 @@ class _DeleteAccountCodeScreenState
     );
   }
 }
-

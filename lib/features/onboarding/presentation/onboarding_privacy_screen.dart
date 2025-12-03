@@ -24,7 +24,6 @@ class OnboardingPrivacyScreen extends StatelessWidget {
               child: Column(
                 children: [
                   SizedBox(height: h * 0.18), // Top spacing similar to Figma
-
                   // 1) Title
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),

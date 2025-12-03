@@ -10,7 +10,7 @@ import '../../../l10n/app_localizations.dart';
 
 class BloodTypeScreen extends ConsumerStatefulWidget {
   final bool isFromProfile;
-  
+
   const BloodTypeScreen({super.key, this.isFromProfile = false});
 
   @override
@@ -37,7 +37,7 @@ class _BloodTypeScreenState extends ConsumerState<BloodTypeScreen> {
       if (widget.isFromProfile) {
         context.go('/profile');
       } else {
-      context.push('/goals');
+        context.push('/goals');
       }
     }
   }
@@ -75,12 +75,7 @@ class _BloodTypeScreenState extends ConsumerState<BloodTypeScreen> {
               ),
               const SizedBox(height: 20),
               // Mara logo
-              const Center(
-                child: MaraLogo(
-                  width: 258,
-                  height: 202,
-                ),
-              ),
+              const Center(child: MaraLogo(width: 258, height: 202)),
               const SizedBox(height: 24),
               // Title
               Text(
@@ -156,13 +151,8 @@ class _BloodTypeButton extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          color: isSelected
-              ? const Color(0xFFC4F4FF)
-              : const Color(0xFFFFFFFF),
-          border: Border.all(
-            color: const Color(0xFFE2E8F0),
-            width: 1,
-          ),
+          color: isSelected ? const Color(0xFFC4F4FF) : const Color(0xFFFFFFFF),
+          border: Border.all(color: const Color(0xFFE2E8F0), width: 1),
         ),
         child: Center(
           child: Text(
@@ -182,4 +172,3 @@ class _BloodTypeButton extends StatelessWidget {
     );
   }
 }
-

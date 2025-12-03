@@ -61,8 +61,9 @@ class SettingsScreen extends ConsumerWidget {
                 // App language
                 _SettingsRow(
                   title: 'App language',
-                  subtitle:
-                      language == AppLanguage.english ? 'English' : 'العربية',
+                  subtitle: language == AppLanguage.english
+                      ? 'English'
+                      : 'العربية',
                   icon: Icons.language,
                   onTap: () {
                     _showLanguagePicker(context, ref);
@@ -85,10 +86,7 @@ class SettingsScreen extends ConsumerWidget {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: AppColors.borderColor,
-                      width: 1,
-                    ),
+                    border: Border.all(color: AppColors.borderColor, width: 1),
                   ),
                   child: Row(
                     children: [
@@ -134,10 +132,7 @@ class SettingsScreen extends ConsumerWidget {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: AppColors.borderColor,
-                      width: 1,
-                    ),
+                    border: Border.all(color: AppColors.borderColor, width: 1),
                   ),
                   child: Row(
                     children: [
@@ -217,10 +212,7 @@ class SettingsScreen extends ConsumerWidget {
                   onTap: () async {
                     final uri = Uri.parse('https://iammara.com/terms');
                     if (await canLaunchUrl(uri)) {
-                      await launchUrl(
-                        uri,
-                        mode: LaunchMode.inAppWebView,
-                      );
+                      await launchUrl(uri, mode: LaunchMode.inAppWebView);
                     } else {
                       if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -327,18 +319,11 @@ class _SettingsRow extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: AppColors.borderColor,
-            width: 1,
-          ),
+          border: Border.all(color: AppColors.borderColor, width: 1),
         ),
         child: Row(
           children: [
-            Icon(
-              icon,
-              color: AppColors.languageButtonColor,
-              size: 24,
-            ),
+            Icon(icon, color: AppColors.languageButtonColor, size: 24),
             const SizedBox(width: 16),
             Expanded(
               child: Column(

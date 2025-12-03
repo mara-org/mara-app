@@ -3,14 +3,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 /// Crash reporter for Mara app
-/// 
+///
 /// Currently logs errors to console. In the future, this should:
 /// - Send crashes to a backend endpoint
 /// - Backend will forward critical crashes to Discord webhook (DISCORD_WEBHOOK_ALERTS)
 /// - Include device info, stack trace, and app version
 class CrashReporter {
   /// Initialize crash handling for the app
-  /// 
+  ///
   /// This should be called before runApp() in main.dart
   static void initialize() {
     // Handle Flutter framework errors
@@ -35,7 +35,7 @@ class CrashReporter {
   }
 
   /// Run app with crash handling zone
-  /// 
+  ///
   /// Use this instead of runApp() to ensure all errors are caught
   static void runAppWithCrashHandling(Widget app) {
     runZonedGuarded<Future<void>>(
@@ -61,7 +61,7 @@ class CrashReporter {
     // TODO: In the future, send this to backend endpoint
     // Backend should forward critical crashes to DISCORD_WEBHOOK_ALERTS
     // Include: device info, app version, error details, stack trace
-    
+
     if (kDebugMode) {
       debugPrint('=== CRASH REPORT ===');
       debugPrint('Context: $context');
@@ -84,4 +84,3 @@ class CrashReporter {
     // });
   }
 }
-

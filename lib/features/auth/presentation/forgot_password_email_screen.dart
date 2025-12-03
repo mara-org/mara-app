@@ -10,7 +10,8 @@ class ForgotPasswordEmailScreen extends StatefulWidget {
   const ForgotPasswordEmailScreen({super.key});
 
   @override
-  State<ForgotPasswordEmailScreen> createState() => _ForgotPasswordEmailScreenState();
+  State<ForgotPasswordEmailScreen> createState() =>
+      _ForgotPasswordEmailScreenState();
 }
 
 class _ForgotPasswordEmailScreenState extends State<ForgotPasswordEmailScreen> {
@@ -76,12 +77,7 @@ class _ForgotPasswordEmailScreenState extends State<ForgotPasswordEmailScreen> {
                   ),
                   SizedBox(height: h * 0.02),
                   // Mara logo at the top
-                  const Center(
-                    child: MaraLogo(
-                      width: 258,
-                      height: 202,
-                    ),
-                  ),
+                  const Center(child: MaraLogo(width: 258, height: 202)),
                   SizedBox(height: h * 0.04),
                   // Title
                   Text(
@@ -139,4 +135,3 @@ class _ForgotPasswordEmailScreenState extends State<ForgotPasswordEmailScreen> {
     );
   }
 }
-

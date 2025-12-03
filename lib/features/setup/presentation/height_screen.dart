@@ -10,7 +10,7 @@ import '../../../l10n/app_localizations.dart';
 
 class HeightScreen extends ConsumerStatefulWidget {
   final bool isFromProfile;
-  
+
   const HeightScreen({super.key, this.isFromProfile = false});
 
   @override
@@ -23,11 +23,13 @@ class _HeightScreenState extends ConsumerState<HeightScreen> {
 
   void _handleContinue() {
     if (_selectedHeight != null && _selectedHeight! > 0) {
-      ref.read(userProfileProvider.notifier).setHeight(_selectedHeight!, _selectedUnit);
+      ref
+          .read(userProfileProvider.notifier)
+          .setHeight(_selectedHeight!, _selectedUnit);
       if (widget.isFromProfile) {
         context.go('/profile');
       } else {
-      context.push('/weight');
+        context.push('/weight');
       }
     }
   }
@@ -70,12 +72,7 @@ class _HeightScreenState extends ConsumerState<HeightScreen> {
                 ),
                 const SizedBox(height: 20),
                 // Mara logo
-                const Center(
-                  child: MaraLogo(
-                    width: 258,
-                    height: 202,
-                  ),
-                ),
+                const Center(child: MaraLogo(width: 258, height: 202)),
                 const SizedBox(height: 40),
                 // Title
                 Text(
@@ -92,29 +89,31 @@ class _HeightScreenState extends ConsumerState<HeightScreen> {
                 // Unit toggle
                 Column(
                   children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _UnitToggle(
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _UnitToggle(
                           text: l10n.cm,
-                      isSelected: _selectedUnit == 'cm',
-                      onTap: () {
-                        setState(() {
-                          _selectedUnit = 'cm';
-                          _selectedHeight = null; // Reset selection when unit changes
-                        });
-                      },
-                    ),
+                          isSelected: _selectedUnit == 'cm',
+                          onTap: () {
+                            setState(() {
+                              _selectedUnit = 'cm';
+                              _selectedHeight =
+                                  null; // Reset selection when unit changes
+                            });
+                          },
+                        ),
                         const SizedBox(width: 96),
-                    _UnitToggle(
+                        _UnitToggle(
                           text: l10n.inchUnit,
-                      isSelected: _selectedUnit == 'in',
-                      onTap: () {
-                        setState(() {
-                          _selectedUnit = 'in';
-                          _selectedHeight = null; // Reset selection when unit changes
-                        });
-                      },
+                          isSelected: _selectedUnit == 'in',
+                          onTap: () {
+                            setState(() {
+                              _selectedUnit = 'in';
+                              _selectedHeight =
+                                  null; // Reset selection when unit changes
+                            });
+                          },
                         ),
                       ],
                     ),
@@ -184,7 +183,9 @@ class _HeightScreenState extends ConsumerState<HeightScreen> {
                   width: 324,
                   height: 52,
                   borderRadius: 20,
-                  onPressed: (_selectedHeight != null && _selectedHeight! > 0) ? _handleContinue : null,
+                  onPressed: (_selectedHeight != null && _selectedHeight! > 0)
+                      ? _handleContinue
+                      : null,
                 ),
                 const SizedBox(height: 20),
               ],
@@ -225,4 +226,3 @@ class _UnitToggle extends StatelessWidget {
     );
   }
 }
-

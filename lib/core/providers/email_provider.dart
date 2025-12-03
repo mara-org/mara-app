@@ -30,4 +30,3 @@ class EmailNotifier extends StateNotifier<String?> {
     await prefs.remove('userEmail');
   }
 }
-

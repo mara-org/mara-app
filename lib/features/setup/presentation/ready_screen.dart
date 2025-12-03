@@ -98,4 +98,3 @@ class ReadyScreen extends StatelessWidget {
     );
   }
 }
-

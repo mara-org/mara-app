@@ -117,12 +117,7 @@ class _SignInEmailScreenState extends ConsumerState<SignInEmailScreen> {
                 children: [
                   SizedBox(height: h * 0.04),
                   // Mara logo at the top
-                  const Center(
-                    child: MaraLogo(
-                      width: 258,
-                      height: 202,
-                    ),
-                  ),
+                  const Center(child: MaraLogo(width: 258, height: 202)),
                   SizedBox(height: h * 0.02),
                   // Title
                   Text(
@@ -212,7 +207,8 @@ class _SignInEmailScreenState extends ConsumerState<SignInEmailScreen> {
                                   recognizer: TapGestureRecognizer()
                                     ..onTap = () async {
                                       final url = Uri.parse(
-                                          'https://iammara.com/terms');
+                                        'https://iammara.com/terms',
+                                      );
                                       if (await canLaunchUrl(url)) {
                                         await launchUrl(
                                           url,
@@ -311,10 +307,7 @@ class _PasswordRequirementsWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFFF8FAFC),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: const Color(0xFFE2E8F0),
-          width: 1,
-        ),
+        border: Border.all(color: const Color(0xFFE2E8F0), width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -329,20 +322,11 @@ class _PasswordRequirementsWidget extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          _RequirementItem(
-            text: l10n.atLeastOneUppercase,
-            isMet: hasUppercase,
-          ),
+          _RequirementItem(text: l10n.atLeastOneUppercase, isMet: hasUppercase),
           const SizedBox(height: 6),
-          _RequirementItem(
-            text: l10n.atLeastOneLowercase,
-            isMet: hasLowercase,
-          ),
+          _RequirementItem(text: l10n.atLeastOneLowercase, isMet: hasLowercase),
           const SizedBox(height: 6),
-          _RequirementItem(
-            text: l10n.atLeastOneNumber,
-            isMet: hasNumeric,
-          ),
+          _RequirementItem(text: l10n.atLeastOneNumber, isMet: hasNumeric),
           const SizedBox(height: 6),
           _RequirementItem(
             text: l10n.atLeastOneSpecialChar,
@@ -363,10 +347,7 @@ class _RequirementItem extends StatelessWidget {
   final String text;
   final bool isMet;
 
-  const _RequirementItem({
-    required this.text,
-    required this.isMet,
-  });
+  const _RequirementItem({required this.text, required this.isMet});
 
   @override
   Widget build(BuildContext context) {
@@ -380,11 +361,7 @@ class _RequirementItem extends StatelessWidget {
             color: isMet ? const Color(0xFF0EA5C6) : const Color(0xFFE2E8F0),
           ),
           child: isMet
-              ? const Icon(
-                  Icons.check,
-                  size: 12,
-                  color: Colors.white,
-                )
+              ? const Icon(Icons.check, size: 12, color: Colors.white)
               : null,
         ),
         const SizedBox(width: 10),

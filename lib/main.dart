@@ -10,10 +10,10 @@ import 'core/utils/crash_reporter.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Initialize crash reporting
   CrashReporter.initialize();
-  
+
   // Set system UI overlay style for both platforms
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
@@ -26,16 +26,10 @@ void main() {
   );
 
   // Enable edge-to-edge on Android
-  SystemChrome.setEnabledSystemUIMode(
-    SystemUiMode.edgeToEdge,
-  );
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
   // Run app with crash handling
-  CrashReporter.runAppWithCrashHandling(
-    const ProviderScope(
-      child: MaraApp(),
-    ),
-  );
+  CrashReporter.runAppWithCrashHandling(const ProviderScope(child: MaraApp()));
 }
 
 class MaraApp extends ConsumerWidget {
@@ -44,15 +38,12 @@ class MaraApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final locale = ref.watch(appLocaleProvider);
-    
+
     return MaterialApp.router(
       key: ValueKey(locale.languageCode), // Force rebuild when locale changes
       title: 'Mara',
       locale: locale,
-      supportedLocales: const [
-        Locale('en'),
-        Locale('ar'),
-      ],
+      supportedLocales: const [Locale('en'), Locale('ar')],
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
@@ -67,10 +58,9 @@ class MaraApp extends ConsumerWidget {
         return MediaQuery(
           // Ensure text scales properly on both platforms
           data: MediaQuery.of(context).copyWith(
-            textScaler: MediaQuery.of(context).textScaler.clamp(
-              minScaleFactor: 0.8,
-              maxScaleFactor: 1.2,
-            ),
+            textScaler: MediaQuery.of(
+              context,
+            ).textScaler.clamp(minScaleFactor: 0.8, maxScaleFactor: 1.2),
           ),
           child: child!,
         );

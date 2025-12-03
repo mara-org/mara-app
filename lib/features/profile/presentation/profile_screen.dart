@@ -31,9 +31,7 @@ class ProfileScreen extends ConsumerWidget {
             child: Text(l10n.cancel),
           ),
           TextButton(
-            style: TextButton.styleFrom(
-              foregroundColor: AppColors.error,
-            ),
+            style: TextButton.styleFrom(foregroundColor: AppColors.error),
             onPressed: () {
               Navigator.of(ctx).pop();
               context.push('/delete-account/email');
@@ -110,8 +108,9 @@ class ProfileScreen extends ConsumerWidget {
                       // Subscription banner or premium status
                       Consumer(
                         builder: (context, ref, child) {
-                          final subscriptionStatus =
-                              ref.watch(subscriptionProvider);
+                          final subscriptionStatus = ref.watch(
+                            subscriptionProvider,
+                          );
                           if (subscriptionStatus ==
                               SubscriptionStatus.premium) {
                             return Container(
@@ -155,7 +154,9 @@ class ProfileScreen extends ConsumerWidget {
                         children: [
                           Padding(
                             padding: const EdgeInsetsDirectional.only(
-                                start: 4, bottom: 12),
+                              start: 4,
+                              bottom: 12,
+                            ),
                             child: Text(
                               l10n.user,
                               style: TextStyle(
@@ -186,7 +187,8 @@ class ProfileScreen extends ConsumerWidget {
                                         l10n.emailLabel,
                                         style: TextStyle(
                                           color: const Color(
-                                              0xFF0F172A), // #0F172A
+                                            0xFF0F172A,
+                                          ), // #0F172A
                                           fontSize: 16,
                                           fontWeight: FontWeight.w500,
                                         ),
@@ -196,7 +198,8 @@ class ProfileScreen extends ConsumerWidget {
                                         email,
                                         style: TextStyle(
                                           color: const Color(
-                                              0xFF64748B), // #64748B
+                                            0xFF64748B,
+                                          ), // #64748B
                                           fontSize: 14,
                                         ),
                                       ),
@@ -233,16 +236,11 @@ class ProfileScreen extends ConsumerWidget {
                         onTap: () async {
                           final uri = Uri.parse('https://iammara.com/terms');
                           if (await canLaunchUrl(uri)) {
-                            await launchUrl(
-                              uri,
-                              mode: LaunchMode.inAppWebView,
-                            );
+                            await launchUrl(uri, mode: LaunchMode.inAppWebView);
                           } else {
                             if (context.mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(l10n.couldNotOpenTerms),
-                                ),
+                                SnackBar(content: Text(l10n.couldNotOpenTerms)),
                               );
                             }
                           }
@@ -266,7 +264,9 @@ class ProfileScreen extends ConsumerWidget {
                           style: TextButton.styleFrom(
                             foregroundColor: AppColors.error,
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 24, vertical: 12),
+                              horizontal: 24,
+                              vertical: 12,
+                            ),
                           ),
                           child: Text(
                             l10n.logOut,
@@ -327,10 +327,7 @@ class _ProfileMenuItem extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: AppColors.borderColor,
-            width: 1,
-          ),
+          border: Border.all(color: AppColors.borderColor, width: 1),
         ),
         child: Row(
           children: [
@@ -341,11 +338,7 @@ class _ProfileMenuItem extends StatelessWidget {
                 color: AppColors.languageButtonColor.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: Icon(
-                icon,
-                color: AppColors.languageButtonColor,
-                size: 24,
-              ),
+              child: Icon(icon, color: AppColors.languageButtonColor, size: 24),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -468,15 +461,15 @@ class _DeveloperSettingsSection extends ConsumerWidget {
       await CacheUtils.clearLocalCaches();
 
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.cacheClearedSuccess)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l10n.cacheClearedSuccess)));
       }
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.cacheClearedSuccess)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l10n.cacheClearedSuccess)));
       }
     }
   }
@@ -502,10 +495,7 @@ class _DeveloperInfoItem extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: AppColors.borderColor,
-          width: 1,
-        ),
+        border: Border.all(color: AppColors.borderColor, width: 1),
       ),
       child: Row(
         children: [
@@ -516,11 +506,7 @@ class _DeveloperInfoItem extends StatelessWidget {
               color: AppColors.languageButtonColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(
-              icon,
-              color: AppColors.languageButtonColor,
-              size: 24,
-            ),
+            child: Icon(icon, color: AppColors.languageButtonColor, size: 24),
           ),
           const SizedBox(width: 16),
           Expanded(

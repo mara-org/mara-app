@@ -43,11 +43,7 @@ class LogoutConfirmationScreen extends ConsumerWidget {
                       color: AppColors.error.withOpacity(0.1),
                       shape: BoxShape.circle,
                     ),
-                    child: Icon(
-                      Icons.logout,
-                      color: AppColors.error,
-                      size: 32,
-                    ),
+                    child: Icon(Icons.logout, color: AppColors.error, size: 32),
                   ),
                   const SizedBox(height: 24),
                   // Title
@@ -90,7 +86,7 @@ class LogoutConfirmationScreen extends ConsumerWidget {
                             // Clear user state
                             ref.read(userProfileProvider.notifier).reset();
                             ref.read(permissionsProvider.notifier).reset();
-                            
+
                             // Navigate to sign up choices
                             context.go('/sign-up-choices');
                           },
@@ -107,4 +103,3 @@ class LogoutConfirmationScreen extends ConsumerWidget {
     );
   }
 }
-

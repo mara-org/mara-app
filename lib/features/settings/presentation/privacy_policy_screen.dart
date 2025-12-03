@@ -33,16 +33,16 @@ class PrivacyPolicyScreen extends StatelessWidget {
                 const SizedBox(height: 20),
                 Text(
                   'Privacy Policy',
-                  style: AppTextStyles.heading1(context).copyWith(
-                    color: AppColors.textPrimary,
-                  ),
+                  style: AppTextStyles.heading1(
+                    context,
+                  ).copyWith(color: AppColors.textPrimary),
                 ),
                 const SizedBox(height: 24),
                 Text(
                   'Last updated: ${DateTime.now().year}',
-                  style: AppTextStyles.caption(context).copyWith(
-                    color: AppColors.textSecondary,
-                  ),
+                  style: AppTextStyles.caption(
+                    context,
+                  ).copyWith(color: AppColors.textSecondary),
                 ),
                 const SizedBox(height: 32),
                 _Section(
@@ -88,10 +88,7 @@ class _Section extends StatelessWidget {
   final String title;
   final String content;
 
-  const _Section({
-    required this.title,
-    required this.content,
-  });
+  const _Section({required this.title, required this.content});
 
   @override
   Widget build(BuildContext context) {
@@ -100,20 +97,18 @@ class _Section extends StatelessWidget {
       children: [
         Text(
           title,
-          style: AppTextStyles.heading2(context).copyWith(
-            color: AppColors.textPrimary,
-          ),
+          style: AppTextStyles.heading2(
+            context,
+          ).copyWith(color: AppColors.textPrimary),
         ),
         const SizedBox(height: 12),
         Text(
           content,
-          style: AppTextStyles.body(context).copyWith(
-            color: AppColors.textSecondary,
-            height: 1.6,
-          ),
+          style: AppTextStyles.body(
+            context,
+          ).copyWith(color: AppColors.textSecondary, height: 1.6),
         ),
       ],
     );
   }
 }
-

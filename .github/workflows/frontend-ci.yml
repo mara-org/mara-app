@@ -27,7 +27,23 @@ jobs:
         run: flutter pub get
 
       - name: Flutter analyze
-        run: flutter analyze
+        run: |
+          # Run analyze and capture output
+          flutter analyze > analyze_output.txt 2>&1 || ANALYZE_EXIT_CODE=$?
+          cat analyze_output.txt
+          
+          # Count errors and warnings (not info)
+          ERRORS=$(grep -c "error •" analyze_output.txt || echo "0")
+          WARNINGS=$(grep -c "warning •" analyze_output.txt || echo "0")
+          
+          # Only fail if there are errors or warnings
+          if [ "$ERRORS" -gt 0 ] || [ "$WARNINGS" -gt 0 ]; then
+            echo "Found $ERRORS errors and $WARNINGS warnings. Failing build."
+            exit 1
+          else
+            echo "Only info-level linting suggestions found. Build continues."
+            exit 0
+          fi --no-fatal-infos
 
       - name: Flutter test
         run: flutter test

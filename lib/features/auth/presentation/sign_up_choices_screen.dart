@@ -27,14 +27,10 @@ class SignUpChoicesScreen extends StatelessWidget {
                   children: [
                     const SizedBox(height: 20),
                     // Mara logo
-                    const Center(
-                      child: MaraLogo(
-                        width: 258,
-                        height: 202,
-                      ),
-                    ),
+                    const Center(child: MaraLogo(width: 258, height: 202)),
                     const SizedBox(
-                        height: 800), // Space for positioned elements
+                      height: 800,
+                    ), // Space for positioned elements
                   ],
                 ),
               ),
@@ -142,9 +138,7 @@ class SignUpChoicesScreen extends StatelessWidget {
                               fontWeight: FontWeight.normal,
                             ),
                           ),
-                          WidgetSpan(
-                            child: SizedBox(width: 4),
-                          ),
+                          WidgetSpan(child: SizedBox(width: 4)),
                           TextSpan(
                             text: l10n.signIn,
                             style: TextStyle(
@@ -197,10 +191,7 @@ class _SocialButton extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           color: backgroundColor,
-          border: Border.all(
-            color: AppColors.borderColor,
-            width: 1,
-          ),
+          border: Border.all(color: AppColors.borderColor, width: 1),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -217,11 +208,7 @@ class _SocialButton extends StatelessWidget {
                   filterQuality: FilterQuality.high,
                   errorBuilder: (context, error, stackTrace) {
                     debugPrint('Error loading image: $iconImagePath - $error');
-                    return Icon(
-                      Icons.image,
-                      color: textColor,
-                      size: 28,
-                    );
+                    return Icon(Icons.image, color: textColor, size: 28);
                   },
                 ),
               ),

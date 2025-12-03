@@ -56,7 +56,9 @@ class NotificationsPermissionScreen extends ConsumerWidget {
                             const SizedBox(height: 20),
                             // Description
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 20),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                              ),
                               child: Text(
                                 l10n.notificationsDescription,
                                 textAlign: TextAlign.center,
@@ -76,7 +78,8 @@ class NotificationsPermissionScreen extends ConsumerWidget {
                   ),
                   // Buttons section - fixed at bottom with consistent height
                   SizedBox(
-                    height: 220, // Fixed height to ensure buttons are at same position
+                    height:
+                        220, // Fixed height to ensure buttons are at same position
                     child: Padding(
                       padding: PlatformUtils.getDefaultPadding(context),
                       child: Column(
@@ -87,7 +90,9 @@ class NotificationsPermissionScreen extends ConsumerWidget {
                           PrimaryButton(
                             text: l10n.allowNotifications,
                             onPressed: () {
-                              ref.read(permissionsProvider.notifier).setNotifications(true);
+                              ref
+                                  .read(permissionsProvider.notifier)
+                                  .setNotifications(true);
                               context.push('/health-data-permission');
                             },
                           ),
@@ -95,7 +100,9 @@ class NotificationsPermissionScreen extends ConsumerWidget {
                           // Not now button
                           TextButton(
                             onPressed: () {
-                              ref.read(permissionsProvider.notifier).setNotifications(false);
+                              ref
+                                  .read(permissionsProvider.notifier)
+                                  .setNotifications(false);
                               context.push('/health-data-permission');
                             },
                             child: Text(
@@ -141,4 +148,3 @@ class NotificationsPermissionScreen extends ConsumerWidget {
     );
   }
 }
-

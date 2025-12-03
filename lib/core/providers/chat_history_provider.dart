@@ -62,10 +62,7 @@ class ChatHistoryNotifier extends StateNotifier<List<Conversation>> {
             ? '${lastMessage.text.substring(0, 60)}...'
             : lastMessage.text;
 
-        return conv.copyWith(
-          messages: List.from(messages),
-          preview: preview,
-        );
+        return conv.copyWith(messages: List.from(messages), preview: preview);
       }
       return conv;
     }).toList();
@@ -103,44 +100,56 @@ class ChatHistoryNotifier extends StateNotifier<List<Conversation>> {
   /// Extract topic from message text for icon classification
   String? _extractTopic(String text) {
     final lowerText = text.toLowerCase();
-    
+
     // Health symptoms
-    if (lowerText.contains(RegExp(r'\b(cough|fever|headache|pain|ache|symptom|sick|ill|nause|dizzy|tired|fatigue)\b'))) {
+    if (lowerText.contains(
+      RegExp(
+        r'\b(cough|fever|headache|pain|ache|symptom|sick|ill|nause|dizzy|tired|fatigue)\b',
+      ),
+    )) {
       return 'symptoms';
     }
-    
+
     // Hydration
-    if (lowerText.contains(RegExp(r'\b(water|hydrat|drink|thirst|dehydrat)\b'))) {
+    if (lowerText.contains(
+      RegExp(r'\b(water|hydrat|drink|thirst|dehydrat)\b'),
+    )) {
       return 'hydration';
     }
-    
+
     // Sleep
-    if (lowerText.contains(RegExp(r'\b(sleep|insomnia|rest|tired|awake|dream|night)\b'))) {
+    if (lowerText.contains(
+      RegExp(r'\b(sleep|insomnia|rest|tired|awake|dream|night)\b'),
+    )) {
       return 'sleep';
     }
-    
+
     // Exercise/Fitness
-    if (lowerText.contains(RegExp(r'\b(exercise|workout|run|walk|steps|fitness|gym|sport)\b'))) {
+    if (lowerText.contains(
+      RegExp(r'\b(exercise|workout|run|walk|steps|fitness|gym|sport)\b'),
+    )) {
       return 'exercise';
     }
-    
+
     // Heart/Cardiovascular
-    if (lowerText.contains(RegExp(r'\b(heart|cardiac|pulse|blood pressure|bp|cardiovascular)\b'))) {
+    if (lowerText.contains(
+      RegExp(r'\b(heart|cardiac|pulse|blood pressure|bp|cardiovascular)\b'),
+    )) {
       return 'heart';
     }
-    
+
     // Nutrition/Diet
-    if (lowerText.contains(RegExp(r'\b(food|eat|diet|nutrition|meal|calorie|weight)\b'))) {
+    if (lowerText.contains(
+      RegExp(r'\b(food|eat|diet|nutrition|meal|calorie|weight)\b'),
+    )) {
       return 'nutrition';
     }
-    
+
     return null;
   }
 }
 
 final chatHistoryProvider =
     StateNotifierProvider<ChatHistoryNotifier, List<Conversation>>(
-  (ref) => ChatHistoryNotifier(),
-);
-
-
+      (ref) => ChatHistoryNotifier(),
+    );

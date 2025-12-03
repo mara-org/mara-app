@@ -25,8 +25,4 @@ class DeleteAccountException implements Exception {
   const DeleteAccountException(this.error);
 }
 
-enum DeleteAccountError {
-  invalidCode,
-  network,
-}
-
+enum DeleteAccountError { invalidCode, network }

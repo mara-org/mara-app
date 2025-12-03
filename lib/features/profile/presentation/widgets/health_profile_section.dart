@@ -35,10 +35,7 @@ class HealthProfileSection extends ConsumerWidget {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: AppColors.borderColor,
-              width: 1,
-            ),
+            border: Border.all(color: AppColors.borderColor, width: 1),
           ),
           child: Column(
             children: [
@@ -50,33 +47,42 @@ class HealthProfileSection extends ConsumerWidget {
               Divider(
                 height: 24,
                 thickness: 1,
-                color: const Color(0xFF0EA5C6).withOpacity(1.0), // #0EA5C6, 100% opacity
+                color: const Color(
+                  0xFF0EA5C6,
+                ).withOpacity(1.0), // #0EA5C6, 100% opacity
               ),
               _HealthProfileRow(
                 label: l10n.dateOfBirthField,
                 value: profile.dateOfBirth != null
-                    ? DateFormat('MMM dd, yyyy', locale.toString()).format(profile.dateOfBirth!)
+                    ? DateFormat(
+                        'MMM dd, yyyy',
+                        locale.toString(),
+                      ).format(profile.dateOfBirth!)
                     : l10n.notSet,
                 onTap: () => context.push('/dob-input?from=profile'),
               ),
               Divider(
                 height: 24,
                 thickness: 1,
-                color: const Color(0xFF0EA5C6).withOpacity(1.0), // #0EA5C6, 100% opacity
+                color: const Color(
+                  0xFF0EA5C6,
+                ).withOpacity(1.0), // #0EA5C6, 100% opacity
               ),
               _HealthProfileRow(
                 label: l10n.genderField,
                 value: profile.gender != null
                     ? profile.gender == Gender.male
-                        ? l10n.male
-                        : l10n.female
+                          ? l10n.male
+                          : l10n.female
                     : l10n.notSet,
                 onTap: () => context.push('/gender?from=profile'),
               ),
               Divider(
                 height: 24,
                 thickness: 1,
-                color: const Color(0xFF0EA5C6).withOpacity(1.0), // #0EA5C6, 100% opacity
+                color: const Color(
+                  0xFF0EA5C6,
+                ).withOpacity(1.0), // #0EA5C6, 100% opacity
               ),
               _HealthProfileRow(
                 label: l10n.heightField,
@@ -88,7 +94,9 @@ class HealthProfileSection extends ConsumerWidget {
               Divider(
                 height: 24,
                 thickness: 1,
-                color: const Color(0xFF0EA5C6).withOpacity(1.0), // #0EA5C6, 100% opacity
+                color: const Color(
+                  0xFF0EA5C6,
+                ).withOpacity(1.0), // #0EA5C6, 100% opacity
               ),
               _HealthProfileRow(
                 label: l10n.weightField,
@@ -100,7 +108,9 @@ class HealthProfileSection extends ConsumerWidget {
               Divider(
                 height: 24,
                 thickness: 1,
-                color: const Color(0xFF0EA5C6).withOpacity(1.0), // #0EA5C6, 100% opacity
+                color: const Color(
+                  0xFF0EA5C6,
+                ).withOpacity(1.0), // #0EA5C6, 100% opacity
               ),
               _HealthProfileRow(
                 label: l10n.bloodTypeField,
@@ -110,7 +120,9 @@ class HealthProfileSection extends ConsumerWidget {
               Divider(
                 height: 24,
                 thickness: 1,
-                color: const Color(0xFF0EA5C6).withOpacity(1.0), // #0EA5C6, 100% opacity
+                color: const Color(
+                  0xFF0EA5C6,
+                ).withOpacity(1.0), // #0EA5C6, 100% opacity
               ),
               _HealthProfileRow(
                 label: l10n.mainGoalField,
@@ -123,7 +135,6 @@ class HealthProfileSection extends ConsumerWidget {
       ],
     );
   }
-
 }
 
 class _HealthProfileRow extends StatelessWidget {
@@ -180,4 +191,3 @@ class _HealthProfileRow extends StatelessWidget {
     );
   }
 }
-

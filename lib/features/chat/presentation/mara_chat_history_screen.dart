@@ -90,9 +90,9 @@ class MaraChatHistoryScreen extends ConsumerWidget {
           ),
           TextButton(
             onPressed: () {
-              ref.read(chatHistoryProvider.notifier).deleteConversation(
-                    conversation.id,
-                  );
+              ref
+                  .read(chatHistoryProvider.notifier)
+                  .deleteConversation(conversation.id);
               Navigator.of(context).pop();
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
@@ -101,9 +101,7 @@ class MaraChatHistoryScreen extends ConsumerWidget {
                 ),
               );
             },
-            style: TextButton.styleFrom(
-              foregroundColor: Colors.red,
-            ),
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
             child: Text(l10n.delete),
           ),
         ],
@@ -143,11 +141,7 @@ class _ConversationCard extends StatelessWidget {
         ),
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 20),
-        child: const Icon(
-          Icons.delete,
-          color: Colors.white,
-          size: 28,
-        ),
+        child: const Icon(Icons.delete, color: Colors.white, size: 28),
       ),
       onDismissed: (_) => onDelete(),
       confirmDismiss: (direction) async {
@@ -166,9 +160,7 @@ class _ConversationCard extends StatelessWidget {
                     ),
                     TextButton(
                       onPressed: () => Navigator.of(context).pop(true),
-                      style: TextButton.styleFrom(
-                        foregroundColor: Colors.red,
-                      ),
+                      style: TextButton.styleFrom(foregroundColor: Colors.red),
                       child: Text(l10n.delete),
                     ),
                   ],
@@ -304,19 +296,13 @@ class _TopicIcon extends StatelessWidget {
           height: 40,
           decoration: BoxDecoration(
             gradient: const LinearGradient(
-              colors: [
-                AppColors.gradientStart,
-                AppColors.languageButtonColor,
-              ],
+              colors: [AppColors.gradientStart, AppColors.languageButtonColor],
             ),
             borderRadius: BorderRadius.circular(12),
           ),
           child: const Padding(
             padding: EdgeInsets.all(8),
-            child: MaraLogo(
-              width: 24,
-              height: 24,
-            ),
+            child: MaraLogo(width: 24, height: 24),
           ),
         );
     }
@@ -328,12 +314,7 @@ class _TopicIcon extends StatelessWidget {
         color: iconColor.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
       ),
-      child: Icon(
-        iconData,
-        color: iconColor,
-        size: 24,
-      ),
+      child: Icon(iconData, color: iconColor, size: 24),
     );
   }
 }
-

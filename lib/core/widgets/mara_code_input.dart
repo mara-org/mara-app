@@ -47,10 +47,7 @@ class MaraCodeInputState extends State<MaraCodeInput> {
 
   List<String> get _digits {
     final text = _controller.text;
-    return List.generate(
-      widget.length,
-      (i) => i < text.length ? text[i] : '',
-    );
+    return List.generate(widget.length, (i) => i < text.length ? text[i] : '');
   }
 
   String get value => _controller.text;
@@ -123,9 +120,9 @@ class MaraCodeInputState extends State<MaraCodeInput> {
                 child: Text(
                   digit,
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        color: AppColors.textPrimary,
-                        fontWeight: FontWeight.w600,
-                      ),
+                    color: AppColors.textPrimary,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               );
             }),

@@ -23,7 +23,7 @@ class PrimaryButton extends StatelessWidget {
     final isIOS = PlatformUtils.isIOS;
     final buttonHeight = height ?? (isIOS ? 50.0 : 48.0);
     final buttonBorderRadius = borderRadius ?? (isIOS ? 12.0 : 8.0);
-    
+
     return SizedBox(
       width: width ?? double.infinity,
       height: buttonHeight,
@@ -53,4 +53,3 @@ class PrimaryButton extends StatelessWidget {
     );
   }
 }
-

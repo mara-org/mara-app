@@ -14,4 +14,3 @@ final deviceInfoProvider = FutureProvider<String>((ref) async {
   final service = ref.read(systemInfoServiceProvider);
   return service.getDeviceInfo();
 });
-

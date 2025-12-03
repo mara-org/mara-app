@@ -36,10 +36,7 @@ class AppSettingsSection extends ConsumerWidget {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: AppColors.borderColor,
-              width: 1,
-            ),
+            border: Border.all(color: AppColors.borderColor, width: 1),
           ),
           child: InkWell(
             onTap: () => context.push('/language-selector?from=profile'),
@@ -101,10 +98,7 @@ class AppSettingsSection extends ConsumerWidget {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: AppColors.borderColor,
-              width: 1,
-            ),
+            border: Border.all(color: AppColors.borderColor, width: 1),
           ),
           child: Row(
             children: [
@@ -162,10 +156,7 @@ class AppSettingsSection extends ConsumerWidget {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: AppColors.borderColor,
-              width: 1,
-            ),
+            border: Border.all(color: AppColors.borderColor, width: 1),
           ),
           child: Row(
             children: [

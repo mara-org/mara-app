@@ -48,12 +48,7 @@ class WelcomePersonalScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: 20),
                 // Mara logo
-                const Center(
-                  child: MaraLogo(
-                    width: 258,
-                    height: 202,
-                  ),
-                ),
+                const Center(child: MaraLogo(width: 258, height: 202)),
                 const SizedBox(height: 40),
                 // Title
                 Text(
@@ -99,4 +94,3 @@ class WelcomePersonalScreen extends ConsumerWidget {
     );
   }
 }
-

@@ -91,8 +91,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ),
               ),
               child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 16,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -100,10 +102,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         // Mara logo
-                        const MaraLogo(
-                          width: 40,
-                          height: 40,
-                        ),
+                        const MaraLogo(width: 40, height: 40),
                         const SizedBox(width: 12),
                         Expanded(
                           child: Column(
@@ -165,10 +164,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       // Conversation resume card
                       Consumer(
                         builder: (context, ref, child) {
-                          final hasPrevious =
-                              ref.watch(hasPreviousConversationsProvider);
-                          final lastTopic =
-                              ref.watch(lastConversationTopicProvider);
+                          final hasPrevious = ref.watch(
+                            hasPreviousConversationsProvider,
+                          );
+                          final lastTopic = ref.watch(
+                            lastConversationTopicProvider,
+                          );
 
                           final String title;
                           final String subtitle;
@@ -251,9 +252,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       // Insights row
                       Row(
                         children: [
-                          Expanded(
-                            child: _StepsCard(),
-                          ),
+                          Expanded(child: _StepsCard()),
                           const SizedBox(width: 12),
                           Expanded(
                             child: _InsightCard(
@@ -572,11 +571,7 @@ class _InsightCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          Icon(
-            icon,
-            color: AppColors.languageButtonColor,
-            size: 32,
-          ),
+          Icon(icon, color: AppColors.languageButtonColor, size: 32),
           const SizedBox(height: 4),
           Text(
             value,

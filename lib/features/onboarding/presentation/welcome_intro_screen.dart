@@ -14,7 +14,7 @@ class WelcomeIntroScreen extends ConsumerWidget {
     ref.watch(appLocaleProvider);
     final l10n = AppLocalizations.of(context)!;
     final h = MediaQuery.of(context).size.height;
-    
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       extendBody: true,

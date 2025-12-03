@@ -74,4 +74,3 @@ class AppTheme {
     return baseTheme;
   }
 }
-

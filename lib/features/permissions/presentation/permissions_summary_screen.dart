@@ -26,12 +26,7 @@ class PermissionsSummaryScreen extends ConsumerWidget {
               children: [
                 const SizedBox(height: 20),
                 // Mara logo
-                const Center(
-                  child: MaraLogo(
-                    width: 258,
-                    height: 202,
-                  ),
-                ),
+                const Center(child: MaraLogo(width: 258, height: 202)),
                 const SizedBox(height: 40),
                 // Title
                 Text(
@@ -117,10 +112,7 @@ class _PermissionItem extends StatelessWidget {
   final String title;
   final bool isEnabled;
 
-  const _PermissionItem({
-    required this.title,
-    required this.isEnabled,
-  });
+  const _PermissionItem({required this.title, required this.isEnabled});
 
   @override
   Widget build(BuildContext context) {
@@ -129,9 +121,7 @@ class _PermissionItem extends StatelessWidget {
       height: 55,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        color: isEnabled
-            ? const Color(0xFFC4F4FF)
-            : const Color(0xFFA2BCC2),
+        color: isEnabled ? const Color(0xFFC4F4FF) : const Color(0xFFA2BCC2),
       ),
       child: Center(
         child: Text(
@@ -150,4 +140,3 @@ class _PermissionItem extends StatelessWidget {
     );
   }
 }
-

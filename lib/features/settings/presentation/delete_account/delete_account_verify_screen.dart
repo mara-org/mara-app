@@ -117,9 +117,9 @@ class _DeleteAccountVerifyScreenState
       await ref.read(emailProvider.notifier).clearEmail();
 
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.deleteAccountSuccessMessage)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.deleteAccountSuccessMessage)));
       context.go('/language-selector');
     } on DeleteAccountException catch (e) {
       if (!mounted) return;
@@ -188,10 +188,7 @@ class _DeleteAccountVerifyScreenState
             padding: const EdgeInsets.only(top: 8),
             child: Text(
               _errorMessage!,
-              style: const TextStyle(
-                color: AppColors.error,
-                fontSize: 13,
-              ),
+              style: const TextStyle(color: AppColors.error, fontSize: 13),
             ),
           ),
         const SizedBox(height: 24),

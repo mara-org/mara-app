@@ -35,7 +35,7 @@ class MaraTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isIOS = PlatformUtils.isIOS;
-    
+
     return TextFormField(
       controller: controller,
       obscureText: obscureText,
@@ -61,17 +61,11 @@ class MaraTextField extends StatelessWidget {
         fillColor: Colors.white,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(isIOS ? 12 : 8),
-          borderSide: BorderSide(
-            color: Colors.grey[300]!,
-            width: 1,
-          ),
+          borderSide: BorderSide(color: Colors.grey[300]!, width: 1),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(isIOS ? 12 : 8),
-          borderSide: BorderSide(
-            color: Colors.grey[300]!,
-            width: 1,
-          ),
+          borderSide: BorderSide(color: Colors.grey[300]!, width: 1),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(isIOS ? 12 : 8),
@@ -82,17 +76,11 @@ class MaraTextField extends StatelessWidget {
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(isIOS ? 12 : 8),
-          borderSide: const BorderSide(
-            color: AppColors.error,
-            width: 1,
-          ),
+          borderSide: const BorderSide(color: AppColors.error, width: 1),
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(isIOS ? 12 : 8),
-          borderSide: const BorderSide(
-            color: AppColors.error,
-            width: 2,
-          ),
+          borderSide: const BorderSide(color: AppColors.error, width: 2),
         ),
         contentPadding: EdgeInsets.symmetric(
           horizontal: 16,
@@ -102,4 +90,3 @@ class MaraTextField extends StatelessWidget {
     );
   }
 }
-

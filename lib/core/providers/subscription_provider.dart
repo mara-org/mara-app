@@ -1,9 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-enum SubscriptionStatus {
-  free,
-  premium,
-}
+enum SubscriptionStatus { free, premium }
 
 class SubscriptionNotifier extends StateNotifier<SubscriptionStatus> {
   SubscriptionNotifier() : super(SubscriptionStatus.free);
@@ -17,7 +14,7 @@ class SubscriptionNotifier extends StateNotifier<SubscriptionStatus> {
   }
 }
 
-final subscriptionProvider = StateNotifierProvider<SubscriptionNotifier, SubscriptionStatus>(
-  (ref) => SubscriptionNotifier(),
-);
-
+final subscriptionProvider =
+    StateNotifierProvider<SubscriptionNotifier, SubscriptionStatus>(
+      (ref) => SubscriptionNotifier(),
+    );

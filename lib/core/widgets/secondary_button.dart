@@ -20,7 +20,7 @@ class SecondaryButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final isIOS = PlatformUtils.isIOS;
     final buttonHeight = height ?? (isIOS ? 50.0 : 48.0);
-    
+
     return SizedBox(
       width: width ?? double.infinity,
       height: buttonHeight,
@@ -49,4 +49,3 @@ class SecondaryButton extends StatelessWidget {
     );
   }
 }
-

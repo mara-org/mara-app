@@ -64,7 +64,8 @@ class CameraPermissionScreen extends ConsumerWidget {
                 ),
                 // Buttons section - fixed at bottom with consistent height
                 SizedBox(
-                  height: 220, // Fixed height to ensure buttons are at same position
+                  height:
+                      220, // Fixed height to ensure buttons are at same position
                   child: Padding(
                     padding: PlatformUtils.getDefaultPadding(context),
                     child: Column(
@@ -75,7 +76,9 @@ class CameraPermissionScreen extends ConsumerWidget {
                         PrimaryButton(
                           text: l10n.allow,
                           onPressed: () {
-                            ref.read(permissionsProvider.notifier).setCamera(true);
+                            ref
+                                .read(permissionsProvider.notifier)
+                                .setCamera(true);
                             context.push('/microphone-permission');
                           },
                         ),
@@ -83,7 +86,9 @@ class CameraPermissionScreen extends ConsumerWidget {
                         // Not now button
                         TextButton(
                           onPressed: () {
-                            ref.read(permissionsProvider.notifier).setCamera(false);
+                            ref
+                                .read(permissionsProvider.notifier)
+                                .setCamera(false);
                             context.push('/microphone-permission');
                           },
                           child: Text(
@@ -140,4 +145,3 @@ class CameraPermissionScreen extends ConsumerWidget {
     );
   }
 }
-

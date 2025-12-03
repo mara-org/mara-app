@@ -47,12 +47,7 @@ class DeleteAccountScaffold extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: size.height * 0.02),
-                const Center(
-                  child: MaraLogo(
-                    width: 258,
-                    height: 202,
-                  ),
-                ),
+                const Center(child: MaraLogo(width: 258, height: 202)),
                 SizedBox(height: size.height * 0.04),
                 Text(
                   title,
@@ -85,4 +80,3 @@ class DeleteAccountScaffold extends StatelessWidget {
     );
   }
 }
-

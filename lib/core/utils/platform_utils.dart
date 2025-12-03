@@ -45,4 +45,3 @@ class PlatformUtils {
     return getScreenWidth(context) > 600;
   }
 }
-

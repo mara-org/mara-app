@@ -10,7 +10,7 @@ import '../../../l10n/app_localizations.dart';
 
 class WeightScreen extends ConsumerStatefulWidget {
   final bool isFromProfile;
-  
+
   const WeightScreen({super.key, this.isFromProfile = false});
 
   @override
@@ -23,11 +23,13 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
 
   void _handleContinue() {
     if (_selectedWeight != null && _selectedWeight! > 0) {
-      ref.read(userProfileProvider.notifier).setWeight(_selectedWeight!, _selectedUnit);
+      ref
+          .read(userProfileProvider.notifier)
+          .setWeight(_selectedWeight!, _selectedUnit);
       if (widget.isFromProfile) {
         context.go('/profile');
       } else {
-      context.push('/blood-type');
+        context.push('/blood-type');
       }
     }
   }
@@ -70,12 +72,7 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
                 ),
                 const SizedBox(height: 20),
                 // Mara logo
-                const Center(
-                  child: MaraLogo(
-                    width: 258,
-                    height: 202,
-                  ),
-                ),
+                const Center(child: MaraLogo(width: 258, height: 202)),
                 const SizedBox(height: 40),
                 // Title
                 Text(
@@ -92,29 +89,31 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
                 // Unit toggle
                 Column(
                   children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _UnitToggle(
-                      text: l10n.kg,
-                      isSelected: _selectedUnit == 'kg',
-                      onTap: () {
-                        setState(() {
-                          _selectedUnit = 'kg';
-                          _selectedWeight = null; // Reset selection when unit changes
-                        });
-                      },
-                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _UnitToggle(
+                          text: l10n.kg,
+                          isSelected: _selectedUnit == 'kg',
+                          onTap: () {
+                            setState(() {
+                              _selectedUnit = 'kg';
+                              _selectedWeight =
+                                  null; // Reset selection when unit changes
+                            });
+                          },
+                        ),
                         const SizedBox(width: 96),
-                    _UnitToggle(
-                      text: l10n.lb,
-                      isSelected: _selectedUnit == 'lb',
-                      onTap: () {
-                        setState(() {
-                          _selectedUnit = 'lb';
-                          _selectedWeight = null; // Reset selection when unit changes
-                        });
-                      },
+                        _UnitToggle(
+                          text: l10n.lb,
+                          isSelected: _selectedUnit == 'lb',
+                          onTap: () {
+                            setState(() {
+                              _selectedUnit = 'lb';
+                              _selectedWeight =
+                                  null; // Reset selection when unit changes
+                            });
+                          },
                         ),
                       ],
                     ),
@@ -184,7 +183,9 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
                   width: 324,
                   height: 52,
                   borderRadius: 20,
-                  onPressed: (_selectedWeight != null && _selectedWeight! > 0) ? _handleContinue : null,
+                  onPressed: (_selectedWeight != null && _selectedWeight! > 0)
+                      ? _handleContinue
+                      : null,
                 ),
                 const SizedBox(height: 20),
               ],
@@ -225,4 +226,3 @@ class _UnitToggle extends StatelessWidget {
     );
   }
 }
-

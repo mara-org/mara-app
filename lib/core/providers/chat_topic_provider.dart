@@ -8,4 +8,3 @@ final hasPreviousConversationsProvider = Provider<bool>((ref) {
   final topic = ref.watch(lastConversationTopicProvider);
   return topic != null && topic.isNotEmpty;
 });
-

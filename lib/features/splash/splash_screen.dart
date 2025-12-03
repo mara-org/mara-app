@@ -17,10 +17,7 @@ class SplashScreen extends StatelessWidget {
               children: [
                 MaraLogo(),
                 SizedBox(height: 24),
-                Text(
-                  'Splash Screen',
-                  style: TextStyle(fontSize: 18),
-                ),
+                Text('Splash Screen', style: TextStyle(fontSize: 18)),
               ],
             ),
           ),
@@ -29,4 +26,3 @@ class SplashScreen extends StatelessWidget {
     );
   }
 }
-

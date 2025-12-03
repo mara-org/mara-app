@@ -56,7 +56,9 @@ class MicrophonePermissionScreen extends ConsumerWidget {
                             const SizedBox(height: 20),
                             // Description
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 20),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                              ),
                               child: Text(
                                 l10n.microphoneAccessDescription,
                                 textAlign: TextAlign.center,
@@ -76,7 +78,8 @@ class MicrophonePermissionScreen extends ConsumerWidget {
                   ),
                   // Buttons section - fixed at bottom with consistent height
                   SizedBox(
-                    height: 220, // Fixed height to ensure buttons are at same position
+                    height:
+                        220, // Fixed height to ensure buttons are at same position
                     child: Padding(
                       padding: PlatformUtils.getDefaultPadding(context),
                       child: Column(
@@ -87,7 +90,9 @@ class MicrophonePermissionScreen extends ConsumerWidget {
                           PrimaryButton(
                             text: l10n.allow,
                             onPressed: () {
-                              ref.read(permissionsProvider.notifier).setMicrophone(true);
+                              ref
+                                  .read(permissionsProvider.notifier)
+                                  .setMicrophone(true);
                               context.push('/notifications-permission');
                             },
                           ),
@@ -95,7 +100,9 @@ class MicrophonePermissionScreen extends ConsumerWidget {
                           // Not now button
                           TextButton(
                             onPressed: () {
-                              ref.read(permissionsProvider.notifier).setMicrophone(false);
+                              ref
+                                  .read(permissionsProvider.notifier)
+                                  .setMicrophone(false);
                               context.push('/notifications-permission');
                             },
                             child: Text(
@@ -153,4 +160,3 @@ class MicrophonePermissionScreen extends ConsumerWidget {
     );
   }
 }
-

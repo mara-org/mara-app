@@ -33,10 +33,7 @@ class _SplashScreenState extends State<SplashScreen> {
           gradient: LinearGradient(
             begin: Alignment(-0.001842716708779335, -0.9999840259552002),
             end: Alignment(0.9999840259552002, -0.008660693652927876),
-            colors: [
-              AppColors.gradientStart,
-              AppColors.gradientEnd,
-            ],
+            colors: [AppColors.gradientStart, AppColors.gradientEnd],
           ),
         ),
         child: SafeArea(
@@ -46,10 +43,7 @@ class _SplashScreenState extends State<SplashScreen> {
               Positioned(
                 left: 68,
                 top: 270,
-                child: const MaraLogo(
-                  width: 285,
-                  height: 202,
-                ),
+                child: const MaraLogo(width: 285, height: 202),
               ),
               // Tagline at the bottom
               Positioned(
@@ -78,4 +72,3 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 }
-

@@ -7,10 +7,7 @@ import '../theme/app_colors.dart';
 class MainBottomNavigation extends StatelessWidget {
   final int currentIndex;
 
-  const MainBottomNavigation({
-    super.key,
-    required this.currentIndex,
-  });
+  const MainBottomNavigation({super.key, required this.currentIndex});
 
   void _onItemTapped(BuildContext context, int index) {
     switch (index) {
@@ -35,10 +32,7 @@ class MainBottomNavigation extends StatelessWidget {
       selectedItemColor: AppColors.languageButtonColor,
       unselectedItemColor: AppColors.textSecondary,
       items: [
-        BottomNavigationBarItem(
-          icon: const Icon(Icons.home),
-          label: l10n.home,
-        ),
+        BottomNavigationBarItem(icon: const Icon(Icons.home), label: l10n.home),
         BottomNavigationBarItem(
           icon: const Icon(Icons.bar_chart),
           label: l10n.analyst,
@@ -63,9 +57,7 @@ class _MaraLogoIcon extends StatelessWidget {
     final image = SizedBox(
       width: 28,
       height: 28,
-      child: Image.asset(
-        'assets/images/mara_logo_new.png',
-      ),
+      child: Image.asset('assets/images/mara_logo_new.png'),
     );
 
     if (isSelected) {

@@ -28,11 +28,9 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
     if (_isCodeComplete) {
       context.go('/ready');
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.verifyEmailError),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.verifyEmailError)));
     }
   }
 
@@ -47,9 +45,9 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
     setState(() {
       _isResending = false;
     });
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(l10n.resendCodeSuccess)),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(l10n.resendCodeSuccess)));
   }
 
   @override
@@ -75,8 +73,9 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                           width: 36,
                           height: 36,
                           decoration: BoxDecoration(
-                            color:
-                                AppColors.languageButtonColor.withOpacity(0.1),
+                            color: AppColors.languageButtonColor.withOpacity(
+                              0.1,
+                            ),
                             shape: BoxShape.circle,
                           ),
                           child: const Icon(
@@ -87,12 +86,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                         ),
                       ),
                     ),
-                    const Center(
-                      child: MaraLogo(
-                        width: 258,
-                        height: 202,
-                      ),
-                    ),
+                    const Center(child: MaraLogo(width: 258, height: 202)),
                   ],
                 ),
                 const SizedBox(height: 40),
@@ -146,8 +140,9 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                       ? SizedBox(
                           width: 16,
                           height: 16,
-                          child:
-                              const CircularProgressIndicator(strokeWidth: 2),
+                          child: const CircularProgressIndicator(
+                            strokeWidth: 2,
+                          ),
                         )
                       : Text(
                           l10n.resendCodeButton,
@@ -168,9 +163,13 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                       borderRadius: BorderRadius.circular(12),
                       gradient: const LinearGradient(
                         begin: Alignment(
-                            0.0005944162257947028, -0.15902137756347656),
-                        end:
-                            Alignment(6.022111415863037, 0.0005944162257947028),
+                          0.0005944162257947028,
+                          -0.15902137756347656,
+                        ),
+                        end: Alignment(
+                          6.022111415863037,
+                          0.0005944162257947028,
+                        ),
                         colors: [
                           AppColors.gradientStart,
                           AppColors.gradientEnd,

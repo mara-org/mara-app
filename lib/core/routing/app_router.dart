@@ -111,14 +111,8 @@ class AppRouter {
         path: '/reset-password',
         builder: (context, state) => const ResetPasswordScreen(),
       ),
-      GoRoute(
-        path: '/auth',
-        builder: (context, state) => const AuthScreen(),
-      ),
-      GoRoute(
-        path: '/ready',
-        builder: (context, state) => const ReadyScreen(),
-      ),
+      GoRoute(path: '/auth', builder: (context, state) => const AuthScreen()),
+      GoRoute(path: '/ready', builder: (context, state) => const ReadyScreen()),
       GoRoute(
         path: '/name-input',
         builder: (context, state) {
@@ -179,10 +173,7 @@ class AppRouter {
         path: '/welcome-personal',
         builder: (context, state) => const WelcomePersonalScreen(),
       ),
-      GoRoute(
-        path: '/setup',
-        builder: (context, state) => const SetupScreen(),
-      ),
+      GoRoute(path: '/setup', builder: (context, state) => const SetupScreen()),
       GoRoute(
         path: '/camera-permission',
         builder: (context, state) => const CameraPermissionScreen(),
@@ -207,10 +198,7 @@ class AppRouter {
         path: '/permissions',
         builder: (context, state) => const PermissionsScreen(),
       ),
-      GoRoute(
-        path: '/home',
-        builder: (context, state) => const HomeScreen(),
-      ),
+      GoRoute(path: '/home', builder: (context, state) => const HomeScreen()),
       GoRoute(
         path: '/analytics',
         builder: (context, state) => const AnalystDashboardScreen(),

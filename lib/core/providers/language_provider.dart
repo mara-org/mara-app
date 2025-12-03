@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-final appLocaleProvider = StateNotifierProvider<AppLocaleNotifier, Locale>((ref) {
+final appLocaleProvider = StateNotifierProvider<AppLocaleNotifier, Locale>((
+  ref,
+) {
   return AppLocaleNotifier();
 });
 
@@ -27,10 +29,7 @@ class AppLocaleNotifier extends StateNotifier<Locale> {
 }
 
 // Keep the old provider for backward compatibility during migration
-enum AppLanguage {
-  arabic,
-  english,
-}
+enum AppLanguage { arabic, english }
 
 class LanguageNotifier extends StateNotifier<AppLanguage> {
   LanguageNotifier() : super(AppLanguage.english);
@@ -43,4 +42,3 @@ class LanguageNotifier extends StateNotifier<AppLanguage> {
 final languageProvider = StateNotifierProvider<LanguageNotifier, AppLanguage>(
   (ref) => LanguageNotifier(),
 );
-

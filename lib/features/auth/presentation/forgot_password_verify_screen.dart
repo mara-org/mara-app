@@ -9,18 +9,17 @@ class ForgotPasswordVerifyScreen extends StatefulWidget {
   const ForgotPasswordVerifyScreen({super.key});
 
   @override
-  State<ForgotPasswordVerifyScreen> createState() => _ForgotPasswordVerifyScreenState();
+  State<ForgotPasswordVerifyScreen> createState() =>
+      _ForgotPasswordVerifyScreenState();
 }
 
-class _ForgotPasswordVerifyScreenState extends State<ForgotPasswordVerifyScreen> {
+class _ForgotPasswordVerifyScreenState
+    extends State<ForgotPasswordVerifyScreen> {
   final List<TextEditingController> _controllers = List.generate(
     6,
     (index) => TextEditingController(),
   );
-  final List<FocusNode> _focusNodes = List.generate(
-    6,
-    (index) => FocusNode(),
-  );
+  final List<FocusNode> _focusNodes = List.generate(6, (index) => FocusNode());
 
   @override
   void dispose() {
@@ -39,11 +38,9 @@ class _ForgotPasswordVerifyScreenState extends State<ForgotPasswordVerifyScreen>
       // Navigate to reset password screen
       context.push('/reset-password');
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.verifyEmailError),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.verifyEmailError)));
     }
   }
 
@@ -79,7 +76,9 @@ class _ForgotPasswordVerifyScreenState extends State<ForgotPasswordVerifyScreen>
                           width: 36,
                           height: 36,
                           decoration: BoxDecoration(
-                            color: AppColors.languageButtonColor.withOpacity(0.1),
+                            color: AppColors.languageButtonColor.withOpacity(
+                              0.1,
+                            ),
                             shape: BoxShape.circle,
                           ),
                           child: const Icon(
@@ -90,12 +89,7 @@ class _ForgotPasswordVerifyScreenState extends State<ForgotPasswordVerifyScreen>
                         ),
                       ),
                     ),
-                    const Center(
-                      child: MaraLogo(
-                        width: 258,
-                        height: 202,
-                      ),
-                    ),
+                    const Center(child: MaraLogo(width: 258, height: 202)),
                   ],
                 ),
                 const SizedBox(height: 40),
@@ -184,12 +178,12 @@ class _ForgotPasswordVerifyScreenState extends State<ForgotPasswordVerifyScreen>
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
                     gradient: const LinearGradient(
-                      begin: Alignment(0.0005944162257947028, -0.15902137756347656),
+                      begin: Alignment(
+                        0.0005944162257947028,
+                        -0.15902137756347656,
+                      ),
                       end: Alignment(6.022111415863037, 0.0005944162257947028),
-                      colors: [
-                        AppColors.gradientStart,
-                        AppColors.gradientEnd,
-                      ],
+                      colors: [AppColors.gradientStart, AppColors.gradientEnd],
                     ),
                     boxShadow: [
                       BoxShadow(
@@ -228,4 +222,3 @@ class _ForgotPasswordVerifyScreenState extends State<ForgotPasswordVerifyScreen>
     );
   }
 }
-

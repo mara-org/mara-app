@@ -12,4 +12,3 @@ final stepsProvider = StateProvider<int>((ref) {
 final stepsGoalProvider = StateProvider<int>((ref) {
   return 10000;
 });
-

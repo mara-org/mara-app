@@ -1,9 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-enum AppThemeMode {
-  light,
-  dark,
-}
+enum AppThemeMode { light, dark }
 
 class SettingsState {
   final AppThemeMode themeMode;
@@ -48,4 +45,3 @@ class SettingsNotifier extends StateNotifier<SettingsState> {
 final settingsProvider = StateNotifierProvider<SettingsNotifier, SettingsState>(
   (ref) => SettingsNotifier(),
 );
-

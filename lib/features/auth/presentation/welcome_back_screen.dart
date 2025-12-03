@@ -63,8 +63,9 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final screenWidth = MediaQuery.of(context).size.width;
-    final buttonWidth = screenWidth - 56; // Same width as email and password fields
-    
+    final buttonWidth =
+        screenWidth - 56; // Same width as email and password fields
+
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
       body: SafeArea(
@@ -80,14 +81,10 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
                     children: [
                       const SizedBox(height: 20),
                       // Mara logo
-                      const Center(
-                        child: MaraLogo(
-                          width: 258,
-                          height: 202,
-                        ),
-                      ),
+                      const Center(child: MaraLogo(width: 258, height: 202)),
                       const SizedBox(
-                          height: 800), // Space for positioned elements
+                        height: 800,
+                      ), // Space for positioned elements
                     ],
                   ),
                 ),
@@ -98,7 +95,8 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
                 start: 28,
                 top: 365,
                 child: SizedBox(
-                  width: MediaQuery.of(context).size.width -
+                  width:
+                      MediaQuery.of(context).size.width -
                       56, // Full width minus left and right padding
                   child: MaraTextField(
                     label: l10n.emailLabel,
@@ -115,7 +113,8 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
                 start: 28,
                 top: 427,
                 child: SizedBox(
-                  width: MediaQuery.of(context).size.width -
+                  width:
+                      MediaQuery.of(context).size.width -
                       56, // Full width minus left and right padding
                   child: MaraTextField(
                     label: l10n.passwordLabel,
@@ -231,11 +230,17 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
               // Positioned "Forget your password? Click here" directly under password field, direction-aware alignment
               PositionedDirectional(
                 start: 28,
-                top: 427 + 56 + 5, // Password field top (427) + field height (~56) + margin (5px)
+                top:
+                    427 +
+                    56 +
+                    5, // Password field top (427) + field height (~56) + margin (5px)
                 child: SizedBox(
-                  width: screenWidth - 56, // Same width as password field - full width
+                  width:
+                      screenWidth -
+                      56, // Same width as password field - full width
                   child: Align(
-                    alignment: AlignmentDirectional.centerStart, // Left in LTR, right in RTL
+                    alignment: AlignmentDirectional
+                        .centerStart, // Left in LTR, right in RTL
                     child: Padding(
                       padding: const EdgeInsets.only(top: 5),
                       child: GestureDetector(
@@ -243,7 +248,8 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
                           context.push('/forgot-password-email');
                         },
                         child: RichText(
-                          textAlign: TextAlign.start, // Left in LTR, right in RTL
+                          textAlign:
+                              TextAlign.start, // Left in LTR, right in RTL
                           text: TextSpan(
                             style: TextStyle(
                               color: AppColors.textSecondary,
@@ -342,10 +348,7 @@ class _SocialButton extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           color: backgroundColor,
-          border: Border.all(
-            color: AppColors.borderColor,
-            width: 1,
-          ),
+          border: Border.all(color: AppColors.borderColor, width: 1),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -362,11 +365,7 @@ class _SocialButton extends StatelessWidget {
                   filterQuality: FilterQuality.high,
                   errorBuilder: (context, error, stackTrace) {
                     debugPrint('Error loading image: $iconImagePath - $error');
-                    return Icon(
-                      Icons.image,
-                      color: textColor,
-                      size: 28,
-                    );
+                    return Icon(Icons.image, color: textColor, size: 28);
                   },
                 ),
               ),

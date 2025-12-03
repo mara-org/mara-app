@@ -14,10 +14,7 @@ import '../../../l10n/app_localizations.dart';
 class MaraChatScreen extends ConsumerStatefulWidget {
   final String? conversationId;
 
-  const MaraChatScreen({
-    super.key,
-    this.conversationId,
-  });
+  const MaraChatScreen({super.key, this.conversationId});
 
   @override
   ConsumerState<MaraChatScreen> createState() => _MaraChatScreenState();
@@ -56,8 +53,9 @@ class _MaraChatScreenState extends ConsumerState<MaraChatScreen> {
   void _loadConversation(String conversationId) {
     if (_hasLoadedConversation) return;
 
-    final conversation =
-        ref.read(chatHistoryProvider.notifier).getConversation(conversationId);
+    final conversation = ref
+        .read(chatHistoryProvider.notifier)
+        .getConversation(conversationId);
     if (conversation != null) {
       ref
           .read(chatMessagesProvider.notifier)
@@ -85,12 +83,9 @@ class _MaraChatScreenState extends ConsumerState<MaraChatScreen> {
     final isFirstMessage = messages.isEmpty;
 
     // Add user message
-    ref.read(chatMessagesProvider.notifier).addMessage(
-          ChatMessage(
-            text: text,
-            type: MessageType.user,
-          ),
-        );
+    ref
+        .read(chatMessagesProvider.notifier)
+        .addMessage(ChatMessage(text: text, type: MessageType.user));
 
     // Save topic from first user message
     if (isFirstMessage) {
@@ -99,8 +94,8 @@ class _MaraChatScreenState extends ConsumerState<MaraChatScreen> {
       final topic = words.length > 4
           ? words.take(4).join(' ') + '...'
           : text.length > 30
-              ? text.substring(0, 30) + '...'
-              : text;
+          ? text.substring(0, 30) + '...'
+          : text;
       ref.read(lastConversationTopicProvider.notifier).state = topic;
     }
 
@@ -121,21 +116,19 @@ class _MaraChatScreenState extends ConsumerState<MaraChatScreen> {
     final l10n = AppLocalizations.of(context);
     if (l10n != null) {
       Future.delayed(const Duration(milliseconds: 500), () {
-        ref.read(chatMessagesProvider.notifier).addMessage(
-              ChatMessage(
-                text: l10n.thanksForSharing,
-                type: MessageType.bot,
-              ),
+        ref
+            .read(chatMessagesProvider.notifier)
+            .addMessage(
+              ChatMessage(text: l10n.thanksForSharing, type: MessageType.bot),
             );
 
         // Update or create conversation in history
         final updatedMessages = ref.read(chatMessagesProvider);
         if (_currentConversationId != null) {
           // Update existing conversation
-          ref.read(chatHistoryProvider.notifier).updateConversation(
-                _currentConversationId!,
-                updatedMessages,
-              );
+          ref
+              .read(chatHistoryProvider.notifier)
+              .updateConversation(_currentConversationId!, updatedMessages);
         } else if (updatedMessages.length >= 2) {
           // Create new conversation (at least user message + bot reply)
           final conversation = ref
@@ -308,8 +301,9 @@ class _MessageBubble extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: Row(
-        mainAxisAlignment:
-            isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment: isUser
+            ? MainAxisAlignment.end
+            : MainAxisAlignment.start,
         children: [
           Flexible(
             child: Container(

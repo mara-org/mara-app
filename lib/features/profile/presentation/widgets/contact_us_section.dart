@@ -59,12 +59,11 @@ class _SocialButtonData {
   final IconData? icon;
   final String url;
 
-  const _SocialButtonData({
-    this.assetPath,
-    this.icon,
-    required this.url,
-  }) : assert(assetPath != null || icon != null,
-            'Either assetPath or icon must be provided');
+  const _SocialButtonData({this.assetPath, this.icon, required this.url})
+    : assert(
+        assetPath != null || icon != null,
+        'Either assetPath or icon must be provided',
+      );
 }
 
 const List<_SocialButtonData> _socialButtons = [
@@ -107,12 +106,11 @@ class _SocialIconButton extends StatelessWidget {
   final IconData? icon;
   final VoidCallback onTap;
 
-  const _SocialIconButton({
-    this.assetPath,
-    this.icon,
-    required this.onTap,
-  }) : assert(assetPath != null || icon != null,
-            'Either assetPath or icon must be provided');
+  const _SocialIconButton({this.assetPath, this.icon, required this.onTap})
+    : assert(
+        assetPath != null || icon != null,
+        'Either assetPath or icon must be provided',
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -124,10 +122,7 @@ class _SocialIconButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: AppColors.borderColor,
-            width: 1,
-          ),
+          border: Border.all(color: AppColors.borderColor, width: 1),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
@@ -144,11 +139,7 @@ class _SocialIconButton extends StatelessWidget {
                   height: 28,
                   fit: BoxFit.contain,
                 )
-              : Icon(
-                  icon,
-                  size: 28,
-                  color: AppColors.textPrimary,
-                ),
+              : Icon(icon, size: 28, color: AppColors.textPrimary),
         ),
       ),
     );

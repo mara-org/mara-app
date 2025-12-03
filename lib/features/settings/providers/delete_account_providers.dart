@@ -5,4 +5,3 @@ import '../data/delete_account_service.dart';
 final deleteAccountServiceProvider = Provider<DeleteAccountService>(
   (ref) => const DeleteAccountService(),
 );
-

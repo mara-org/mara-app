@@ -48,13 +48,9 @@ class _PrivacyWebViewScreenState extends State<PrivacyWebViewScreen> {
       body: Stack(
         children: [
           WebViewWidget(controller: _controller),
-          if (_isLoading)
-            const Center(
-              child: CircularProgressIndicator(),
-            ),
+          if (_isLoading) const Center(child: CircularProgressIndicator()),
         ],
       ),
     );
   }
 }
-

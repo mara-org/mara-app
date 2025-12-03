@@ -26,10 +26,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         leading: IconButton(
-          icon: Icon(
-            Icons.close,
-            color: AppColors.textPrimary,
-          ),
+          icon: Icon(Icons.close, color: AppColors.textPrimary),
           onPressed: () => context.go('/profile'),
         ),
         title: Text(
@@ -117,7 +114,9 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                         WidgetSpan(
                           child: GestureDetector(
                             onTap: () async {
-                              final uri = Uri.parse('https://iammara.com/terms');
+                              final uri = Uri.parse(
+                                'https://iammara.com/terms',
+                              );
                               if (await canLaunchUrl(uri)) {
                                 await launchUrl(
                                   uri,
@@ -176,10 +175,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
         Expanded(
           child: Text(
             text,
-            style: TextStyle(
-              color: AppColors.textPrimary,
-              fontSize: 16,
-            ),
+            style: TextStyle(color: AppColors.textPrimary, fontSize: 16),
           ),
         ),
       ],
@@ -216,8 +212,8 @@ class _PricingCard extends StatelessWidget {
           border: Border.all(
             color: isSelected
                 ? (isHighlighted
-                    ? AppColors.languageButtonColor
-                    : AppColors.languageButtonColor)
+                      ? AppColors.languageButtonColor
+                      : AppColors.languageButtonColor)
                 : Colors.grey.shade300,
             width: isSelected ? 2 : 1,
           ),
@@ -230,7 +226,9 @@ class _PricingCard extends StatelessWidget {
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color: isSelected ? AppColors.languageButtonColor : Colors.black87,
+                color: isSelected
+                    ? AppColors.languageButtonColor
+                    : Colors.black87,
               ),
             ),
             const SizedBox(height: 8),
@@ -243,15 +241,14 @@ class _PricingCard extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    color: isSelected ? AppColors.languageButtonColor : Colors.black87,
+                    color: isSelected
+                        ? AppColors.languageButtonColor
+                        : Colors.black87,
                   ),
                 ),
                 Text(
                   period,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey.shade600,
-                  ),
+                  style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
                 ),
               ],
             ),
@@ -261,4 +258,3 @@ class _PricingCard extends StatelessWidget {
     );
   }
 }
-

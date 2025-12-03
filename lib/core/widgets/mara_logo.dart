@@ -5,17 +5,13 @@ class MaraLogo extends StatelessWidget {
   final double? width;
   final double? height;
 
-  const MaraLogo({
-    super.key,
-    this.width,
-    this.height,
-  });
+  const MaraLogo({super.key, this.width, this.height});
 
   @override
   Widget build(BuildContext context) {
     final logoWidth = width ?? (PlatformUtils.isIOS ? 120 : 100);
     final logoHeight = height ?? (PlatformUtils.isIOS ? 120 : 100);
-    
+
     return Image.asset(
       'assets/images/mara_logo_new.png',
       width: logoWidth,
@@ -29,14 +25,9 @@ class MaraLogo extends StatelessWidget {
             color: Colors.white.withOpacity(0.2),
             borderRadius: BorderRadius.circular(8),
           ),
-          child: const Icon(
-            Icons.image,
-            color: Colors.white,
-            size: 48,
-          ),
+          child: const Icon(Icons.image, color: Colors.white, size: 48),
         );
       },
     );
   }
 }
-

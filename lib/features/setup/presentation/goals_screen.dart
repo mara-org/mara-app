@@ -10,7 +10,7 @@ import '../../../l10n/app_localizations.dart';
 
 class GoalsScreen extends ConsumerStatefulWidget {
   final bool isFromProfile;
-  
+
   const GoalsScreen({super.key, this.isFromProfile = false});
 
   @override
@@ -35,7 +35,7 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
       if (widget.isFromProfile) {
         context.go('/profile');
       } else {
-      context.push('/welcome-personal');
+        context.push('/welcome-personal');
       }
     }
   }
@@ -74,12 +74,7 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
                 ),
                 const SizedBox(height: 20),
                 // Mara logo
-                const Center(
-                  child: MaraLogo(
-                    width: 258,
-                    height: 202,
-                  ),
-                ),
+                const Center(child: MaraLogo(width: 258, height: 202)),
                 const SizedBox(height: 40),
                 // Title
                 Text(
@@ -149,13 +144,9 @@ class _GoalButton extends StatelessWidget {
         height: 52,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          color: isSelected
-              ? const Color(0xFFC4F4FF)
-              : Colors.white,
+          color: isSelected ? const Color(0xFFC4F4FF) : Colors.white,
           border: Border.all(
-            color: isSelected
-                ? const Color(0xFFC4F4FF)
-                : AppColors.borderColor,
+            color: isSelected ? const Color(0xFFC4F4FF) : AppColors.borderColor,
             width: 1,
           ),
         ),
@@ -177,4 +168,3 @@ class _GoalButton extends StatelessWidget {
     );
   }
 }
-

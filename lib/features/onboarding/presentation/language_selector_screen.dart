@@ -43,10 +43,7 @@ class LanguageSelectorScreen extends ConsumerWidget {
                   Positioned(
                     left: 68,
                     top: 270,
-                    child: const MaraLogo(
-                      width: 285,
-                      height: 202,
-                    ),
+                    child: const MaraLogo(width: 285, height: 202),
                   ),
                 ],
               ),
@@ -174,8 +171,9 @@ class _LanguageButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final backgroundColor =
-        isDisabled ? Colors.grey.shade300 : AppColors.languageButtonColor;
+    final backgroundColor = isDisabled
+        ? Colors.grey.shade300
+        : AppColors.languageButtonColor;
     final textColor = isDisabled ? Colors.grey.shade600 : Colors.white;
 
     return GestureDetector(
@@ -186,9 +184,7 @@ class _LanguageButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(
-                isDisabled ? 0.05 : 0.25,
-              ),
+              color: Colors.black.withOpacity(isDisabled ? 0.05 : 0.25),
               offset: const Offset(0, 4),
               blurRadius: 4,
             ),

@@ -17,10 +17,7 @@ class SubscriptionBanner extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: AppColors.borderColor,
-            width: 1,
-          ),
+          border: Border.all(color: AppColors.borderColor, width: 1),
         ),
         child: Row(
           children: [
@@ -76,4 +73,3 @@ class SubscriptionBanner extends StatelessWidget {
     );
   }
 }
-

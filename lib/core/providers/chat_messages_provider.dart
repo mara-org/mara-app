@@ -20,7 +20,5 @@ class ChatMessagesNotifier extends StateNotifier<List<ChatMessage>> {
 
 final chatMessagesProvider =
     StateNotifierProvider<ChatMessagesNotifier, List<ChatMessage>>(
-  (ref) => ChatMessagesNotifier(),
-);
-
-
+      (ref) => ChatMessagesNotifier(),
+    );

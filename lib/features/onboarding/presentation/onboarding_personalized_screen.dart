@@ -16,10 +16,7 @@ class OnboardingPersonalizedScreen extends StatelessWidget {
         shape: BoxShape.circle,
       ),
       child: Center(
-        child: Image.asset(
-          'assets/icons/favorite.png',
-          fit: BoxFit.contain,
-        ),
+        child: Image.asset('assets/icons/favorite.png', fit: BoxFit.contain),
       ),
     );
   }
@@ -50,12 +47,10 @@ class OnboardingPersonalizedScreen extends StatelessWidget {
               child: Column(
                 children: [
                   SizedBox(height: h * 0.18), // Top spacing
-
                   // 1) Large blue heart icon
                   _buildHeartIcon(),
 
                   const SizedBox(height: 16), // 16px spacing
-
                   // 2) Title: "Personalized health insights, made just for you"
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -72,7 +67,6 @@ class OnboardingPersonalizedScreen extends StatelessWidget {
                   ),
 
                   const SizedBox(height: 12), // 8-12px spacing
-
                   // 3) Description text
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 44),
@@ -83,8 +77,9 @@ class OnboardingPersonalizedScreen extends StatelessWidget {
                         fontFamily: 'Roboto',
                         fontSize: 14,
                         fontWeight: FontWeight.w400,
-                        color: const Color(0xFF0F172A)
-                            .withOpacity(0.65), // 60-70% opacity
+                        color: const Color(
+                          0xFF0F172A,
+                        ).withOpacity(0.65), // 60-70% opacity
                       ),
                     ),
                   ),

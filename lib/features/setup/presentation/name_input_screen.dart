@@ -15,7 +15,7 @@ class NameInputScreen extends ConsumerStatefulWidget {
   final bool isFromProfile;
   final bool fromLanguageChange;
   final String? languageCode;
-  
+
   const NameInputScreen({
     super.key,
     this.isFromProfile = false,
@@ -36,9 +36,7 @@ class _NameInputScreenState extends ConsumerState<NameInputScreen> {
       return FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z ]'));
     }
     if (languageCode == 'ar') {
-      return FilteringTextInputFormatter.allow(
-        RegExp(r'[ء-ي ]'),
-      );
+      return FilteringTextInputFormatter.allow(RegExp(r'[ء-ي ]'));
     }
     // Fallback to allow any Unicode letters plus spaces.
     return FilteringTextInputFormatter.allow(
@@ -87,11 +85,7 @@ class _NameInputScreenState extends ConsumerState<NameInputScreen> {
     final nameFormatter = _formatterForLanguage(effectiveLanguage);
     formatters.add(nameFormatter);
     if (effectiveLanguage == 'ar') {
-      formatters.add(
-        FilteringTextInputFormatter.deny(
-          RegExp(r'[0-9٠-٩۰-۹]'),
-        ),
-      );
+      formatters.add(FilteringTextInputFormatter.deny(RegExp(r'[0-9٠-٩۰-۹]')));
     }
 
     return Scaffold(
@@ -125,12 +119,7 @@ class _NameInputScreenState extends ConsumerState<NameInputScreen> {
                 ),
                 const SizedBox(height: 20),
                 // Mara logo
-                const Center(
-                  child: MaraLogo(
-                    width: 258,
-                    height: 202,
-                  ),
-                ),
+                const Center(child: MaraLogo(width: 258, height: 202)),
                 const SizedBox(height: 40),
                 // Title
                 Text(
