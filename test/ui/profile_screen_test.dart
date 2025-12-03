@@ -4,7 +4,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mara_app/features/profile/presentation/profile_screen.dart';
-import '../../utils/test_utils.dart';
+import '../utils/test_utils.dart';
 
 void main() {
   group('Profile Screen Widget Tests', () {

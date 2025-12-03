@@ -88,14 +88,11 @@ void expectWidgetNotVisible(WidgetTester tester, Finder finder) {
   expect(finder, findsNothing);
 }
 
-/// Mock provider for testing
-class MockProvider<T> extends Provider<T> {
-  MockProvider(super.create, {super.name});
-
-  static Provider<T> of<T>(T value) {
-    return Provider<T>((ref) => value);
-  }
-}
+/// Mock provider helper for testing
+/// Note: Provider is sealed in Riverpod, so we can't extend it directly
+/// Instead, create providers inline in tests using Provider<T>((ref) => value)
+/// Example:
+///   final mockProvider = Provider<String>((ref) => 'test value');
 
 /// TODO: Add more test utilities:
 /// - Mock HTTP client for API testing
