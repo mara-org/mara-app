@@ -3,17 +3,29 @@
 // TODO: Add more widget tests for all screens and components
 
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mara_app/features/home/presentation/home_screen.dart';
+import 'package:mara_app/l10n/app_localizations.dart';
 
 void main() {
   group('Home Screen Widget Tests', () {
     testWidgets('Home screen renders correctly', (WidgetTester tester) async {
-      // Build the app with ProviderScope
+      // Build the app with ProviderScope and localization delegates
       await tester.pumpWidget(
         const ProviderScope(
           child: MaterialApp(
+            localizationsDelegates: [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: [
+              Locale('en'),
+              Locale('ar'),
+            ],
             home: HomeScreen(),
           ),
         ),
