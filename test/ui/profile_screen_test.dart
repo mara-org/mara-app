@@ -24,11 +24,11 @@ void main() {
         ProviderScope(
           overrides: [
             // Mock email provider (avoid SharedPreferences access)
-            emailProvider.overrideWith(() => _MockEmailNotifier()),
+            emailProvider.overrideWith((ref) => _MockEmailNotifier()),
             // Mock subscription provider
-            subscriptionProvider.overrideWith(() => SubscriptionNotifier()),
+            subscriptionProvider.overrideWith((ref) => SubscriptionNotifier()),
             // Mock user profile provider
-            userProfileProvider.overrideWith(() => UserProfileNotifier()),
+            userProfileProvider.overrideWith((ref) => UserProfileNotifier()),
             // Mock system info providers (avoid platform-specific calls)
             appVersionProvider.overrideWith((ref) => Future.value('1.0.0 (1)')),
             deviceInfoProvider
@@ -88,9 +88,9 @@ void main() {
         ProviderScope(
           overrides: [
             // Mock providers to avoid platform-specific failures
-            emailProvider.overrideWith(() => _MockEmailNotifier()),
-            subscriptionProvider.overrideWith(() => SubscriptionNotifier()),
-            userProfileProvider.overrideWith(() => UserProfileNotifier()),
+            emailProvider.overrideWith((ref) => _MockEmailNotifier()),
+            subscriptionProvider.overrideWith((ref) => SubscriptionNotifier()),
+            userProfileProvider.overrideWith((ref) => UserProfileNotifier()),
             appVersionProvider.overrideWith((ref) => Future.value('1.0.0 (1)')),
             deviceInfoProvider
                 .overrideWith((ref) => Future.value('Test Device')),
