@@ -8,7 +8,6 @@ import 'package:golden_toolkit/golden_toolkit.dart';
 import 'package:mara_app/features/onboarding/presentation/welcome_intro_screen.dart';
 import 'package:mara_app/l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() {
   group('Welcome Screen Golden Tests', () {

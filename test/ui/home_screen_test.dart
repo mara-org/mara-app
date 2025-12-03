@@ -8,7 +8,6 @@ import 'package:mara_app/features/home/presentation/home_screen.dart';
 import 'package:mara_app/core/widgets/primary_button.dart';
 import 'package:mara_app/l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../utils/test_utils.dart';
 
 void main() {

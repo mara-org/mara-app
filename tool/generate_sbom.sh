@@ -47,73 +47,82 @@ TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
   echo "  \"dependencies\": ["
 } > "$OUTPUT_FILE"
 
-# Extract dependencies from pubspec.lock
-# Use a simpler parsing approach
+# Extract dependencies from pubspec.lock using a Python-like approach
+# Use awk to parse the lock file more reliably
 FIRST=true
 
-# Parse pubspec.lock line by line
-PACKAGE_NAME=""
-VERSION=""
-SOURCE="unknown"
+# Parse pubspec.lock - look for package entries
+CURRENT_PACKAGE=""
+CURRENT_VERSION=""
+CURRENT_SOURCE="unknown"
 
 while IFS= read -r line || [ -n "$line" ]; do
   # Match package name (format: "  package_name:")
   if [[ $line =~ ^[[:space:]]+([a-zA-Z0-9_-]+):[[:space:]]*$ ]]; then
     # Save previous package if we have one
-    if [ -n "$PACKAGE_NAME" ] && [ -n "$VERSION" ]; then
-      if [ "$FIRST" = true ]; then
-        FIRST=false
-      else
-        echo "," >> "$OUTPUT_FILE"
+    if [ -n "$CURRENT_PACKAGE" ] && [ -n "$CURRENT_VERSION" ]; then
+      # Skip metadata sections
+      if [[ "$CURRENT_PACKAGE" != "packages" ]] && [[ "$CURRENT_PACKAGE" != "sdks" ]] && [[ "$CURRENT_PACKAGE" != "dependency_graph" ]]; then
+        if [ "$FIRST" = true ]; then
+          FIRST=false
+        else
+          echo "," >> "$OUTPUT_FILE"
+        fi
+        # Escape JSON special characters in values
+        ESCAPED_NAME=$(echo "$CURRENT_PACKAGE" | sed 's/"/\\"/g')
+        ESCAPED_VERSION=$(echo "$CURRENT_VERSION" | sed 's/"/\\"/g')
+        ESCAPED_SOURCE=$(echo "$CURRENT_SOURCE" | sed 's/"/\\"/g')
+        {
+          echo "    {"
+          echo "      \"name\": \"$ESCAPED_NAME\","
+          echo "      \"version\": \"$ESCAPED_VERSION\","
+          echo "      \"source\": \"$ESCAPED_SOURCE\""
+          echo -n "    }"
+        } >> "$OUTPUT_FILE"
       fi
-      {
-        echo "    {"
-        echo "      \"name\": \"$PACKAGE_NAME\","
-        echo "      \"version\": \"$VERSION\","
-        echo "      \"source\": \"$SOURCE\""
-        echo -n "    }"
-      } >> "$OUTPUT_FILE"
     fi
     
     # Start new package
-    PACKAGE_NAME="${BASH_REMATCH[1]}"
-    VERSION=""
-    SOURCE="unknown"
-    
-    # Skip metadata sections
-    if [[ "$PACKAGE_NAME" == "packages" ]] || [[ "$PACKAGE_NAME" == "sdks" ]] || [[ "$PACKAGE_NAME" == "dependency_graph" ]]; then
-      PACKAGE_NAME=""
-      continue
-    fi
+    CURRENT_PACKAGE="${BASH_REMATCH[1]}"
+    CURRENT_VERSION=""
+    CURRENT_SOURCE="unknown"
   fi
   
-  # Extract version
-  if [ -n "$PACKAGE_NAME" ] && [[ $line =~ version:[[:space:]]*(.+) ]]; then
-    VERSION="${BASH_REMATCH[1]}"
-    VERSION=$(echo "$VERSION" | tr -d ' ')
+  # Extract version (handle both quoted and unquoted)
+  if [ -n "$CURRENT_PACKAGE" ] && [[ $line =~ version:[[:space:]]*(.+) ]]; then
+    CURRENT_VERSION="${BASH_REMATCH[1]}"
+    # Remove quotes if present and trim whitespace
+    CURRENT_VERSION=$(echo "$CURRENT_VERSION" | sed 's/^"//;s/"$//' | tr -d ' ')
   fi
   
   # Extract source
-  if [ -n "$PACKAGE_NAME" ] && [[ $line =~ source:[[:space:]]*(.+) ]]; then
-    SOURCE="${BASH_REMATCH[1]}"
-    SOURCE=$(echo "$SOURCE" | tr -d ' ')
+  if [ -n "$CURRENT_PACKAGE" ] && [[ $line =~ source:[[:space:]]*(.+) ]]; then
+    CURRENT_SOURCE="${BASH_REMATCH[1]}"
+    # Remove quotes if present and trim whitespace
+    CURRENT_SOURCE=$(echo "$CURRENT_SOURCE" | sed 's/^"//;s/"$//' | tr -d ' ')
   fi
 done < pubspec.lock
 
 # Add last package if exists
-if [ -n "$PACKAGE_NAME" ] && [ -n "$VERSION" ]; then
-  if [ "$FIRST" = true ]; then
-    FIRST=false
-  else
-    echo "," >> "$OUTPUT_FILE"
+if [ -n "$CURRENT_PACKAGE" ] && [ -n "$CURRENT_VERSION" ]; then
+  if [[ "$CURRENT_PACKAGE" != "packages" ]] && [[ "$CURRENT_PACKAGE" != "sdks" ]] && [[ "$CURRENT_PACKAGE" != "dependency_graph" ]]; then
+    if [ "$FIRST" = true ]; then
+      FIRST=false
+    else
+      echo "," >> "$OUTPUT_FILE"
+    fi
+    # Escape JSON special characters
+    ESCAPED_NAME=$(echo "$CURRENT_PACKAGE" | sed 's/"/\\"/g')
+    ESCAPED_VERSION=$(echo "$CURRENT_VERSION" | sed 's/"/\\"/g')
+    ESCAPED_SOURCE=$(echo "$CURRENT_SOURCE" | sed 's/"/\\"/g')
+    {
+      echo "    {"
+      echo "      \"name\": \"$ESCAPED_NAME\","
+      echo "      \"version\": \"$ESCAPED_VERSION\","
+      echo "      \"source\": \"$ESCAPED_SOURCE\""
+      echo -n "    }"
+    } >> "$OUTPUT_FILE"
   fi
-  {
-    echo "    {"
-    echo "      \"name\": \"$PACKAGE_NAME\","
-    echo "      \"version\": \"$VERSION\","
-    echo "      \"source\": \"$SOURCE\""
-    echo -n "    }"
-  } >> "$OUTPUT_FILE"
 fi
 
 # Close JSON
@@ -132,6 +141,8 @@ if command -v jq &> /dev/null; then
   else
     echo "⚠️ Warning: Generated SBOM may not be valid JSON"
     echo "💡 Install 'jq' for JSON validation: brew install jq (macOS) or apt-get install jq (Linux)"
+    # Try to show the error
+    jq . "$OUTPUT_FILE" 2>&1 | head -5 || true
   fi
 else
   echo "✅ SBOM generated: $OUTPUT_FILE"
