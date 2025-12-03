@@ -2,7 +2,7 @@
 
 **Mara** is an AI-powered health companion mobile app built with Flutter. It helps users track their health, get personalized insights, and interact with an intelligent health assistant.
 
-> **Note**: This is currently a Flutter frontend-only app. Backend services will be added in the future.
+
 
 ## 🎯 Features
 
