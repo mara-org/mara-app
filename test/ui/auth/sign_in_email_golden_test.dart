@@ -1,0 +1,70 @@
+// Golden tests for Sign In Email Screen
+// Visual regression tests for auth screen in light and dark mode
+
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:golden_toolkit/golden_toolkit.dart';
+import 'package:mara_app/features/auth/presentation/sign_in_email_screen.dart';
+import 'package:mara_app/l10n/app_localizations.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import '../utils/test_utils.dart';
+
+void main() {
+  group('Sign In Email Screen Golden Tests', () {
+    testGoldens(
+      'Sign in screen - light mode',
+      (WidgetTester tester) async {
+        await tester.pumpWidgetBuilder(
+          ProviderScope(
+            child: MaterialApp(
+              localizationsDelegates: const [
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              supportedLocales: const [
+                Locale('en'),
+                Locale('ar'),
+              ],
+              theme: ThemeData.light(),
+              home: const SignInEmailScreen(),
+            ),
+          ),
+          surfaceSize: const Size(375, 812), // iPhone 11 Pro size
+        );
+
+        await screenMatchesGolden(tester, 'sign_in_email_screen_light');
+      },
+    );
+
+    testGoldens(
+      'Sign in screen - dark mode',
+      (WidgetTester tester) async {
+        await tester.pumpWidgetBuilder(
+          ProviderScope(
+            child: MaterialApp(
+              localizationsDelegates: const [
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              supportedLocales: const [
+                Locale('en'),
+                Locale('ar'),
+              ],
+              theme: ThemeData.dark(),
+              home: const SignInEmailScreen(),
+            ),
+          ),
+          surfaceSize: const Size(375, 812), // iPhone 11 Pro size
+        );
+
+        await screenMatchesGolden(tester, 'sign_in_email_screen_dark');
+      },
+    );
+  });
+}
+
