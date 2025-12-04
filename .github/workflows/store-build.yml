@@ -1,0 +1,178 @@
+# Mara CD – Store Build Automation
+# Builds Play Store AAB and App Store IPA using Fastlane
+# Frontend-only: builds artifacts, does NOT upload to stores
+# Uploads built artifacts as GitHub Actions artifacts
+
+name: Mara CD – Store Build
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'  # Trigger on semantic version tags (e.g., v1.0.0)
+  workflow_dispatch:
+    inputs:
+      build_android:
+        description: 'Build Android AAB'
+        required: true
+        default: 'true'
+        type: boolean
+      build_ios:
+        description: 'Build iOS IPA'
+        required: true
+        default: 'false'
+        type: boolean
+
+jobs:
+  build-android:
+    name: Build Android AAB
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || github.event.inputs.build_android == 'true'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.27.0"
+
+      - name: Flutter pub get
+        run: flutter pub get
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+
+      - name: Install Fastlane dependencies
+        working-directory: fastlane
+        run: |
+          bundle install
+
+      - name: Extract version from tag or pubspec
+        id: version
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            VERSION_TAG="${{ github.ref_name }}"
+            VERSION_NAME=$(echo "$VERSION_TAG" | sed 's/^v//')
+            echo "version_name=$VERSION_NAME" >> $GITHUB_OUTPUT
+          else
+            # Extract from pubspec.yaml
+            VERSION_NAME=$(grep -E '^version:' pubspec.yaml | sed 's/version: //' | cut -d'+' -f1)
+            VERSION_CODE=$(grep -E '^version:' pubspec.yaml | sed 's/version: //' | cut -d'+' -f2)
+            echo "version_name=$VERSION_NAME" >> $GITHUB_OUTPUT
+            echo "version_code=$VERSION_CODE" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build Android AAB with Fastlane
+        working-directory: fastlane
+        env:
+          VERSION_NAME: ${{ steps.version.outputs.version_name }}
+          VERSION_CODE: ${{ steps.version.outputs.version_code }}
+        run: |
+          bundle exec fastlane android build_aab
+
+      - name: Sign AAB (if secrets configured)
+        if: env.ANDROID_KEYSTORE_BASE64 != ''
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          # Decode keystore
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > keystore.jks
+          
+          # Sign AAB using apksigner (preferred) or jarsigner
+          if command -v apksigner &> /dev/null; then
+            apksigner sign \
+              --ks keystore.jks \
+              --ks-key-alias "$ANDROID_KEY_ALIAS" \
+              --ks-pass pass:"$ANDROID_KEYSTORE_PASSWORD" \
+              --key-pass pass:"$ANDROID_KEY_PASSWORD" \
+              --out build/app/outputs/bundle/release/app-release-signed.aab \
+              build/app/outputs/bundle/release/app-release.aab
+          else
+            # Fallback to jarsigner
+            jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 \
+              -keystore keystore.jks \
+              -storepass "$ANDROID_KEYSTORE_PASSWORD" \
+              -keypass "$ANDROID_KEY_PASSWORD" \
+              build/app/outputs/bundle/release/app-release.aab \
+              "$ANDROID_KEY_ALIAS"
+          fi
+          
+          # Clean up keystore
+          rm -f keystore.jks
+
+      - name: Upload AAB artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: mara-android-aab-${{ steps.version.outputs.version_name }}
+          path: build/app/outputs/bundle/release/*.aab
+          retention-days: 90
+          if-no-files-found: error
+
+  build-ios:
+    name: Build iOS IPA
+    runs-on: macos-latest
+    if: github.event_name == 'push' || github.event.inputs.build_ios == 'true'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.27.0"
+
+      - name: Flutter pub get
+        run: flutter pub get
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+
+      - name: Install Fastlane dependencies
+        working-directory: fastlane
+        run: |
+          bundle install
+
+      - name: Extract version from tag or pubspec
+        id: version
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            VERSION_TAG="${{ github.ref_name }}"
+            VERSION_NAME=$(echo "$VERSION_TAG" | sed 's/^v//')
+            echo "version_name=$VERSION_NAME" >> $GITHUB_OUTPUT
+          else
+            VERSION_NAME=$(grep -E '^version:' pubspec.yaml | sed 's/version: //' | cut -d'+' -f1)
+            BUILD_NUMBER=$(grep -E '^version:' pubspec.yaml | sed 's/version: //' | cut -d'+' -f2)
+            echo "version_name=$VERSION_NAME" >> $GITHUB_OUTPUT
+            echo "build_number=$BUILD_NUMBER" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build iOS with Fastlane
+        working-directory: fastlane
+        env:
+          VERSION_NAME: ${{ steps.version.outputs.version_name }}
+          BUILD_NUMBER: ${{ steps.version.outputs.build_number }}
+        run: |
+          bundle exec fastlane ios build_ipa
+
+      - name: Upload iOS build artifacts
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: mara-ios-build-${{ steps.version.outputs.version_name }}
+          path: |
+            build/ios/iphoneos/*.app
+            build/ios/iphoneos/*.ipa
+          retention-days: 90
+          if-no-files-found: ignore
+
