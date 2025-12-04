@@ -29,6 +29,7 @@ dependencies:
   firebase_core: ^3.0.0
   firebase_analytics: ^11.0.0
   firebase_crashlytics: ^4.0.0
+  firebase_remote_config: ^5.0.0
   # Network - HTTP client with retry support
   dio: ^5.4.0
 
@@ -38,6 +39,11 @@ dev_dependencies:
   flutter_lints: ^3.0.0
   golden_toolkit: ^0.15.0
   dart_code_metrics: ^4.7.0
+  integration_test:
+    sdk: flutter
+
+dependency_overrides:
+  file: 7.0.0
 
 flutter:
   uses-material-design: true

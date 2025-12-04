@@ -1,6 +1,11 @@
 # Mara Security – PR Security Check
 # Quick security checks for pull requests
 # Runs lightweight security scans without full CI
+# 
+# INTENDED AS REQUIRED STATUS CHECK:
+# This workflow should be configured as a required status check in GitHub branch protection rules.
+# It will FAIL the job if critical/high-risk dependencies are outdated and can be upgraded.
+# Low/medium issues will only print warnings.
 
 name: Mara Security – PR Security Check
 
@@ -13,6 +18,9 @@ jobs:
   security-check:
     name: Security PR Check
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
 
     steps:
       - name: Checkout code
@@ -30,7 +38,6 @@ jobs:
 
       - name: Check for outdated dependencies
         id: outdated_check
-        continue-on-error: true
         run: |
           echo "🔍 Checking for outdated dependencies..."
           OUTDATED=$(dart pub outdated --mode=null-safety 2>&1 || true)
@@ -38,18 +45,51 @@ jobs:
           if echo "$OUTDATED" | grep -q "No dependencies are outdated"; then
             echo "✅ All dependencies are up to date"
             echo "has_outdated=false" >> $GITHUB_OUTPUT
-          else
-            echo "⚠️ Outdated dependencies found:"
-            echo "$OUTDATED" | head -20
-            echo "has_outdated=true" >> $GITHUB_OUTPUT
+            echo "critical_outdated=false" >> $GITHUB_OUTPUT
+            echo "can_upgrade=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          echo "⚠️ Outdated dependencies found:"
+          echo "$OUTDATED"
+          echo "has_outdated=true" >> $GITHUB_OUTPUT
+          
+          # Check for critical packages (Flutter, Dart, security-related)
+          CRITICAL_PATTERNS="flutter|dart|sentry|firebase|http|dio"
+          CRITICAL_FOUND=false
+          CAN_UPGRADE=false
+          
+          # Check if critical packages are outdated
+          if echo "$OUTDATED" | grep -qiE "$CRITICAL_PATTERNS"; then
+            echo "🚨 Critical packages may be outdated"
+            echo "critical_outdated=true" >> $GITHUB_OUTPUT
+            CRITICAL_FOUND=true
             
-            # Check for critical packages
-            if echo "$OUTDATED" | grep -qi "flutter\|dart\|sentry\|firebase"; then
-              echo "🚨 Critical packages may be outdated"
-              echo "critical_outdated=true" >> $GITHUB_OUTPUT
+            # Check if upgrades are available (not just dev dependencies)
+            if echo "$OUTDATED" | grep -qiE "upgradable|can be upgraded"; then
+              echo "⚠️ Critical packages CAN be upgraded"
+              echo "can_upgrade=true" >> $GITHUB_OUTPUT
+              CAN_UPGRADE=true
             else
-              echo "critical_outdated=false" >> $GITHUB_OUTPUT
+              echo "can_upgrade=false" >> $GITHUB_OUTPUT
             fi
+          else
+            echo "critical_outdated=false" >> $GITHUB_OUTPUT
+            echo "can_upgrade=false" >> $GITHUB_OUTPUT
+          fi
+          
+          # FAIL if critical packages can be upgraded
+          if [ "$CRITICAL_FOUND" = "true" ] && [ "$CAN_UPGRADE" = "true" ]; then
+            echo "❌ FAILING: Critical dependencies are outdated and CAN be upgraded"
+            echo "Please update critical packages before merging this PR:"
+            echo "  dart pub outdated --mode=null-safety"
+            echo "  dart pub upgrade"
+            exit 1
+          elif [ "$CRITICAL_FOUND" = "true" ]; then
+            echo "⚠️ WARNING: Critical packages are outdated but may require manual review"
+            echo "Please review outdated critical packages"
+          else
+            echo "ℹ️ Only non-critical packages are outdated (low/medium risk)"
           fi
 
       - name: Basic secrets scan
@@ -107,8 +147,17 @@ jobs:
           gh pr comment "$PR_NUMBER" --body "$COMMENT" || echo "Failed to add comment"
 
       - name: Security check summary
+        if: always()
         run: |
-          echo "✅ Security PR check completed"
-          echo "Outdated dependencies: ${{ steps.outdated_check.outputs.has_outdated }}"
-          echo "Critical outdated: ${{ steps.outdated_check.outputs.critical_outdated }}"
+          echo "📊 Security PR check summary:"
+          echo "  Outdated dependencies: ${{ steps.outdated_check.outputs.has_outdated }}"
+          echo "  Critical outdated: ${{ steps.outdated_check.outputs.critical_outdated }}"
+          echo "  Can upgrade: ${{ steps.outdated_check.outputs.can_upgrade }}"
+          
+          if [ "${{ steps.outdated_check.outputs.critical_outdated }}" = "true" ] && [ "${{ steps.outdated_check.outputs.can_upgrade }}" = "true" ]; then
+            echo "❌ Check FAILED: Critical dependencies need updating"
+            exit 1
+          else
+            echo "✅ Security check passed (or non-blocking warnings only)"
+          fi
 

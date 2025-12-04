@@ -1,0 +1,69 @@
+# Mara CD – Smoke Tests
+# Runs minimal reliable tests after deployment to validate build integrity
+# Frontend-only: validates app can start and basic flows work
+
+name: Mara CD – Smoke Tests
+
+on:
+  workflow_run:
+    workflows: ["Mara CD – Deploy APK", "Mara CD – Staging Deployment"]
+    types:
+      - completed
+
+jobs:
+  smoke-tests:
+    name: Post-Deployment Smoke Tests
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.27.0"
+
+      - name: Flutter pub get
+        run: flutter pub get
+
+      - name: Run smoke tests
+        run: |
+          echo "🧪 Running smoke tests..."
+          
+          # Run a minimal subset of tests that validate basic app functionality
+          # These tests should be fast and reliable
+          
+          # Test 1: App can be analyzed without errors
+          echo "Test 1: Static analysis..."
+          flutter analyze --no-fatal-infos --no-fatal-warnings || {
+            echo "❌ Smoke test failed: Static analysis found issues"
+            exit 1
+          }
+          
+          # Test 2: Critical unit tests pass
+          echo "Test 2: Critical unit tests..."
+          flutter test test/widget_test.dart test/utils/test_utils.dart || {
+            echo "❌ Smoke test failed: Critical unit tests failed"
+            exit 1
+          }
+          
+          # Test 3: App can build (dry-run)
+          echo "Test 3: Build validation..."
+          flutter build apk --debug --dry-run || {
+            echo "❌ Smoke test failed: Build validation failed"
+            exit 1
+          }
+          
+          echo "✅ All smoke tests passed"
+
+      - name: Smoke test summary
+        if: always()
+        run: |
+          echo "📊 Smoke Test Summary:"
+          echo "  Status: ${{ job.status }}"
+          echo "  Deployment validated: ${{ github.event.workflow_run.conclusion == 'success' }}"
+

@@ -7,12 +7,27 @@ import 'core/routing/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'core/providers/language_provider.dart';
 import 'core/utils/crash_reporter.dart';
+import 'core/utils/logger.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize crash reporting
+  // Initialize structured logging
+  await Logger.init();
+
+  // Initialize crash reporting with environment
   CrashReporter.initialize();
+  await CrashReporter.init(
+    environment: const bool.fromEnvironment('dart.vm.product')
+        ? 'production'
+        : 'development',
+  );
+
+  Logger.info(
+    'App starting',
+    screen: 'main',
+    feature: 'app_init',
+  );
 
   // Set system UI overlay style for both platforms
   SystemChrome.setSystemUIOverlayStyle(

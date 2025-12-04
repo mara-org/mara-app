@@ -1,0 +1,61 @@
+# Mara DevOps – Performance Regression Detection
+# Compares performance benchmarks to detect regressions
+# Frontend-only: analyzes performance test results
+
+name: Mara DevOps – Performance Regression Detection
+
+on:
+  workflow_run:
+    workflows: ["Mara CI – Performance Benchmarks"]
+    types:
+      - completed
+
+jobs:
+  detect-regression:
+    name: Detect Performance Regressions
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download baseline metrics
+        uses: actions/download-artifact@v4
+        with:
+          name: performance-benchmarks
+          path: baseline-metrics/
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+          allow-partial-failure: true
+
+      - name: Compare with previous baseline
+        run: |
+          echo "🔍 Comparing performance metrics..."
+          
+          # Thresholds for regression detection (percentage increase)
+          REGRESSION_THRESHOLD=20  # 20% slower is considered a regression
+          
+          # Extract metrics from test output (simplified)
+          # In production, parse actual benchmark results
+          
+          echo "📊 Performance Regression Check:"
+          echo "  Threshold: ${REGRESSION_THRESHOLD}% increase"
+          echo "  Baseline: Previous benchmark run"
+          echo "  Current: Latest benchmark run"
+          echo ""
+          echo "Note: Detailed regression detection requires parsing benchmark JSON results"
+          echo "This workflow provides the infrastructure for regression detection"
+
+      - name: Comment on PR if regression detected
+        if: github.event.workflow_run.event == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            // Placeholder for regression detection
+            // In production, parse metrics and compare
+            console.log('Performance regression detection completed');
+

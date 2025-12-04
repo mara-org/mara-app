@@ -1,0 +1,157 @@
+# Mara CD – Rollback Deployment
+# Allows rolling back to a previous build version
+# Frontend-only: prepares previous build artifacts for re-release
+
+name: Mara CD – Rollback
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_tag:
+        description: 'Version tag or commit SHA to rollback to (e.g., v1.0.0 or abc1234)'
+        required: true
+      reason:
+        description: 'Reason for rollback'
+        required: true
+        default: 'Rollback due to issues'
+
+jobs:
+  rollback:
+    name: Rollback to Previous Version
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://github.com/${{ github.repository }}/releases/tag/${{ github.event.inputs.version_tag }}
+
+    env:
+      DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_DEPLOYS }}
+      ROLLBACK_VERSION: ${{ github.event.inputs.version_tag }}
+      ROLLBACK_REASON: ${{ github.event.inputs.reason }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.version_tag }}
+
+      - name: Verify rollback target
+        run: |
+          echo "🔄 Rolling back to: $ROLLBACK_VERSION"
+          echo "Reason: $ROLLBACK_REASON"
+          
+          # Verify the tag/commit exists
+          if git rev-parse --verify "$ROLLBACK_VERSION" >/dev/null 2>&1; then
+            echo "✅ Rollback target verified: $ROLLBACK_VERSION"
+            COMMIT_SHA=$(git rev-parse "$ROLLBACK_VERSION")
+            echo "COMMIT_SHA=$COMMIT_SHA" >> $GITHUB_ENV
+          else
+            echo "❌ Error: Rollback target '$ROLLBACK_VERSION' not found"
+            echo "Please verify the version tag or commit SHA exists"
+            exit 1
+          fi
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.27.0"
+
+      - name: Flutter pub get
+        run: flutter pub get
+
+      - name: Extract app version
+        run: |
+          if grep -q '^version:' pubspec.yaml; then
+            VERSION_LINE=$(grep '^version:' pubspec.yaml | head -n 1)
+            VERSION_VALUE=$(echo "$VERSION_LINE" | awk '{print $2}')
+          else
+            VERSION_VALUE="unknown"
+          fi
+          echo "APP_VERSION=$VERSION_VALUE" >> $GITHUB_ENV
+          echo "ROLLBACK_VERSION_FULL=${VERSION_VALUE}-rollback-$(date +%Y%m%d-%H%M%S)" >> $GITHUB_ENV
+
+      - name: Build rollback APK
+        run: |
+          echo "🔨 Building rollback APK for version $ROLLBACK_VERSION..."
+          flutter build apk --release
+          
+          if [ -f "build/app/outputs/flutter-apk/app-release.apk" ]; then
+            echo "✅ Rollback APK built successfully"
+          else
+            echo "❌ Rollback APK build failed"
+            exit 1
+          fi
+
+      - name: Build rollback AAB
+        continue-on-error: true
+        run: |
+          echo "🔨 Building rollback AAB..."
+          flutter build appbundle --release
+          
+          if [ -f "build/app/outputs/bundle/release/app-release.aab" ]; then
+            echo "✅ Rollback AAB built successfully"
+            echo "aab_built=true" >> $GITHUB_ENV
+          else
+            echo "⚠️ Rollback AAB build failed (non-critical)"
+            echo "aab_built=false" >> $GITHUB_ENV
+          fi
+
+      - name: Upload rollback artifacts
+        uses: actions/upload-artifact@v5
+        with:
+          name: rollback-${{ env.ROLLBACK_VERSION_FULL }}
+          path: |
+            build/app/outputs/flutter-apk/app-release.apk
+            build/app/outputs/bundle/release/app-release.aab
+          retention-days: 90
+
+      - name: Create rollback summary
+        run: |
+          echo "## Rollback Summary" > rollback-summary.md
+          echo "" >> rollback-summary.md
+          echo "- **Rollback Target:** $ROLLBACK_VERSION" >> rollback-summary.md
+          echo "- **Commit SHA:** $COMMIT_SHA" >> rollback-summary.md
+          echo "- **App Version:** $APP_VERSION" >> rollback-summary.md
+          echo "- **Reason:** $ROLLBACK_REASON" >> rollback-summary.md
+          echo "- **Timestamp:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")" >> rollback-summary.md
+          echo "" >> rollback-summary.md
+          echo "Artifacts are available for download and re-deployment." >> rollback-summary.md
+          
+          cat rollback-summary.md
+
+      - name: Upload rollback summary
+        uses: actions/upload-artifact@v5
+        with:
+          name: rollback-summary-${{ env.ROLLBACK_VERSION_FULL }}
+          path: rollback-summary.md
+          retention-days: 90
+
+      - name: Notify Discord
+        if: always()
+        continue-on-error: true
+        run: |
+          STATUS="${{ job.status }}"
+          COMMIT_URL="https://github.com/${GITHUB_REPOSITORY}/commit/${COMMIT_SHA}"
+          RUN_URL="https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+
+          ICON="✅"
+          TITLE="Rollback Build Completed"
+          if [ "$STATUS" != "success" ]; then
+            ICON="❌"
+            TITLE="Rollback Build FAILED"
+          fi
+
+          MESSAGE="${ICON} **${TITLE}**
+          
+          **Rollback Details:**
+          - Target: \`$ROLLBACK_VERSION\`
+          - Version: \`$APP_VERSION\`
+          - Reason: $ROLLBACK_REASON
+          - Commit: [\`${COMMIT_SHA::7}\`](${COMMIT_URL})
+          
+          Workflow: ${RUN_URL}"
+
+          if [ -n "$DISCORD_WEBHOOK" ]; then
+            PAYLOAD=$(python3 -c "import json; print(json.dumps({'content': '''$MESSAGE'''}))" 2>/dev/null)
+            curl -s -H "Content-Type: application/json" -d "$PAYLOAD" -X POST "$DISCORD_WEBHOOK" >/dev/null 2>&1 || true
+          fi
+

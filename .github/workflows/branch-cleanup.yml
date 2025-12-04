@@ -1,0 +1,93 @@
+# Mara Automation – Branch Cleanup
+# Automatically deletes merged branches after they're merged into main
+# Conservative: only deletes branches that are safe to delete
+
+name: Mara Automation – Branch Cleanup
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  cleanup:
+    name: Cleanup Merged Branches
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch all branches
+        run: git fetch --prune
+
+      - name: List merged branches
+        id: merged_branches
+        run: |
+          echo "🔍 Finding branches merged into main..."
+          
+          # Get all remote branches except main and protected branches
+          PROTECTED_BRANCHES="main|master|develop|staging|production"
+          MERGED_BRANCHES=$(git branch -r --merged origin/main | \
+            grep -vE "origin/(${PROTECTED_BRANCHES}|HEAD)" | \
+            sed 's|origin/||' | \
+            xargs -r echo || echo "")
+          
+          if [ -z "$MERGED_BRANCHES" ]; then
+            echo "✅ No merged branches to clean up"
+            echo "branches_to_delete=" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          echo "Found merged branches: $MERGED_BRANCHES"
+          echo "branches_to_delete=$MERGED_BRANCHES" >> $GITHUB_OUTPUT
+          
+          # Count branches
+          BRANCH_COUNT=$(echo "$MERGED_BRANCHES" | wc -w)
+          echo "branch_count=$BRANCH_COUNT" >> $GITHUB_OUTPUT
+
+      - name: Delete merged branches
+        if: steps.merged_branches.outputs.branches_to_delete != ''
+        run: |
+          BRANCHES="${{ steps.merged_branches.outputs.branches_to_delete }}"
+          BRANCH_COUNT="${{ steps.merged_branches.outputs.branch_count }}"
+          
+          echo "🗑️ Deleting $BRANCH_COUNT merged branch(es)..."
+          
+          DELETED=0
+          FAILED=0
+          
+          for BRANCH in $BRANCHES; do
+            # Skip if branch name looks suspicious or is a protected pattern
+            if [[ "$BRANCH" =~ ^(main|master|develop|staging|production|gh-pages)$ ]] || \
+               [[ "$BRANCH" =~ ^(dependabot|renovate)/.* ]]; then
+              echo "⏭️ Skipping protected/special branch: $BRANCH"
+              continue
+            fi
+            
+            echo "Deleting branch: $BRANCH"
+            if git push origin --delete "$BRANCH" 2>&1; then
+              echo "✅ Deleted: $BRANCH"
+              DELETED=$((DELETED + 1))
+            else
+              echo "⚠️ Failed to delete: $BRANCH (may already be deleted or protected)"
+              FAILED=$((FAILED + 1))
+            fi
+          done
+          
+          echo "📊 Cleanup summary:"
+          echo "  Deleted: $DELETED"
+          echo "  Failed: $FAILED"
+          echo "  Total processed: $BRANCH_COUNT"
+
+      - name: Cleanup summary
+        if: always()
+        run: |
+          echo "✅ Branch cleanup completed"
+          echo "Branches processed: ${{ steps.merged_branches.outputs.branch_count }}"
+

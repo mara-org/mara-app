@@ -1,0 +1,70 @@
+# Mara DevOps – Documentation Generation
+# Generates API documentation from Dart code
+# Frontend-only: generates docs for Flutter app
+
+name: Mara DevOps – Documentation Generation
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'lib/**'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'lib/**'
+  workflow_dispatch:
+
+jobs:
+  generate-docs:
+    name: Generate Documentation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.27.0"
+
+      - name: Flutter pub get
+        run: flutter pub get
+
+      - name: Generate API documentation
+        run: |
+          echo "📚 Generating API documentation..."
+          
+          # Generate docs using dart doc
+          flutter pub global activate dartdoc || echo "dartdoc may already be installed"
+          dart doc --output=docs/api || {
+            echo "⚠️ Documentation generation failed or no public APIs found"
+            echo "This is expected if the codebase doesn't have public APIs yet"
+            exit 0
+          }
+          
+          echo "✅ Documentation generated"
+
+      - name: Upload documentation artifacts
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: api-documentation
+          path: docs/api/**
+          retention-days: 30
+          if-no-files-found: ignore
+
+      - name: Documentation summary
+        if: always()
+        run: |
+          echo "📚 Documentation Generation Summary:"
+          if [ -d "docs/api" ]; then
+            echo "  ✅ API docs generated in docs/api/"
+            echo "  📄 View artifacts to download generated docs"
+          else
+            echo "  ℹ️  No API docs generated (may not have public APIs yet)"
+          fi
+

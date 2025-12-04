@@ -143,4 +143,157 @@ class AnalyticsService {
       parameters: signUpMethod != null ? {'method': signUpMethod} : null,
     );
   }
+
+  // ============================================
+  // SLO Metrics - Client-side performance tracking
+  // ============================================
+
+  /// Record app cold start duration
+  ///
+  /// Call this when the app finishes initializing and the first screen is displayed.
+  /// [durationMs] - Time in milliseconds from app start to first screen
+  static Future<void> recordAppColdStart({
+    required int durationMs,
+  }) async {
+    await logEvent(
+      'app_cold_start',
+      parameters: {
+        'duration_ms': durationMs,
+        'duration_seconds': (durationMs / 1000).toStringAsFixed(2),
+      },
+    );
+  }
+
+  /// Record time to open chat screen
+  ///
+  /// Call this when the chat screen becomes fully interactive.
+  /// [durationMs] - Time in milliseconds from navigation start to screen ready
+  static Future<void> recordChatScreenOpen({
+    required int durationMs,
+  }) async {
+    await logEvent(
+      'chat_screen_open',
+      parameters: {
+        'duration_ms': durationMs,
+        'duration_seconds': (durationMs / 1000).toStringAsFixed(2),
+      },
+    );
+  }
+
+  /// Record sign-in flow success
+  ///
+  /// Call this when sign-in completes successfully
+  /// [method] - Sign-in method (e.g., 'email', 'google', 'apple')
+  /// [durationMs] - Time in milliseconds for the sign-in flow
+  static Future<void> recordSignInSuccess({
+    required String method,
+    int? durationMs,
+  }) async {
+    final parameters = <String, Object>{
+      'method': method,
+      'success': true,
+    };
+    if (durationMs != null) {
+      parameters['duration_ms'] = durationMs;
+      parameters['duration_seconds'] = (durationMs / 1000).toStringAsFixed(2);
+    }
+    await logEvent('sign_in_flow', parameters: parameters);
+  }
+
+  /// Record sign-in flow failure
+  ///
+  /// Call this when sign-in fails
+  /// [method] - Sign-in method (e.g., 'email', 'google', 'apple')
+  /// [error] - Error description (non-sensitive)
+  /// [durationMs] - Time in milliseconds before failure
+  static Future<void> recordSignInFailure({
+    required String method,
+    required String error,
+    int? durationMs,
+  }) async {
+    final parameters = <String, Object>{
+      'method': method,
+      'success': false,
+      'error': error,
+    };
+    if (durationMs != null) {
+      parameters['duration_ms'] = durationMs;
+      parameters['duration_seconds'] = (durationMs / 1000).toStringAsFixed(2);
+    }
+    await logEvent('sign_in_flow', parameters: parameters);
+  }
+
+  /// Record chat start flow success
+  ///
+  /// Call this when a chat session starts successfully
+  /// [durationMs] - Time in milliseconds to start chat
+  static Future<void> recordChatStartSuccess({
+    int? durationMs,
+  }) async {
+    final parameters = <String, Object>{
+      'success': true,
+    };
+    if (durationMs != null) {
+      parameters['duration_ms'] = durationMs;
+      parameters['duration_seconds'] = (durationMs / 1000).toStringAsFixed(2);
+    }
+    await logEvent('chat_start_flow', parameters: parameters);
+  }
+
+  /// Record chat start flow failure
+  ///
+  /// Call this when starting a chat fails
+  /// [error] - Error description (non-sensitive)
+  /// [durationMs] - Time in milliseconds before failure
+  static Future<void> recordChatStartFailure({
+    required String error,
+    int? durationMs,
+  }) async {
+    final parameters = <String, Object>{
+      'success': false,
+      'error': error,
+    };
+    if (durationMs != null) {
+      parameters['duration_ms'] = durationMs;
+      parameters['duration_seconds'] = (durationMs / 1000).toStringAsFixed(2);
+    }
+    await logEvent('chat_start_flow', parameters: parameters);
+  }
+
+  /// Record message send success
+  ///
+  /// Call this when a message is sent successfully
+  /// [durationMs] - Time in milliseconds to send message
+  static Future<void> recordMessageSendSuccess({
+    int? durationMs,
+  }) async {
+    final parameters = <String, Object>{
+      'success': true,
+    };
+    if (durationMs != null) {
+      parameters['duration_ms'] = durationMs;
+      parameters['duration_seconds'] = (durationMs / 1000).toStringAsFixed(2);
+    }
+    await logEvent('message_send', parameters: parameters);
+  }
+
+  /// Record message send failure
+  ///
+  /// Call this when sending a message fails
+  /// [error] - Error description (non-sensitive)
+  /// [durationMs] - Time in milliseconds before failure
+  static Future<void> recordMessageSendFailure({
+    required String error,
+    int? durationMs,
+  }) async {
+    final parameters = <String, Object>{
+      'success': false,
+      'error': error,
+    };
+    if (durationMs != null) {
+      parameters['duration_ms'] = durationMs;
+      parameters['duration_seconds'] = (durationMs / 1000).toStringAsFixed(2);
+    }
+    await logEvent('message_send', parameters: parameters);
+  }
 }

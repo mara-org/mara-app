@@ -224,8 +224,144 @@ This document outlines the incident response procedures for the Mara app. It pro
 - ✅ CI/CD pipeline status (Discord `#mara-dev-events`)
 - ✅ Deployment status (Discord `#mara-deploys`)
 - ✅ Repeated failures (Discord `#mara-alerts`)
+- ✅ Crash reports (Sentry/Firebase Crashlytics)
+- ✅ Error tracking (Sentry with structured tags)
+- ✅ Performance metrics (Firebase Analytics SLO events)
+- ✅ Structured logging (`Logger` class for debugging)
 - ⚠️ Health checks (placeholder - needs backend)
-- ⚠️ Crash reports (detection only - needs backend integration)
+
+### Using Observability Dashboards for Incident Debugging
+
+#### Sentry Dashboard
+
+**Access**: https://sentry.io/organizations/[org]/projects/[project]/
+
+**Key Views for Incidents**:
+
+1. **Issues Tab** - View all error reports
+   - Filter by tags: `environment`, `app_version`, `build_number`, `screen`, `feature`, `error_type`
+   - Example: Filter `error_type:network` to see all network-related errors
+   - Example: Filter `screen:chat_screen` to see errors specific to chat
+
+2. **Performance Tab** - View performance metrics
+   - Track app cold start times
+   - Monitor screen render times
+   - Identify performance regressions
+
+3. **Releases Tab** - Track errors by app version
+   - Compare crash rates between versions
+   - Identify regressions introduced in specific builds
+
+**Debugging Workflow**:
+1. Check Sentry Issues for recent errors matching incident symptoms
+2. Filter by `environment:production` and `error_type` (network/ui/data/unknown)
+3. Review error details: stack trace, tags (screen, feature), user context
+4. Check if errors correlate with recent deployments (Releases tab)
+5. Use structured tags to identify affected screens/features
+
+**Example Query**:
+```
+environment:production AND error_type:network AND screen:chat_screen
+```
+
+#### Firebase Crashlytics Dashboard
+
+**Access**: Firebase Console → Crashlytics
+
+**Key Views for Incidents**:
+
+1. **Crash-free users** - Overall app stability metric
+   - Monitor crash-free rate (target: >99.9%)
+   - Identify sudden drops indicating incidents
+
+2. **Crashes Tab** - View crash reports
+   - Filter by custom keys: `environment`, `app_version`, `build_number`, `screen`, `feature`, `error_type`
+   - View crash trends over time
+   - See affected devices and OS versions
+
+3. **Non-fatal errors** - Recoverable errors
+   - Track non-fatal errors by screen/feature
+   - Identify error patterns
+
+**Debugging Workflow**:
+1. Check Crash-free users graph for sudden drops
+2. Filter crashes by custom keys (e.g., `screen:chat_screen`)
+3. Review crash details: stack trace, device info, user steps
+4. Check if crashes correlate with specific app versions
+5. Use custom keys to identify affected features
+
+**Example Filter**:
+- Custom Key: `screen` = `chat_screen`
+- Custom Key: `error_type` = `network`
+
+#### Firebase Analytics Dashboard
+
+**Access**: Firebase Console → Analytics
+
+**Key Views for Incidents**:
+
+1. **Events Tab** - View custom events
+   - Monitor SLO metrics: `app_cold_start`, `chat_screen_open`
+   - Track flow success rates: `sign_in_flow`, `chat_start_flow`, `message_send`
+   - Filter by event parameters (success, error, duration_ms)
+
+2. **DebugView** (Development) - Real-time event monitoring
+   - See events as they happen in debug builds
+   - Useful for testing and debugging
+
+**Debugging Workflow**:
+1. Check `sign_in_flow` events for sign-in failures
+   - Filter `success:false` to see failures
+   - Check `error` parameter for failure reasons
+   - Review `duration_ms` to identify slow flows
+
+2. Check `chat_start_flow` events for chat start issues
+   - Filter `success:false` to see failures
+   - Review error patterns
+
+3. Check `message_send` events for message sending issues
+   - Filter `success:false` to see failures
+   - Identify network vs. data errors
+
+4. Monitor `app_cold_start` for performance issues
+   - Check P95 duration_ms values
+   - Identify performance regressions
+
+**Example Queries**:
+- `sign_in_flow` where `success:false` - Sign-in failures
+- `chat_start_flow` where `success:false` - Chat start failures
+- `message_send` where `success:false` - Message send failures
+- `app_cold_start` where `duration_ms > 3000` - Slow app starts
+
+#### Structured Logs (Logger)
+
+**Access**: Console logs (debug builds) or log aggregation service (if configured)
+
+**Key Information**:
+- Structured logs include: screen, feature, log level, session_id, app_version
+- Use logs to trace user flows and identify where errors occur
+- Logs never contain sensitive health data (per design)
+
+**Debugging Workflow**:
+1. Search logs by `screen` or `feature` to trace user flow
+2. Use `session_id` to correlate logs from same user session
+3. Filter by log level (`ERROR`, `WARNING`, `INFO`) to find issues
+4. Review timestamps to understand sequence of events
+
+**Example Log Search**:
+```
+screen:chat_screen AND level:ERROR
+```
+
+### Alert Thresholds
+- **Repeated Failures:** 3+ failures OR 2+ consecutive failures
+- **Deploy Failures:** Any failure triggers alert
+- **Crash Rate:** > 1% crash-free users drop triggers alert
+- **SLO Violations:** 
+  - App cold start P95 > 3 seconds
+  - Sign-in flow success rate < 98%
+  - Chat start flow success rate < 98%
+  - Message send success rate < 99%
 
 ### Alert Thresholds
 - **Repeated Failures:** 3+ failures OR 2+ consecutive failures
@@ -258,7 +394,7 @@ This document outlines the incident response procedures for the Mara app. It pro
 
 ### Documentation
 - This runbook: `docs/INCIDENT_RESPONSE.md`
-- SRE Audit: `SRE_AUDIT_REPORT.md`
+- Enterprise Audit Report: [docs/ENTERPRISE_AUDIT_REPORT.md](ENTERPRISE_AUDIT_REPORT.md)
 - README: `README.md`
 
 ## Contact Information

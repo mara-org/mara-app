@@ -11,12 +11,17 @@ on:
   push:
     branches:
       - main  # Trigger on main branch pushes
+    tags:
+      - 'v*.*.*'  # Trigger on semantic version tags (e.g., v1.0.0, v2.1.3)
   workflow_dispatch:  # Allow manual trigger from the Actions tab
 
 jobs:
   deploy:
     name: Build & Deploy
     runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://github.com/${{ github.repository }}/releases
 
     env:
       DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_DEPLOYS }}
@@ -48,16 +53,150 @@ jobs:
         run: echo "DEPLOY_START_TIME=$(date +%s)" >> $GITHUB_ENV
 
       - name: Build Flutter APK
-        run: flutter build apk --release
-
-      # If you use web instead of APK, comment the step above and use:
-      # - name: Build Flutter Web
-      #   run: flutter build web --release
-
-      - name: Deploy Flutter build
+        id: build_apk
         run: |
-          echo "TODO: add real deploy (Firebase App Distribution / Play Store / Web hosting) later"
-          echo "Build artifacts are available in build/app/outputs/flutter-apk/"
+          flutter build apk --release
+          if [ -f "build/app/outputs/flutter-apk/app-release.apk" ]; then
+            echo "✅ APK built successfully"
+            echo "apk_path=build/app/outputs/flutter-apk/app-release.apk" >> $GITHUB_OUTPUT
+          else
+            echo "❌ APK build failed or file not found"
+            exit 1
+          fi
+
+      - name: Build Flutter App Bundle (AAB)
+        id: build_aab
+        continue-on-error: true
+        run: |
+          flutter build appbundle --release
+          if [ -f "build/app/outputs/bundle/release/app-release.aab" ]; then
+            echo "✅ AAB built successfully"
+            echo "aab_path=build/app/outputs/bundle/release/app-release.aab" >> $GITHUB_OUTPUT
+            echo "aab_built=true" >> $GITHUB_OUTPUT
+          else
+            echo "⚠️ AAB build failed or file not found (non-critical)"
+            echo "aab_built=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Prepare artifact names
+        id: artifact_names
+        run: |
+          SHORT_SHA="${GITHUB_SHA::7}"
+          VERSION="${{ env.APP_VERSION }}"
+          TAG_NAME="${{ github.ref_name }}"
+          
+          # Use tag name if available, otherwise use version + commit
+          if [[ "$TAG_NAME" == v* ]]; then
+            ARTIFACT_SUFFIX="$TAG_NAME"
+          else
+            ARTIFACT_SUFFIX="v${VERSION}-${SHORT_SHA}"
+          fi
+          
+          echo "apk_name=mara-android-apk-${ARTIFACT_SUFFIX}" >> $GITHUB_OUTPUT
+          echo "aab_name=mara-android-aab-${ARTIFACT_SUFFIX}" >> $GITHUB_OUTPUT
+          echo "artifact_suffix=${ARTIFACT_SUFFIX}" >> $GITHUB_OUTPUT
+
+      - name: Check for signing secrets
+        id: signing_check
+        run: |
+          if [ -n "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" ] && \
+             [ -n "${{ secrets.ANDROID_KEY_ALIAS }}" ] && \
+             [ -n "${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" ] && \
+             [ -n "${{ secrets.ANDROID_KEY_PASSWORD }}" ]; then
+            echo "✅ Signing secrets found"
+            echo "signing_available=true" >> $GITHUB_OUTPUT
+          else
+            echo "ℹ️ Signing secrets not configured"
+            echo "signing_available=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Sign APK (if secrets available)
+        if: steps.signing_check.outputs.signing_available == 'true'
+        run: |
+          echo "🔐 Signing APK with provided keystore..."
+          
+          # Decode keystore
+          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > /tmp/keystore.jks
+          
+          # Sign APK using apksigner (preferred) or jarsigner
+          if command -v apksigner &> /dev/null; then
+            apksigner sign \
+              --ks /tmp/keystore.jks \
+              --ks-key-alias "${{ secrets.ANDROID_KEY_ALIAS }}" \
+              --ks-pass pass:"${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" \
+              --key-pass pass:"${{ secrets.ANDROID_KEY_PASSWORD }}" \
+              --out build/app/outputs/flutter-apk/app-release-signed.apk \
+              build/app/outputs/flutter-apk/app-release.apk
+            
+            # Replace unsigned with signed
+            mv build/app/outputs/flutter-apk/app-release-signed.apk \
+               build/app/outputs/flutter-apk/app-release.apk
+            echo "✅ APK signed with apksigner"
+          else
+            # Fallback to jarsigner
+            jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 \
+              -keystore /tmp/keystore.jks \
+              -storepass "${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" \
+              -keypass "${{ secrets.ANDROID_KEY_PASSWORD }}" \
+              build/app/outputs/flutter-apk/app-release.apk \
+              "${{ secrets.ANDROID_KEY_ALIAS }}"
+            echo "✅ APK signed with jarsigner"
+          fi
+          
+          # Clean up keystore
+          rm -f /tmp/keystore.jks
+          echo "signing_completed=true" >> $GITHUB_OUTPUT
+
+      - name: Sign AAB (if secrets available)
+        if: steps.signing_check.outputs.signing_available == 'true' && steps.build_aab.outputs.aab_built == 'true'
+        run: |
+          echo "🔐 Signing AAB with provided keystore..."
+          
+          # Decode keystore
+          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > /tmp/keystore.jks
+          
+          # Sign AAB using jarsigner
+          jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 \
+            -keystore /tmp/keystore.jks \
+            -storepass "${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" \
+            -keypass "${{ secrets.ANDROID_KEY_PASSWORD }}" \
+            build/app/outputs/bundle/release/app-release.aab \
+            "${{ secrets.ANDROID_KEY_ALIAS }}"
+          
+          # Clean up keystore
+          rm -f /tmp/keystore.jks
+          echo "✅ AAB signed"
+
+      - name: Upload APK artifact
+        if: steps.build_apk.outputs.apk_path != ''
+        uses: actions/upload-artifact@v5
+        with:
+          name: ${{ steps.artifact_names.outputs.apk_name }}
+          path: build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 90
+          if-no-files-found: error
+
+      - name: Upload AAB artifact
+        if: steps.build_aab.outputs.aab_built == 'true'
+        uses: actions/upload-artifact@v5
+        with:
+          name: ${{ steps.artifact_names.outputs.aab_name }}
+          path: build/app/outputs/bundle/release/app-release.aab
+          retention-days: 90
+          if-no-files-found: warn
+
+      - name: Deploy summary
+        if: steps.signing_check.outputs.signing_available == 'false'
+        run: |
+          echo "ℹ️ Signing skipped: keystore secrets not configured yet."
+          echo "   To enable signing, configure these secrets in GitHub:"
+          echo "   - ANDROID_KEYSTORE_BASE64"
+          echo "   - ANDROID_KEY_ALIAS"
+          echo "   - ANDROID_KEYSTORE_PASSWORD"
+          echo "   - ANDROID_KEY_PASSWORD"
+          echo ""
+          echo "Build artifacts are available as GitHub Actions artifacts."
+          echo "No backend/server deployment configured (frontend-only repo)."
 
       - name: Compute deploy duration
         run: |

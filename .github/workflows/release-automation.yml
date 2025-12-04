@@ -1,0 +1,175 @@
+# Mara CD – Release Automation
+# Automatically bumps versions and generates release notes
+# Frontend-only: manages app versioning and changelog
+
+name: Mara CD – Release Automation
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'pubspec.yaml'
+  workflow_dispatch:
+    inputs:
+      version_bump:
+        description: 'Version bump type'
+        required: true
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+      create_release:
+        description: 'Create GitHub release'
+        required: true
+        type: boolean
+        default: true
+
+jobs:
+  release-automation:
+    name: Automate Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Determine version bump
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            BUMP_TYPE="${{ github.event.inputs.version_bump }}"
+          else
+            # Auto-detect from commit messages (conventional commits)
+            LAST_COMMIT_MSG=$(git log -1 --pretty=%B)
+            LAST_COMMIT_LOWER=$(echo "$LAST_COMMIT_MSG" | tr '[:upper:]' '[:lower:]')
+            
+            if [[ "$LAST_COMMIT_LOWER" =~ ^(feat|add|new) ]]; then
+              BUMP_TYPE="minor"
+            elif [[ "$LAST_COMMIT_LOWER" =~ ^(fix|bugfix) ]]; then
+              BUMP_TYPE="patch"
+            elif [[ "$LAST_COMMIT_LOWER" =~ ^(breaking|major) ]]; then
+              BUMP_TYPE="major"
+            else
+              BUMP_TYPE="patch"  # Default to patch
+            fi
+          fi
+          
+          echo "bump_type=$BUMP_TYPE" >> $GITHUB_OUTPUT
+          
+          # Get current version
+          CURRENT_VERSION=$(grep '^version:' pubspec.yaml | awk '{print $2}' | head -n 1)
+          echo "current_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+          
+          # Parse version (format: major.minor.patch+build)
+          IFS='+' read -r VERSION_PART BUILD_PART <<< "$CURRENT_VERSION"
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION_PART"
+          
+          MAJOR=${MAJOR:-1}
+          MINOR=${MINOR:-0}
+          PATCH=${PATCH:-0}
+          BUILD=${BUILD_PART:-1}
+          
+          # Bump version
+          case "$BUMP_TYPE" in
+            major)
+              MAJOR=$((MAJOR + 1))
+              MINOR=0
+              PATCH=0
+              ;;
+            minor)
+              MINOR=$((MINOR + 1))
+              PATCH=0
+              ;;
+            patch)
+              PATCH=$((PATCH + 1))
+              ;;
+          esac
+          
+          # Increment build number
+          BUILD=$((BUILD + 1))
+          
+          NEW_VERSION="$MAJOR.$MINOR.$PATCH+$BUILD"
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          
+          echo "Version bump: $CURRENT_VERSION → $NEW_VERSION ($BUMP_TYPE)"
+
+      - name: Update version in pubspec.yaml
+        run: |
+          CURRENT_VERSION="${{ steps.version.outputs.current_version }}"
+          NEW_VERSION="${{ steps.version.outputs.new_version }}"
+          
+          # Update version line in pubspec.yaml
+          sed -i.bak "s/^version:.*/version: $NEW_VERSION/" pubspec.yaml
+          rm pubspec.yaml.bak
+          
+          echo "✅ Updated version to $NEW_VERSION"
+
+      - name: Generate changelog
+        run: |
+          bash scripts/generate-changelog.sh
+
+      - name: Commit version bump and changelog
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          git add pubspec.yaml CHANGELOG.md
+          git commit -m "chore: bump version to ${{ steps.version.outputs.new_version }}" || {
+            echo "No changes to commit (version may already be updated)"
+            exit 0
+          }
+          
+          git push origin HEAD:${{ github.ref_name }} || {
+            echo "Failed to push (may require manual merge)"
+            exit 0
+          }
+
+      - name: Create Git tag
+        if: github.event.inputs.create_release == 'true' || github.event_name == 'push'
+        run: |
+          NEW_VERSION="${{ steps.version.outputs.new_version }}"
+          TAG_NAME="v${NEW_VERSION%%+*}"  # Remove build number from tag
+          
+          git tag -a "$TAG_NAME" -m "Release $TAG_NAME" || {
+            echo "Tag may already exist"
+            exit 0
+          }
+          
+          git push origin "$TAG_NAME" || {
+            echo "Failed to push tag (may already exist)"
+            exit 0
+          }
+          
+          echo "tag_name=$TAG_NAME" >> $GITHUB_ENV
+
+      - name: Create GitHub Release
+        if: github.event.inputs.create_release == 'true' || github.event_name == 'push'
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.tag_name }}
+          release_name: Release ${{ env.tag_name }}
+          body_path: CHANGELOG.md
+          draft: false
+          prerelease: false
+
+      - name: Release summary
+        if: always()
+        run: |
+          echo "📦 Release Automation Summary:"
+          echo "  Current version: ${{ steps.version.outputs.current_version }}"
+          echo "  New version: ${{ steps.version.outputs.new_version }}"
+          echo "  Bump type: ${{ steps.version.outputs.bump_type }}"
+          if [ -n "${{ env.tag_name }}" ]; then
+            echo "  Tag: ${{ env.tag_name }}"
+          fi
+
