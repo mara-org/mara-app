@@ -258,7 +258,7 @@ This document outlines the incident response procedures for the Mara app. It pro
 
 ### Documentation
 - This runbook: `docs/INCIDENT_RESPONSE.md`
-- SRE Audit: `SRE_AUDIT_REPORT.md`
+- Enterprise Audit Report: [docs/ENTERPRISE_AUDIT_REPORT.md](ENTERPRISE_AUDIT_REPORT.md)
 - README: `README.md`
 
 ## Contact Information

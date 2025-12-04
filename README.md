@@ -149,7 +149,9 @@ lib/
 
 **This repo is intentionally backend-agnostic.** No backend code, API endpoints, or `/health` endpoints exist in this repository by design.
 
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for detailed architecture documentation.
+**Related Documentation:**
+- [Architecture](docs/ARCHITECTURE.md) - Detailed architecture documentation
+- [Enterprise Audit Report](docs/ENTERPRISE_AUDIT_REPORT.md) - Comprehensive engineering maturity assessment
 
 ## 🔒 Security & SBOM
 
@@ -554,8 +556,10 @@ AnalyticsService.logEvent('button_clicked', {'button_name': 'chat'});
 
 ### Documentation
 
-- **Incident Response Runbook:** `docs/INCIDENT_RESPONSE.md`
-- **SRE Audit Report:** `SRE_AUDIT_REPORT.md`
+- **Architecture:** [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) - System architecture and design
+- **Frontend SLOs:** [docs/FRONTEND_SLOS.md](docs/FRONTEND_SLOS.md) - Service level objectives
+- **Incident Response Runbook:** [docs/INCIDENT_RESPONSE.md](docs/INCIDENT_RESPONSE.md) - Incident handling procedures
+- **Enterprise Audit Report:** [docs/ENTERPRISE_AUDIT_REPORT.md](docs/ENTERPRISE_AUDIT_REPORT.md) - Comprehensive engineering maturity audit
 
 See the [Incident Response Runbook](docs/INCIDENT_RESPONSE.md) for detailed procedures on handling incidents, escalation, and post-mortems.
 
