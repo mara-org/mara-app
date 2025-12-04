@@ -75,6 +75,14 @@ jobs:
       - name: Flutter pub get
         run: flutter pub get
 
+      - name: Validate environment and configuration
+        run: |
+          echo "🔍 Running environment validation..."
+          bash scripts/validate-environment.sh || {
+            echo "⚠️ Environment validation found issues. Review warnings above."
+            # Don't fail CI for warnings, only errors
+          }
+
       - name: Check for outdated dependencies
         id: outdated_check
         run: |

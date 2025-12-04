@@ -1,0 +1,100 @@
+# Fastfile for Mara App
+# Frontend-only: Builds Play Store AAB and App Store IPA
+# Does NOT upload to stores (assumes credentials will be configured separately)
+
+default_platform(:android)
+
+platform :android do
+  desc "Build Android App Bundle (AAB) for Play Store"
+  lane :build_aab do
+    # Set version from environment or pubspec.yaml
+    version_name = ENV["VERSION_NAME"] || get_version_name_from_pubspec
+    version_code = ENV["VERSION_CODE"] || get_version_code_from_pubspec
+
+    puts "Building AAB for version #{version_name} (#{version_code})"
+
+    # Build release AAB
+    sh("flutter build appbundle --release")
+
+    # AAB will be in build/app/outputs/bundle/release/app-release.aab
+    puts "✅ AAB built successfully: build/app/outputs/bundle/release/app-release.aab"
+  end
+
+  desc "Build Android APK for testing"
+  lane :build_apk do
+    version_name = ENV["VERSION_NAME"] || get_version_name_from_pubspec
+    version_code = ENV["VERSION_CODE"] || get_version_code_from_pubspec
+
+    puts "Building APK for version #{version_name} (#{version_code})"
+
+    sh("flutter build apk --release")
+
+    puts "✅ APK built successfully: build/app/outputs/flutter-apk/app-release.apk"
+  end
+
+  # Helper to get version from pubspec.yaml
+  def get_version_name_from_pubspec
+    pubspec_path = "../pubspec.yaml"
+    if File.exist?(pubspec_path)
+      content = File.read(pubspec_path)
+      if match = content.match(/version:\s*([\d.]+)\+(\d+)/)
+        return match[1]
+      end
+    end
+    "1.0.0"
+  end
+
+  def get_version_code_from_pubspec
+    pubspec_path = "../pubspec.yaml"
+    if File.exist?(pubspec_path)
+      content = File.read(pubspec_path)
+      if match = content.match(/version:\s*([\d.]+)\+(\d+)/)
+        return match[2].to_i
+      end
+    end
+    1
+  end
+end
+
+platform :ios do
+  desc "Build iOS IPA for App Store"
+  lane :build_ipa do
+    # Set version from environment or pubspec.yaml
+    version_name = ENV["VERSION_NAME"] || get_version_name_from_pubspec
+    build_number = ENV["BUILD_NUMBER"] || get_version_code_from_pubspec
+
+    puts "Building IPA for version #{version_name} (#{build_number})"
+
+    # Build iOS release
+    # Note: This requires proper code signing setup
+    # For now, we'll build but not archive (requires Xcode setup)
+    sh("flutter build ios --release --no-codesign")
+
+    puts "✅ iOS build completed (IPA creation requires Xcode and code signing)"
+    puts "⚠️  Note: Full IPA creation requires Xcode setup and code signing certificates"
+  end
+
+  # Helper methods (same as Android)
+  def get_version_name_from_pubspec
+    pubspec_path = "../pubspec.yaml"
+    if File.exist?(pubspec_path)
+      content = File.read(pubspec_path)
+      if match = content.match(/version:\s*([\d.]+)\+(\d+)/)
+        return match[1]
+      end
+    end
+    "1.0.0"
+  end
+
+  def get_version_code_from_pubspec
+    pubspec_path = "../pubspec.yaml"
+    if File.exist?(pubspec_path)
+      content = File.read(pubspec_path)
+      if match = content.match(/version:\s*([\d.]+)\+(\d+)/)
+        return match[2].to_i
+      end
+    end
+    1
+  end
+end
+
