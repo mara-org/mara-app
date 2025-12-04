@@ -16,7 +16,7 @@ We release patches for security vulnerabilities. Which versions are eligible for
 If you discover a security vulnerability in the Mara mobile app (frontend repository), please report it:
 
 1. **Do NOT** open a public GitHub issue
-2. Email security details to: [security@mara-app.com] (to be configured)
+2. Email security details to: [security@iammara.com] (to be configured)
 3. Include:
    - Description of the vulnerability
    - Steps to reproduce
@@ -168,8 +168,7 @@ If you discover a security vulnerability in the Mara mobile app (frontend reposi
 
 ## Contact
 
-- **Security Email:** [security@mara-app.com] (to be configured)
-- **Security Team:** [@security-team] (to be configured)
+- **Security Email:** [security@iammara.com] (to be configured)
 
 ## Disclosure Policy
 

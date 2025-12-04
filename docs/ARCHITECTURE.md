@@ -204,30 +204,147 @@ The app follows a layered architecture pattern:
 
 ### Workflows
 
+#### Core CI Workflows
+
 1. **Frontend CI** (`.github/workflows/frontend-ci.yml`):
    - Multi-platform builds (Android, iOS, Web)
    - Code formatting checks
    - Static analysis
-   - Test execution with coverage
-   - Flaky test detection
+   - Test execution with coverage (parallel execution)
+   - Flaky test detection with retry logic
    - Performance timing metrics
+   - Test result caching
+   - Per-file coverage gates
+   - PR size-based test selection
+   - CI failure root cause analysis
 
-2. **SBOM Generation** (`.github/workflows/sbom-generation.yml`):
-   - Generates SBOM on push to `main` and release tags
-   - Uploads SBOM as artifact
+2. **Integration Tests** (`.github/workflows/integration-tests.yml`):
+   - End-to-end integration tests
+   - Multi-platform support (Android, iOS)
+   - Web platform gracefully skipped
 
 3. **Golden Tests** (`.github/workflows/golden-tests.yml`):
    - Visual regression testing
    - Uploads diffs as artifacts on failure
+   - Light and dark mode support
 
-4. **Security Scanning**:
-   - CodeQL analysis
-   - Secrets scanning (TruffleHog)
+4. **Performance Benchmarks** (`.github/workflows/performance-benchmarks.yml`):
+   - Performance test execution
+   - Metrics collection and tracking
+   - Regression detection support
 
-5. **Automation**:
-   - PR size labeling
-   - Auto-labeler (by file paths)
-   - Auto-merge (when conditions met)
+5. **Dart Metrics** (`.github/workflows/dart-metrics.yml`):
+   - Code complexity analysis
+   - File size warnings
+   - Static analysis with `dart_code_metrics`
+
+6. **Docs CI** (`.github/workflows/docs-ci.yml`):
+   - Markdown linting
+   - Documentation quality checks
+   - Triggered on docs changes only
+
+#### Security Workflows
+
+7. **Security PR Check** (`.github/workflows/security-pr-check.yml`):
+   - Dependency vulnerability scanning
+   - Outdated dependency detection
+   - Basic secrets scanning
+   - PR comments on security issues
+   - **Note:** Requires `pull-requests: write` permission
+
+8. **CodeQL Analysis** (`.github/workflows/codeql-analysis.yml`):
+   - Static Application Security Testing (SAST)
+   - Weekly scheduled scans
+
+9. **Secrets Scan** (`.github/workflows/secrets-scan.yml`):
+   - TruffleHog secrets detection
+   - Weekly scheduled scans
+
+10. **License Scan** (`.github/workflows/license-scan.yml`):
+    - License compliance checking
+    - Weekly scheduled scans
+
+11. **SBOM Generation** (`.github/workflows/sbom-generation.yml`):
+    - Generates SBOM on push to `main` and release tags
+    - Uploads SBOM as artifact
+
+#### Deployment Workflows
+
+12. **Production Deploy** (`.github/workflows/frontend-deploy.yml`):
+    - Production APK/AAB builds
+    - Artifact signing (if configured)
+    - GitHub Environments approval gates
+
+13. **Staging Deploy** (`.github/workflows/staging-deploy.yml`):
+    - Staging environment builds
+    - Pre-production testing
+
+14. **PR Preview Deploy** (`.github/workflows/pr-preview-deploy.yml`):
+    - Debug APK builds for PRs
+    - Automatic PR comments with download links
+    - **Note:** Requires `pull-requests: write` permission
+
+15. **Rollback** (`.github/workflows/rollback.yml`):
+    - Rollback to previous versions
+    - Manual trigger with version selection
+
+16. **Smoke Tests** (`.github/workflows/smoke-tests.yml`):
+    - Post-deployment validation
+    - Critical test execution
+
+17. **Release Automation** (`.github/workflows/release-automation.yml`):
+    - Semantic versioning
+    - Changelog generation
+    - GitHub release creation
+
+#### Automation Workflows
+
+18. **Auto-Triage** (`.github/workflows/auto-triage.yml`):
+    - Automatic issue/PR labeling
+    - Assignee suggestions
+    - **Note:** Uses `github-script` (context is built-in)
+
+19. **Contributor Onboarding** (`.github/workflows/contributor-onboarding.yml`):
+    - Welcomes first-time contributors
+    - Provides helpful links and resources
+    - **Note:** Uses `github-script` (context is built-in)
+
+20. **Auto-Merge** (`.github/workflows/auto-merge.yml`):
+    - Automatic PR merging when conditions met
+    - Supports Dependabot PRs
+
+21. **Auto-Rebase** (`.github/workflows/auto-rebase.yml`):
+    - Automatic PR rebasing on main branch updates
+
+22. **Branch Cleanup** (`.github/workflows/branch-cleanup.yml`):
+    - Automatic deletion of merged branches
+
+23. **PR Size** (`.github/workflows/pr-size.yml`):
+    - PR size labeling
+    - Warnings for large PRs
+
+24. **Performance Regression Detection** (`.github/workflows/performance-regression-detection.yml`):
+    - Compares benchmark results
+    - Detects performance regressions
+    - **Note:** Requires `pull-requests: write` permission for PR comments
+
+25. **DORA Metrics** (`.github/workflows/dora-metrics.yml`):
+    - Deployment frequency tracking
+    - Change failure rate calculation
+    - Lead time measurement
+
+### Workflow Permissions
+
+All workflows that interact with PRs/issues require explicit permissions:
+
+- **PR Comments:** `pull-requests: write`
+- **Issue Management:** `issues: write`
+- **Code Access:** `contents: read` (or `contents: write` for deployments)
+- **Security Events:** `security-events: write` (for CodeQL)
+
+**Recent Fixes:**
+- Added missing `pull-requests: write` permissions to workflows that comment on PRs
+- Fixed duplicate `context` declarations in `github-script` workflows (context is built-in)
 
 ## Testing Strategy
 

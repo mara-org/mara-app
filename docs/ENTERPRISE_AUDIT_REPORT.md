@@ -13,7 +13,7 @@
 
 This comprehensive audit evaluates the Mara mobile application repository against enterprise-grade engineering standards used by world-class technology companies. The audit covers CI/CD, DevOps automation, SRE practices, observability, security, code quality, and reliability engineering.
 
-**Current Overall Maturity Score: 78%** (Updated: December 2024) ⬆️ +16%  
+**Current Overall Maturity Score: 78%** (Updated: December 2025) ⬆️ +16%  
 **Target Maturity Score: 85%+ (Enterprise-Grade)**
 
 ### Key Findings
@@ -22,7 +22,7 @@ This comprehensive audit evaluates the Mara mobile application repository agains
 - ⚠️ **Gaps:** Some advanced SRE practices need production data, performance regression detection needs baseline metrics
 - 🔴 **Critical:** None - all critical gaps addressed
 
-### Recent Improvements (December 2024 - Major Update)
+### Recent Improvements (December 2025 - Major Update)
 
 **CI/CD Enhancements:**
 - ✅ Parallel test execution with configurable concurrency
@@ -85,6 +85,16 @@ This comprehensive audit evaluates the Mara mobile application repository agains
 - ✅ Circuit breaker pattern (`lib/core/network/circuit_breaker.dart`)
 - ✅ Client-side rate limiting (`lib/core/network/rate_limiter.dart`)
 - ✅ Graceful degradation (ErrorView widget, offline cache)
+
+**Workflow Fixes (December 2025):**
+- ✅ Fixed missing `pull-requests: write` permissions in workflows that comment on PRs
+  - `pr-preview-deploy.yml`: Now properly comments on PRs with preview build links
+  - `performance-regression-detection.yml`: Can comment on PRs when regressions detected
+  - `security-pr-check.yml`: Can comment on PRs with security check results
+- ✅ Fixed duplicate `context` declarations in `github-script` workflows
+  - `contributor-onboarding.yml`: Removed duplicate context declaration
+  - `auto-triage.yml`: Removed duplicate context declaration
+  - Note: `github-script` action provides `context` as a built-in variable
 
 ---
 
@@ -1400,7 +1410,7 @@ This audit provides a clear roadmap to transform Mara-App from a **good** mobile
 
 ---
 
-**Report Generated:** December 2024  
-**Next Review:** March 2025  
+**Report Generated:** December 2025  
+**Next Review:** March 2026  
 **Auditor:** Enterprise Engineering Standards (Google, Netflix, Stripe, GitHub, Amazon)
 
