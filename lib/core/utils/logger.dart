@@ -54,7 +54,8 @@ class Logger {
     String? feature,
     Map<String, dynamic>? extra,
   }) {
-    _log(LogLevel.info, message, screen: screen, feature: feature, extra: extra);
+    _log(LogLevel.info, message,
+        screen: screen, feature: feature, extra: extra);
   }
 
   /// Log a warning message
@@ -158,14 +159,25 @@ class Logger {
       buffer.writeln('│ Session: ${logEntry['session_id']}');
     }
     if (logEntry['app_version'] != null) {
-      buffer.writeln('│ Version: ${logEntry['app_version']} (${logEntry['build_number']})');
+      buffer.writeln(
+          '│ Version: ${logEntry['app_version']} (${logEntry['build_number']})');
     }
     if (error != null) {
       buffer.writeln('│ Error: $error');
     }
     if (logEntry.length > 5) {
       // Has extra fields
-      buffer.writeln('│ Extra: ${logEntry.entries.where((e) => !['level', 'message', 'screen', 'feature', 'session_id', 'app_version', 'build_number', 'timestamp', 'error'].contains(e.key)).map((e) => '${e.key}=${e.value}').join(', ')}');
+      buffer.writeln('│ Extra: ${logEntry.entries.where((e) => ![
+            'level',
+            'message',
+            'screen',
+            'feature',
+            'session_id',
+            'app_version',
+            'build_number',
+            'timestamp',
+            'error'
+          ].contains(e.key)).map((e) => '${e.key}=${e.value}').join(', ')}');
     }
     buffer.write('└─────────────────────────────────────────────');
     return buffer.toString();
@@ -182,4 +194,3 @@ enum LogLevel {
   final int value;
   const LogLevel(this.value);
 }
-

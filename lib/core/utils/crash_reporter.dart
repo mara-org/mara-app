@@ -24,7 +24,7 @@ class CrashReporter {
   static bool _initialized = false;
   static String? _sentryDsn;
   static bool _useFirebase = false;
-  
+
   // Context tags for error reporting
   static String? _environment;
   static String? _appVersion;
@@ -84,13 +84,16 @@ class CrashReporter {
     if (_useFirebase) {
       try {
         if (_environment != null) {
-          FirebaseCrashlytics.instance.setCustomKey('environment', _environment!);
+          FirebaseCrashlytics.instance
+              .setCustomKey('environment', _environment!);
         }
         if (_appVersion != null) {
-          FirebaseCrashlytics.instance.setCustomKey('app_version', _appVersion!);
+          FirebaseCrashlytics.instance
+              .setCustomKey('app_version', _appVersion!);
         }
         if (_buildNumber != null) {
-          FirebaseCrashlytics.instance.setCustomKey('build_number', _buildNumber!);
+          FirebaseCrashlytics.instance
+              .setCustomKey('build_number', _buildNumber!);
         }
       } catch (e) {
         if (kDebugMode) {
@@ -119,7 +122,7 @@ class CrashReporter {
   /// Call this when navigating to a new screen
   static void setScreen(String screen) {
     _currentScreen = screen;
-    
+
     if (_sentryDsn != null && _sentryDsn!.isNotEmpty) {
       try {
         Sentry.configureScope((scope) {
@@ -129,7 +132,7 @@ class CrashReporter {
         // Silently fail
       }
     }
-    
+
     if (_useFirebase) {
       try {
         FirebaseCrashlytics.instance.setCustomKey('screen', screen);
@@ -144,7 +147,7 @@ class CrashReporter {
   /// Call this when entering a feature flow
   static void setFeature(String feature) {
     _currentFeature = feature;
-    
+
     if (_sentryDsn != null && _sentryDsn!.isNotEmpty) {
       try {
         Sentry.configureScope((scope) {
@@ -154,7 +157,7 @@ class CrashReporter {
         // Silently fail
       }
     }
-    
+
     if (_useFirebase) {
       try {
         FirebaseCrashlytics.instance.setCustomKey('feature', feature);
@@ -248,7 +251,7 @@ class CrashReporter {
   }) async {
     // Determine error type
     final errorType = _determineErrorType(error, context);
-    
+
     // Always log to console for debugging
     if (kDebugMode) {
       debugPrint('=== CRASH REPORT ===');
@@ -258,7 +261,8 @@ class CrashReporter {
       if (screen != null) debugPrint('Screen: $screen');
       if (feature != null) debugPrint('Feature: $feature');
       if (_environment != null) debugPrint('Environment: $_environment');
-      if (_appVersion != null) debugPrint('Version: $_appVersion (Build: $_buildNumber)');
+      if (_appVersion != null)
+        debugPrint('Version: $_appVersion (Build: $_buildNumber)');
       if (stackTrace != null) {
         debugPrint('Stack trace: $stackTrace');
       }
@@ -279,10 +283,13 @@ class CrashReporter {
               scope.setTag('error_type', errorType);
               if (screen != null) scope.setTag('screen', screen);
               if (feature != null) scope.setTag('feature', feature);
-              if (_environment != null) scope.setTag('environment', _environment!);
-              if (_appVersion != null) scope.setTag('app_version', _appVersion!);
-              if (_buildNumber != null) scope.setTag('build_number', _buildNumber!);
-              
+              if (_environment != null)
+                scope.setTag('environment', _environment!);
+              if (_appVersion != null)
+                scope.setTag('app_version', _appVersion!);
+              if (_buildNumber != null)
+                scope.setTag('build_number', _buildNumber!);
+
               // Set context
               scope.setContexts('error_details', {
                 'context': context,
@@ -309,7 +316,7 @@ class CrashReporter {
           if (feature != null) {
             FirebaseCrashlytics.instance.setCustomKey('feature', feature);
           }
-          
+
           await FirebaseCrashlytics.instance.recordError(
             error,
             stackTrace,
