@@ -1,0 +1,65 @@
+name: Technical Debt
+description: Report technical debt or code quality improvements
+title: '[TECH DEBT] '
+labels: ['tech-debt', 'improvement']
+assignees: ''
+
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Describe the technical debt or code quality issue
+      placeholder: What technical debt needs to be addressed?
+    validations:
+      required: true
+
+  - type: textarea
+    id: location
+    attributes:
+      label: Location
+      description: Where is this technical debt located?
+      placeholder: File paths, modules, or areas affected
+      value: |
+        - 
+        - 
+    validations:
+      required: true
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact
+      description: What is the impact of this technical debt?
+      placeholder: How does this affect development, performance, or maintainability?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed_solution
+    attributes:
+      label: Proposed Solution
+      description: How should this be addressed?
+      placeholder: Describe the refactoring or improvement approach
+    validations:
+      required: false
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How urgent is this technical debt?
+      options:
+        - Low - Can be addressed when convenient
+        - Medium - Should be addressed soon
+        - High - Blocking or causing issues
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional_context
+    attributes:
+      label: Additional Context
+      description: Any other relevant information
+      placeholder: Links, references, or related issues
+

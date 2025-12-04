@@ -1,0 +1,88 @@
+name: Bug Report
+description: Create a report to help us improve
+title: '[BUG] '
+labels: ['bug']
+assignees: ''
+
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: A clear and concise description of what the bug is
+      placeholder: Describe the bug...
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps_to_reproduce
+    attributes:
+      label: Steps to Reproduce
+      description: Steps to reproduce the behavior
+      placeholder: |
+        1. Go to '...'
+        2. Click on '...'
+        3. Scroll down to '...'
+        4. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected_behavior
+    attributes:
+      label: Expected Behavior
+      description: What you expected to happen
+      placeholder: A clear description of what you expected to happen
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual_behavior
+    attributes:
+      label: Actual Behavior
+      description: What actually happened
+      placeholder: A clear description of what actually happened
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: If applicable, add screenshots to help explain your problem
+      placeholder: Drag and drop screenshots here or paste image URLs
+
+  - type: input
+    id: device
+    attributes:
+      label: Device
+      description: Device model (e.g., iPhone 14, Samsung Galaxy S21)
+      placeholder: iPhone 14
+    validations:
+      required: false
+
+  - type: input
+    id: os_version
+    attributes:
+      label: OS Version
+      description: Operating system version (e.g., iOS 16.0, Android 13)
+      placeholder: iOS 16.0
+    validations:
+      required: false
+
+  - type: input
+    id: app_version
+    attributes:
+      label: App Version
+      description: App version where bug occurs (e.g., 1.0.0+1)
+      placeholder: 1.0.0+1
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional_context
+    attributes:
+      label: Additional Context
+      description: Add any other context about the problem here
+      placeholder: Any other relevant information...
+

@@ -1,0 +1,63 @@
+# Mara CI – Dart Metrics
+# Runs code complexity and metrics analysis
+# Provides insights into code quality and maintainability
+
+name: Mara CI – Dart Metrics
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  dart-metrics:
+    name: Dart Code Metrics
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.27.0"
+
+      - name: Flutter pub get
+        run: flutter pub get
+
+      - name: Run dart analyze
+        run: |
+          echo "🔍 Running dart analyze..."
+          flutter analyze || {
+            echo "⚠️ Analysis found issues"
+            exit 1
+          }
+
+      - name: Run dart_code_metrics
+        continue-on-error: true
+        run: |
+          echo "📊 Running dart_code_metrics..."
+          dart run dart_code_metrics:metrics analyze lib --reporter=console || {
+            echo "⚠️ Code metrics analysis completed with warnings"
+          }
+
+      - name: Print complexity warnings
+        continue-on-error: true
+        run: |
+          echo "📈 Checking code complexity..."
+          dart run dart_code_metrics:metrics analyze lib --reporter=console --set-exit-on-warnings=false 2>&1 | grep -i "complexity\|cyclomatic" || echo "No complexity warnings found"
+
+      - name: Print file size warnings
+        continue-on-error: true
+        run: |
+          echo "📏 Checking file sizes..."
+          find lib -name "*.dart" -type f | while read file; do
+            LINES=$(wc -l < "$file" | tr -d ' ')
+            if [ "$LINES" -gt 500 ]; then
+              echo "⚠️ Large file detected: $file ($LINES lines) - Consider splitting"
+            fi
+          done
+

@@ -12,6 +12,15 @@
 # Core application code
 /lib/ @justAbdulaziz10 @gqnxx
 
+# Core functionality (specific)
+/lib/core/ @justAbdulaziz10
+
+# Authentication feature
+/lib/features/auth/ @justAbdulaziz10
+
+# Chat feature
+/lib/features/chat/ @justAbdulaziz10
+
 # Test files
 /test/ @justAbdulaziz10 @gqnxx
 

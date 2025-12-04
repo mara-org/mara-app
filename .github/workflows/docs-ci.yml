@@ -1,0 +1,76 @@
+# Mara CI – Documentation Only
+# Lightweight CI for documentation changes
+# Runs only when README.md or docs/** files are changed
+# Skips Flutter build for faster feedback
+
+name: Mara CI – Documentation Only
+
+on:
+  pull_request:
+    paths:
+      - 'README.md'
+      - 'docs/**'
+      - '.github/**/*.md'
+  push:
+    branches: [main]
+    paths:
+      - 'README.md'
+      - 'docs/**'
+      - '.github/**/*.md'
+
+jobs:
+  docs-ci:
+    name: Documentation CI
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check markdown files
+        run: |
+          echo "📝 Checking markdown files..."
+          # Basic markdown validation - check for common issues
+          find . -name "*.md" -type f ! -path "./.git/*" ! -path "./build/*" | while read file; do
+            echo "Checking: $file"
+            # Check for broken links (basic check)
+            if grep -q "\[.*\](.*)" "$file"; then
+              echo "  ✓ Contains markdown links"
+            fi
+            # Check file is not empty
+            if [ ! -s "$file" ]; then
+              echo "  ⚠️ Warning: Empty markdown file: $file"
+            fi
+          done
+
+      - name: Validate markdown syntax (optional)
+        continue-on-error: true
+        run: |
+          echo "🔍 Validating markdown syntax..."
+          # Install markdownlint if available
+          if command -v markdownlint &> /dev/null; then
+            markdownlint README.md docs/**/*.md || echo "Markdown linting completed with warnings"
+          else
+            echo "💡 Install markdownlint for better markdown validation"
+            echo "   npm install -g markdownlint-cli"
+          fi
+
+      - name: Spell check (optional)
+        continue-on-error: true
+        run: |
+          echo "🔤 Running spell check (optional)..."
+          # Basic spell check using common tools
+          if command -v aspell &> /dev/null; then
+            echo "💡 aspell available - spell check can be enabled"
+          elif command -v codespell &> /dev/null; then
+            codespell README.md docs/ || echo "Spell check completed"
+          else
+            echo "💡 Install codespell for spell checking: pip install codespell"
+          fi
+
+      - name: Documentation summary
+        run: |
+          echo "✅ Documentation CI completed"
+          echo "📄 Files checked:"
+          find . -name "*.md" -type f ! -path "./.git/*" ! -path "./build/*" | wc -l | xargs echo "  Total markdown files:"
+

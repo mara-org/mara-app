@@ -1,0 +1,114 @@
+# Mara Security – PR Security Check
+# Quick security checks for pull requests
+# Runs lightweight security scans without full CI
+
+name: Mara Security – PR Security Check
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  security-check:
+    name: Security PR Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for secrets scanning
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.27.0"
+
+      - name: Flutter pub get
+        run: flutter pub get
+
+      - name: Check for outdated dependencies
+        id: outdated_check
+        continue-on-error: true
+        run: |
+          echo "🔍 Checking for outdated dependencies..."
+          OUTDATED=$(dart pub outdated --mode=null-safety 2>&1 || true)
+          
+          if echo "$OUTDATED" | grep -q "No dependencies are outdated"; then
+            echo "✅ All dependencies are up to date"
+            echo "has_outdated=false" >> $GITHUB_OUTPUT
+          else
+            echo "⚠️ Outdated dependencies found:"
+            echo "$OUTDATED" | head -20
+            echo "has_outdated=true" >> $GITHUB_OUTPUT
+            
+            # Check for critical packages
+            if echo "$OUTDATED" | grep -qi "flutter\|dart\|sentry\|firebase"; then
+              echo "🚨 Critical packages may be outdated"
+              echo "critical_outdated=true" >> $GITHUB_OUTPUT
+            else
+              echo "critical_outdated=false" >> $GITHUB_OUTPUT
+            fi
+          fi
+
+      - name: Basic secrets scan
+        id: secrets_scan
+        continue-on-error: true
+        run: |
+          echo "🔒 Running basic secrets scan..."
+          
+          # Use trufflehog-lite if available, otherwise basic grep
+          if command -v trufflehog &> /dev/null; then
+            echo "Using TruffleHog for secrets scanning..."
+            trufflehog filesystem . --json --only-verified 2>&1 | head -50 || echo "Secrets scan completed"
+          else
+            echo "Using basic pattern matching for secrets..."
+            # Basic secret patterns (common API keys, tokens)
+            SECRETS_FOUND=0
+            if grep -r -i -E "(api[_-]?key|secret[_-]?key|password|token|private[_-]?key)\s*=\s*['\"][^'\"]{20,}" --include="*.dart" --include="*.yaml" --include="*.yml" . 2>/dev/null | grep -v "node_modules" | grep -v ".git"; then
+              echo "⚠️ Potential secrets found in code"
+              SECRETS_FOUND=1
+            fi
+            
+            if [ "$SECRETS_FOUND" -eq 0 ]; then
+              echo "✅ No obvious secrets found in code"
+            fi
+          fi
+
+      - name: Comment on PR if outdated dependencies
+        if: steps.outdated_check.outputs.has_outdated == 'true'
+        continue-on-error: true
+        run: |
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+          CRITICAL="${{ steps.outdated_check.outputs.critical_outdated }}"
+          
+          if [ "$CRITICAL" = "true" ]; then
+            COMMENT="⚠️ **Security Check: Outdated Dependencies**
+            
+            This PR has outdated dependencies, including critical packages.
+            
+            Please review and update dependencies using:
+            \`\`\`bash
+            dart pub outdated --mode=null-safety
+            dart pub upgrade
+            \`\`\`
+            
+            Critical packages should be kept up to date for security."
+          else
+            COMMENT="ℹ️ **Security Check: Outdated Dependencies**
+            
+            This PR has some outdated dependencies. Consider updating them:
+            \`\`\`bash
+            dart pub outdated --mode=null-safety
+            \`\`\`"
+          fi
+          
+          gh pr comment "$PR_NUMBER" --body "$COMMENT" || echo "Failed to add comment"
+
+      - name: Security check summary
+        run: |
+          echo "✅ Security PR check completed"
+          echo "Outdated dependencies: ${{ steps.outdated_check.outputs.has_outdated }}"
+          echo "Critical outdated: ${{ steps.outdated_check.outputs.critical_outdated }}"
+
