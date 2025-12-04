@@ -1,0 +1,223 @@
+# Mara Automation – Code Review Automation
+# Auto-requests reviewers based on CODEOWNERS and changed paths
+# Adds PR checklist comment for reviewers
+# Frontend-only: uses GitHub Actions and github-script
+
+name: Mara Automation – Code Review Automation
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  auto-request-reviewers:
+    name: Auto Request Reviewers
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get changed files
+        id: changed_files
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            # Get changed files in PR
+            CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -E '\.(dart|yaml|yml|md)$' || true)
+          else
+            CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD | grep -E '\.(dart|yaml|yml|md)$' || true)
+          fi
+          
+          echo "changed_files<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGED_FILES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          
+          echo "Changed files:"
+          echo "$CHANGED_FILES"
+
+      - name: Determine reviewers based on CODEOWNERS
+        id: determine_reviewers
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            
+            const changedFiles = `${{ steps.changed_files.outputs.changed_files }}`.split('\n').filter(Boolean);
+            const codeownersPath = '.github/CODEOWNERS';
+            
+            let reviewers = new Set();
+            const reviewAreas = [];
+            
+            // Read CODEOWNERS file
+            if (fs.existsSync(codeownersPath)) {
+              const codeownersContent = fs.readFileSync(codeownersPath, 'utf8');
+              const lines = codeownersContent.split('\n');
+              
+              for (const line of lines) {
+                if (line.trim() === '' || line.startsWith('#')) continue;
+                
+                const parts = line.trim().split(/\s+/);
+                if (parts.length < 2) continue;
+                
+                const pattern = parts[0];
+                const owners = parts.slice(1);
+                
+                // Check if any changed file matches this pattern
+                for (const file of changedFiles) {
+                  if (matchesPattern(file, pattern)) {
+                    owners.forEach(owner => {
+                      if (owner.startsWith('@')) {
+                        reviewers.add(owner.substring(1)); // Remove @
+                        reviewAreas.push(`${pattern} → ${owner}`);
+                      }
+                    });
+                  }
+                }
+              }
+            }
+            
+            // Default reviewer if no specific match
+            if (reviewers.size === 0) {
+              reviewers.add('justAbdulaziz10');
+            }
+            
+            // Helper function to match file paths against CODEOWNERS patterns
+            function matchesPattern(file, pattern) {
+              // Simple pattern matching (supports * and **)
+              const regex = new RegExp('^' + pattern.replace(/\*\*/g, '.*').replace(/\*/g, '[^/]*') + '$');
+              return regex.test(file) || file.startsWith(pattern);
+            }
+            
+            core.setOutput('reviewers', Array.from(reviewers).join(','));
+            core.setOutput('review_areas', reviewAreas.join('; '));
+            
+            console.log('Reviewers:', Array.from(reviewers));
+            console.log('Review areas:', reviewAreas);
+
+      - name: Request reviewers
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const reviewers = `${{ steps.determine_reviewers.outputs.reviewers }}`.split(',').filter(Boolean);
+            
+            if (reviewers.length > 0) {
+              console.log('Requesting reviews from:', reviewers);
+              
+              await github.rest.pulls.requestReviewers({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: context.issue.number,
+                reviewers: reviewers,
+              });
+            } else {
+              console.log('No reviewers determined');
+            }
+
+      - name: Add PR review checklist comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const changedFiles = `${{ steps.changed_files.outputs.changed_files }}`.split('\n').filter(Boolean);
+            const reviewAreas = `${{ steps.determine_reviewers.outputs.review_areas }}`.split('; ').filter(Boolean);
+            
+            // Determine what changed
+            const hasDartChanges = changedFiles.some(f => f.endsWith('.dart'));
+            const hasTestChanges = changedFiles.some(f => f.includes('test/') || f.includes('_test.dart'));
+            const hasDocChanges = changedFiles.some(f => f.endsWith('.md') || f.includes('docs/'));
+            const hasWorkflowChanges = changedFiles.some(f => f.includes('.github/workflows/'));
+            const hasUIChanges = changedFiles.some(f => f.includes('presentation/') || f.includes('widgets/'));
+            
+            let checklist = '## 📋 PR Review Checklist\n\n';
+            
+            if (hasDartChanges) {
+              checklist += '### Code Quality\n';
+              checklist += '- [ ] Code follows style guidelines (`dart format .`)\n';
+              checklist += '- [ ] No linter errors (`flutter analyze`)\n';
+              checklist += '- [ ] Code is well-documented\n';
+              checklist += '\n';
+            }
+            
+            if (hasTestChanges || hasDartChanges) {
+              checklist += '### Testing\n';
+              checklist += '- [ ] Tests added/updated for new functionality\n';
+              checklist += '- [ ] All tests pass locally\n';
+              checklist += '- [ ] Coverage meets threshold (60% for new/modified files)\n';
+              checklist += '\n';
+            }
+            
+            if (hasUIChanges) {
+              checklist += '### UI/UX\n';
+              checklist += '- [ ] UI changes tested on Android and iOS\n';
+              checklist += '- [ ] Screenshots provided (if significant UI changes)\n';
+              checklist += '- [ ] Accessibility verified (screen reader, semantic labels)\n';
+              checklist += '- [ ] RTL layout tested (Arabic locale)\n';
+              checklist += '\n';
+            }
+            
+            if (hasWorkflowChanges) {
+              checklist += '### CI/CD\n';
+              checklist += '- [ ] Workflow changes tested locally or in fork\n';
+              checklist += '- [ ] No breaking changes to existing workflows\n';
+              checklist += '\n';
+            }
+            
+            if (hasDocChanges) {
+              checklist += '### Documentation\n';
+              checklist += '- [ ] Documentation is clear and accurate\n';
+              checklist += '- [ ] Links are valid\n';
+              checklist += '\n';
+            }
+            
+            checklist += '### General\n';
+            checklist += '- [ ] No secrets or sensitive data in code\n';
+            checklist += '- [ ] Backend-agnostic (no backend code added)\n';
+            checklist += '- [ ] Follows Clean Architecture patterns (if applicable)\n';
+            checklist += '\n';
+            
+            if (reviewAreas.length > 0) {
+              checklist += '### Review Areas\n';
+              reviewAreas.forEach(area => {
+                checklist += `- ${area}\n`;
+              });
+              checklist += '\n';
+            }
+            
+            checklist += '---\n';
+            checklist += '_This checklist was automatically generated based on changed files._';
+            
+            // Check if checklist comment already exists
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            
+            const existingChecklist = comments.find(c => 
+              c.user.type === 'Bot' && 
+              c.body.includes('PR Review Checklist')
+            );
+            
+            if (existingChecklist) {
+              // Update existing comment
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existingChecklist.id,
+                body: checklist,
+              });
+            } else {
+              // Create new comment
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: checklist,
+              });
+            }
+
