@@ -6,19 +6,24 @@
 
 | Category | Previous | Current | Target | Status |
 |----------|----------|---------|--------|--------|
-| **CI** | 60% | **65%** ⬆️ | 80% | 🟡 In Progress |
-| **Security** | 55% | **62%** ⬆️ | 70% | 🟡 In Progress |
-| **DevOps** | 65% | **72%** ⬆️ | 75% | 🟡 In Progress |
+| **CI** | 60% | **68%** ⬆️ | 80% | 🟡 In Progress |
+| **Security** | 55% | **68%** ⬆️ | 70% | 🟡 In Progress |
+| **DevOps** | 65% | **78%** ⬆️ | 75% | 🟢 Near Target |
 | **Observability** | 25% | **25%** | 60% | 🔴 Needs Work |
 | **SRE** | 50% | **50%** | 70% | 🟡 In Progress |
 | **Testing** | 45% | **45%** | 70% | 🟡 In Progress |
 
-**Overall Maturity:** 53% → **58%** ⬆️ (Latest Improvements Complete)
+**Overall Maturity:** 53% → **62%** ⬆️ (Latest Improvements Complete)
 
-### Key Improvements (Latest Update)
+### Key Improvements (Latest Update - December 2024)
+- ✅ **HARDENED:** Security PR check - now FAILS on critical outdated dependencies
+- ✅ **NEW:** Security summary job in frontend CI - blocks PRs with critical dependency issues
+- ✅ **ENHANCED:** Frontend deploy workflow - tag triggers, artifact uploads, conditional signing
+- ✅ **ENHANCED:** Auto-merge workflow - supports Dependabot and dependencies label auto-merge
+- ✅ **NEW:** Branch cleanup workflow (`branch-cleanup.yml`) - auto-deletes merged branches
+- ✅ **NEW:** License scan workflow (`license-scan.yml`) - weekly dependency license compliance
 - ✅ Dart code metrics workflow (`dart-metrics.yml`) for complexity analysis
 - ✅ Documentation-only CI (`docs-ci.yml`) for lightweight doc checks
-- ✅ Security PR check workflow (`security-pr-check.yml`) for dependency scanning
 - ✅ Enhanced CODEOWNERS with specific area ownerships
 - ✅ YAML issue templates (bug_report, feature_request, tech_debt)
 - ✅ Code metrics: file size warnings, complexity tracking

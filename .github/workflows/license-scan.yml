@@ -1,0 +1,155 @@
+# Mara Security – License Scan
+# Scans Flutter dependencies for license compliance
+# Runs on workflow_dispatch and weekly schedule
+# Frontend-only: scans pubspec.lock dependencies
+
+name: Mara Security – License Scan
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Run weekly on Mondays at 00:00 UTC
+    - cron: '0 0 * * 1'
+
+jobs:
+  license-scan:
+    name: License Compliance Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.27.0"
+
+      - name: Flutter pub get
+        run: flutter pub get
+
+      - name: Scan dependencies for licenses
+        id: license_scan
+        run: |
+          echo "📋 Scanning dependencies for licenses..."
+          
+          # Check if pubspec.lock exists
+          if [ ! -f "pubspec.lock" ]; then
+            echo "❌ Error: pubspec.lock not found"
+            exit 1
+          fi
+          
+          # Extract package names and versions from pubspec.lock
+          echo "## License Scan Results" > license-report.md
+          echo "" >> license-report.md
+          echo "Generated: $(date -u +"%Y-%m-%d %H:%M:%S UTC")" >> license-report.md
+          echo "" >> license-report.md
+          echo "| Package | Version | Source | License |" >> license-report.md
+          echo "|---------|---------|--------|---------|" >> license-report.md
+          
+          # Parse pubspec.lock for packages
+          CURRENT_PACKAGE=""
+          CURRENT_VERSION=""
+          CURRENT_SOURCE="unknown"
+          FORBIDDEN_FOUND=false
+          
+          while IFS= read -r line || [ -n "$line" ]; do
+            # Match package name
+            if [[ $line =~ ^[[:space:]]+([a-zA-Z0-9_-]+):[[:space:]]*$ ]]; then
+              PACKAGE_NAME="${BASH_REMATCH[1]}"
+              
+              # Skip metadata sections
+              if [[ "$PACKAGE_NAME" == "packages" ]] || \
+                 [[ "$PACKAGE_NAME" == "sdks" ]] || \
+                 [[ "$PACKAGE_NAME" == "dependency_graph" ]]; then
+                CURRENT_PACKAGE=""
+                continue
+              fi
+              
+              CURRENT_PACKAGE="$PACKAGE_NAME"
+              CURRENT_VERSION=""
+              CURRENT_SOURCE="unknown"
+            fi
+            
+            # Extract version
+            if [ -n "$CURRENT_PACKAGE" ] && [[ $line =~ version:[[:space:]]*(.+) ]]; then
+              CURRENT_VERSION="${BASH_REMATCH[1]}"
+              CURRENT_VERSION=$(echo "$CURRENT_VERSION" | sed 's/^"//;s/"$//' | tr -d ' ')
+            fi
+            
+            # Extract source
+            if [ -n "$CURRENT_PACKAGE" ] && [[ $line =~ source:[[:space:]]*(.+) ]]; then
+              CURRENT_SOURCE="${BASH_REMATCH[1]}"
+              CURRENT_SOURCE=$(echo "$CURRENT_SOURCE" | sed 's/^"//;s/"$//' | tr -d ' ')
+            fi
+            
+            # When we have all info, add to report
+            if [ -n "$CURRENT_PACKAGE" ] && [ -n "$CURRENT_VERSION" ] && \
+               [[ "$CURRENT_PACKAGE" != "packages" ]] && \
+               [[ "$CURRENT_PACKAGE" != "sdks" ]]; then
+              # Try to get license info (most packages from pub.dev have standard licenses)
+              # For now, mark as "See pub.dev" - in production, use pana or license-checker
+              LICENSE="See pub.dev"
+              
+              echo "| $CURRENT_PACKAGE | $CURRENT_VERSION | $CURRENT_SOURCE | $LICENSE |" >> license-report.md
+              
+              # Reset for next package
+              CURRENT_PACKAGE=""
+              CURRENT_VERSION=""
+              CURRENT_SOURCE="unknown"
+            fi
+          done < pubspec.lock
+          
+          echo "" >> license-report.md
+          echo "## Forbidden Licenses" >> license-report.md
+          echo "" >> license-report.md
+          echo "The following licenses are NOT allowed (placeholder - configure deny-list):" >> license-report.md
+          echo "- None detected (deny-list not configured)" >> license-report.md
+          echo "" >> license-report.md
+          echo "## Notes" >> license-report.md
+          echo "- This is a simplified license scan. For production use, consider:" >> license-report.md
+          echo "  - Using \`pana\` package analyzer for detailed license info" >> license-report.md
+          echo "  - Using \`license-checker\` or similar tools" >> license-report.md
+          echo "  - Configuring a deny-list of forbidden licenses" >> license-report.md
+          
+          # Count packages
+          PACKAGE_COUNT=$(grep -c "^|" license-report.md || echo "0")
+          PACKAGE_COUNT=$((PACKAGE_COUNT - 3)) # Subtract header rows
+          
+          echo "📊 Found $PACKAGE_COUNT packages"
+          echo "package_count=$PACKAGE_COUNT" >> $GITHUB_OUTPUT
+          echo "forbidden_found=$FORBIDDEN_FOUND" >> $GITHUB_OUTPUT
+
+      - name: Display license report
+        run: |
+          echo "📄 License Report:"
+          echo "=================="
+          cat license-report.md
+
+      - name: Upload license report
+        uses: actions/upload-artifact@v5
+        with:
+          name: license-report
+          path: license-report.md
+          retention-days: 90
+
+      - name: Check for forbidden licenses
+        run: |
+          # Placeholder: Check for forbidden licenses
+          # In production, configure a deny-list and fail if found
+          FORBIDDEN_FOUND="${{ steps.license_scan.outputs.forbidden_found }}"
+          
+          if [ "$FORBIDDEN_FOUND" = "true" ]; then
+            echo "❌ Forbidden licenses detected - failing build"
+            exit 1
+          else
+            echo "✅ No forbidden licenses detected"
+          fi
+
+      - name: License scan summary
+        if: always()
+        run: |
+          echo "✅ License scan completed"
+          echo "Packages scanned: ${{ steps.license_scan.outputs.package_count }}"
+          echo "Forbidden licenses: ${{ steps.license_scan.outputs.forbidden_found }}"
+

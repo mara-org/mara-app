@@ -27,47 +27,100 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Check if auto-merge label exists
-        id: check_label
+      - name: Check PR author and labels
+        id: check_pr
         run: |
           PR_NUMBER="${{ github.event.pull_request.number }}"
+          PR_AUTHOR=$(gh pr view "$PR_NUMBER" --json author --jq '.author.login' || echo "")
           LABELS=$(gh pr view "$PR_NUMBER" --json labels --jq '.labels[].name' || echo "")
           
+          echo "PR Author: $PR_AUTHOR"
+          echo "Labels: $LABELS"
+          
+          # Check if auto-merge label exists
           if echo "$LABELS" | grep -q "auto-merge"; then
             echo "✅ auto-merge label found"
             echo "has_label=true" >> $GITHUB_OUTPUT
           else
-            echo "⏭️ auto-merge label not found, skipping"
+            echo "⏭️ auto-merge label not found"
             echo "has_label=false" >> $GITHUB_OUTPUT
+          fi
+          
+          # Check if PR is from Dependabot or has dependencies label
+          IS_DEPENDABOT=false
+          HAS_DEPENDENCIES_LABEL=false
+          
+          if [ "$PR_AUTHOR" = "dependabot[bot]" ]; then
+            echo "✅ PR is from Dependabot"
+            echo "is_dependabot=true" >> $GITHUB_OUTPUT
+            IS_DEPENDABOT=true
+          else
+            echo "is_dependabot=false" >> $GITHUB_OUTPUT
+          fi
+          
+          if echo "$LABELS" | grep -qi "dependencies"; then
+            echo "✅ PR has 'dependencies' label"
+            echo "has_dependencies_label=true" >> $GITHUB_OUTPUT
+            HAS_DEPENDENCIES_LABEL=true
+          else
+            echo "has_dependencies_label=false" >> $GITHUB_OUTPUT
+          fi
+          
+          # Auto-merge is allowed if:
+          # 1. Has auto-merge label, OR
+          # 2. Is Dependabot/dependencies PR with all checks passing
+          if [ "$IS_DEPENDABOT" = "true" ] || [ "$HAS_DEPENDENCIES_LABEL" = "true" ]; then
+            echo "✅ PR qualifies for auto-merge (Dependabot or dependencies label)"
+            echo "can_auto_merge=true" >> $GITHUB_OUTPUT
+          elif [ "${{ steps.check_pr.outputs.has_label }}" = "true" ]; then
+            echo "✅ PR qualifies for auto-merge (has auto-merge label)"
+            echo "can_auto_merge=true" >> $GITHUB_OUTPUT
+          else
+            echo "⏭️ PR does not qualify for auto-merge"
+            echo "can_auto_merge=false" >> $GITHUB_OUTPUT
             exit 0
           fi
 
-      - name: Check CI status
+      - name: Check CI and security status
         id: check_ci
         run: |
           PR_NUMBER="${{ github.event.pull_request.number }}"
           
-          # Get PR status
-          STATUS=$(gh pr view "$PR_NUMBER" --json statusCheckRollup --jq '.statusCheckRollup[] | select(.conclusion != null) | .conclusion' || echo "")
+          # Get PR status checks
+          STATUSES=$(gh pr view "$PR_NUMBER" --json statusCheckRollup --jq '.statusCheckRollup[] | select(.conclusion != null) | .conclusion' || echo "")
           
-          # Check if all checks passed
-          if echo "$STATUS" | grep -q "FAILURE"; then
+          # Check for failures
+          if echo "$STATUSES" | grep -q "FAILURE"; then
             echo "❌ Some CI checks failed"
             echo "ci_passed=false" >> $GITHUB_OUTPUT
             exit 0
-          elif echo "$STATUS" | grep -q "PENDING"; then
+          fi
+          
+          # Check for pending
+          if echo "$STATUSES" | grep -q "PENDING"; then
             echo "⏳ CI checks still pending"
             echo "ci_passed=false" >> $GITHUB_OUTPUT
             exit 0
-          else
-            echo "✅ All CI checks passed"
-            echo "ci_passed=true" >> $GITHUB_OUTPUT
           fi
+          
+          # Check specifically for security-pr-check status
+          SECURITY_STATUS=$(gh pr checks "$PR_NUMBER" --json name,conclusion --jq '.[] | select(.name == "Security PR Check") | .conclusion' || echo "")
+          
+          if [ "$SECURITY_STATUS" = "FAILURE" ]; then
+            echo "❌ Security PR Check failed - blocking auto-merge"
+            echo "ci_passed=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          echo "✅ All CI and security checks passed"
+          echo "ci_passed=true" >> $GITHUB_OUTPUT
 
       - name: Check approvals
         id: check_approvals
         run: |
           PR_NUMBER="${{ github.event.pull_request.number }}"
+          IS_DEPENDABOT="${{ steps.check_pr.outputs.is_dependabot }}"
+          HAS_DEPENDENCIES_LABEL="${{ steps.check_pr.outputs.has_dependencies_label }}"
           
           # Get approval count
           APPROVALS=$(gh pr view "$PR_NUMBER" --json reviews --jq '[.reviews[] | select(.state == "APPROVED")] | length' || echo "0")
@@ -75,8 +128,24 @@ jobs:
           echo "Approvals: $APPROVALS"
           echo "approval_count=$APPROVALS" >> $GITHUB_OUTPUT
           
-          # Require at least 1 approval (can be increased to 2)
-          if [ "$APPROVALS" -ge 1 ]; then
+          # For Dependabot/dependencies PRs: allow auto-merge with 0 approvals if trivial
+          # For other PRs: require at least 1 approval
+          if [ "$IS_DEPENDABOT" = "true" ] || [ "$HAS_DEPENDENCIES_LABEL" = "true" ]; then
+            # Check if PR only touches pubspec.yaml/pubspec.lock (trivial dependency update)
+            CHANGED_FILES=$(gh pr view "$PR_NUMBER" --json files --jq '.files[].path' || echo "")
+            NON_DEPENDENCY_FILES=$(echo "$CHANGED_FILES" | grep -v "pubspec.yaml" | grep -v "pubspec.lock" | grep -v "^$" || true)
+            
+            if [ -z "$NON_DEPENDENCY_FILES" ]; then
+              echo "✅ Trivial dependency-only PR - approval not required"
+              echo "has_approvals=true" >> $GITHUB_OUTPUT
+            elif [ "$APPROVALS" -ge 1 ]; then
+              echo "✅ Required approvals met"
+              echo "has_approvals=true" >> $GITHUB_OUTPUT
+            else
+              echo "⏳ Waiting for at least 1 approval"
+              echo "has_approvals=false" >> $GITHUB_OUTPUT
+            fi
+          elif [ "$APPROVALS" -ge 1 ]; then
             echo "✅ Required approvals met"
             echo "has_approvals=true" >> $GITHUB_OUTPUT
           else
@@ -102,7 +171,7 @@ jobs:
 
       - name: Auto merge PR
         if: |
-          steps.check_label.outputs.has_label == 'true' &&
+          steps.check_pr.outputs.can_auto_merge == 'true' &&
           steps.check_ci.outputs.ci_passed == 'true' &&
           steps.check_approvals.outputs.has_approvals == 'true' &&
           steps.check_conflicts.outputs.has_conflicts == 'false'
@@ -121,7 +190,7 @@ jobs:
 
       - name: Comment if conditions not met
         if: |
-          steps.check_label.outputs.has_label == 'true' &&
+          steps.check_pr.outputs.can_auto_merge == 'true' &&
           (steps.check_ci.outputs.ci_passed != 'true' ||
            steps.check_approvals.outputs.has_approvals != 'true' ||
            steps.check_conflicts.outputs.has_conflicts == 'true')

@@ -13,6 +13,83 @@ on:
       - main  # Trigger on PR to main
 
 jobs:
+  security-summary:
+    name: Security Summary
+    runs-on: ubuntu-latest
+    # Skip for doc-only changes
+    if: |
+      !contains(github.event.pull_request.head.ref, 'docs') &&
+      !(contains(github.event.head_commit.message, '[skip security]') || contains(github.event.head_commit.message, '[docs only]'))
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.27.0"
+
+      - name: Flutter pub get
+        run: flutter pub get
+
+      - name: Check for outdated dependencies
+        id: outdated_check
+        run: |
+          echo "🔍 Checking for outdated dependencies..."
+          OUTDATED=$(dart pub outdated --mode=null-safety 2>&1 || true)
+          
+          if echo "$OUTDATED" | grep -q "No dependencies are outdated"; then
+            echo "✅ All dependencies are up to date"
+            echo "has_outdated=false" >> $GITHUB_OUTPUT
+            echo "critical_outdated=false" >> $GITHUB_OUTPUT
+            echo "can_upgrade=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          echo "⚠️ Outdated dependencies found:"
+          echo "$OUTDATED" | head -30
+          echo "has_outdated=true" >> $GITHUB_OUTPUT
+          
+          # Check for critical packages
+          CRITICAL_PATTERNS="flutter|dart|sentry|firebase|http|dio"
+          CRITICAL_FOUND=false
+          CAN_UPGRADE=false
+          
+          if echo "$OUTDATED" | grep -qiE "$CRITICAL_PATTERNS"; then
+            echo "🚨 Critical packages may be outdated"
+            echo "critical_outdated=true" >> $GITHUB_OUTPUT
+            CRITICAL_FOUND=true
+            
+            if echo "$OUTDATED" | grep -qiE "upgradable|can be upgraded"; then
+              echo "can_upgrade=true" >> $GITHUB_OUTPUT
+              CAN_UPGRADE=true
+            else
+              echo "can_upgrade=false" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "critical_outdated=false" >> $GITHUB_OUTPUT
+            echo "can_upgrade=false" >> $GITHUB_OUTPUT
+          fi
+          
+          # FAIL only if critical packages can be upgraded
+          if [ "$CRITICAL_FOUND" = "true" ] && [ "$CAN_UPGRADE" = "true" ]; then
+            echo "❌ FAILING: Critical dependencies are outdated and CAN be upgraded"
+            exit 1
+          elif [ "$CRITICAL_FOUND" = "true" ]; then
+            echo "⚠️ WARNING: Critical packages outdated (may require manual review)"
+          fi
+
+      - name: Security summary output
+        if: always()
+        run: |
+          echo "📊 Security Summary:"
+          echo "  Outdated: ${{ steps.outdated_check.outputs.has_outdated }}"
+          echo "  Critical: ${{ steps.outdated_check.outputs.critical_outdated }}"
+          echo "  Can upgrade: ${{ steps.outdated_check.outputs.can_upgrade }}"
+
   ci:
     name: Mara CI – Multi Platform
     runs-on: ${{ matrix.os }}
