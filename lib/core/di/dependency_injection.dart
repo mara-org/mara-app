@@ -40,9 +40,12 @@ final analyticsServiceProvider = Provider<AnalyticsService>((ref) {
   return AnalyticsService();
 });
 
-/// Provider for [FeatureFlagService].
-final featureFlagServiceProvider = Provider<FeatureFlagService>((ref) {
-  // Use Firebase Remote Config if available, otherwise use in-memory
+/// Provider for [RemoteConfigService].
+///
+/// This provides the remote config service for feature flags.
+/// FeatureFlagService.init() should be called with this service.
+final remoteConfigServiceProvider = Provider<RemoteConfigService>((ref) {
+  // Use Firebase Remote Config if available
   return FirebaseRemoteConfigService();
 });
 
