@@ -29,12 +29,35 @@ jobs:
         run: flutter pub get
 
       - name: Run dart analyze
+        continue-on-error: true
         run: |
           echo "🔍 Running dart analyze..."
-          flutter analyze || {
-            echo "⚠️ Analysis found issues"
+          ANALYZE_OUTPUT=$(flutter analyze 2>&1) || true
+          echo "$ANALYZE_OUTPUT"
+          
+          # Count issue types
+          ERRORS=$(echo "$ANALYZE_OUTPUT" | grep -c "error •" || echo "0")
+          WARNINGS=$(echo "$ANALYZE_OUTPUT" | grep -c "warning •" || echo "0")
+          INFOS=$(echo "$ANALYZE_OUTPUT" | grep -c "info •" || echo "0")
+          TOTAL=$(echo "$ANALYZE_OUTPUT" | grep -oP '\d+(?= issues found)' || echo "0")
+          
+          echo ""
+          echo "📊 Analysis Summary:"
+          echo "  Total issues: $TOTAL"
+          echo "  Errors: $ERRORS"
+          echo "  Warnings: $WARNINGS"
+          echo "  Info suggestions: $INFOS"
+          echo ""
+          
+          if [ "$ERRORS" -gt 0 ]; then
+            echo "❌ Found $ERRORS error(s) - please fix these"
             exit 1
-          }
+          elif [ "$WARNINGS" -gt 0 ]; then
+            echo "⚠️ Found $WARNINGS warning(s) - consider addressing these"
+          else
+            echo "ℹ️ Found $INFOS info-level suggestions (non-blocking)"
+            echo "💡 Tip: Run 'dart fix --apply' to auto-fix many of these"
+          fi
 
       - name: Run dart_code_metrics
         continue-on-error: true
