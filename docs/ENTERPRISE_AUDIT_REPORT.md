@@ -408,14 +408,14 @@ This comprehensive audit evaluates the Mara mobile application repository agains
 
 | Feature | Mara | Vercel | Netlify | Google Cloud | Stripe |
 |---------|------|--------|--------|--------------|--------|
-| Staging environment | ❌ | ✅ | ✅ | ✅ | ✅ |
-| PR previews | ❌ | ✅ | ✅ | ✅ | ✅ |
-| Rollback | ❌ | ✅ | ✅ | ✅ | ✅ |
+| Staging environment | ✅ | ✅ | ✅ | ✅ | ✅ |
+| PR previews | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Rollback | ✅ | ✅ | ✅ | ✅ | ✅ |
 | Canary deployments | ❌ | ✅ | ✅ | ✅ | ✅ |
-| Smoke tests | ❌ | ✅ | ✅ | ✅ | ✅ |
-| Artifact storage | ⚠️ | ✅ | ✅ | ✅ | ✅ |
-| Release automation | ❌ | ✅ | ✅ | ✅ | ✅ |
-| DORA metrics | ❌ | ✅ | ✅ | ✅ | ✅ |
+| Smoke tests | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Artifact storage | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Release automation | ✅ | ✅ | ✅ | ✅ | ✅ |
+| DORA metrics | ✅ | ✅ | ✅ | ✅ | ✅ |
 
 ---
 
