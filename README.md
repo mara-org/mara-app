@@ -6,16 +6,25 @@
 
 | Category | Previous | Current | Target | Status |
 |----------|----------|---------|--------|--------|
-| **CI** | 42% | **60%** | 80% | 🟡 In Progress |
-| **Security** | 35% | **55%** | 70% | 🟡 In Progress |
-| **DevOps** | 52% | **65%** | 75% | 🟡 In Progress |
-| **Observability** | 18% | **25%** | 60% | 🔴 Needs Work |
-| **SRE** | 45% | **50%** | 70% | 🟡 In Progress |
-| **Testing** | 30% | **45%** | 70% | 🟡 In Progress |
+| **CI** | 60% | **65%** ⬆️ | 80% | 🟡 In Progress |
+| **Security** | 55% | **62%** ⬆️ | 70% | 🟡 In Progress |
+| **DevOps** | 65% | **72%** ⬆️ | 75% | 🟡 In Progress |
+| **Observability** | 25% | **25%** | 60% | 🔴 Needs Work |
+| **SRE** | 50% | **50%** | 70% | 🟡 In Progress |
+| **Testing** | 45% | **45%** | 70% | 🟡 In Progress |
 
-**Overall Maturity:** 48% → **53%** (Phase 2 Complete)
+**Overall Maturity:** 53% → **58%** ⬆️ (Latest Improvements Complete)
 
-### Key Improvements in Phase 2
+### Key Improvements (Latest Update)
+- ✅ Dart code metrics workflow (`dart-metrics.yml`) for complexity analysis
+- ✅ Documentation-only CI (`docs-ci.yml`) for lightweight doc checks
+- ✅ Security PR check workflow (`security-pr-check.yml`) for dependency scanning
+- ✅ Enhanced CODEOWNERS with specific area ownerships
+- ✅ YAML issue templates (bug_report, feature_request, tech_debt)
+- ✅ Code metrics: file size warnings, complexity tracking
+- ✅ Non-blocking info-level warnings in CI (only fails on errors)
+
+### Previous Improvements (Phase 2)
 - ✅ Multi-platform CI (Android, iOS, Web)
 - ✅ Coverage enforcement (70% threshold)
 - ✅ CodeQL SAST scanning
@@ -393,6 +402,7 @@ You can bypass the hook with `git commit --no-verify` if needed, but this is **n
 
 ### Continuous Integration (CI)
 
+#### Main CI Workflow
 The **Frontend CI** workflow (`.github/workflows/frontend-ci.yml`) runs automatically on:
 - Push to any branch
 - Pull request to `main`
@@ -405,6 +415,29 @@ It performs:
 5. Test execution (`flutter test`)
 
 Results are sent to Discord via the `DISCORD_WEBHOOK_FRONTEND` secret.
+
+#### Additional CI Workflows
+
+**Dart Metrics** (`.github/workflows/dart-metrics.yml`):
+- Code complexity analysis using `dart_code_metrics`
+- File size warnings (detects files >500 lines)
+- Cyclomatic complexity tracking
+- Non-blocking info-level warnings (only fails on errors)
+- Provides helpful summary of errors/warnings/info counts
+
+**Documentation CI** (`.github/workflows/docs-ci.yml`):
+- Lightweight CI for documentation-only changes
+- Triggers only when `README.md` or `docs/**` files change
+- Skips Flutter build for faster feedback
+- Markdown validation
+- Optional spell checking support
+
+**Security PR Check** (`.github/workflows/security-pr-check.yml`):
+- Checks for outdated dependencies (`dart pub outdated`)
+- Basic secrets scanning (TruffleHog or pattern matching)
+- Detects critical package updates (Flutter/Dart/Sentry/Firebase)
+- Comments on PRs with outdated dependencies
+- Provides security summary
 
 ### Continuous Deployment (CD)
 
@@ -558,6 +591,12 @@ The `.github/CODEOWNERS` file automatically assigns reviewers for pull requests 
   - `/test/**` - All test files
   - `/.github/**` - GitHub workflows and configuration
 
+**Specific Area Ownerships:**
+- `/lib/core/` → `@justAbdulaziz10`
+- `/lib/features/auth/` → `@justAbdulaziz10`
+- `/lib/features/chat/` → `@justAbdulaziz10`
+- `/test/` → `@justAbdulaziz10`
+
 **Adding More Owners:**
 
 To add more owners, edit `.github/CODEOWNERS` and add GitHub usernames (without @) to the appropriate paths. See the file header for instructions.
@@ -575,20 +614,27 @@ When creating a PR, use the template that includes:
 
 ### Issue Templates
 
-Two issue templates are available:
+Three issue templates are available (YAML format):
 
-1. **Bug Report** (`.github/ISSUE_TEMPLATE/bug_report.md`):
+1. **Bug Report** (`.github/ISSUE_TEMPLATE/bug_report.yml`):
    - Description
    - Steps to reproduce
    - Expected vs actual behavior
    - Screenshots
    - Device/OS info
 
-2. **Feature Request** (`.github/ISSUE_TEMPLATE/feature_request.md`):
+2. **Feature Request** (`.github/ISSUE_TEMPLATE/feature_request.yml`):
    - Problem/context
    - Proposed solution
    - Alternatives considered
    - Additional context
+
+3. **Technical Debt** (`.github/ISSUE_TEMPLATE/tech_debt.yml`) **NEW**:
+   - Description of technical debt
+   - Location (file paths/modules)
+   - Impact assessment
+   - Proposed solution
+   - Priority level
 
 ## 🔄 Dependency Updates
 
