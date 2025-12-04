@@ -1,0 +1,149 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../storage/local_cache.dart';
+import '../analytics/analytics_service.dart';
+import '../feature_flags/feature_flag_service.dart';
+import '../feature_flags/firebase_remote_config_service.dart';
+import '../../features/auth/data/datasources/auth_local_data_source.dart';
+import '../../features/auth/data/datasources/auth_remote_data_source.dart';
+import '../../features/auth/data/repositories/auth_repository_impl.dart';
+import '../../features/auth/domain/models/auth_result.dart';
+import '../../features/auth/domain/models/user.dart';
+import '../../features/auth/domain/repositories/auth_repository.dart';
+import '../../features/auth/domain/usecases/sign_in_usecase.dart';
+import '../../features/auth/domain/usecases/sign_up_usecase.dart';
+
+/// Dependency Injection container using Riverpod.
+///
+/// This provides a centralized way to register and access dependencies.
+/// It makes it easy to swap implementations for testing.
+class DependencyInjection {
+  /// Initializes all dependencies.
+  ///
+  /// This should be called once at app startup.
+  static Future<void> initialize() async {
+    // Core services are already initialized in main.dart
+    // This is here for future expansion
+  }
+}
+
+// ============================================================================
+// Core Services Providers
+// ============================================================================
+
+/// Provider for [LocalCache].
+final localCacheProvider = Provider<LocalCache>((ref) {
+  return LocalCache();
+});
+
+/// Provider for [AnalyticsService].
+final analyticsServiceProvider = Provider<AnalyticsService>((ref) {
+  return AnalyticsService();
+});
+
+/// Provider for [FeatureFlagService].
+final featureFlagServiceProvider = Provider<FeatureFlagService>((ref) {
+  // Use Firebase Remote Config if available, otherwise use in-memory
+  return FirebaseRemoteConfigService();
+});
+
+// ============================================================================
+// Auth Feature Providers
+// ============================================================================
+
+/// Provider for [AuthLocalDataSource].
+final authLocalDataSourceProvider = Provider<AuthLocalDataSource>((ref) {
+  final localCache = ref.read(localCacheProvider);
+  return AuthLocalDataSource(localCache);
+});
+
+/// Provider for [AuthRemoteDataSource].
+///
+/// TODO: Replace with actual implementation when backend is available.
+final authRemoteDataSourceProvider = Provider<AuthRemoteDataSource>((ref) {
+  // Placeholder implementation - will be replaced when backend is ready
+  throw UnimplementedError(
+    'AuthRemoteDataSource implementation needed when backend is available',
+  );
+});
+
+/// Provider for [AuthRepository].
+final authRepositoryProvider = Provider<AuthRepository>((ref) {
+  final localDataSource = ref.read(authLocalDataSourceProvider);
+  // For now, use only local data source until backend is available
+  // When backend is ready, uncomment:
+  // final remoteDataSource = ref.read(authRemoteDataSourceProvider);
+  // return AuthRepositoryImpl(remoteDataSource, localDataSource);
+  
+  // Temporary: Create repository with null remote data source
+  // This will be replaced when backend is available
+  return AuthRepositoryImpl(
+    // remoteDataSource, // TODO: Uncomment when backend is ready
+    _PlaceholderRemoteDataSource(),
+    localDataSource,
+  );
+});
+
+/// Provider for [SignInUseCase].
+final signInUseCaseProvider = Provider<SignInUseCase>((ref) {
+  final authRepository = ref.read(authRepositoryProvider);
+  return SignInUseCase(authRepository);
+});
+
+/// Provider for [SignUpUseCase].
+final signUpUseCaseProvider = Provider<SignUpUseCase>((ref) {
+  final authRepository = ref.read(authRepositoryProvider);
+  return SignUpUseCase(authRepository);
+});
+
+// ============================================================================
+// Placeholder Implementation
+// ============================================================================
+
+/// Placeholder remote data source until backend is available.
+///
+/// This prevents the app from crashing while backend is being developed.
+class _PlaceholderRemoteDataSource implements AuthRemoteDataSource {
+  @override
+  Future<AuthResult> signIn({
+    required String email,
+    required String password,
+  }) async {
+    // Placeholder - will be replaced with actual API call
+    throw UnimplementedError('Backend API not yet available');
+  }
+
+  @override
+  Future<AuthResult> signUp({
+    required String email,
+    required String password,
+    String? displayName,
+  }) async {
+    throw UnimplementedError('Backend API not yet available');
+  }
+
+  @override
+  Future<void> signOut() async {
+    throw UnimplementedError('Backend API not yet available');
+  }
+
+  @override
+  Future<User?> getCurrentUser() async {
+    throw UnimplementedError('Backend API not yet available');
+  }
+
+  @override
+  Future<bool> sendPasswordResetEmail(String email) async {
+    throw UnimplementedError('Backend API not yet available');
+  }
+
+  @override
+  Future<bool> verifyEmailCode(String code) async {
+    throw UnimplementedError('Backend API not yet available');
+  }
+
+  @override
+  Future<bool> resendVerificationCode() async {
+    throw UnimplementedError('Backend API not yet available');
+  }
+}
+
