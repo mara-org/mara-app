@@ -76,6 +76,73 @@ This document describes the architecture of the Mara mobile application. This re
 └─────────────────────────────────────────────────────────────┘
 ```
 
+## Architecture Layers
+
+The app follows a layered architecture pattern:
+
+```
+┌─────────────────────────────────────────┐
+│         Presentation Layer              │
+│  (UI, Widgets, Screens, Navigation)   │
+└─────────────────────────────────────────┘
+                    ↓
+┌─────────────────────────────────────────┐
+│          Domain Layer                   │
+│    (Use Cases, Entities, Business)     │
+│         (To be implemented)            │
+└─────────────────────────────────────────┘
+                    ↓
+┌─────────────────────────────────────────┐
+│           Data Layer                    │
+│  (Repositories, Data Sources, Cache)   │
+│         (To be implemented)            │
+└─────────────────────────────────────────┘
+                    ↓
+┌─────────────────────────────────────────┐
+│      External Services                  │
+│  (Sentry, Firebase, Future Backend)    │
+└─────────────────────────────────────────┘
+```
+
+### Presentation Layer
+
+**Location:** `lib/features/*/presentation/`
+
+- UI widgets and screens
+- Navigation logic (GoRouter)
+- State management (Riverpod)
+- User interactions
+
+### Domain Layer
+
+**Location:** `lib/features/*/domain/` (to be implemented)
+
+- Business logic
+- Use cases
+- Domain entities
+- Validation rules
+
+### Data Layer
+
+**Location:** `lib/features/*/data/` (to be implemented)
+
+- Repository implementations
+- Data sources (network, local cache)
+- Data models
+- API clients
+
+### Core Layer
+
+**Location:** `lib/core/`
+
+- Shared utilities (logging, crash reporting, analytics)
+- Network layer (retry, circuit breaker, rate limiting)
+- Storage (local cache)
+- Feature flags
+- Routing
+- Theme
+- Models
+
 ## Client-Side Architecture
 
 ### Observability Stack
@@ -113,6 +180,15 @@ This document describes the architecture of the Mara mobile application. This re
 - Key-value storage using SharedPreferences
 - Simple interface: `saveString()`, `getString()`, etc.
 - Can be extended with TTL, encryption, cache eviction
+- Enables graceful degradation when offline
+
+### Feature Flags
+
+**Feature Flag Service**: `lib/core/feature_flags/feature_flag_service.dart`
+- Enables canary deployments and staged rollouts
+- Supports Firebase Remote Config
+- Local defaults for development
+- Implementation: `lib/core/feature_flags/firebase_remote_config_service.dart`
 
 ### State Management
 

@@ -1,0 +1,85 @@
+# Mara CD – PR Preview Deployment
+# Builds preview APK for PR reviewers to test
+# Frontend-only: lightweight debug builds for testing
+
+name: Mara CD – PR Preview Deployment
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [opened, synchronize, reopened]
+
+jobs:
+  pr-preview-build:
+    name: Build PR Preview
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.27.0"
+
+      - name: Flutter pub get
+        run: flutter pub get
+
+      - name: Build preview APK
+        run: |
+          echo "🔨 Building PR preview APK..."
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+          PR_SHA="${GITHUB_SHA::7}"
+          
+          # Build debug APK (faster, smaller, good for preview)
+          flutter build apk --debug --dart-define=ENVIRONMENT=preview --dart-define=PR_NUMBER=$PR_NUMBER
+          
+          if [ -f "build/app/outputs/flutter-apk/app-debug.apk" ]; then
+            echo "✅ Preview APK built successfully"
+          else
+            echo "❌ Preview APK build failed"
+            exit 1
+          fi
+
+      - name: Upload preview APK
+        uses: actions/upload-artifact@v5
+        with:
+          name: preview-apk-pr-${{ github.event.pull_request.number }}
+          path: build/app/outputs/flutter-apk/app-debug.apk
+          retention-days: 7
+          if-no-files-found: error
+
+      - name: Comment on PR with preview link
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prNumber = context.issue.number;
+            const artifactUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            
+            const comment = `## 📦 PR Preview Build
+            
+            A preview APK has been built for this PR and is available as an artifact.
+            
+            **Download:** [View artifacts](${artifactUrl}) → \`preview-apk-pr-${prNumber}\`
+            
+            **Note:** This is a debug build for testing purposes only. Not for production use.
+            
+            **How to install:**
+            1. Download the APK from the artifacts link above
+            2. Enable "Install from unknown sources" on your Android device
+            3. Install and test the preview build
+            
+            ⚠️ This preview build will be deleted after 7 days.`;
+            
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              body: comment
+            });
+

@@ -1,0 +1,137 @@
+# Mara Automation – Auto Triage
+# Automatically labels and assigns issues/PRs based on content and files changed
+# Frontend-only: triages frontend repository issues
+
+name: Mara Automation – Auto Triage
+
+on:
+  issues:
+    types: [opened]
+  pull_request:
+    types: [opened]
+
+jobs:
+  triage:
+    name: Auto Triage Issues/PRs
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Triage issue or PR
+        id: triage
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const context = github.context;
+            const isPR = 'pull_request' in context.payload;
+            const number = isPR ? context.payload.pull_request.number : context.payload.issue.number;
+            const title = isPR ? context.payload.pull_request.title : context.payload.issue.title;
+            const body = isPR ? context.payload.pull_request.body : context.payload.issue.body;
+            const labels = [];
+            const assignees = [];
+            
+            // Analyze title and body for keywords
+            const titleLower = title.toLowerCase();
+            const bodyLower = (body || '').toLowerCase();
+            const combined = `${titleLower} ${bodyLower}`;
+            
+            // Bug detection
+            if (combined.match(/\b(bug|error|crash|broken|fix|issue|problem)\b/)) {
+              labels.push('bug');
+            }
+            
+            // Feature detection
+            if (combined.match(/\b(feat|feature|add|new|implement|enhancement)\b/) ||
+                titleLower.startsWith('feat:') || titleLower.startsWith('feature:')) {
+              labels.push('feature');
+            }
+            
+            // Documentation detection
+            if (combined.match(/\b(doc|documentation|readme|guide|tutorial)\b/) ||
+                titleLower.includes('doc') || titleLower.includes('readme')) {
+              labels.push('documentation');
+            }
+            
+            // Security detection
+            if (combined.match(/\b(security|vulnerability|exploit|attack|secure)\b/)) {
+              labels.push('security');
+            }
+            
+            // Performance detection
+            if (combined.match(/\b(performance|slow|speed|optimize|benchmark)\b/)) {
+              labels.push('performance');
+            }
+            
+            // For PRs, analyze changed files
+            if (isPR) {
+              const { data: files } = await github.rest.pulls.listFiles({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: number,
+              });
+              
+              const changedPaths = files.map(f => f.filename);
+              
+              // Area-based labeling
+              if (changedPaths.some(p => p.startsWith('lib/features/auth/'))) {
+                labels.push('area:auth');
+              }
+              if (changedPaths.some(p => p.startsWith('lib/features/chat/'))) {
+                labels.push('area:chat');
+              }
+              if (changedPaths.some(p => p.startsWith('lib/core/'))) {
+                labels.push('area:core');
+              }
+              if (changedPaths.some(p => p.startsWith('test/') || p.includes('_test.dart'))) {
+                labels.push('area:tests');
+              }
+              if (changedPaths.some(p => p.startsWith('.github/workflows/'))) {
+                labels.push('area:ci-cd');
+              }
+              if (changedPaths.some(p => p.startsWith('docs/'))) {
+                labels.push('area:documentation');
+              }
+              
+              // Auto-assign based on CODEOWNERS (simplified)
+              // In production, use CODEOWNERS file parsing
+              if (changedPaths.some(p => p.startsWith('lib/core/')) ||
+                  changedPaths.some(p => p.startsWith('lib/features/auth/')) ||
+                  changedPaths.some(p => p.startsWith('lib/features/chat/'))) {
+                assignees.push('justAbdulaziz10');
+              }
+            }
+            
+            // Apply labels
+            if (labels.length > 0) {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: number,
+                labels: labels,
+              });
+            }
+            
+            // Assign reviewers/assignees
+            if (assignees.length > 0 && isPR) {
+              await github.rest.issues.addAssignees({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: number,
+                assignees: assignees,
+              });
+            }
+            
+            return { labels, assignees };
+
+      - name: Triage summary
+        run: |
+          echo "✅ Auto-triage completed"
+          echo "Labels applied: ${{ steps.triage.outputs.labels }}"
+          echo "Assignees: ${{ steps.triage.outputs.assignees }}"
+

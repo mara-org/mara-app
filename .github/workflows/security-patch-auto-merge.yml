@@ -1,0 +1,97 @@
+# Mara Security – Security Patch Auto-Merge
+# Automatically merges Dependabot security patches that pass CI
+# Frontend-only: handles dependency security updates
+
+name: Mara Security – Security Patch Auto-Merge
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled]
+
+jobs:
+  auto-merge-security:
+    name: Auto-Merge Security Patches
+    runs-on: ubuntu-latest
+    if: |
+      github.event.pull_request.user.login == 'dependabot[bot]' &&
+      (contains(github.event.pull_request.labels.*.name, 'security') || 
+       contains(github.event.pull_request.title, 'security') ||
+       contains(github.event.pull_request.title, 'Security'))
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Verify PR only touches dependencies
+        id: verify_deps_only
+        run: |
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+          
+          # Get changed files
+          CHANGED_FILES=$(gh pr view "$PR_NUMBER" --json files --jq '.files[].path' || echo "")
+          
+          # Check if only dependency files changed
+          NON_DEPENDENCY_FILES=$(echo "$CHANGED_FILES" | grep -v "pubspec.yaml" | grep -v "pubspec.lock" | grep -v "^$" || true)
+          
+          if [ -z "$NON_DEPENDENCY_FILES" ]; then
+            echo "✅ PR only touches dependencies"
+            echo "deps_only=true" >> $GITHUB_OUTPUT
+          else
+            echo "⚠️ PR touches non-dependency files:"
+            echo "$NON_DEPENDENCY_FILES"
+            echo "deps_only=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Wait for CI checks
+        if: steps.verify_deps_only.outputs.deps_only == 'true'
+        uses: lewagon/wait-on-check-action@v1.3.4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          check-regexp: '.*'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          wait-interval: 10
+          allowed-conclusions: success,neutral
+
+      - name: Auto-merge security patch
+        if: steps.verify_deps_only.outputs.deps_only == 'true'
+        run: |
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+          
+          echo "🚀 Auto-merging security patch PR #$PR_NUMBER"
+          
+          # Merge PR
+          gh pr merge "$PR_NUMBER" --squash --delete-branch --auto || {
+            echo "⚠️ Auto-merge failed (may require manual review)"
+            exit 0
+          }
+          
+          echo "✅ Security patch merged successfully"
+
+      - name: Comment if not auto-merged
+        if: steps.verify_deps_only.outputs.deps_only != 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prNumber = context.payload.pull_request.number;
+            
+            const comment = `## ⚠️ Security Patch Review Required
+            
+            This PR touches files beyond dependencies (\`pubspec.yaml\`/\`pubspec.lock\`).
+            
+            **Action Required:** Manual review needed before merging.
+            
+            **Changed Files:**
+            - Please review all changes carefully
+            - Ensure no breaking changes introduced
+            - Verify tests pass`;
+            
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              body: comment,
+            });
+

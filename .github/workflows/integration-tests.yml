@@ -1,0 +1,83 @@
+# Mara CI – Integration Tests
+# Runs end-to-end integration tests for critical user flows
+# Frontend-only: tests app flows without requiring backend modifications
+
+name: Mara CI – Integration Tests
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  integration-tests:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.27.0"
+
+      - name: Cache Flutter pub dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.pub-cache
+            ${{ github.workspace }}/.dart_tool
+          key: ${{ runner.os }}-flutter-pub-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-flutter-pub-
+
+      - name: Flutter pub get
+        run: flutter pub get
+
+      - name: Install integration_test dependencies
+        run: |
+          flutter pub add --dev integration_test || echo "integration_test may already be added"
+          flutter pub get
+
+      - name: Run integration tests
+        run: |
+          echo "🧪 Running integration tests..."
+          
+          # Check if integration_test directory exists
+          if [ ! -d "integration_test" ]; then
+            echo "⚠️ integration_test directory not found. Creating basic structure..."
+            mkdir -p integration_test
+            echo "Integration tests will be added here"
+            exit 0  # Don't fail if tests don't exist yet
+          fi
+          
+          # Run integration tests
+          flutter test integration_test/ || {
+            echo "❌ Integration tests failed"
+            exit 1
+          }
+
+      - name: Upload integration test results
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: integration-test-results
+          path: |
+            integration_test/**/*.png
+            test_driver/**/*.png
+          retention-days: 7
+          if-no-files-found: ignore
+
+      - name: Integration test summary
+        if: always()
+        run: |
+          echo "✅ Integration tests completed"
+          echo "Results uploaded as artifacts if available"
+

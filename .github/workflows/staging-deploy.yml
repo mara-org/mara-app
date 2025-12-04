@@ -1,0 +1,133 @@
+# Mara CD – Staging Deployment
+# Builds and deploys staging builds from main or staging branch
+# Frontend-only: builds APK/AAB for staging environment
+
+name: Mara CD – Staging Deployment
+
+on:
+  push:
+    branches:
+      - main
+      - staging
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to deploy'
+        required: true
+        default: 'main'
+
+jobs:
+  staging-deploy:
+    name: Build & Deploy Staging
+    runs-on: ubuntu-latest
+    environment:
+      name: staging
+      url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+    env:
+      DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_DEPLOYS }}
+      ENVIRONMENT: staging
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.27.0"
+
+      - name: Flutter pub get
+        run: flutter pub get
+
+      - name: Extract app version
+        run: |
+          if grep -q '^version:' pubspec.yaml; then
+            VERSION_LINE=$(grep '^version:' pubspec.yaml | head -n 1)
+            VERSION_VALUE=$(echo "$VERSION_LINE" | awk '{print $2}')
+          else
+            VERSION_VALUE="unknown"
+          fi
+          echo "APP_VERSION=$VERSION_VALUE" >> $GITHUB_ENV
+          echo "STAGING_VERSION=${VERSION_VALUE}-staging-$(date +%Y%m%d-%H%M%S)" >> $GITHUB_ENV
+
+      - name: Build Flutter APK (Staging)
+        run: |
+          echo "🔨 Building staging APK..."
+          flutter build apk --release --dart-define=ENVIRONMENT=staging
+          
+          if [ -f "build/app/outputs/flutter-apk/app-release.apk" ]; then
+            echo "✅ Staging APK built successfully"
+          else
+            echo "❌ Staging APK build failed"
+            exit 1
+          fi
+
+      - name: Build Flutter App Bundle (Staging)
+        continue-on-error: true
+        run: |
+          echo "🔨 Building staging AAB..."
+          flutter build appbundle --release --dart-define=ENVIRONMENT=staging
+          
+          if [ -f "build/app/outputs/bundle/release/app-release.aab" ]; then
+            echo "✅ Staging AAB built successfully"
+            echo "aab_built=true" >> $GITHUB_OUTPUT
+          else
+            echo "⚠️ Staging AAB build failed (non-critical)"
+            echo "aab_built=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Upload staging APK artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: mara-staging-apk-${{ env.STAGING_VERSION }}
+          path: build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 30
+
+      - name: Upload staging AAB artifact
+        if: steps.build_aab.outputs.aab_built == 'true'
+        uses: actions/upload-artifact@v5
+        with:
+          name: mara-staging-aab-${{ env.STAGING_VERSION }}
+          path: build/app/outputs/bundle/release/app-release.aab
+          retention-days: 30
+
+      - name: Deploy summary
+        run: |
+          echo "✅ Staging build completed"
+          echo "Environment: staging"
+          echo "Version: ${{ env.STAGING_VERSION }}"
+          echo "Artifacts uploaded and ready for distribution"
+          echo ""
+          echo "Next steps:"
+          echo "- Download APK/AAB from artifacts"
+          echo "- Distribute via Firebase App Distribution or internal track"
+          echo "- No backend changes required (uses same backend endpoints)"
+
+      - name: Notify Discord
+        if: always()
+        continue-on-error: true
+        run: |
+          STATUS="${{ job.status }}"
+          COMMIT_URL="https://github.com/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}"
+          RUN_URL="https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+
+          ICON="✅"
+          TITLE="Mara Staging Build Succeeded"
+          if [ "$STATUS" != "success" ]; then
+            ICON="❌"
+            TITLE="Mara Staging Build FAILED"
+          fi
+
+          MESSAGE="${ICON} **${TITLE}**
+          Environment: \`staging\`
+          Version: \`${{ env.STAGING_VERSION }}\`
+          Branch: \`${GITHUB_REF_NAME}\`
+          Commit: [\`${GITHUB_SHA::7}\`](${COMMIT_URL})
+          Workflow: ${RUN_URL}"
+
+          if [ -n "$DISCORD_WEBHOOK" ]; then
+            PAYLOAD=$(python3 -c "import json; print(json.dumps({'content': '''$MESSAGE'''}))" 2>/dev/null)
+            curl -s -H "Content-Type: application/json" -d "$PAYLOAD" -X POST "$DISCORD_WEBHOOK" >/dev/null 2>&1 || true
+          fi
+

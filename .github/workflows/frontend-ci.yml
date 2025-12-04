@@ -13,6 +13,46 @@ on:
       - main  # Trigger on PR to main
 
 jobs:
+  determine-test-strategy:
+    name: Determine Test Strategy
+    runs-on: ubuntu-latest
+    outputs:
+      test_suite: ${{ steps.pr_size.outputs.test_suite }}
+      pr_size: ${{ steps.pr_size.outputs.size }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determine PR size and test strategy
+        id: pr_size
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            # Get changed lines from PR
+            CHANGED_LINES=$(git diff --shortstat origin/${{ github.base_ref }}...HEAD 2>/dev/null | awk '{print $4+$6}' || echo "0")
+          else
+            # For pushes, check last commit
+            CHANGED_LINES=$(git diff --shortstat HEAD~1 HEAD 2>/dev/null | awk '{print $4+$6}' || echo "0")
+          fi
+          
+          echo "Changed lines: $CHANGED_LINES"
+          echo "size=$CHANGED_LINES" >> $GITHUB_OUTPUT
+          
+          # Determine test suite based on PR size
+          if [ "$CHANGED_LINES" -lt 50 ]; then
+            TEST_SUITE="minimal"  # Only critical tests
+            echo "📦 Small PR detected (<50 lines) - running minimal test suite"
+          elif [ "$CHANGED_LINES" -lt 200 ]; then
+            TEST_SUITE="standard"  # Standard test suite
+            echo "📦 Medium PR detected (50-200 lines) - running standard test suite"
+          else
+            TEST_SUITE="full"  # Full test suite including integration tests
+            echo "📦 Large PR detected (>200 lines) - running full test suite"
+          fi
+          
+          echo "test_suite=$TEST_SUITE" >> $GITHUB_OUTPUT
+
   security-summary:
     name: Security Summary
     runs-on: ubuntu-latest
@@ -93,6 +133,7 @@ jobs:
   ci:
     name: Mara CI – Multi Platform
     runs-on: ${{ matrix.os }}
+    needs: [determine-test-strategy]
     strategy:
       fail-fast: false
       matrix:
@@ -126,9 +167,20 @@ jobs:
           path: |
             ~/.pub-cache
             ${{ github.workspace }}/.dart_tool
+            ${{ github.workspace }}/build
           key: ${{ runner.os }}-flutter-pub-${{ hashFiles('**/pubspec.lock') }}
           restore-keys: |
             ${{ runner.os }}-flutter-pub-
+
+      - name: Cache test results
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ github.workspace }}/.dart_tool/test
+            ${{ github.workspace }}/test/.test_coverage
+          key: ${{ runner.os }}-test-results-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-test-results-
 
       - name: Cache Gradle dependencies
         uses: actions/cache@v4
@@ -223,15 +275,26 @@ jobs:
           echo "🧪 Running tests with coverage..."
           START_TIME=$(date +%s)
           
-          # First test run
-          if flutter test --coverage; then
+          # Determine concurrency based on available CPU cores (parallel test execution)
+          # Use 4 workers by default, or number of cores if less
+          CONCURRENCY=4
+          if command -v nproc &> /dev/null; then
+            CORES=$(nproc)
+            if [ "$CORES" -lt "$CONCURRENCY" ]; then
+              CONCURRENCY=$CORES
+            fi
+          fi
+          echo "Running tests with concurrency: $CONCURRENCY"
+          
+          # First test run with parallel execution
+          if flutter test --coverage --concurrency=$CONCURRENCY; then
             TEST_PASSED=true
           else
             TEST_PASSED=false
             echo "⚠️ First test run failed. Retrying once to detect flaky tests..."
             
-            # Retry once
-            if flutter test --coverage; then
+            # Retry once with parallel execution
+            if flutter test --coverage --concurrency=$CONCURRENCY; then
               TEST_PASSED=true
               echo "✅ Tests passed on retry. Marked as flaky – tests passed on retry."
             else
@@ -314,6 +377,17 @@ jobs:
           }
           echo "✅ Build succeeded for ${PLATFORM}"
           echo "build_success=true" >> $GITHUB_OUTPUT
+
+      - name: Check per-file coverage
+        if: steps.test_coverage.outputs.coverage_generated == 'true' && matrix.platform == 'android'
+        run: |
+          echo "📊 Checking per-file coverage thresholds..."
+          bash scripts/check-coverage-per-file.sh 60 coverage/lcov.info || {
+            echo "⚠️ Per-file coverage check failed. This is a warning for now."
+            echo "Files below 60% coverage threshold need tests added."
+            # Don't fail CI yet - allow gradual improvement
+            # exit 1
+          }
 
       - name: Upload coverage artifact
         if: steps.test_coverage.outputs.coverage_generated == 'true'
@@ -450,3 +524,48 @@ jobs:
           
           # Always exit successfully to not fail the CI job
           exit 0
+
+      - name: CI Failure Root Cause Analysis
+        if: failure()
+        run: |
+          echo "🔍 Analyzing CI failure root cause..."
+          
+          FAILURE_CATEGORY="unknown"
+          
+          # Check format step
+          if [ "${{ steps.format_check.outcome }}" = "failure" ]; then
+            FAILURE_CATEGORY="format"
+            echo "❌ Failure category: format"
+            echo "   Issue: Code formatting check failed"
+            echo "   Fix: Run 'dart format .' locally"
+          # Check analyze step
+          elif [ "${{ steps.analyze.outcome }}" = "failure" ]; then
+            FAILURE_CATEGORY="analyze"
+            echo "❌ Failure category: analyze"
+            echo "   Issue: Static analysis found errors or warnings"
+            echo "   Fix: Run 'flutter analyze' and fix reported issues"
+          # Check test step
+          elif [ "${{ steps.test_coverage.outcome }}" = "failure" ]; then
+            FAILURE_CATEGORY="tests"
+            echo "❌ Failure category: tests"
+            echo "   Issue: Tests failed or coverage below threshold"
+            echo "   Fix: Review test failures and add missing tests"
+          # Check build step
+          elif [ "${{ steps.platform_build.outcome }}" = "failure" ]; then
+            FAILURE_CATEGORY="build"
+            echo "❌ Failure category: build"
+            echo "   Issue: Platform build failed for ${{ matrix.platform }}"
+            echo "   Fix: Check build logs for platform-specific issues"
+          else
+            FAILURE_CATEGORY="unknown"
+            echo "⚠️ Failure category: unknown"
+            echo "   Review job logs for details"
+          fi
+          
+          echo "FAILURE_CATEGORY=$FAILURE_CATEGORY" >> $GITHUB_ENV
+          echo ""
+          echo "📋 Summary:"
+          echo "  Format: ${{ steps.format_check.outcome }}"
+          echo "  Analyze: ${{ steps.analyze.outcome }}"
+          echo "  Tests: ${{ steps.test_coverage.outcome }}"
+          echo "  Build: ${{ steps.platform_build.outcome }}"
