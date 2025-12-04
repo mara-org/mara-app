@@ -67,6 +67,8 @@ All deployments are **frontend-only** - backend code lives in a separate reposit
 - Allows reviewers to test changes before merge
 - Lightweight debug builds (not for production)
 
+**Note:** This workflow requires `pull-requests: write` permission to comment on PRs. The permission is configured in the workflow file.
+
 ## Deployment Promotion Flow
 
 ```
