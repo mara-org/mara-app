@@ -15,6 +15,9 @@ jobs:
     name: Build PR Preview
     runs-on: ubuntu-latest
     if: github.event.pull_request.draft == false
+    permissions:
+      contents: read
+      pull-requests: write
 
     steps:
       - name: Checkout code
