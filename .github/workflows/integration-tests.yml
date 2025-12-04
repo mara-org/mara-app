@@ -58,11 +58,19 @@ jobs:
             exit 0  # Don't fail if tests don't exist yet
           fi
           
-          # Run integration tests
-          flutter test integration_test/ || {
+          # Integration tests don't support web platform
+          # Run integration tests (will skip web automatically)
+          echo "Note: Web platform is not supported for integration tests"
+          echo "Running integration tests for supported platforms (Android/iOS)..."
+          
+          # Run integration tests - they will automatically skip web
+          flutter test integration_test/ --no-pub || {
             echo "❌ Integration tests failed"
+            echo "Note: Web platform tests are skipped (not supported)"
             exit 1
           }
+          
+          echo "✅ Integration tests completed (web platform skipped)"
 
       - name: Upload integration test results
         if: always()

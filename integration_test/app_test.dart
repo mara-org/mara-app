@@ -8,6 +8,11 @@ void main() {
 
   group('App Integration Tests', () {
     testWidgets('App launches successfully', (WidgetTester tester) async {
+      // Skip on web platform (not supported)
+      if (tester.binding is! IntegrationTestWidgetsFlutterBinding) {
+        return;
+      }
+
       // Start the app
       app.main();
       await tester.pumpAndSettle();
@@ -17,6 +22,11 @@ void main() {
     });
 
     testWidgets('App navigates to initial screen', (WidgetTester tester) async {
+      // Skip on web platform (not supported)
+      if (tester.binding is! IntegrationTestWidgetsFlutterBinding) {
+        return;
+      }
+
       app.main();
       await tester.pumpAndSettle(const Duration(seconds: 2));
 

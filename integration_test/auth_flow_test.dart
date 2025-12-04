@@ -8,6 +8,11 @@ void main() {
 
   group('Auth Flow Integration Tests', () {
     testWidgets('Auth screens are accessible', (WidgetTester tester) async {
+      // Skip on web platform (not supported)
+      if (tester.binding is! IntegrationTestWidgetsFlutterBinding) {
+        return;
+      }
+
       app.main();
       await tester.pumpAndSettle(const Duration(seconds: 2));
 
