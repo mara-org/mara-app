@@ -1,0 +1,133 @@
+# Mara CI – Code Duplication Detection
+# Scans codebase for duplicate code blocks
+# Fails if duplication exceeds threshold (default: 7%)
+# Frontend-only: scans lib/ and test/ directories
+
+name: Mara CI – Code Duplication Detection
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  detect-duplication:
+    name: Detect Code Duplication
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install jscpd
+        run: npm install -g jscpd@latest
+
+      - name: Run code duplication detection
+        id: duplication_check
+        continue-on-error: true
+        run: |
+          echo "🔍 Running code duplication detection..."
+          
+          # Configuration
+          DUPLICATION_THRESHOLD=7  # Fail if duplication > 7%
+          MIN_TOKENS=50  # Minimum tokens to consider a duplicate
+          
+          # Run jscpd on lib/ and test/ directories
+          jscpd \
+            --min-tokens $MIN_TOKENS \
+            --min-lines 10 \
+            --threshold $DUPLICATION_THRESHOLD \
+            --format json \
+            --reporters json,console \
+            --output ./duplication-report \
+            lib/ test/ \
+            > duplication-output.json 2>&1 || true
+          
+          # Parse JSON output to get duplication percentage
+          if [ -f "./duplication-report/jscpd-report.json" ]; then
+            DUPLICATION_PERCENT=$(cat ./duplication-report/jscpd-report.json | grep -o '"percentage":[0-9.]*' | head -1 | cut -d':' -f2 || echo "0")
+            echo "duplication_percent=$DUPLICATION_PERCENT" >> $GITHUB_OUTPUT
+            echo "📊 Code duplication detected: ${DUPLICATION_PERCENT}%"
+            
+            # Check if duplication exceeds threshold
+            if (( $(echo "$DUPLICATION_PERCENT > $DUPLICATION_THRESHOLD" | bc -l) )); then
+              echo "❌ Code duplication (${DUPLICATION_PERCENT}%) exceeds threshold (${DUPLICATION_THRESHOLD}%)"
+              echo "duplication_exceeded=true" >> $GITHUB_OUTPUT
+              exit 1
+            else
+              echo "✅ Code duplication (${DUPLICATION_PERCENT}%) is within threshold (${DUPLICATION_THRESHOLD}%)"
+              echo "duplication_exceeded=false" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "⚠️ Could not parse duplication report. Assuming no duplication."
+            echo "duplication_percent=0" >> $GITHUB_OUTPUT
+            echo "duplication_exceeded=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Upload duplication report
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: code-duplication-report
+          path: |
+            duplication-report/
+            duplication-output.json
+          retention-days: 30
+          if-no-files-found: ignore
+
+      - name: Comment on PR if duplication exceeds threshold
+        if: steps.duplication_check.outputs.duplication_exceeded == 'true' && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        permissions:
+          pull-requests: write
+        with:
+          script: |
+            const prNumber = context.issue.number;
+            const duplicationPercent = '${{ steps.duplication_check.outputs.duplication_percent }}';
+            const threshold = 7;
+            
+            const comment = `## ⚠️ Code Duplication Detected
+            
+            This PR has **${duplicationPercent}%** code duplication, which exceeds the threshold of **${threshold}%**.
+            
+            **Action Required:**
+            - Review the [duplication report](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}) to identify duplicate code blocks
+            - Refactor duplicate code into shared utilities or functions
+            - Aim to reduce duplication below ${threshold}%
+            
+            **How to reduce duplication:**
+            - Extract common logic into helper functions
+            - Create reusable widgets/components
+            - Use mixins or base classes for shared behavior
+            - Consider using code generation for repetitive patterns
+            
+            See [CONTRIBUTING.md](../CONTRIBUTING.md) for guidelines on handling code duplication.`;
+            
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              body: comment
+            });
+
+      - name: Duplication check summary
+        if: always()
+        run: |
+          echo "### Code Duplication Check Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- Duplication: ${{ steps.duplication_check.outputs.duplication_percent }}%" >> $GITHUB_STEP_SUMMARY
+          echo "- Threshold: 7%" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.duplication_check.outputs.duplication_exceeded }}" == "true" ]; then
+            echo "- Status: ❌ **FAILED** - Duplication exceeds threshold" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- Status: ✅ **PASSED** - Duplication within threshold" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "💡 Review the duplication report artifact for detailed analysis." >> $GITHUB_STEP_SUMMARY
+

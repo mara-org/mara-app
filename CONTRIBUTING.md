@@ -98,6 +98,50 @@ Thank you for your interest in contributing to the Mara mobile application! This
 
 - **Features:** Organize code by feature in `lib/features/`
 - **Core:** Shared utilities go in `lib/core/`
+- **Architecture:** Follow Clean Architecture patterns (presentation/domain/data layers)
+
+### Code Duplication
+
+We enforce a **maximum code duplication threshold of 7%** to maintain code quality and maintainability.
+
+**What is checked:**
+- The CI workflow (`.github/workflows/code-duplication.yml`) scans `lib/` and `test/` directories
+- Uses `jscpd` to detect duplicate code blocks (minimum 50 tokens, 10 lines)
+- Fails the build if duplication exceeds 7%
+
+**How to handle duplication violations:**
+
+1. **Identify duplicate code:**
+   - Review the duplication report artifact from the CI run
+   - Look for code blocks that appear multiple times
+
+2. **Refactor duplicate code:**
+   - Extract common logic into helper functions or utilities
+   - Create reusable widgets/components for duplicate UI code
+   - Use mixins or base classes for shared behavior
+   - Consider code generation for repetitive patterns
+
+3. **Examples of good refactoring:**
+   ```dart
+   // ❌ Bad: Duplicate validation logic
+   String? validateEmail1(String? email) { /* ... */ }
+   String? validateEmail2(String? email) { /* ... */ }
+   
+   // ✅ Good: Shared validation utility
+   class EmailValidator {
+     static String? validate(String? email) { /* ... */ }
+   }
+   ```
+
+4. **If duplication is unavoidable:**
+   - Document why duplication is necessary
+   - Consider if the duplication threshold should be adjusted for specific cases
+   - Discuss with the team before increasing the threshold
+
+**Threshold Configuration:**
+- Default threshold: **7%**
+- Minimum tokens: **50** (prevents false positives from small snippets)
+- Minimum lines: **10** (prevents false positives from very short blocks)
 - **Tests:** Mirror the `lib/` structure in `test/`
 
 ### Naming Conventions
