@@ -42,6 +42,9 @@ dev_dependencies:
   integration_test:
     sdk: flutter
 
+dependency_overrides:
+  file: 7.0.0
+
 flutter:
   uses-material-design: true
   generate: true
