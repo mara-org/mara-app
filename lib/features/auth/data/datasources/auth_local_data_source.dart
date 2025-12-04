@@ -53,4 +53,3 @@ class AuthLocalDataSource {
     return LocalCache.getString(_tokenKey);
   }
 }
-

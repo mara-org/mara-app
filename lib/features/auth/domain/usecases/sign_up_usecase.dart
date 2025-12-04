@@ -19,12 +19,12 @@ class SignUpUseCase {
     required String password,
     String? displayName,
   }) async {
-      Logger.info(
-        'Sign-up attempt',
-        feature: 'auth',
-        screen: 'sign_up',
-        extra: {'email': email}, // Note: Never log passwords
-      );
+    Logger.info(
+      'Sign-up attempt',
+      feature: 'auth',
+      screen: 'sign_up',
+      extra: {'email': email}, // Note: Never log passwords
+    );
 
     try {
       final result = await _authRepository.signUp(
@@ -45,7 +45,10 @@ class SignUpUseCase {
           'Sign-up failed',
           feature: 'auth',
           screen: 'sign_up',
-          extra: {'error': result.errorMessage, 'errorType': result.errorType?.toString()},
+          extra: {
+            'error': result.errorMessage,
+            'errorType': result.errorType?.toString()
+          },
         );
       }
 
@@ -66,4 +69,3 @@ class SignUpUseCase {
     }
   }
 }
-

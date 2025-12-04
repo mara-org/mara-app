@@ -51,4 +51,3 @@ enum AuthErrorType {
   /// Unknown or unexpected error.
   unknown,
 }
-

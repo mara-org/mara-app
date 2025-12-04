@@ -34,4 +34,3 @@ abstract class AuthRemoteDataSource {
   /// Resends email verification code via remote API.
   Future<bool> resendVerificationCode();
 }
-

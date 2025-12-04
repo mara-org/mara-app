@@ -36,4 +36,3 @@ class EmailValidationResult {
     return EmailValidationResult.valid();
   }
 }
-

@@ -223,13 +223,14 @@ class AuthRepositoryImpl implements AuthRepository {
     final errorString = error.toString().toLowerCase();
     if (errorString.contains('network') || errorString.contains('connection')) {
       return AuthErrorType.networkError;
-    } else if (errorString.contains('invalid') || errorString.contains('credential')) {
+    } else if (errorString.contains('invalid') ||
+        errorString.contains('credential')) {
       return AuthErrorType.invalidCredentials;
-    } else if (errorString.contains('email') && errorString.contains('verify')) {
+    } else if (errorString.contains('email') &&
+        errorString.contains('verify')) {
       return AuthErrorType.emailNotVerified;
     } else {
       return AuthErrorType.unknown;
     }
   }
 }
-

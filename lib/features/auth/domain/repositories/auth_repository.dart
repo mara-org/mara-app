@@ -34,4 +34,3 @@ abstract class AuthRepository {
   /// Resends email verification code.
   Future<bool> resendVerificationCode();
 }
-

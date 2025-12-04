@@ -19,12 +19,12 @@ class SignInUseCase {
     required String email,
     required String password,
   }) async {
-      Logger.info(
-        'Sign-in attempt',
-        feature: 'auth',
-        screen: 'sign_in',
-        extra: {'email': email}, // Note: Never log passwords
-      );
+    Logger.info(
+      'Sign-in attempt',
+      feature: 'auth',
+      screen: 'sign_in',
+      extra: {'email': email}, // Note: Never log passwords
+    );
 
     try {
       final result = await _authRepository.signIn(
@@ -44,7 +44,10 @@ class SignInUseCase {
           'Sign-in failed',
           feature: 'auth',
           screen: 'sign_in',
-          extra: {'error': result.errorMessage, 'errorType': result.errorType?.toString()},
+          extra: {
+            'error': result.errorMessage,
+            'errorType': result.errorType?.toString()
+          },
         );
       }
 
@@ -65,4 +68,3 @@ class SignInUseCase {
     }
   }
 }
-

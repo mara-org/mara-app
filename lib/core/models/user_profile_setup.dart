@@ -88,7 +88,8 @@ class UserProfileSetup {
       return 'Height must be greater than 0';
     }
     // Reasonable height limits (in cm)
-    final maxHeight = heightUnit == 'in' ? 300 : 250; // ~8ft in inches, ~8ft in cm
+    final maxHeight =
+        heightUnit == 'in' ? 300 : 250; // ~8ft in inches, ~8ft in cm
     if (value > maxHeight) {
       return 'Height value seems too large';
     }
@@ -121,16 +122,7 @@ class UserProfileSetup {
       return null; // Blood type is optional
     }
     // Valid blood types: A+, A-, B+, B-, AB+, AB-, O+, O-
-    final validBloodTypes = [
-      'A+',
-      'A-',
-      'B+',
-      'B-',
-      'AB+',
-      'AB-',
-      'O+',
-      'O-'
-    ];
+    final validBloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
     if (!validBloodTypes.contains(value.toUpperCase())) {
       return 'Invalid blood type format';
     }

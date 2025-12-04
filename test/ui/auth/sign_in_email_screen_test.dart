@@ -12,7 +12,8 @@ import '../utils/test_utils.dart';
 
 void main() {
   group('Sign In Email Screen Widget Tests', () {
-    testWidgets('Sign in screen renders correctly', (WidgetTester tester) async {
+    testWidgets('Sign in screen renders correctly',
+        (WidgetTester tester) async {
       await pumpMaraApp(tester, const SignInEmailScreen());
 
       // Verify screen exists
@@ -20,7 +21,8 @@ void main() {
       expect(find.byType(Scaffold), findsOneWidget);
 
       // Verify form fields exist
-      expect(find.byType(MaraTextField), findsNWidgets(2)); // Email and password fields
+      expect(find.byType(MaraTextField),
+          findsNWidgets(2)); // Email and password fields
       expect(find.byType(PrimaryButton), findsOneWidget);
     });
 
@@ -53,10 +55,12 @@ void main() {
 
       // Verify password was entered (may be obscured)
       // The exact behavior depends on MaraTextField implementation
-      expect(find.text('TestPassword123!'), findsNothing); // Password should be hidden
+      expect(find.text('TestPassword123!'),
+          findsNothing); // Password should be hidden
     });
 
-    testWidgets('Form validation works for empty email', (WidgetTester tester) async {
+    testWidgets('Form validation works for empty email',
+        (WidgetTester tester) async {
       await pumpMaraApp(tester, const SignInEmailScreen());
 
       // Find and tap the sign in button
@@ -128,4 +132,3 @@ void main() {
     });
   });
 }
-

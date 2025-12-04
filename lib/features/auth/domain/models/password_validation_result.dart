@@ -87,4 +87,3 @@ enum PasswordStrength {
   medium,
   strong,
 }
-

@@ -76,7 +76,7 @@ final authRepositoryProvider = Provider<AuthRepository>((ref) {
   // When backend is ready, uncomment:
   // final remoteDataSource = ref.read(authRemoteDataSourceProvider);
   // return AuthRepositoryImpl(remoteDataSource, localDataSource);
-  
+
   // Temporary: Create repository with null remote data source
   // This will be replaced when backend is available
   return AuthRepositoryImpl(
@@ -149,4 +149,3 @@ class _PlaceholderRemoteDataSource implements AuthRemoteDataSource {
     throw UnimplementedError('Backend API not yet available');
   }
 }
-

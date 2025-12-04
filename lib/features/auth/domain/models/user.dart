@@ -64,6 +64,6 @@ class User {
   int get hashCode => id.hashCode ^ email.hashCode;
 
   @override
-  String toString() => 'User(id: $id, email: $email, isEmailVerified: $isEmailVerified)';
+  String toString() =>
+      'User(id: $id, email: $email, isEmailVerified: $isEmailVerified)';
 }
-
