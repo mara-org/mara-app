@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart';
-
 /// Rate limiter for client-side request throttling
 ///
 /// Prevents spamming the backend by limiting the number of requests
