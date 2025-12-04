@@ -1,3 +1,5 @@
+import '../analytics/analytics_service.dart';
+
 /// Unified observability service for Mara app.
 ///
 /// This service wraps logger, analytics, and crash reporter to provide
@@ -10,19 +12,11 @@
 /// observability.trackError('Failed to load data', error, stackTrace);
 /// observability.trackPerformanceMetric('screen_load_time', 150, 'ms');
 /// ```
-import '../analytics/analytics_service.dart';
 import '../utils/crash_reporter.dart';
 import '../utils/logger.dart';
 
 class ObservabilityService {
-  final AnalyticsService _analytics;
-  final CrashReporter _crashReporter;
-
-  ObservabilityService({
-    AnalyticsService? analytics,
-    CrashReporter? crashReporter,
-  })  : _analytics = analytics ?? AnalyticsService(),
-        _crashReporter = crashReporter ?? CrashReporter();
+  ObservabilityService();
 
   /// Tracks a custom event.
   ///
@@ -44,10 +38,11 @@ class ObservabilityService {
       extra: parameters,
     );
 
-    // Track in analytics
-    _analytics.logEvent(
-      eventName: eventName,
-      parameters: parameters ?? {},
+    // Track in analytics (static method)
+    AnalyticsService.logEvent(
+      eventName,
+      parameters:
+          parameters != null ? Map<String, Object>.from(parameters) : null,
     );
   }
 
@@ -67,31 +62,22 @@ class ObservabilityService {
     String? feature,
     bool fatal = false,
   }) {
-    // Log to structured logger
-    if (fatal) {
-      Logger.critical(
-        message,
-        screen: screen,
-        feature: feature ?? 'observability',
-        error: error,
-        stackTrace: stackTrace,
-      );
-    } else {
-      Logger.error(
-        message,
-        screen: screen,
-        feature: feature ?? 'observability',
-        error: error,
-        stackTrace: stackTrace,
-      );
-    }
+    // Log to structured logger (use error level for both, fatal is handled by crash reporter)
+    Logger.error(
+      message,
+      screen: screen,
+      feature: feature ?? 'observability',
+      error: error,
+      stackTrace: stackTrace,
+    );
 
-    // Report to crash reporter
-    _crashReporter.recordError(
+    // Report to crash reporter (static method)
+    CrashReporter.recordError(
       error,
       stackTrace,
-      reason: message,
-      fatal: fatal,
+      context: message,
+      screen: screen,
+      feature: feature ?? 'observability',
     );
   }
 
@@ -121,9 +107,9 @@ class ObservabilityService {
       },
     );
 
-    // Track in analytics as a custom event
-    _analytics.logEvent(
-      eventName: 'performance_metric',
+    // Track in analytics as a custom event (static method)
+    AnalyticsService.logEvent(
+      'performance_metric',
       parameters: {
         'metric_name': metricName,
         'value': value,
@@ -150,14 +136,8 @@ class ObservabilityService {
       extra: parameters,
     );
 
-    // Track in analytics
-    _analytics.logScreenView(
-      screenName: screenName,
-      parameters: parameters ?? {},
-    );
-
-    // Update logger's current screen context
-    Logger.setScreen(screenName);
+    // Track in analytics (static method, no parameters support)
+    AnalyticsService.logScreenView(screenName);
   }
 
   /// Tracks a user action.
@@ -249,7 +229,6 @@ class ObservabilityService {
       error,
       stackTrace: stackTrace,
       feature: flowName,
-      extra: parameters,
     );
 
     trackEvent(

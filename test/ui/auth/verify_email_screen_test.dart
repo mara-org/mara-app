@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mara_app/features/auth/presentation/verify_email_screen.dart';
 import 'package:mara_app/core/widgets/mara_code_input.dart';
-import '../utils/test_utils.dart';
+import '../../utils/test_utils.dart';
 
 void main() {
   group('Verify Email Screen Widget Tests', () {

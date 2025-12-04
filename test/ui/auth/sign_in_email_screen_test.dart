@@ -8,7 +8,7 @@ import 'package:mara_app/features/auth/presentation/sign_in_email_screen.dart';
 import 'package:mara_app/core/widgets/mara_text_field.dart';
 import 'package:mara_app/core/widgets/primary_button.dart';
 import 'package:mara_app/core/providers/email_provider.dart';
-import '../utils/test_utils.dart';
+import '../../utils/test_utils.dart';
 
 void main() {
   group('Sign In Email Screen Widget Tests', () {
