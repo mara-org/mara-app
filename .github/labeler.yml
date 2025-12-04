@@ -73,7 +73,7 @@ area:ci:
 # Documentation
 area:docs:
   - docs/**
-  - *.md
+  - '*.md'
   - README.md
 
 # Dependencies
