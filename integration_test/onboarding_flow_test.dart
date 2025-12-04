@@ -9,6 +9,11 @@ void main() {
   group('Onboarding Flow Integration Tests', () {
     testWidgets('Onboarding screens render without errors',
         (WidgetTester tester) async {
+      // Skip on web platform (not supported)
+      if (tester.binding is! IntegrationTestWidgetsFlutterBinding) {
+        return;
+      }
+
       app.main();
       await tester.pumpAndSettle(const Duration(seconds: 2));
 
