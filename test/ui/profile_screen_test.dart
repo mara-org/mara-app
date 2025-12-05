@@ -302,6 +302,9 @@ void main() {
                   .overrideWith((ref) => Future.value('Test Device')),
               appReviewServiceProvider
                   .overrideWith((ref) => mockAppReviewService),
+              // Mock share app service
+              shareAppServiceProvider
+                  .overrideWith((ref) => MockShareAppService()),
             ],
             child: MaterialApp.router(
               routerConfig: GoRouter(
