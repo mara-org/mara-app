@@ -338,11 +338,8 @@ void main() {
         expect(rateAppFinder, findsOneWidget);
 
         await tester.tap(rateAppFinder);
-        await tester.pump(); // Allow tap to process
-        await tester
-            .pump(const Duration(milliseconds: 100)); // Allow async operation
-        await tester.pump(
-            const Duration(milliseconds: 100)); // Allow callback to execute
+        // Wait for async operations to complete
+        await tester.pumpAndSettle(const Duration(seconds: 2));
 
         // Verify that openStoreListing was called
         expect(mockAppReviewService.openStoreListingCalled, isTrue,
@@ -474,11 +471,8 @@ void main() {
         expect(shareAppFinder, findsOneWidget);
 
         await tester.tap(shareAppFinder);
-        await tester.pump(); // Allow tap to process
-        await tester
-            .pump(const Duration(milliseconds: 100)); // Allow async operation
-        await tester.pump(
-            const Duration(milliseconds: 100)); // Allow callback to execute
+        // Wait for async operations to complete
+        await tester.pumpAndSettle(const Duration(seconds: 2));
 
         // Verify that shareApp was called
         expect(mockShareAppService.shareAppCalled, isTrue,
