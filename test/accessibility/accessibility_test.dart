@@ -5,17 +5,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/services.dart';
-import 'package:mara_app/main.dart' as app;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mara_app/main.dart';
+import '../utils/test_utils.dart';
 
 void main() {
   group('Accessibility Tests', () {
-    testWidgets('Home screen has semantic labels', (WidgetTester tester) async {
+    testWidgets('Home screen has semantic labels',
+        (final WidgetTester tester) async {
       // Build the app
-      await tester.pumpWidget(const app.MyApp());
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: MaraApp(),
+        ),
+      );
       await tester.pumpAndSettle();
 
       // Check for semantic labels
-      final semantics = tester.binding.pipelineOwner.semanticsOwner;
+      final semantics = tester.binding.rootPipelineOwner.semanticsOwner;
       expect(semantics, isNotNull, reason: 'Semantics owner should exist');
 
       // Verify key elements have semantic labels
@@ -27,8 +34,12 @@ void main() {
     });
 
     testWidgets('Touch targets meet minimum size (44x44dp)',
-        (WidgetTester tester) async {
-      await tester.pumpWidget(const app.MyApp());
+        (final WidgetTester tester) async {
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: MaraApp(),
+        ),
+      );
       await tester.pumpAndSettle();
 
       // Find all buttons
@@ -54,8 +65,12 @@ void main() {
     });
 
     testWidgets('Text fields have accessibility hints',
-        (WidgetTester tester) async {
-      await tester.pumpWidget(const app.MyApp());
+        (final WidgetTester tester) async {
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: MaraApp(),
+        ),
+      );
       await tester.pumpAndSettle();
 
       // Navigate to sign-in screen if needed
@@ -77,8 +92,13 @@ void main() {
       }
     });
 
-    testWidgets('Images have semantic labels', (WidgetTester tester) async {
-      await tester.pumpWidget(const app.MyApp());
+    testWidgets('Images have semantic labels',
+        (final WidgetTester tester) async {
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: MaraApp(),
+        ),
+      );
       await tester.pumpAndSettle();
 
       // Find all images
@@ -94,30 +114,43 @@ void main() {
     });
 
     testWidgets('Screen reader can navigate all interactive elements',
-        (WidgetTester tester) async {
-      await tester.pumpWidget(const app.MyApp());
+        (final WidgetTester tester) async {
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: MaraApp(),
+        ),
+      );
       await tester.pumpAndSettle();
 
       // Simulate screen reader navigation
-      final semantics = tester.binding.pipelineOwner.semanticsOwner;
+      final semantics = tester.binding.rootPipelineOwner.semanticsOwner;
       expect(semantics, isNotNull);
 
       // Find all focusable elements
-      final focusableElements = find.byType(ElevatedButton);
-      focusableElements.addAll(find.byType(TextButton));
-      focusableElements.addAll(find.byType(TextField));
+      final buttons = find.byType(ElevatedButton);
+      final textButtons = find.byType(TextButton);
+      final textFields = find.byType(TextField);
+
+      // Count total focusable elements
+      final totalFocusable = buttons.evaluate().length +
+          textButtons.evaluate().length +
+          textFields.evaluate().length;
 
       // Verify elements are accessible
       expect(
-        focusableElements.evaluate().length,
+        totalFocusable,
         greaterThan(0),
         reason: 'Should have at least one focusable element',
       );
     });
 
     testWidgets('Color contrast meets WCAG AA standards',
-        (WidgetTester tester) async {
-      await tester.pumpWidget(const app.MyApp());
+        (final WidgetTester tester) async {
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: MaraApp(),
+        ),
+      );
       await tester.pumpAndSettle();
 
       // This is a placeholder test
@@ -142,12 +175,16 @@ void main() {
     });
 
     testWidgets('No accessibility warnings in widget tree',
-        (WidgetTester tester) async {
-      await tester.pumpWidget(const app.MyApp());
+        (final WidgetTester tester) async {
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: MaraApp(),
+        ),
+      );
       await tester.pumpAndSettle();
 
       // Check for common accessibility issues
-      final semantics = tester.binding.pipelineOwner.semanticsOwner;
+      final semantics = tester.binding.rootPipelineOwner.semanticsOwner;
       expect(semantics, isNotNull);
 
       // This test ensures no obvious accessibility violations

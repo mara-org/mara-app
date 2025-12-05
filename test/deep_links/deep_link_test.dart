@@ -19,7 +19,8 @@ void main() {
         routes: [
           GoRoute(
             path: '/home',
-            builder: (context, state) => const Scaffold(
+            builder: (final BuildContext context, final GoRouterState state) =>
+                const Scaffold(
               body: Text('Home'),
             ),
           ),
@@ -46,7 +47,8 @@ void main() {
         routes: [
           GoRoute(
             path: '/chat',
-            builder: (context, state) => const Scaffold(
+            builder: (final BuildContext context, final GoRouterState state) =>
+                const Scaffold(
               body: Text('Chat'),
             ),
           ),
@@ -71,7 +73,8 @@ void main() {
         routes: [
           GoRoute(
             path: '/profile',
-            builder: (context, state) => const Scaffold(
+            builder: (final BuildContext context, final GoRouterState state) =>
+                const Scaffold(
               body: Text('Profile'),
             ),
           ),
@@ -96,7 +99,7 @@ void main() {
         routes: [
           GoRoute(
             path: '/chat/:conversationId',
-            builder: (context, state) {
+            builder: (final BuildContext context, final GoRouterState state) {
               final conversationId =
                   state.pathParameters['conversationId'] ?? '';
               return Scaffold(
@@ -125,12 +128,15 @@ void main() {
         routes: [
           GoRoute(
             path: '/home',
-            builder: (context, state) => const Scaffold(
+            builder: (final BuildContext context, final GoRouterState state) =>
+                const Scaffold(
               body: Text('Home'),
             ),
           ),
         ],
-        errorBuilder: (context, state) => const Scaffold(
+        errorBuilder:
+            (final BuildContext context, final GoRouterState state) =>
+                const Scaffold(
           body: Text('404'),
         ),
       );
@@ -155,13 +161,15 @@ void main() {
         routes: [
           GoRoute(
             path: '/home',
-            builder: (context, state) => const Scaffold(
+            builder: (final BuildContext context, final GoRouterState state) =>
+                const Scaffold(
               body: Text('Home'),
             ),
           ),
           GoRoute(
             path: '/chat',
-            builder: (context, state) => const Scaffold(
+            builder: (final BuildContext context, final GoRouterState state) =>
+                const Scaffold(
               body: Text('Chat'),
             ),
           ),
@@ -201,7 +209,8 @@ void main() {
   });
 
   group('App Links (Android)', () {
-    testWidgets('App link format is handled', (WidgetTester tester) async {
+    testWidgets('App link format is handled',
+        (final WidgetTester tester) async {
       // Placeholder for Android app link testing
       // In production, test actual app link handling
       expect(true, isTrue, reason: 'App link test placeholder');

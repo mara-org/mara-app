@@ -6,11 +6,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:mara_app/main.dart' as app;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mara_app/main.dart';
+import '../utils/test_utils.dart';
 
 void main() {
   group('Localization Tests', () {
-    testWidgets('App loads with English locale', (WidgetTester tester) async {
+    testWidgets('App loads with English locale',
+        (final WidgetTester tester) async {
       await tester.pumpWidget(
         const MaterialApp(
           localizationsDelegates: [
@@ -34,7 +37,7 @@ void main() {
     });
 
     testWidgets('App loads with Arabic locale (RTL)',
-        (WidgetTester tester) async {
+        (final WidgetTester tester) async {
       await tester.pumpWidget(
         const MaterialApp(
           localizationsDelegates: [
@@ -57,13 +60,12 @@ void main() {
       final scaffold = tester.widget<Scaffold>(find.byType(Scaffold));
       expect(scaffold, isNotNull);
 
-      // Verify text direction is RTL
-      final textDirection = tester.binding.window.platformDispatcher.locale;
+      // Verify RTL layout is applied
       // Note: This is a simplified check - in production, verify actual RTL behavior
     });
 
     testWidgets('All required translations are present',
-        (WidgetTester tester) async {
+        (final WidgetTester tester) async {
       // This test verifies that all translation keys exist
       // In production, you would load ARB files and check keys
 
@@ -74,7 +76,7 @@ void main() {
     });
 
     testWidgets('Date formatting works for both locales',
-        (WidgetTester tester) async {
+        (final WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           localizationsDelegates: const [
@@ -89,7 +91,7 @@ void main() {
           locale: const Locale('en'),
           home: Scaffold(
             body: Builder(
-              builder: (context) {
+              builder: (final BuildContext context) {
                 final now = DateTime.now();
                 return Text(now.toString());
               },
@@ -105,20 +107,20 @@ void main() {
     });
 
     testWidgets('Number formatting works for both locales',
-        (WidgetTester tester) async {
+        (final WidgetTester tester) async {
       await tester.pumpWidget(
-        MaterialApp(
-          localizationsDelegates: const [
+        const MaterialApp(
+          localizationsDelegates: [
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
-          supportedLocales: const [
+          supportedLocales: [
             Locale('en', ''),
             Locale('ar', ''),
           ],
-          locale: const Locale('en'),
-          home: const Scaffold(
+          locale: Locale('en'),
+          home: Scaffold(
             body: Text('1234.56'),
           ),
         ),
@@ -133,7 +135,7 @@ void main() {
 
   group('RTL Layout Tests', () {
     testWidgets('RTL layout flips correctly for Arabic',
-        (WidgetTester tester) async {
+        (final WidgetTester tester) async {
       await tester.pumpWidget(
         const MaterialApp(
           localizationsDelegates: [
@@ -168,7 +170,8 @@ void main() {
       expect(directionality.textDirection, TextDirection.rtl);
     });
 
-    testWidgets('Text alignment adjusts for RTL', (WidgetTester tester) async {
+    testWidgets('Text alignment adjusts for RTL',
+        (final WidgetTester tester) async {
       await tester.pumpWidget(
         const MaterialApp(
           locale: Locale('ar'),
@@ -191,10 +194,10 @@ void main() {
     });
 
     testWidgets('Icons flip correctly in RTL mode',
-        (WidgetTester tester) async {
+        (final WidgetTester tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          locale: Locale('ar'),
+        MaterialApp(
+          locale: const Locale('ar'),
           home: Directionality(
             textDirection: TextDirection.rtl,
             child: Scaffold(

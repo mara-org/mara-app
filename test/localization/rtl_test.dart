@@ -8,7 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('RTL Layout Tests', () {
     testWidgets('Directionality widget sets RTL correctly',
-        (WidgetTester tester) async {
+        (final WidgetTester tester) async {
       await tester.pumpWidget(
         const Directionality(
           textDirection: TextDirection.rtl,
@@ -24,7 +24,7 @@ void main() {
     });
 
     testWidgets('Row children order correctly in RTL',
-        (WidgetTester tester) async {
+        (final WidgetTester tester) async {
       await tester.pumpWidget(
         const Directionality(
           textDirection: TextDirection.rtl,
@@ -57,10 +57,10 @@ void main() {
     });
 
     testWidgets('AppBar leading icon positions correctly in RTL',
-        (WidgetTester tester) async {
+        (final WidgetTester tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          locale: Locale('ar'),
+        MaterialApp(
+          locale: const Locale('ar'),
           home: Directionality(
             textDirection: TextDirection.rtl,
             child: Scaffold(
@@ -81,7 +81,7 @@ void main() {
     });
 
     testWidgets('Text alignment works correctly in RTL',
-        (WidgetTester tester) async {
+        (final WidgetTester tester) async {
       await tester.pumpWidget(
         const Directionality(
           textDirection: TextDirection.rtl,
