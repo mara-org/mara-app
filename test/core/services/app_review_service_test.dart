@@ -90,13 +90,14 @@ void main() {
 
   group('IAppReviewService interface', () {
     test('AppReviewService implements IAppReviewService', () {
-      expect(service, isA<IAppReviewService>());
+      final testService = AppReviewService();
+      expect(testService, isA<IAppReviewService>());
     });
 
     test('IAppReviewService has required methods', () {
-      final service = AppReviewService();
-      expect(service.isReviewAvailable, isA<Future<bool> Function()>());
-      expect(service.openStoreListing, isA<Future<void> Function()>());
+      final testService = AppReviewService();
+      expect(testService.isReviewAvailable, isA<Future<bool> Function()>());
+      expect(testService.openStoreListing, isA<Future<void> Function()>());
     });
   });
 }

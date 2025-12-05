@@ -2,12 +2,11 @@
 // Tests the share app service functionality including platform-aware
 // store URL selection and share message construction.
 
-import 'dart:io';
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mara_app/core/config/app_config.dart';
 import 'package:mara_app/core/services/share_app_service.dart';
 import 'package:mara_app/l10n/app_localizations.dart';
+import 'package:mara_app/l10n/app_localizations_en.dart';
 
 void main() {
   group('ShareAppService', () {
@@ -95,12 +94,16 @@ void main() {
 
   group('IShareAppService interface', () {
     test('ShareAppService implements IShareAppService', () {
-      expect(service, isA<IShareAppService>());
+      final testService = ShareAppService();
+      expect(testService, isA<IShareAppService>());
     });
 
     test('IShareAppService has required methods', () {
-      final service = ShareAppService();
-      expect(service.shareApp, isA<Future<void> Function(AppLocalizations)>());
+      final testService = ShareAppService();
+      expect(
+        testService.shareApp,
+        isA<Future<void> Function(AppLocalizations)>(),
+      );
     });
   });
 }

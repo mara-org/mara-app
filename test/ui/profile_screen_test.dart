@@ -17,6 +17,7 @@ import 'package:mara_app/core/services/app_review_service.dart';
 import 'package:mara_app/core/services/share_app_service.dart';
 import 'package:mara_app/features/profile/presentation/profile_screen.dart';
 import 'package:mara_app/l10n/app_localizations.dart';
+import 'package:mara_app/l10n/app_localizations_en.dart';
 import 'package:mara_app/shared/system/system_providers.dart';
 
 // Custom asset bundle that returns empty data for missing assets
@@ -271,7 +272,8 @@ void main() {
         await tester.pumpAndSettle(const Duration(seconds: 10));
 
         // Verify Rate App menu item exists
-        final l10n = AppLocalizations.of(tester.binding.window.locale);
+        // Use the English localization directly for testing
+        final l10n = AppLocalizationsEn();
         expect(find.text(l10n.profileRateAppTitle), findsOneWidget);
         expect(find.text(l10n.profileRateAppSubtitle), findsOneWidget);
       }, (error, stack) {
@@ -330,7 +332,8 @@ void main() {
         await tester.pumpAndSettle(const Duration(seconds: 10));
 
         // Find and tap the Rate App menu item
-        final l10n = AppLocalizations.of(tester.binding.window.locale);
+        // Use the English localization directly for testing
+        final l10n = AppLocalizationsEn();
         final rateAppFinder = find.text(l10n.profileRateAppTitle);
         expect(rateAppFinder, findsOneWidget);
 
@@ -397,7 +400,8 @@ void main() {
         await tester.pumpAndSettle(const Duration(seconds: 10));
 
         // Verify Share App menu item exists
-        final l10n = AppLocalizations.of(tester.binding.window.locale);
+        // Use the English localization directly for testing
+        final l10n = AppLocalizationsEn();
         expect(find.text(l10n.profileShareAppTitle), findsOneWidget);
         expect(find.text(l10n.profileShareAppSubtitle), findsOneWidget);
       }, (error, stack) {
@@ -458,7 +462,8 @@ void main() {
         await tester.pumpAndSettle(const Duration(seconds: 10));
 
         // Find and tap the Share App menu item
-        final l10n = AppLocalizations.of(tester.binding.window.locale);
+        // Use the English localization directly for testing
+        final l10n = AppLocalizationsEn();
         final shareAppFinder = find.text(l10n.profileShareAppTitle);
         expect(shareAppFinder, findsOneWidget);
 
