@@ -1,0 +1,185 @@
+# Mara DevOps – A/B Testing Infrastructure
+# Manages A/B test configurations and validates test setup
+# Frontend-only: uses Firebase Remote Config for A/B testing
+# Validates A/B test configurations and tracks test variants
+
+name: Mara DevOps – A/B Testing Infrastructure
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'lib/core/feature_flags/**'
+      - '.github/workflows/ab-testing.yml'
+  workflow_dispatch:
+    inputs:
+      test_name:
+        description: 'A/B test name'
+        required: true
+        type: string
+      variant_a_percentage:
+        description: 'Variant A percentage (0-100)'
+        required: true
+        type: string
+        default: '50'
+      variant_b_percentage:
+        description: 'Variant B percentage (0-100)'
+        required: true
+        type: string
+        default: '50'
+
+jobs:
+  validate-ab-test:
+    name: Validate A/B Test Configuration
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Validate A/B test configuration
+        run: |
+          echo "🧪 Validating A/B test configuration..."
+          
+          # Check if feature flags directory exists
+          if [ ! -d "lib/core/feature_flags" ]; then
+            echo "❌ Feature flags directory not found"
+            exit 1
+          fi
+          
+          # Check if Firebase Remote Config service exists
+          if [ ! -f "lib/core/feature_flags/firebase_remote_config_service.dart" ]; then
+            echo "⚠️ Firebase Remote Config service not found"
+            echo "A/B testing requires Firebase Remote Config"
+          else
+            echo "✅ Firebase Remote Config service found"
+          fi
+          
+          # Validate test configuration if provided
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            TEST_NAME="${{ github.event.inputs.test_name }}"
+            VARIANT_A="${{ github.event.inputs.variant_a_percentage }}"
+            VARIANT_B="${{ github.event.inputs.variant_b_percentage }}"
+            
+            if [ -z "$TEST_NAME" ]; then
+              echo "❌ Test name is required"
+              exit 1
+            fi
+            
+            # Validate percentages sum to 100
+            TOTAL=$((VARIANT_A + VARIANT_B))
+            if [ "$TOTAL" -ne 100 ]; then
+              echo "❌ Variant percentages must sum to 100 (got $TOTAL)"
+              exit 1
+            fi
+            
+            echo "✅ A/B test configuration valid:"
+            echo "   Test: $TEST_NAME"
+            echo "   Variant A: ${VARIANT_A}%"
+            echo "   Variant B: ${VARIANT_B}%"
+          fi
+
+      - name: Check for A/B test implementations
+        run: |
+          echo "🔍 Checking for A/B test implementations..."
+          
+          # Look for A/B test usage in code
+          AB_TEST_COUNT=$(grep -r "getABTest\|getFeatureFlag\|isVariant" lib/ --include="*.dart" | wc -l || echo "0")
+          
+          if [ "$AB_TEST_COUNT" -gt 0 ]; then
+            echo "✅ Found $AB_TEST_COUNT A/B test references in code"
+          else
+            echo "⚠️ No A/B test implementations found"
+            echo "Consider implementing A/B tests using Firebase Remote Config"
+          fi
+
+      - name: Generate A/B test documentation
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          TEST_NAME="${{ github.event.inputs.test_name }}"
+          VARIANT_A="${{ github.event.inputs.variant_a_percentage }}"
+          VARIANT_B="${{ github.event.inputs.variant_b_percentage }}"
+          
+          DOC_FILE="ab-test-${TEST_NAME}-$(date +%Y%m%d).md"
+          
+          cat > "$DOC_FILE" << EOF
+          # A/B Test: ${TEST_NAME}
+          
+          **Created:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          **Status:** Active
+          
+          ## Configuration
+          
+          - **Variant A:** ${VARIANT_A}%
+          - **Variant B:** ${VARIANT_B}%
+          
+          ## Firebase Remote Config Setup
+          
+          1. Go to Firebase Console → Remote Config
+          2. Create parameter: \`ab_test_${TEST_NAME}\`
+          3. Set up percentage rollout:
+             - Variant A: ${VARIANT_A}%
+             - Variant B: ${VARIANT_B}%
+          4. Publish configuration
+          
+          ## Implementation
+          
+          Use FeatureFlagService to check variant:
+          
+          \`\`\`dart
+          final variant = await featureFlagService.getABTestVariant('${TEST_NAME}');
+          if (variant == 'A') {
+            // Variant A implementation
+          } else {
+            // Variant B implementation
+          }
+          \`\`\`
+          
+          ## Metrics to Track
+          
+          - Conversion rate
+          - User engagement
+          - Feature usage
+          - Performance metrics
+          
+          ## Success Criteria
+          
+          Define success criteria before starting test:
+          - Primary metric: [TBD]
+          - Statistical significance: 95% confidence
+          - Minimum sample size: [TBD]
+          
+          ## Timeline
+          
+          - Start: $(date -u +"%Y-%m-%d")
+          - End: [TBD]
+          - Analysis: [TBD]
+          
+          EOF
+          
+          echo "✅ A/B test documentation created: $DOC_FILE"
+
+      - name: Upload A/B test documentation
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/upload-artifact@v5
+        with:
+          name: ab-test-docs-${{ github.event.inputs.test_name }}
+          path: ab-test-*.md
+          retention-days: 90
+          if-no-files-found: ignore
+
+      - name: Summary
+        run: |
+          echo "### A/B Testing Infrastructure Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- Feature flags directory: ✅ Found" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "- Test name: ${{ github.event.inputs.test_name }}" >> $GITHUB_STEP_SUMMARY
+            echo "- Variant A: ${{ github.event.inputs.variant_a_percentage }}%" >> $GITHUB_STEP_SUMMARY
+            echo "- Variant B: ${{ github.event.inputs.variant_b_percentage }}%" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "📋 Next steps:" >> $GITHUB_STEP_SUMMARY
+          echo "1. Configure Firebase Remote Config" >> $GITHUB_STEP_SUMMARY
+          echo "2. Implement variant logic in code" >> $GITHUB_STEP_SUMMARY
+          echo "3. Track metrics and analyze results" >> $GITHUB_STEP_SUMMARY
+

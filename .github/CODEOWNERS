@@ -8,12 +8,38 @@
 # 4. Paths use gitignore-style patterns
 #
 # Documentation: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+#
+# IMPORTANT: This file is enforced via branch protection rules on the main branch.
+# All changes to protected paths require approval from code owners.
 
-# Core application code
+# ============================================================================
+# Core Application Code
+# ============================================================================
+
+# All application code (default owners)
 /lib/ @justAbdulaziz10 @gqnxx
 
-# Core functionality (specific)
+# Core functionality (specific owner)
 /lib/core/ @justAbdulaziz10
+
+# Core observability and analytics
+/lib/core/observability/ @justAbdulaziz10
+/lib/core/analytics/ @justAbdulaziz10
+/lib/core/utils/crash_reporter.dart @justAbdulaziz10
+/lib/core/utils/logger.dart @justAbdulaziz10
+
+# Core network layer
+/lib/core/network/ @justAbdulaziz10
+
+# Core feature flags
+/lib/core/feature_flags/ @justAbdulaziz10
+
+# Core dependency injection
+/lib/core/di/ @justAbdulaziz10
+
+# ============================================================================
+# Feature Modules
+# ============================================================================
 
 # Authentication feature
 /lib/features/auth/ @justAbdulaziz10
@@ -21,9 +47,114 @@
 # Chat feature
 /lib/features/chat/ @justAbdulaziz10
 
-# Test files
+# Home screen
+/lib/features/home/ @justAbdulaziz10
+
+# Profile feature
+/lib/features/profile/ @justAbdulaziz10
+
+# Analytics feature
+/lib/features/analytics/ @justAbdulaziz10
+
+# Onboarding feature
+/lib/features/onboarding/ @justAbdulaziz10
+
+# Settings feature
+/lib/features/settings/ @justAbdulaziz10
+
+# ============================================================================
+# Testing
+# ============================================================================
+
+# All test files
 /test/ @justAbdulaziz10 @gqnxx
+
+# Integration tests
+/integration_test/ @justAbdulaziz10 @gqnxx
+
+# Performance tests
+/test/performance/ @justAbdulaziz10
+
+# Accessibility tests
+/test/accessibility/ @justAbdulaziz10
+/test/ui/accessibility/ @justAbdulaziz10
+
+# Localization tests
+/test/localization/ @justAbdulaziz10
+/test/ui/localization/ @justAbdulaziz10
+
+# Deep link tests
+/test/deep_links/ @justAbdulaziz10
+
+# ============================================================================
+# CI/CD and DevOps
+# ============================================================================
 
 # GitHub workflows and configuration
 /.github/ @justAbdulaziz10 @gqnxx
+
+# GitHub workflows (critical)
+/.github/workflows/ @justAbdulaziz10 @gqnxx
+
+# GitHub Actions workflows (deployment)
+/.github/workflows/*-deploy.yml @justAbdulaziz10
+/.github/workflows/release-automation.yml @justAbdulaziz10
+/.github/workflows/canary-deploy.yml @justAbdulaziz10
+
+# GitHub Actions workflows (security)
+/.github/workflows/security-*.yml @justAbdulaziz10
+/.github/workflows/codeql-analysis.yml @justAbdulaziz10
+/.github/workflows/secrets-scan.yml @justAbdulaziz10
+
+# Scripts
+/scripts/ @justAbdulaziz10 @gqnxx
+
+# ============================================================================
+# Documentation
+# ============================================================================
+
+# Architecture documentation
+/docs/ARCHITECTURE.md @justAbdulaziz10
+/docs/architecture/ @justAbdulaziz10
+
+# Security documentation
+/docs/SECURITY.md @justAbdulaziz10
+
+# SRE documentation
+/docs/INCIDENT_RESPONSE.md @justAbdulaziz10
+/docs/ONCALL.md @justAbdulaziz10
+/docs/FRONTEND_SLOS.md @justAbdulaziz10
+/docs/ERROR_BUDGET_REPORT.md @justAbdulaziz10
+
+# Deployment documentation
+/docs/DEPLOYMENT.md @justAbdulaziz10
+/docs/CANARY_DEPLOYMENT.md @justAbdulaziz10
+/docs/A_B_TESTING.md @justAbdulaziz10
+/docs/PERFORMANCE.md @justAbdulaziz10
+
+# Enterprise audit
+/docs/ENTERPRISE_AUDIT_REPORT.md @justAbdulaziz10
+
+# ============================================================================
+# Configuration Files
+# ============================================================================
+
+# Pubspec and dependencies
+/pubspec.yaml @justAbdulaziz10 @gqnxx
+/pubspec.lock @justAbdulaziz10 @gqnxx
+
+# Analysis options
+/analysis_options.yaml @justAbdulaziz10 @gqnxx
+
+# Fastlane configuration
+/fastlane/ @justAbdulaziz10
+
+# ============================================================================
+# Root Level Files
+# ============================================================================
+
+# README and contributing
+/README.md @justAbdulaziz10 @gqnxx
+/CONTRIBUTING.md @justAbdulaziz10 @gqnxx
+/CHANGELOG.md @justAbdulaziz10 @gqnxx
 

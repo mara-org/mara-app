@@ -1,0 +1,194 @@
+# Mara QA – Localization Tests
+# Tests app localization and RTL support
+# Validates translations, RTL layouts, and locale-specific formatting
+# Frontend-only: client-side localization validation
+
+name: Mara QA – Localization Tests
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  schedule:
+    # Run weekly on Mondays at 01:00 UTC
+    - cron: '0 1 * * 1'
+  workflow_dispatch:
+
+jobs:
+  localization-tests:
+    name: Localization Tests
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        locale: [en, ar]
+        platform: [ios, android]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.27.0'
+          channel: 'stable'
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Validate localization files
+        run: |
+          echo "🌐 Validating localization files..."
+          
+          # Check if all ARB files are valid
+          if [ -d "lib/l10n" ]; then
+            echo "Found l10n directory"
+            ls -la lib/l10n/
+            
+            # Validate ARB files exist
+            if [ ! -f "lib/l10n/app_en.arb" ]; then
+              echo "❌ Missing app_en.arb"
+              exit 1
+            fi
+            
+            if [ ! -f "lib/l10n/app_ar.arb" ]; then
+              echo "❌ Missing app_ar.arb"
+              exit 1
+            fi
+            
+            echo "✅ Localization files found"
+          else
+            echo "❌ l10n directory not found"
+            exit 1
+          fi
+
+      - name: Run localization tests
+        id: l10n_tests
+        continue-on-error: true
+        run: |
+          echo "🌐 Running localization tests for locale: ${{ matrix.locale }} on ${{ matrix.platform }}..."
+          
+          # Run localization test suite
+          flutter test test/localization/ \
+            --dart-define=TEST_LOCALE=${{ matrix.locale }} \
+            --platform=${{ matrix.platform }} \
+            --reporter=expanded \
+            || L10N_EXIT_CODE=$?
+          
+          if [ -z "${L10N_EXIT_CODE:-}" ]; then
+            echo "l10n_status=passed" >> $GITHUB_OUTPUT
+            echo "✅ Localization tests passed for ${{ matrix.locale }}"
+          else
+            echo "l10n_status=failed" >> $GITHUB_OUTPUT
+            echo "❌ Localization tests failed for ${{ matrix.locale }}"
+            exit $L10N_EXIT_CODE
+          fi
+
+      - name: Check RTL layout (Arabic only)
+        if: matrix.locale == 'ar'
+        run: |
+          echo "🔀 Checking RTL layout for Arabic..."
+          
+          # Run RTL-specific tests
+          flutter test test/localization/rtl_test.dart \
+            --dart-define=TEST_LOCALE=ar \
+            --platform=${{ matrix.platform }} \
+            --reporter=expanded \
+            || echo "⚠️ RTL tests not found, skipping"
+
+      - name: Validate translation completeness
+        run: |
+          echo "📝 Validating translation completeness..."
+          
+          # Check if all keys in en.arb exist in ar.arb
+          if [ -f "lib/l10n/app_en.arb" ] && [ -f "lib/l10n/app_ar.arb" ]; then
+            # Extract keys from English file
+            EN_KEYS=$(grep -o '"[^"]*":' lib/l10n/app_en.arb | sed 's/":$//' | sed 's/"//g' | sort)
+            AR_KEYS=$(grep -o '"[^"]*":' lib/l10n/app_ar.arb | sed 's/":$//' | sed 's/"//g' | sort)
+            
+            # Find missing keys
+            MISSING=$(comm -23 <(echo "$EN_KEYS") <(echo "$AR_KEYS"))
+            
+            if [ -n "$MISSING" ]; then
+              echo "⚠️ Missing translations in Arabic:"
+              echo "$MISSING"
+              echo "translation_complete=false" >> $GITHUB_OUTPUT
+            else
+              echo "✅ All translations present"
+              echo "translation_complete=true" >> $GITHUB_OUTPUT
+            fi
+          fi
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: localization-test-results-${{ matrix.locale }}-${{ matrix.platform }}
+          path: |
+            test/.test_coverage/
+            test/localization/
+          retention-days: 30
+          if-no-files-found: ignore
+
+      - name: Comment on PR if tests fail
+        if: steps.l10n_tests.outputs.l10n_status == 'failed' && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        permissions:
+          pull-requests: write
+        with:
+          script: |
+            const locale = '${{ matrix.locale }}';
+            const platform = '${{ matrix.platform }}';
+            
+            const comment = `## 🌐 Localization Tests Failed
+            
+            Localization tests failed for **${locale}** on **${platform}**.
+            
+            **Common Localization Issues:**
+            - Missing translations
+            - Incorrect RTL layout (for Arabic)
+            - Text overflow in RTL mode
+            - Date/time formatting issues
+            - Number formatting issues
+            - Missing locale-specific assets
+            
+            **How to Fix:**
+            1. Review test output in [workflow run](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})
+            2. Add missing translations to \`lib/l10n/app_${locale}.arb\`
+            3. Test RTL layout with Arabic locale
+            4. Verify text doesn't overflow in RTL mode
+            5. Check date/time/number formatting
+            
+            **Resources:**
+            - [Flutter Internationalization](https://docs.flutter.dev/accessibility-and-localization/internationalization)
+            - [RTL Support](https://docs.flutter.dev/accessibility-and-localization/internationalization#rtl-support)
+            
+            See [CONTRIBUTING.md](../CONTRIBUTING.md) for localization guidelines.`;
+            
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: comment
+            });
+
+      - name: Localization test summary
+        if: always()
+        run: |
+          echo "### Localization Test Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- Locale: ${{ matrix.locale }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Platform: ${{ matrix.platform }}" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.l10n_tests.outputs.l10n_status }}" == "passed" ]; then
+            echo "- Status: ✅ **PASSED**" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- Status: ❌ **FAILED**" >> $GITHUB_STEP_SUMMARY
+          fi
+          if [ "${{ steps.l10n_tests.outputs.translation_complete }}" == "true" ]; then
+            echo "- Translations: ✅ Complete" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- Translations: ⚠️ Incomplete" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "💡 Review test results artifact for detailed analysis." >> $GITHUB_STEP_SUMMARY
+

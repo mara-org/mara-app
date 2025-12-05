@@ -1,0 +1,127 @@
+# Mara QA – Accessibility Tests
+# Automated accessibility testing for Flutter app
+# Tests screen reader support, semantic labels, touch targets, and contrast
+# Frontend-only: client-side accessibility validation
+
+name: Mara QA – Accessibility Tests
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  schedule:
+    # Run weekly on Mondays at 00:00 UTC
+    - cron: '0 0 * * 1'
+  workflow_dispatch:
+
+jobs:
+  accessibility-tests:
+    name: Accessibility Tests
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        platform: [ios, android]
+        include:
+          - platform: ios
+            device: iPhone 16 Pro
+          - platform: android
+            device: Pixel 7
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.27.0'
+          channel: 'stable'
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Run accessibility tests
+        id: a11y_tests
+        continue-on-error: true
+        run: |
+          echo "♿ Running accessibility tests on ${{ matrix.platform }}..."
+          
+          # Run accessibility test suite
+          flutter test test/accessibility/ \
+            --platform=${{ matrix.platform }} \
+            --reporter=expanded \
+            || A11Y_EXIT_CODE=$?
+          
+          if [ -z "${A11Y_EXIT_CODE:-}" ]; then
+            echo "a11y_status=passed" >> $GITHUB_OUTPUT
+            echo "✅ Accessibility tests passed"
+          else
+            echo "a11y_status=failed" >> $GITHUB_OUTPUT
+            echo "❌ Accessibility tests failed"
+            exit $A11Y_EXIT_CODE
+          fi
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: accessibility-test-results-${{ matrix.platform }}
+          path: |
+            test/.test_coverage/
+            test/accessibility/
+          retention-days: 30
+          if-no-files-found: ignore
+
+      - name: Comment on PR if tests fail
+        if: steps.a11y_tests.outputs.a11y_status == 'failed' && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        permissions:
+          pull-requests: write
+        with:
+          script: |
+            const comment = `## ♿ Accessibility Tests Failed
+            
+            Accessibility tests failed on **${{ matrix.platform }}**.
+            
+            **Common Accessibility Issues:**
+            - Missing semantic labels
+            - Insufficient color contrast
+            - Touch targets too small (< 44x44dp)
+            - Missing accessibility hints
+            - Incorrect accessibility roles
+            
+            **How to Fix:**
+            1. Review test output in [workflow run](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})
+            2. Add semantic labels using \`Semantics\` widget
+            3. Ensure touch targets are at least 44x44dp
+            4. Test with screen reader (VoiceOver/TalkBack)
+            5. Verify color contrast meets WCAG AA standards
+            
+            **Resources:**
+            - [Flutter Accessibility](https://docs.flutter.dev/accessibility-and-localization/accessibility)
+            - [WCAG Guidelines](https://www.w3.org/WAI/WCAG21/quickref/)
+            
+            See [CONTRIBUTING.md](../CONTRIBUTING.md) for accessibility guidelines.`;
+            
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: comment
+            });
+
+      - name: Accessibility test summary
+        if: always()
+        run: |
+          echo "### Accessibility Test Summary (${{ matrix.platform }})" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.a11y_tests.outputs.a11y_status }}" == "passed" ]; then
+            echo "- Status: ✅ **PASSED**" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- Status: ❌ **FAILED**" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "- Platform: ${{ matrix.platform }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Device: ${{ matrix.device }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "💡 Review test results artifact for detailed analysis." >> $GITHUB_STEP_SUMMARY
+

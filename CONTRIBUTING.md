@@ -177,6 +177,27 @@ We enforce a **maximum code duplication threshold of 7%** to maintain code quali
 - Location: `integration_test/`
 - Run: `flutter test integration_test/`
 
+### Accessibility Tests
+
+- Test screen reader support, semantic labels, touch targets
+- Location: `test/accessibility/`
+- Run: `flutter test test/accessibility/`
+- CI: Automatically runs on PRs via `accessibility-tests.yml`
+
+### Localization Tests
+
+- Test translations and RTL layouts
+- Location: `test/localization/`
+- Run: `flutter test test/localization/`
+- CI: Automatically runs on PRs via `localization-tests.yml`
+
+### Deep Link Tests
+
+- Test deep linking and URL routing
+- Location: `test/deep_links/`
+- Run: `flutter test test/deep_links/`
+- CI: Automatically runs on PRs via `deep-link-tests.yml`
+
 ### Coverage
 
 - Aim for >60% coverage for new code

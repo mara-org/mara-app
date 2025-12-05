@@ -1,0 +1,215 @@
+# Mara CD – Canary Deployment
+# Gradual rollout using feature flags (Firebase Remote Config)
+# Frontend-only: manages client-side canary rollouts
+# Uses feature flags to gradually expose new features to users
+
+name: Mara CD – Canary Deployment
+
+on:
+  workflow_dispatch:
+    inputs:
+      feature_name:
+        description: 'Feature flag name for canary'
+        required: true
+        type: string
+      rollout_percentage:
+        description: 'Initial rollout percentage (1-100)'
+        required: true
+        type: string
+        default: '1'
+      environment:
+        description: 'Environment'
+        required: true
+        type: choice
+        options:
+          - staging
+          - production
+      auto_promote:
+        description: 'Auto-promote to 100% after 24h if no issues'
+        required: true
+        type: boolean
+        default: true
+
+jobs:
+  canary-deploy:
+    name: Canary Deployment
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Validate inputs
+        run: |
+          FEATURE_NAME="${{ github.event.inputs.feature_name }}"
+          ROLLOUT_PERCENT="${{ github.event.inputs.rollout_percentage }}"
+          
+          if [ -z "$FEATURE_NAME" ]; then
+            echo "❌ Feature name is required"
+            exit 1
+          fi
+          
+          if ! [[ "$ROLLOUT_PERCENT" =~ ^[0-9]+$ ]] || [ "$ROLLOUT_PERCENT" -lt 1 ] || [ "$ROLLOUT_PERCENT" -gt 100 ]; then
+            echo "❌ Rollout percentage must be between 1 and 100"
+            exit 1
+          fi
+          
+          echo "✅ Inputs validated"
+          echo "Feature: $FEATURE_NAME"
+          echo "Rollout: ${ROLLOUT_PERCENT}%"
+          echo "Environment: ${{ github.event.inputs.environment }}"
+
+      - name: Create canary deployment plan
+        id: canary_plan
+        run: |
+          FEATURE_NAME="${{ github.event.inputs.feature_name }}"
+          ROLLOUT_PERCENT="${{ github.event.inputs.rollout_percentage }}"
+          ENV="${{ github.event.inputs.environment }}"
+          AUTO_PROMOTE="${{ github.event.inputs.auto_promote }}"
+          
+          # Create canary plan document
+          PLAN_FILE="canary-plan-${FEATURE_NAME}-$(date +%Y%m%d-%H%M%S).md"
+          
+          cat > "$PLAN_FILE" << EOF
+          # Canary Deployment Plan: ${FEATURE_NAME}
+          
+          **Feature:** \`${FEATURE_NAME}\`
+          **Environment:** ${ENV}
+          **Initial Rollout:** ${ROLLOUT_PERCENT}%
+          **Auto-Promote:** ${AUTO_PROMOTE}
+          **Started:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          
+          ## Rollout Schedule
+          
+          - **Phase 1:** ${ROLLOUT_PERCENT}% (Current)
+          - **Phase 2:** $((ROLLOUT_PERCENT * 2))% (After 6 hours, if no issues)
+          - **Phase 3:** $((ROLLOUT_PERCENT * 5))% (After 12 hours, if no issues)
+          - **Phase 4:** 25% (After 18 hours, if no issues)
+          - **Phase 5:** 50% (After 24 hours, if no issues)
+          - **Phase 6:** 100% (After 48 hours, if no issues)
+          
+          ## Monitoring
+          
+          Monitor the following metrics:
+          - Crash rate (should remain < 0.1%)
+          - Error rate (should remain < 2%)
+          - Performance metrics (P95 cold start < 3s)
+          - User engagement metrics
+          
+          ## Rollback Criteria
+          
+          Rollback immediately if:
+          - Crash rate increases > 0.5%
+          - Error rate increases > 5%
+          - Performance degradation > 20%
+          - Critical user-reported issues
+          
+          ## Firebase Remote Config Setup
+          
+          To enable this canary:
+          1. Go to Firebase Console → Remote Config
+          2. Create/update feature flag: \`${FEATURE_NAME}\`
+          3. Set percentage rollout: ${ROLLOUT_PERCENT}%
+          4. Publish configuration
+          
+          ## Status Tracking
+          
+          - [ ] Phase 1 deployed (${ROLLOUT_PERCENT}%)
+          - [ ] Monitoring active
+          - [ ] Phase 2 ready (if no issues)
+          - [ ] Phase 3 ready (if no issues)
+          - [ ] Phase 4 ready (if no issues)
+          - [ ] Phase 5 ready (if no issues)
+          - [ ] Phase 6 ready (100% rollout)
+          EOF
+          
+          echo "plan_file=$PLAN_FILE" >> $GITHUB_OUTPUT
+          echo "✅ Canary plan created: $PLAN_FILE"
+
+      - name: Upload canary plan
+        uses: actions/upload-artifact@v5
+        with:
+          name: canary-plan-${{ github.event.inputs.feature_name }}
+          path: ${{ steps.canary_plan.outputs.plan_file }}
+          retention-days: 90
+
+      - name: Create deployment tracking issue
+        uses: actions/github-script@v7
+        permissions:
+          issues: write
+        with:
+          script: |
+            const featureName = '${{ github.event.inputs.feature_name }}';
+            const rolloutPercent = '${{ github.event.inputs.rollout_percentage }}';
+            const environment = '${{ github.event.inputs.environment }}';
+            const planFile = '${{ steps.canary_plan.outputs.plan_file }}';
+            
+            const issueBody = `## Canary Deployment: ${featureName}
+            
+            **Environment:** ${environment}
+            **Initial Rollout:** ${rolloutPercent}%
+            **Started:** ${new Date().toISOString()}
+            
+            ### Rollout Schedule
+            
+            - **Phase 1:** ${rolloutPercent}% (Current)
+            - **Phase 2:** ${parseInt(rolloutPercent) * 2}% (After 6 hours, if no issues)
+            - **Phase 3:** ${parseInt(rolloutPercent) * 5}% (After 12 hours, if no issues)
+            - **Phase 4:** 25% (After 18 hours, if no issues)
+            - **Phase 5:** 50% (After 24 hours, if no issues)
+            - **Phase 6:** 100% (After 48 hours, if no issues)
+            
+            ### Monitoring Checklist
+            
+            - [ ] Crash rate < 0.1%
+            - [ ] Error rate < 2%
+            - [ ] Performance metrics stable
+            - [ ] No critical user reports
+            
+            ### Rollback Criteria
+            
+            Rollback immediately if:
+            - Crash rate > 0.5%
+            - Error rate > 5%
+            - Performance degradation > 20%
+            - Critical user-reported issues
+            
+            ### Firebase Remote Config
+            
+            Feature flag: \`${featureName}\`
+            Current rollout: ${rolloutPercent}%
+            
+            See [canary plan artifact](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}) for details.
+            
+            ---
+            _This issue tracks the canary deployment progress. Update checkboxes as phases complete._`;
+            
+            const issue = await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `🚀 Canary Deployment: ${featureName} (${rolloutPercent}%)`,
+              body: issueBody,
+              labels: ['deployment', 'canary', environment],
+            });
+            
+            console.log(`Created tracking issue: ${issue.data.html_url}`);
+
+      - name: Summary
+        run: |
+          echo "### Canary Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- **Feature:** ${{ github.event.inputs.feature_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Rollout:** ${{ github.event.inputs.rollout_percentage }}%" >> $GITHUB_STEP_SUMMARY
+          echo "- **Environment:** ${{ github.event.inputs.environment }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Auto-Promote:** ${{ github.event.inputs.auto_promote }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "📋 Next steps:" >> $GITHUB_STEP_SUMMARY
+          echo "1. Configure Firebase Remote Config with feature flag" >> $GITHUB_STEP_SUMMARY
+          echo "2. Monitor metrics for 6 hours" >> $GITHUB_STEP_SUMMARY
+          echo "3. Proceed to next phase if no issues detected" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "See canary plan artifact for detailed rollout schedule." >> $GITHUB_STEP_SUMMARY
+

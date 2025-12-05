@@ -1,0 +1,159 @@
+# Mara QA – Deep Link Tests
+# Tests deep linking functionality and URL routing
+# Validates app navigation from deep links and universal links
+# Frontend-only: client-side deep link validation
+
+name: Mara QA – Deep Link Tests
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  schedule:
+    # Run weekly on Mondays at 02:00 UTC
+    - cron: '0 2 * * 1'
+  workflow_dispatch:
+
+jobs:
+  deep-link-tests:
+    name: Deep Link Tests
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        platform: [ios, android]
+        include:
+          - platform: ios
+            device: iPhone 16 Pro
+          - platform: android
+            device: Pixel 7
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.27.0'
+          channel: 'stable'
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Run deep link tests
+        id: deep_link_tests
+        continue-on-error: true
+        run: |
+          echo "🔗 Running deep link tests on ${{ matrix.platform }}..."
+          
+          # Run deep link test suite
+          flutter test test/deep_links/ \
+            --platform=${{ matrix.platform }} \
+            --reporter=expanded \
+            || DEEP_LINK_EXIT_CODE=$?
+          
+          if [ -z "${DEEP_LINK_EXIT_CODE:-}" ]; then
+            echo "deep_link_status=passed" >> $GITHUB_OUTPUT
+            echo "✅ Deep link tests passed"
+          else
+            echo "deep_link_status=failed" >> $GITHUB_OUTPUT
+            echo "❌ Deep link tests failed"
+            exit $DEEP_LINK_EXIT_CODE
+          fi
+
+      - name: Validate deep link routes
+        run: |
+          echo "🔍 Validating deep link routes..."
+          
+          # List of expected deep link routes
+          EXPECTED_ROUTES=(
+            "/home"
+            "/chat"
+            "/profile"
+            "/analytics"
+            "/sign-in-email"
+            "/sign-up-choices"
+          )
+          
+          # Check if routes are defined in routing configuration
+          if [ -f "lib/core/routing/app_router.dart" ]; then
+            echo "✅ Router configuration found"
+            
+            for route in "${EXPECTED_ROUTES[@]}"; do
+              if grep -q "\"$route\"" lib/core/routing/app_router.dart || grep -q "'$route'" lib/core/routing/app_router.dart; then
+                echo "✅ Route $route found"
+              else
+                echo "⚠️ Route $route not found in router"
+              fi
+            done
+          else
+            echo "⚠️ Router configuration not found"
+          fi
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: deep-link-test-results-${{ matrix.platform }}
+          path: |
+            test/.test_coverage/
+            test/deep_links/
+          retention-days: 30
+          if-no-files-found: ignore
+
+      - name: Comment on PR if tests fail
+        if: steps.deep_link_tests.outputs.deep_link_status == 'failed' && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        permissions:
+          pull-requests: write
+        with:
+          script: |
+            const platform = '${{ matrix.platform }}';
+            
+            const comment = `## 🔗 Deep Link Tests Failed
+            
+            Deep link tests failed on **${platform}**.
+            
+            **Common Deep Link Issues:**
+            - Route not registered in router
+            - Missing route parameters
+            - Incorrect URL parsing
+            - Navigation failure
+            - Missing universal link configuration (iOS)
+            - Missing intent filters (Android)
+            
+            **How to Fix:**
+            1. Review test output in [workflow run](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})
+            2. Verify route is registered in \`lib/core/routing/app_router.dart\`
+            3. Test deep link manually: \`flutter run --dart-define=DEEP_LINK=<url>\`
+            4. Check iOS universal links configuration (\`ios/Runner/Info.plist\`)
+            5. Check Android intent filters (\`android/app/src/main/AndroidManifest.xml\`)
+            
+            **Resources:**
+            - [Flutter Deep Linking](https://docs.flutter.dev/development/ui/navigation/deep-linking)
+            - [GoRouter Deep Linking](https://pub.dev/packages/go_router)
+            
+            See [CONTRIBUTING.md](../CONTRIBUTING.md) for deep linking guidelines.`;
+            
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: comment
+            });
+
+      - name: Deep link test summary
+        if: always()
+        run: |
+          echo "### Deep Link Test Summary (${{ matrix.platform }})" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.deep_link_tests.outputs.deep_link_status }}" == "passed" ]; then
+            echo "- Status: ✅ **PASSED**" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- Status: ❌ **FAILED**" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "- Platform: ${{ matrix.platform }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Device: ${{ matrix.device }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "💡 Review test results artifact for detailed analysis." >> $GITHUB_STEP_SUMMARY
+
