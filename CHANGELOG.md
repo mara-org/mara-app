@@ -1,3 +1,43 @@
+## [1.1.0+3] - 2025-12-05
+
+### Added
+- feat(profile): add Rate App and Share App features (845684f)
+
+### Fixed
+- fix: use pump() instead of pumpAndSettle() in accessibility tests (e68be0f)
+- fix: wrap accessibility tests in try-catch to handle initialization failures (4c13add)
+- fix: make accessibility and RTL tests more lenient (8501568)
+- fix: resolve all flutter analyze errors in test files (4cb87e7)
+- feat: achieve enterprise-grade engineering standards (85% maturity) (1b18554)
+- fix: verify button tappability without actually tapping (151ecc8)
+- fix: simplify onboarding button test to handle navigation gracefully (0f1e5d9)
+- fix: make onboarding button test more lenient about navigation (32cd550)
+- fix: make widget tests more robust and skip golden tests until baselines are generated (5273612)
+- fix: correct ObservabilityService API usage and test imports (4b1f11a)
+- feat: add ObservabilityService and update enterprise audit report (c2fe791)
+- feat(cicd): add Fastlane store build automation and environment validation (559540e)
+- feat(automation): add code review automation workflow (24f5159)
+- feat(ci): add code duplication detection workflow (73e6179)
+- fix(di): correct RemoteConfigService provider type (a2bdd06)
+- feat(arch): enhance domain models with validation and helper methods (1694a80)
+- feat(arch): introduce Clean Architecture for auth feature (06544b1)
+- fix: update CD comparison table to reflect implemented features (edc8852)
+
+### Other
+- style: apply dart format to test files (01d8443)
+- style: format test files with dart format (9ce963a)
+- chore: update iOS Flutter generated files (862476b)
+- docs: update email addresses in markdown files (d70f373)
+- Merge pull request #22 from mara-org/docs/move-audit-report-to-docs (6ef76dd)
+- style: format code with dart format (663afca)
+- docs: update README.md with latest enterprise improvements (005872b)
+- test: add golden tests, accessibility tests, and localization tests (a176dce)
+- test: add comprehensive widget tests for critical screens (8293f59)
+- Merge pull request #21 from mara-org/docs/move-audit-report-to-docs (3492c2b)
+- chore: update pubspec.lock (64ae01b)
+- docs: comprehensive update to enterprise audit report (35b7b97)
+- docs: update all documentation with recent workflow fixes and improvements (9304750)
+
 # Changelog
 
 All notable changes to this project will be documented in this file.
