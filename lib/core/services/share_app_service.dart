@@ -70,4 +70,3 @@ class ShareAppService implements IShareAppService {
     return l10n.shareAppMessage(storeUrl);
   }
 }
-

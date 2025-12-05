@@ -38,4 +38,3 @@ class AppConfig {
   /// TODO: Adjust if the actual landing page URL differs.
   static const String publicLandingPageUrl = 'https://mara.health';
 }
-

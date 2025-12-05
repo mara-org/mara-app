@@ -99,4 +99,3 @@ class AppReviewService implements IAppReviewService {
     }
   }
 }
-
