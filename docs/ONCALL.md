@@ -249,7 +249,7 @@ gh run view <run-id> --log
 
 - **Team Discord:** [Your Discord Server]
 - **On-Call Schedule:** [Link to schedule]
-- **Emergency Contact:** [To be configured]
+- **Emergency Contact:** support@iammara.com
 
 ---
 

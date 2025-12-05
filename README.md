@@ -731,7 +731,7 @@ Contributions are welcome! Please follow the existing code style and create pull
 
 ## 📞 Support
 
-For support, please contact the Mara team or open an issue in the repository.
+For support, please contact support@iammara.com or open an issue in the repository.
 
 ---
 

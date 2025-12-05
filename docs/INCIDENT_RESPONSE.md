@@ -401,7 +401,7 @@ screen:chat_screen AND level:ERROR
 
 **Team Discord:** [Your Discord Server]  
 **GitHub Repository:** https://github.com/mara-org/mara-app  
-**Emergency Contact:** [To be configured]
+**Emergency Contact:** support@iammara.com
 
 ---
 
