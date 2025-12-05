@@ -64,8 +64,8 @@ void main() {
 
     test('IAppReviewService has required methods', () {
       final testService = AppReviewService();
-      expect(service.isReviewAvailable, isA<Future<bool> Function()>());
-      expect(service.openStoreListing, isA<Future<void> Function()>());
+      expect(testService.isReviewAvailable, isA<Future<bool> Function()>());
+      expect(testService.openStoreListing, isA<Future<void> Function()>());
     });
   });
 }
