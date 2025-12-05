@@ -134,9 +134,8 @@ void main() {
             ),
           ),
         ],
-        errorBuilder:
-            (final BuildContext context, final GoRouterState state) =>
-                const Scaffold(
+        errorBuilder: (final BuildContext context, final GoRouterState state) =>
+            const Scaffold(
           body: Text('404'),
         ),
       );

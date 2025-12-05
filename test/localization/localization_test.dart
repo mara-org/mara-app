@@ -4,11 +4,8 @@
 // Frontend-only: client-side localization validation
 
 import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mara_app/main.dart';
-import '../utils/test_utils.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('Localization Tests', () {
