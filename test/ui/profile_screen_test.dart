@@ -338,10 +338,16 @@ void main() {
         expect(rateAppFinder, findsOneWidget);
 
         await tester.tap(rateAppFinder);
-        await tester.pumpAndSettle();
+        await tester.pump(); // Allow tap to process
+        await tester
+            .pump(const Duration(milliseconds: 100)); // Allow async operation
+        await tester.pump(
+            const Duration(milliseconds: 100)); // Allow callback to execute
 
         // Verify that openStoreListing was called
-        expect(mockAppReviewService.openStoreListingCalled, isTrue);
+        expect(mockAppReviewService.openStoreListingCalled, isTrue,
+            reason:
+                'openStoreListing should be called when Rate App is tapped');
       }, (error, stack) {
         if (error is AssertionError &&
             error.toString().contains('Unable to load asset')) {
@@ -468,10 +474,15 @@ void main() {
         expect(shareAppFinder, findsOneWidget);
 
         await tester.tap(shareAppFinder);
-        await tester.pumpAndSettle();
+        await tester.pump(); // Allow tap to process
+        await tester
+            .pump(const Duration(milliseconds: 100)); // Allow async operation
+        await tester.pump(
+            const Duration(milliseconds: 100)); // Allow callback to execute
 
         // Verify that shareApp was called
-        expect(mockShareAppService.shareAppCalled, isTrue);
+        expect(mockShareAppService.shareAppCalled, isTrue,
+            reason: 'shareApp should be called when Share App is tapped');
       }, (error, stack) {
         if (error is AssertionError &&
             error.toString().contains('Unable to load asset')) {
