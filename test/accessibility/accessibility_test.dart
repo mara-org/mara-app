@@ -26,7 +26,8 @@ void main() {
       );
     });
 
-    testWidgets('Touch targets meet minimum size (44x44dp)', (WidgetTester tester) async {
+    testWidgets('Touch targets meet minimum size (44x44dp)',
+        (WidgetTester tester) async {
       await tester.pumpWidget(const app.MyApp());
       await tester.pumpAndSettle();
 
@@ -52,18 +53,19 @@ void main() {
       }
     });
 
-    testWidgets('Text fields have accessibility hints', (WidgetTester tester) async {
+    testWidgets('Text fields have accessibility hints',
+        (WidgetTester tester) async {
       await tester.pumpWidget(const app.MyApp());
       await tester.pumpAndSettle();
 
       // Navigate to sign-in screen if needed
       // This is a placeholder - adjust based on your app structure
       final textFields = find.byType(TextField);
-      
+
       if (textFields.evaluate().isNotEmpty) {
         for (final field in tester.widgetList(textFields)) {
           final textField = field as TextField;
-          
+
           // Check if field has hint text or label
           expect(
             textField.decoration?.hintText != null ||
@@ -81,7 +83,7 @@ void main() {
 
       // Find all images
       final images = find.byType(Image);
-      
+
       // Check that images have semantic labels or are decorative
       // This is a placeholder - adjust based on your app structure
       if (images.evaluate().isNotEmpty) {
@@ -91,7 +93,8 @@ void main() {
       }
     });
 
-    testWidgets('Screen reader can navigate all interactive elements', (WidgetTester tester) async {
+    testWidgets('Screen reader can navigate all interactive elements',
+        (WidgetTester tester) async {
       await tester.pumpWidget(const app.MyApp());
       await tester.pumpAndSettle();
 
@@ -112,14 +115,15 @@ void main() {
       );
     });
 
-    testWidgets('Color contrast meets WCAG AA standards', (WidgetTester tester) async {
+    testWidgets('Color contrast meets WCAG AA standards',
+        (WidgetTester tester) async {
       await tester.pumpWidget(const app.MyApp());
       await tester.pumpAndSettle();
 
       // This is a placeholder test
       // In production, you would use a contrast checking library
       // For now, we verify that text and background colors are defined
-      
+
       final textWidgets = find.byType(Text);
       expect(textWidgets, findsWidgets);
 
@@ -127,7 +131,7 @@ void main() {
       for (final text in tester.widgetList(textWidgets)) {
         final textWidget = text as Text;
         final style = textWidget.style;
-        
+
         // Check that text has a color defined
         expect(
           style?.color != null,
@@ -137,7 +141,8 @@ void main() {
       }
     });
 
-    testWidgets('No accessibility warnings in widget tree', (WidgetTester tester) async {
+    testWidgets('No accessibility warnings in widget tree',
+        (WidgetTester tester) async {
       await tester.pumpWidget(const app.MyApp());
       await tester.pumpAndSettle();
 
@@ -150,4 +155,3 @@ void main() {
     });
   });
 }
-

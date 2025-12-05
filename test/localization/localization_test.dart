@@ -33,7 +33,8 @@ void main() {
       expect(find.text('Test'), findsOneWidget);
     });
 
-    testWidgets('App loads with Arabic locale (RTL)', (WidgetTester tester) async {
+    testWidgets('App loads with Arabic locale (RTL)',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         const MaterialApp(
           localizationsDelegates: [
@@ -61,16 +62,19 @@ void main() {
       // Note: This is a simplified check - in production, verify actual RTL behavior
     });
 
-    testWidgets('All required translations are present', (WidgetTester tester) async {
+    testWidgets('All required translations are present',
+        (WidgetTester tester) async {
       // This test verifies that all translation keys exist
       // In production, you would load ARB files and check keys
-      
+
       // Placeholder: Verify localization files exist
       // Actual implementation would parse ARB files and check completeness
-      expect(true, isTrue, reason: 'Translation completeness check placeholder');
+      expect(true, isTrue,
+          reason: 'Translation completeness check placeholder');
     });
 
-    testWidgets('Date formatting works for both locales', (WidgetTester tester) async {
+    testWidgets('Date formatting works for both locales',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           localizationsDelegates: const [
@@ -100,7 +104,8 @@ void main() {
       expect(find.byType(Text), findsWidgets);
     });
 
-    testWidgets('Number formatting works for both locales', (WidgetTester tester) async {
+    testWidgets('Number formatting works for both locales',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           localizationsDelegates: const [
@@ -127,7 +132,8 @@ void main() {
   });
 
   group('RTL Layout Tests', () {
-    testWidgets('RTL layout flips correctly for Arabic', (WidgetTester tester) async {
+    testWidgets('RTL layout flips correctly for Arabic',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         const MaterialApp(
           localizationsDelegates: [
@@ -157,7 +163,8 @@ void main() {
       await tester.pumpAndSettle();
 
       // Verify RTL direction is applied
-      final directionality = tester.widget<Directionality>(find.byType(Directionality));
+      final directionality =
+          tester.widget<Directionality>(find.byType(Directionality));
       expect(directionality.textDirection, TextDirection.rtl);
     });
 
@@ -183,7 +190,8 @@ void main() {
       expect(find.text('Arabic Text'), findsOneWidget);
     });
 
-    testWidgets('Icons flip correctly in RTL mode', (WidgetTester tester) async {
+    testWidgets('Icons flip correctly in RTL mode',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         const MaterialApp(
           locale: Locale('ar'),
@@ -205,4 +213,3 @@ void main() {
     });
   });
 }
-

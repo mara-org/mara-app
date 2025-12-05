@@ -9,10 +9,11 @@ import 'package:go_router/go_router.dart';
 
 void main() {
   group('Deep Link Tests', () {
-    testWidgets('Home route is accessible via deep link', (WidgetTester tester) async {
+    testWidgets('Home route is accessible via deep link',
+        (WidgetTester tester) async {
       // This is a placeholder test
       // In production, you would use GoRouter and test actual deep link handling
-      
+
       // Mock router configuration
       final router = GoRouter(
         routes: [
@@ -39,7 +40,8 @@ void main() {
       expect(find.text('Home'), findsOneWidget);
     });
 
-    testWidgets('Chat route is accessible via deep link', (WidgetTester tester) async {
+    testWidgets('Chat route is accessible via deep link',
+        (WidgetTester tester) async {
       final router = GoRouter(
         routes: [
           GoRoute(
@@ -63,7 +65,8 @@ void main() {
       expect(find.text('Chat'), findsOneWidget);
     });
 
-    testWidgets('Profile route is accessible via deep link', (WidgetTester tester) async {
+    testWidgets('Profile route is accessible via deep link',
+        (WidgetTester tester) async {
       final router = GoRouter(
         routes: [
           GoRoute(
@@ -87,13 +90,15 @@ void main() {
       expect(find.text('Profile'), findsOneWidget);
     });
 
-    testWidgets('Deep link with parameters is handled correctly', (WidgetTester tester) async {
+    testWidgets('Deep link with parameters is handled correctly',
+        (WidgetTester tester) async {
       final router = GoRouter(
         routes: [
           GoRoute(
             path: '/chat/:conversationId',
             builder: (context, state) {
-              final conversationId = state.pathParameters['conversationId'] ?? '';
+              final conversationId =
+                  state.pathParameters['conversationId'] ?? '';
               return Scaffold(
                 body: Text('Chat: $conversationId'),
               );
@@ -114,7 +119,8 @@ void main() {
       expect(find.text('Chat: 123'), findsOneWidget);
     });
 
-    testWidgets('Invalid deep link shows error or fallback', (WidgetTester tester) async {
+    testWidgets('Invalid deep link shows error or fallback',
+        (WidgetTester tester) async {
       final router = GoRouter(
         routes: [
           GoRoute(
@@ -143,7 +149,8 @@ void main() {
       expect(find.text('404'), findsOneWidget);
     });
 
-    testWidgets('Deep link navigation preserves app state', (WidgetTester tester) async {
+    testWidgets('Deep link navigation preserves app state',
+        (WidgetTester tester) async {
       final router = GoRouter(
         routes: [
           GoRoute(
@@ -185,7 +192,8 @@ void main() {
   });
 
   group('Universal Links (iOS)', () {
-    testWidgets('Universal link format is handled', (WidgetTester tester) async {
+    testWidgets('Universal link format is handled',
+        (WidgetTester tester) async {
       // Placeholder for iOS universal link testing
       // In production, test actual universal link handling
       expect(true, isTrue, reason: 'Universal link test placeholder');
@@ -200,4 +208,3 @@ void main() {
     });
   });
 }
-

@@ -7,7 +7,8 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('RTL Layout Tests', () {
-    testWidgets('Directionality widget sets RTL correctly', (WidgetTester tester) async {
+    testWidgets('Directionality widget sets RTL correctly',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         const Directionality(
           textDirection: TextDirection.rtl,
@@ -17,11 +18,13 @@ void main() {
         ),
       );
 
-      final directionality = tester.widget<Directionality>(find.byType(Directionality));
+      final directionality =
+          tester.widget<Directionality>(find.byType(Directionality));
       expect(directionality.textDirection, TextDirection.rtl);
     });
 
-    testWidgets('Row children order correctly in RTL', (WidgetTester tester) async {
+    testWidgets('Row children order correctly in RTL',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         const Directionality(
           textDirection: TextDirection.rtl,
@@ -53,7 +56,8 @@ void main() {
       expect(secondPosition.dx, lessThan(firstPosition.dx));
     });
 
-    testWidgets('AppBar leading icon positions correctly in RTL', (WidgetTester tester) async {
+    testWidgets('AppBar leading icon positions correctly in RTL',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         const MaterialApp(
           locale: Locale('ar'),
@@ -76,7 +80,8 @@ void main() {
       expect(find.byIcon(Icons.menu), findsOneWidget);
     });
 
-    testWidgets('Text alignment works correctly in RTL', (WidgetTester tester) async {
+    testWidgets('Text alignment works correctly in RTL',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         const Directionality(
           textDirection: TextDirection.rtl,
@@ -99,4 +104,3 @@ void main() {
     });
   });
 }
-
