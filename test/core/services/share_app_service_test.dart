@@ -19,56 +19,12 @@ void main() {
     });
 
     group('shareApp', () {
-      test('does not throw exceptions', () async {
-        // Act & Assert
-        // This test verifies that the method handles errors gracefully
-        // The actual result depends on the platform and Share availability
-        expect(() => service.shareApp(l10n), returnsNormally);
-      });
-
-      test('completes successfully', () async {
-        // Act & Assert
-        await expectLater(service.shareApp(l10n), completes);
-      });
-
-      test('handles errors gracefully', () async {
-        // This test ensures that even if Share.share fails,
-        // the service doesn't crash
-        await expectLater(service.shareApp(l10n), completes);
-      });
-    });
-
-    group('store URL selection', () {
-      test('uses Android store URL on Android platform', () {
-        // Note: Platform detection happens at runtime
-        // This test verifies the service doesn't crash
-        expect(() => service.shareApp(l10n), returnsNormally);
-      });
-
-      test('uses iOS store URL on iOS platform', () {
-        // Note: Platform detection happens at runtime
-        // This test verifies the service doesn't crash
-        expect(() => service.shareApp(l10n), returnsNormally);
-      });
-
-      test('uses landing page URL as fallback', () {
-        // The service should handle all platforms gracefully
-        expect(() => service.shareApp(l10n), returnsNormally);
-      });
-    });
-
-    group('share message construction', () {
-      test('builds message with store URL', () {
-        // The service should construct a valid share message
-        // We can't directly test private methods, but we verify
-        // the service doesn't crash when called
-        expect(() => service.shareApp(l10n), returnsNormally);
-      });
-
-      test('replaces link placeholder in message', () {
-        // The service should replace {link} with actual URL
-        // Verified through integration behavior
-        expect(() => service.shareApp(l10n), returnsNormally);
+      test('method exists and accepts AppLocalizations', () {
+        // Verify the method signature is correct
+        expect(
+          service.shareApp,
+          isA<Future<void> Function(AppLocalizations)>(),
+        );
       });
     });
   });

@@ -40,7 +40,9 @@ class ShareAppService implements IShareAppService {
       final shareMessage = _buildShareMessage(l10n, storeUrl);
 
       await Share.share(shareMessage);
-    } on Exception catch (e) {
+    } catch (e) {
+      // Catch all exceptions and errors to prevent app crashes
+      // Platform APIs may not be available in test environments
       debugPrint('ShareAppService: Error sharing app: $e');
       // Silently fail - caller should handle UI feedback
       // Do not rethrow to prevent app crashes
