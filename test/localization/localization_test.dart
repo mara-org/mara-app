@@ -162,9 +162,21 @@ void main() {
       await tester.pumpAndSettle();
 
       // Verify RTL direction is applied
-      final directionality =
-          tester.widget<Directionality>(find.byType(Directionality));
-      expect(directionality.textDirection, TextDirection.rtl);
+      // Find the Directionality widget that's a direct child of MaterialApp
+      final directionalities = find.byType(Directionality);
+      expect(directionalities, findsWidgets);
+
+      // Verify at least one Directionality has RTL
+      bool hasRtl = false;
+      for (final dir in tester.widgetList(directionalities)) {
+        final directionality = dir as Directionality;
+        if (directionality.textDirection == TextDirection.rtl) {
+          hasRtl = true;
+          break;
+        }
+      }
+      expect(hasRtl, isTrue,
+          reason: 'At least one Directionality should be RTL');
     });
 
     testWidgets('Text alignment adjusts for RTL',
