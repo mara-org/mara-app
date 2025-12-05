@@ -142,6 +142,8 @@ The app follows a layered architecture pattern:
 - Routing
 - Theme
 - Models
+- Services (app review, analytics, etc.)
+- Configuration (app config, constants)
 
 ## Client-Side Architecture
 
@@ -187,6 +189,25 @@ The app follows a layered architecture pattern:
 **Feature Flag Service**: `lib/core/feature_flags/feature_flag_service.dart`
 - Enables canary deployments and staged rollouts
 - Supports Firebase Remote Config
+
+### App Review Service
+
+**App Review Service**: `lib/core/services/app_review_service.dart`
+- Encapsulates app store rating and listing functionality
+- Uses `in_app_review` package for native in-app review when available
+- Falls back to platform-specific store URLs (Google Play Store / App Store)
+- Handles errors gracefully without crashing
+- Registered in dependency injection for easy testing and mocking
+
+### Share App Service
+
+**Share App Service**: `lib/core/services/share_app_service.dart`
+- Encapsulates all logic to share the app link using `share_plus` package
+- Chooses the correct store URL (Google Play Store / App Store) based on platform
+- Falls back to public landing page URL if store URLs are not yet configured
+- Builds localized share messages with store URLs
+- Handles errors gracefully without crashing
+- Exposed via the app's DI / provider pattern (Riverpod)
 - Local defaults for development
 - Implementation: `lib/core/feature_flags/firebase_remote_config_service.dart`
 

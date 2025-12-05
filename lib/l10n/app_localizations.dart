@@ -1573,6 +1573,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Delete'**
   String get delete;
+
+  /// No description provided for @profileRateAppTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate Mara App'**
+  String get profileRateAppTitle;
+
+  /// No description provided for @profileRateAppSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Help us improve by rating the app on the store.'**
+  String get profileRateAppSubtitle;
+
+  /// No description provided for @rateAppUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to open the store right now. Please try again later.'**
+  String get rateAppUnavailable;
+
+  /// No description provided for @profileShareAppTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Share Mara App'**
+  String get profileShareAppTitle;
+
+  /// No description provided for @profileShareAppSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite your friends to try Mara.'**
+  String get profileShareAppSubtitle;
+
+  /// No description provided for @profileShareAppError.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to share the app right now. Please try again later.'**
+  String get profileShareAppError;
+
+  /// No description provided for @shareAppMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Check out Mara – your smart health companion. Download it here: {link}'**
+  String shareAppMessage(Object link);
 }
 
 class _AppLocalizationsDelegate

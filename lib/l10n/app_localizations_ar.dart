@@ -798,4 +798,30 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get delete => 'حذف';
+
+  @override
+  String get profileRateAppTitle => 'قيّم تطبيق مرا';
+
+  @override
+  String get profileRateAppSubtitle =>
+      'ساعدنا على التطوير بتقييم التطبيق في المتجر.';
+
+  @override
+  String get rateAppUnavailable =>
+      'تعذر فتح المتجر حاليًا. يرجى المحاولة مرة أخرى لاحقًا.';
+
+  @override
+  String get profileShareAppTitle => 'شارك تطبيق مرا';
+
+  @override
+  String get profileShareAppSubtitle => 'ادعُ أصدقاءك لتجربة مرا.';
+
+  @override
+  String get profileShareAppError =>
+      'تعذر مشاركة التطبيق الآن. حاول مرة أخرى لاحقًا.';
+
+  @override
+  String shareAppMessage(Object link) {
+    return 'جرّب تطبيق مرا، رفيقك الذكي للصحة. لتحميله: $link';
+  }
 }

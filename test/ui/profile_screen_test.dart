@@ -9,9 +9,12 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mara_app/core/di/dependency_injection.dart';
 import 'package:mara_app/core/providers/email_provider.dart';
 import 'package:mara_app/core/providers/subscription_provider.dart';
 import 'package:mara_app/core/providers/user_profile_provider.dart';
+import 'package:mara_app/core/services/app_review_service.dart';
+import 'package:mara_app/core/services/share_app_service.dart';
 import 'package:mara_app/features/profile/presentation/profile_screen.dart';
 import 'package:mara_app/l10n/app_localizations.dart';
 import 'package:mara_app/shared/system/system_providers.dart';
@@ -78,6 +81,12 @@ void main() {
                   .overrideWith((ref) => Future.value('1.0.0 (1)')),
               deviceInfoProvider
                   .overrideWith((ref) => Future.value('Test Device')),
+              // Mock app review service
+              appReviewServiceProvider
+                  .overrideWith((ref) => MockAppReviewService()),
+              // Mock share app service
+              shareAppServiceProvider
+                  .overrideWith((ref) => MockShareAppService()),
             ],
             child: DefaultAssetBundle(
               bundle: TestAssetBundle(),
@@ -159,6 +168,12 @@ void main() {
                   .overrideWith((ref) => Future.value('1.0.0 (1)')),
               deviceInfoProvider
                   .overrideWith((ref) => Future.value('Test Device')),
+              // Mock app review service
+              appReviewServiceProvider
+                  .overrideWith((ref) => MockAppReviewService()),
+              // Mock share app service
+              shareAppServiceProvider
+                  .overrideWith((ref) => MockShareAppService()),
             ],
             child: MaterialApp.router(
               routerConfig: GoRouter(
@@ -209,6 +224,258 @@ void main() {
       });
     });
 
+    testWidgets('Profile screen shows Rate App menu item',
+        (WidgetTester tester) async {
+      await runZonedGuarded(() async {
+        final mockAppReviewService = MockAppReviewService();
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [
+              emailProvider.overrideWith((ref) => _MockEmailNotifier()),
+              subscriptionProvider
+                  .overrideWith((ref) => SubscriptionNotifier()),
+              userProfileProvider.overrideWith((ref) => UserProfileNotifier()),
+              appVersionProvider
+                  .overrideWith((ref) => Future.value('1.0.0 (1)')),
+              deviceInfoProvider
+                  .overrideWith((ref) => Future.value('Test Device')),
+              appReviewServiceProvider
+                  .overrideWith((ref) => mockAppReviewService),
+            ],
+            child: MaterialApp.router(
+              routerConfig: GoRouter(
+                initialLocation: '/profile',
+                routes: [
+                  GoRoute(
+                    path: '/profile',
+                    builder: (context, state) => const ProfileScreen(),
+                  ),
+                ],
+              ),
+              localizationsDelegates: const [
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              supportedLocales: const [
+                Locale('en'),
+                Locale('ar'),
+              ],
+            ),
+          ),
+        );
+
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 100));
+        await tester.pumpAndSettle(const Duration(seconds: 10));
+
+        // Verify Rate App menu item exists
+        final l10n = AppLocalizations.of(tester.binding.window.locale);
+        expect(find.text(l10n.profileRateAppTitle), findsOneWidget);
+        expect(find.text(l10n.profileRateAppSubtitle), findsOneWidget);
+      }, (error, stack) {
+        if (error is AssertionError &&
+            error.toString().contains('Unable to load asset')) {
+          return;
+        }
+        throw error;
+      });
+    });
+
+    testWidgets('Tapping Rate App calls openStoreListing',
+        (WidgetTester tester) async {
+      await runZonedGuarded(() async {
+        final mockAppReviewService = MockAppReviewService();
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [
+              emailProvider.overrideWith((ref) => _MockEmailNotifier()),
+              subscriptionProvider
+                  .overrideWith((ref) => SubscriptionNotifier()),
+              userProfileProvider.overrideWith((ref) => UserProfileNotifier()),
+              appVersionProvider
+                  .overrideWith((ref) => Future.value('1.0.0 (1)')),
+              deviceInfoProvider
+                  .overrideWith((ref) => Future.value('Test Device')),
+              appReviewServiceProvider
+                  .overrideWith((ref) => mockAppReviewService),
+            ],
+            child: MaterialApp.router(
+              routerConfig: GoRouter(
+                initialLocation: '/profile',
+                routes: [
+                  GoRoute(
+                    path: '/profile',
+                    builder: (context, state) => const ProfileScreen(),
+                  ),
+                ],
+              ),
+              localizationsDelegates: const [
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              supportedLocales: const [
+                Locale('en'),
+                Locale('ar'),
+              ],
+            ),
+          ),
+        );
+
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 100));
+        await tester.pumpAndSettle(const Duration(seconds: 10));
+
+        // Find and tap the Rate App menu item
+        final l10n = AppLocalizations.of(tester.binding.window.locale);
+        final rateAppFinder = find.text(l10n.profileRateAppTitle);
+        expect(rateAppFinder, findsOneWidget);
+
+        await tester.tap(rateAppFinder);
+        await tester.pumpAndSettle();
+
+        // Verify that openStoreListing was called
+        expect(mockAppReviewService.openStoreListingCalled, isTrue);
+      }, (error, stack) {
+        if (error is AssertionError &&
+            error.toString().contains('Unable to load asset')) {
+          return;
+        }
+        throw error;
+      });
+    });
+
+    testWidgets('Profile screen shows Share App menu item',
+        (WidgetTester tester) async {
+      await runZonedGuarded(() async {
+        final mockShareAppService = MockShareAppService();
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [
+              emailProvider.overrideWith((ref) => _MockEmailNotifier()),
+              subscriptionProvider
+                  .overrideWith((ref) => SubscriptionNotifier()),
+              userProfileProvider.overrideWith((ref) => UserProfileNotifier()),
+              appVersionProvider
+                  .overrideWith((ref) => Future.value('1.0.0 (1)')),
+              deviceInfoProvider
+                  .overrideWith((ref) => Future.value('Test Device')),
+              appReviewServiceProvider
+                  .overrideWith((ref) => MockAppReviewService()),
+              shareAppServiceProvider
+                  .overrideWith((ref) => mockShareAppService),
+            ],
+            child: MaterialApp.router(
+              routerConfig: GoRouter(
+                initialLocation: '/profile',
+                routes: [
+                  GoRoute(
+                    path: '/profile',
+                    builder: (context, state) => const ProfileScreen(),
+                  ),
+                ],
+              ),
+              localizationsDelegates: const [
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              supportedLocales: const [
+                Locale('en'),
+                Locale('ar'),
+              ],
+            ),
+          ),
+        );
+
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 100));
+        await tester.pumpAndSettle(const Duration(seconds: 10));
+
+        // Verify Share App menu item exists
+        final l10n = AppLocalizations.of(tester.binding.window.locale);
+        expect(find.text(l10n.profileShareAppTitle), findsOneWidget);
+        expect(find.text(l10n.profileShareAppSubtitle), findsOneWidget);
+      }, (error, stack) {
+        if (error is AssertionError &&
+            error.toString().contains('Unable to load asset')) {
+          return;
+        }
+        throw error;
+      });
+    });
+
+    testWidgets('Tapping Share App calls shareApp',
+        (WidgetTester tester) async {
+      await runZonedGuarded(() async {
+        final mockShareAppService = MockShareAppService();
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [
+              emailProvider.overrideWith((ref) => _MockEmailNotifier()),
+              subscriptionProvider
+                  .overrideWith((ref) => SubscriptionNotifier()),
+              userProfileProvider.overrideWith((ref) => UserProfileNotifier()),
+              appVersionProvider
+                  .overrideWith((ref) => Future.value('1.0.0 (1)')),
+              deviceInfoProvider
+                  .overrideWith((ref) => Future.value('Test Device')),
+              appReviewServiceProvider
+                  .overrideWith((ref) => MockAppReviewService()),
+              shareAppServiceProvider
+                  .overrideWith((ref) => mockShareAppService),
+            ],
+            child: MaterialApp.router(
+              routerConfig: GoRouter(
+                initialLocation: '/profile',
+                routes: [
+                  GoRoute(
+                    path: '/profile',
+                    builder: (context, state) => const ProfileScreen(),
+                  ),
+                ],
+              ),
+              localizationsDelegates: const [
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              supportedLocales: const [
+                Locale('en'),
+                Locale('ar'),
+              ],
+            ),
+          ),
+        );
+
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 100));
+        await tester.pumpAndSettle(const Duration(seconds: 10));
+
+        // Find and tap the Share App menu item
+        final l10n = AppLocalizations.of(tester.binding.window.locale);
+        final shareAppFinder = find.text(l10n.profileShareAppTitle);
+        expect(shareAppFinder, findsOneWidget);
+
+        await tester.tap(shareAppFinder);
+        await tester.pumpAndSettle();
+
+        // Verify that shareApp was called
+        expect(mockShareAppService.shareAppCalled, isTrue);
+      }, (error, stack) {
+        if (error is AssertionError &&
+            error.toString().contains('Unable to load asset')) {
+          return;
+        }
+        throw error;
+      });
+    });
+
     // TODO: Add more widget tests:
     // - Test user interactions (tapping edit buttons, settings)
     // - Test state changes (profile updated)
@@ -224,5 +491,33 @@ void main() {
 class _MockEmailNotifier extends EmailNotifier {
   _MockEmailNotifier() : super() {
     state = 'test@example.com';
+  }
+}
+
+// Mock AppReviewService for testing
+class MockAppReviewService implements IAppReviewService {
+  bool isReviewAvailableCalled = false;
+  bool openStoreListingCalled = false;
+  bool isReviewAvailableResult = true;
+
+  @override
+  Future<bool> isReviewAvailable() async {
+    isReviewAvailableCalled = true;
+    return isReviewAvailableResult;
+  }
+
+  @override
+  Future<void> openStoreListing() async {
+    openStoreListingCalled = true;
+  }
+}
+
+// Mock ShareAppService for testing
+class MockShareAppService implements IShareAppService {
+  bool shareAppCalled = false;
+
+  @override
+  Future<void> shareApp(AppLocalizations l10n) async {
+    shareAppCalled = true;
   }
 }

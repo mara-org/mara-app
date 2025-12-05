@@ -161,6 +161,8 @@
   - User section with email display
   - Full Health Profile section (Name, Date of Birth, Gender, Height, Weight, Blood Type, Main Goal) - all editable using onboarding screens
   - Full App Settings section (Language preferences, Health reminders, Email notifications)
+  - Rate Mara App (opens app store listing for rating)
+  - Share Mara App (opens native share sheet with app link)
   - Privacy Policy (opens in WebView)
   - Terms of Service (opens in external browser)
   - Developer Settings (App Version, Device Info - dynamic data)

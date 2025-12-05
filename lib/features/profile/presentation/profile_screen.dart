@@ -3,8 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../core/di/dependency_injection.dart';
 import '../../../core/providers/email_provider.dart';
 import '../../../core/providers/subscription_provider.dart';
+import '../../../core/services/app_review_service.dart';
+import '../../../core/services/share_app_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/cache_utils.dart';
 import '../../../core/utils/platform_utils.dart';
@@ -217,6 +220,12 @@ class ProfileScreen extends ConsumerWidget {
                       const SizedBox(height: 40),
                       // App Settings section
                       const AppSettingsSection(),
+                      const SizedBox(height: 40),
+                      // Rate App
+                      _RateAppMenuItem(),
+                      const SizedBox(height: 16),
+                      // Share App
+                      _ShareAppMenuItem(),
                       const SizedBox(height: 40),
                       // Privacy Policy
                       _ProfileMenuItem(
@@ -550,5 +559,87 @@ class _DeveloperInfoItem extends StatelessWidget {
     }
 
     return card;
+  }
+}
+
+/// Menu item widget for rating the app.
+///
+/// Displays a "Rate Mara App" option that opens the app store listing
+/// when tapped. Handles errors gracefully with user-friendly messages.
+class _RateAppMenuItem extends ConsumerWidget {
+  const _RateAppMenuItem();
+
+  Future<void> _handleRateAppTap(
+    BuildContext context,
+    IAppReviewService appReviewService,
+  ) async {
+    final l10n = AppLocalizations.of(context)!;
+    try {
+      await appReviewService.openStoreListing();
+    } catch (e) {
+      // Show error message if opening store fails
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.rateAppUnavailable),
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final appReviewService = ref.read(appReviewServiceProvider);
+
+    return _ProfileMenuItem(
+      title: l10n.profileRateAppTitle,
+      subtitle: l10n.profileRateAppSubtitle,
+      icon: Icons.star_rate_rounded,
+      onTap: () => _handleRateAppTap(context, appReviewService),
+    );
+  }
+}
+
+/// Menu item widget for sharing the app.
+///
+/// Displays a "Share Mara App" option that opens the native share sheet
+/// when tapped. Handles errors gracefully with user-friendly messages.
+class _ShareAppMenuItem extends ConsumerWidget {
+  const _ShareAppMenuItem();
+
+  Future<void> _handleShareAppTap(
+    BuildContext context,
+    IShareAppService shareAppService,
+    AppLocalizations l10n,
+  ) async {
+    try {
+      await shareAppService.shareApp(l10n);
+    } catch (e) {
+      // Show error message if sharing fails
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.profileShareAppError),
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final shareAppService = ref.read(shareAppServiceProvider);
+
+    return _ProfileMenuItem(
+      title: l10n.profileShareAppTitle,
+      subtitle: l10n.profileShareAppSubtitle,
+      icon: Icons.share_rounded,
+      onTap: () => _handleShareAppTap(context, shareAppService, l10n),
+    );
   }
 }

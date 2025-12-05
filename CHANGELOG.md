@@ -8,6 +8,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.1+2] - 2025-12-04
 
 ### Added
+- feat: add Rate app entry to Profile screen with platform-aware store linking
+  - Added `AppReviewService` abstraction for app store rating functionality
+  - Integrated `in_app_review` package with fallback to store URLs
+  - Added "Rate Mara App" menu item to Profile screen
+  - Added localization support (English and Arabic)
+  - Added comprehensive unit and widget tests
+  - Added `AppConfig` for store IDs (with TODO placeholders for real values)
+- feat(profile): add Share Mara App action with store-aware sharing
+  - Added `ShareAppService` abstraction for sharing app links
+  - Integrated `share_plus` package for native share sheet
+  - Added platform-aware store URL selection (Android/iOS/fallback)
+  - Added "Share Mara App" menu item to Profile screen
+  - Added localization support (English and Arabic) with share message template
+  - Extended `AppConfig` with store URLs and landing page URL
+  - Added comprehensive unit and widget tests
+  - Handles errors gracefully with user-friendly error messages
 
 ### Fixed
 - fix: remove duplicate context declarations in github-script workflows (7617885)

@@ -805,4 +805,30 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get delete => 'Delete';
+
+  @override
+  String get profileRateAppTitle => 'Rate Mara App';
+
+  @override
+  String get profileRateAppSubtitle =>
+      'Help us improve by rating the app on the store.';
+
+  @override
+  String get rateAppUnavailable =>
+      'Unable to open the store right now. Please try again later.';
+
+  @override
+  String get profileShareAppTitle => 'Share Mara App';
+
+  @override
+  String get profileShareAppSubtitle => 'Invite your friends to try Mara.';
+
+  @override
+  String get profileShareAppError =>
+      'Unable to share the app right now. Please try again later.';
+
+  @override
+  String shareAppMessage(Object link) {
+    return 'Check out Mara – your smart health companion. Download it here: $link';
+  }
 }

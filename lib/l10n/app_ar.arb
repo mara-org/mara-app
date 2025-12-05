@@ -305,5 +305,12 @@
   "deleteConversationConfirmation": "هل أنت متأكد أنك تريد حذف هذه المحادثة؟ لا يمكن التراجع عن هذا الإجراء.",
   "conversationDeleted": "تم حذف المحادثة",
   "cancel": "إلغاء",
-  "delete": "حذف"
+  "delete": "حذف",
+  "profileRateAppTitle": "قيّم تطبيق مرا",
+  "profileRateAppSubtitle": "ساعدنا على التطوير بتقييم التطبيق في المتجر.",
+  "rateAppUnavailable": "تعذر فتح المتجر حاليًا. يرجى المحاولة مرة أخرى لاحقًا.",
+  "profileShareAppTitle": "شارك تطبيق مرا",
+  "profileShareAppSubtitle": "ادعُ أصدقاءك لتجربة مرا.",
+  "profileShareAppError": "تعذر مشاركة التطبيق الآن. حاول مرة أخرى لاحقًا.",
+  "shareAppMessage": "جرّب تطبيق مرا، رفيقك الذكي للصحة. لتحميله: {link}"
 }

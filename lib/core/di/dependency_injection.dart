@@ -3,6 +3,8 @@ import '../storage/local_cache.dart';
 import '../analytics/analytics_service.dart';
 import '../feature_flags/feature_flag_service.dart';
 import '../feature_flags/firebase_remote_config_service.dart';
+import '../services/app_review_service.dart';
+import '../services/share_app_service.dart';
 import '../../features/auth/data/datasources/auth_local_data_source.dart';
 import '../../features/auth/data/datasources/auth_remote_data_source.dart';
 import '../../features/auth/data/repositories/auth_repository_impl.dart';
@@ -47,6 +49,22 @@ final analyticsServiceProvider = Provider<AnalyticsService>((ref) {
 final remoteConfigServiceProvider = Provider<RemoteConfigService>((ref) {
   // Use Firebase Remote Config if available
   return FirebaseRemoteConfigService();
+});
+
+/// Provider for [IAppReviewService].
+///
+/// This provides the app review service for opening store listings
+/// and handling in-app reviews.
+final appReviewServiceProvider = Provider<IAppReviewService>((final ref) {
+  return AppReviewService();
+});
+
+/// Provider for [IShareAppService].
+///
+/// This provides the share app service for sharing the app
+/// with platform-aware store URLs.
+final shareAppServiceProvider = Provider<IShareAppService>((final ref) {
+  return ShareAppService();
 });
 
 // ============================================================================
