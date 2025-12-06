@@ -151,21 +151,25 @@ class HealthDataService implements IHealthDataService {
         HealthDataType.SLEEP_ASLEEP,
         HealthDataType.STEPS,
       ];
-      
-      final granted = await _health!.requestAuthorization(healthDataTypesToRequest);
+
+      final granted =
+          await _health!.requestAuthorization(healthDataTypesToRequest);
 
       Logger.info(
         'HealthDataService: Permission request result: $granted',
         feature: 'health',
         screen: 'health_data_service',
-        extra: {'requestedTypes': healthDataTypesToRequest.map((e) => e.toString()).toList()},
+        extra: {
+          'requestedTypes':
+              healthDataTypesToRequest.map((e) => e.toString()).toList()
+        },
       );
 
       // After requesting, verify permissions are actually granted
       if (granted) {
         // Wait a moment for permissions to propagate (especially on iOS)
         await Future.delayed(const Duration(milliseconds: 500));
-        
+
         // Use our hasPermissions method which does a test read
         final verified = await hasPermissions();
         Logger.info(
@@ -210,16 +214,17 @@ class HealthDataService implements IHealthDataService {
         HealthDataType.SLEEP_ASLEEP,
         HealthDataType.STEPS,
       ];
-      
-      final permissionResult = await _health!.hasPermissions(healthDataTypesToCheck);
+
+      final permissionResult =
+          await _health!.hasPermissions(healthDataTypesToCheck);
       final hasPermissions = permissionResult == true;
-      
+
       Logger.info(
         'HealthDataService: Permission check result: $hasPermissions (raw: $permissionResult)',
         feature: 'health',
         screen: 'health_data_service',
       );
-      
+
       // If the permission check is unclear (null), try to actually read data
       // This is more reliable than just checking permissions
       if (permissionResult != true && permissionResult != false) {
@@ -228,20 +233,20 @@ class HealthDataService implements IHealthDataService {
           feature: 'health',
           screen: 'health_data_service',
         );
-        
+
         // Try a test read to see if we can actually access health data
         try {
           final now = DateTime.now();
           final testStart = now.subtract(const Duration(days: 7));
           final testEnd = now;
-          
+
           // Try to read data - if this succeeds, we have permissions
           await _health!.getHealthDataFromTypes(
             types: healthDataTypesToCheck,
             startTime: testStart,
             endTime: testEnd,
           );
-          
+
           // If we can read data (even if empty), we have permissions
           Logger.info(
             'HealthDataService: Test read successful, permissions appear to be granted',
@@ -258,7 +263,7 @@ class HealthDataService implements IHealthDataService {
           return false;
         }
       }
-      
+
       return hasPermissions;
     } catch (e, stackTrace) {
       Logger.error(
@@ -306,10 +311,11 @@ class HealthDataService implements IHealthDataService {
       // We sum them to get the total daily steps
       int totalSteps = 0;
       final stepValues = <int>[];
-      
+
       for (final data in steps) {
         if (data.value is NumericHealthValue) {
-          final stepValue = (data.value as NumericHealthValue).numericValue.toInt();
+          final stepValue =
+              (data.value as NumericHealthValue).numericValue.toInt();
           stepValues.add(stepValue);
           totalSteps += stepValue;
         }
@@ -364,7 +370,7 @@ class HealthDataService implements IHealthDataService {
       // Query from 2 days ago to capture sleep sessions that might span multiple days
       // This ensures we capture overnight sleep that started 2 nights ago
       final queryStart = startOfDay.subtract(const Duration(days: 2));
-      
+
       Logger.info(
         'HealthDataService: Querying sleep data from ${queryStart.toIso8601String()} to ${endOfDay.toIso8601String()} (today: ${startOfDay.toIso8601String()})',
         feature: 'health',
@@ -379,7 +385,7 @@ class HealthDataService implements IHealthDataService {
           feature: 'health',
           screen: 'health_data_service',
         );
-        
+
         // Query from 2 days ago to today to capture sleep sessions that span midnight
         final sleepInBedData = await _health!.getHealthDataFromTypes(
           types: [HealthDataType.SLEEP_IN_BED],
@@ -398,12 +404,14 @@ class HealthDataService implements IHealthDataService {
           final sleepSegments = <_DateTimeRange>[];
 
           // Log all raw sleep data entries for debugging
-          final entriesInfo = sleepInBedData.map((e) => {
-            'from': e.dateFrom.toIso8601String(),
-            'to': e.dateTo.toIso8601String(),
-            'value': e.value.toString(),
-          }).toList();
-          
+          final entriesInfo = sleepInBedData
+              .map((e) => {
+                    'from': e.dateFrom.toIso8601String(),
+                    'to': e.dateTo.toIso8601String(),
+                    'value': e.value.toString(),
+                  })
+              .toList();
+
           Logger.info(
             'HealthDataService: Processing ${sleepInBedData.length} sleep entries',
             feature: 'health',
@@ -419,16 +427,19 @@ class HealthDataService implements IHealthDataService {
           for (final data in sleepInBedData) {
             final segmentStart = data.dateFrom;
             final segmentEnd = data.dateTo;
-            
+
             // Check if this segment overlaps with today at all
             // Overlap exists if: segment starts before today ends AND segment ends after today starts
-            final overlapsWithToday = segmentStart.isBefore(endOfDay) && segmentEnd.isAfter(startOfDay);
-            
+            final overlapsWithToday = segmentStart.isBefore(endOfDay) &&
+                segmentEnd.isAfter(startOfDay);
+
             if (overlapsWithToday) {
               // Calculate the portion that overlaps with today
-              final overlapStart = segmentStart.isBefore(startOfDay) ? startOfDay : segmentStart;
-              final overlapEnd = segmentEnd.isAfter(endOfDay) ? endOfDay : segmentEnd;
-              
+              final overlapStart =
+                  segmentStart.isBefore(startOfDay) ? startOfDay : segmentStart;
+              final overlapEnd =
+                  segmentEnd.isAfter(endOfDay) ? endOfDay : segmentEnd;
+
               if (overlapEnd.isAfter(overlapStart)) {
                 final duration = overlapEnd.difference(overlapStart);
                 Logger.info(
@@ -436,7 +447,8 @@ class HealthDataService implements IHealthDataService {
                   feature: 'health',
                   screen: 'health_data_service',
                 );
-                sleepSegments.add(_DateTimeRange(start: overlapStart, end: overlapEnd));
+                sleepSegments
+                    .add(_DateTimeRange(start: overlapStart, end: overlapEnd));
               }
             } else {
               Logger.info(
@@ -508,7 +520,7 @@ class HealthDataService implements IHealthDataService {
           feature: 'health',
           screen: 'health_data_service',
         );
-        
+
         // Query from 2 days ago to today to capture sleep sessions that span midnight
         final sleepAsleepData = await _health!.getHealthDataFromTypes(
           types: [HealthDataType.SLEEP_ASLEEP],
@@ -527,12 +539,14 @@ class HealthDataService implements IHealthDataService {
           final sleepSegments = <_DateTimeRange>[];
 
           // Log all raw sleep data entries for debugging
-          final asleepEntriesInfo = sleepAsleepData.map((e) => {
-            'from': e.dateFrom.toIso8601String(),
-            'to': e.dateTo.toIso8601String(),
-            'value': e.value.toString(),
-          }).toList();
-          
+          final asleepEntriesInfo = sleepAsleepData
+              .map((e) => {
+                    'from': e.dateFrom.toIso8601String(),
+                    'to': e.dateTo.toIso8601String(),
+                    'value': e.value.toString(),
+                  })
+              .toList();
+
           Logger.info(
             'HealthDataService: Processing ${sleepAsleepData.length} SLEEP_ASLEEP entries',
             feature: 'health',
@@ -544,15 +558,18 @@ class HealthDataService implements IHealthDataService {
           for (final data in sleepAsleepData) {
             final segmentStart = data.dateFrom;
             final segmentEnd = data.dateTo;
-            
+
             // Check if this segment overlaps with today at all
-            final overlapsWithToday = segmentStart.isBefore(endOfDay) && segmentEnd.isAfter(startOfDay);
-            
+            final overlapsWithToday = segmentStart.isBefore(endOfDay) &&
+                segmentEnd.isAfter(startOfDay);
+
             if (overlapsWithToday) {
               // Calculate the portion that overlaps with today
-              final overlapStart = segmentStart.isBefore(startOfDay) ? startOfDay : segmentStart;
-              final overlapEnd = segmentEnd.isAfter(endOfDay) ? endOfDay : segmentEnd;
-              
+              final overlapStart =
+                  segmentStart.isBefore(startOfDay) ? startOfDay : segmentStart;
+              final overlapEnd =
+                  segmentEnd.isAfter(endOfDay) ? endOfDay : segmentEnd;
+
               if (overlapEnd.isAfter(overlapStart)) {
                 final duration = overlapEnd.difference(overlapStart);
                 Logger.info(
@@ -560,7 +577,8 @@ class HealthDataService implements IHealthDataService {
                   feature: 'health',
                   screen: 'health_data_service',
                 );
-                sleepSegments.add(_DateTimeRange(start: overlapStart, end: overlapEnd));
+                sleepSegments
+                    .add(_DateTimeRange(start: overlapStart, end: overlapEnd));
               }
             } else {
               Logger.info(
@@ -627,10 +645,11 @@ class HealthDataService implements IHealthDataService {
           feature: 'health',
           screen: 'health_data_service',
         );
-        
-        final diagnosticStart = DateTime.now().subtract(const Duration(days: 7));
+
+        final diagnosticStart =
+            DateTime.now().subtract(const Duration(days: 7));
         final diagnosticEnd = DateTime.now();
-        
+
         // Try all sleep types to see what's available
         final allSleepTypes = [
           HealthDataType.SLEEP_IN_BED,
@@ -639,7 +658,7 @@ class HealthDataService implements IHealthDataService {
           HealthDataType.SLEEP_REM,
           HealthDataType.SLEEP_AWAKE,
         ];
-        
+
         for (final sleepType in allSleepTypes) {
           try {
             final diagnosticData = await _health!.getHealthDataFromTypes(
@@ -647,7 +666,7 @@ class HealthDataService implements IHealthDataService {
               startTime: diagnosticStart,
               endTime: diagnosticEnd,
             );
-            
+
             if (diagnosticData.isNotEmpty) {
               Logger.info(
                 'HealthDataService: Found ${diagnosticData.length} entries of type $sleepType in last 7 days',
@@ -771,7 +790,7 @@ class HealthDataService implements IHealthDataService {
   @override
   Future<Map<String, double>> getAllSleepData() async {
     final result = <String, double>{};
-    
+
     try {
       await _initialize();
 
@@ -787,7 +806,8 @@ class HealthDataService implements IHealthDataService {
       // Query from a very early date to now to get all available data
       // HealthKit/Health Connect typically stores data for years
       final now = DateTime.now();
-      final startDate = DateTime(2010, 1, 1); // Start from 2010 to capture all historical data
+      final startDate = DateTime(
+          2010, 1, 1); // Start from 2010 to capture all historical data
       final endDate = now.add(const Duration(days: 1)); // Include today
 
       Logger.info(
@@ -813,31 +833,40 @@ class HealthDataService implements IHealthDataService {
         // Group by date and sum hours per day
         // For sleep sessions that span midnight, count the sleep for the day it ends (wake-up day)
         for (final data in sleepInBedData) {
-          final startDate = DateTime(data.dateFrom.year, data.dateFrom.month, data.dateFrom.day);
-          final endDate = DateTime(data.dateTo.year, data.dateTo.month, data.dateTo.day);
-          
+          final startDate = DateTime(
+              data.dateFrom.year, data.dateFrom.month, data.dateFrom.day);
+          final endDate =
+              DateTime(data.dateTo.year, data.dateTo.month, data.dateTo.day);
+
           final duration = data.dateTo.difference(data.dateFrom);
           final totalHours = duration.inSeconds / 3600.0;
-          
+
           if (startDate == endDate) {
             // Sleep session is within a single day
-            final dateKey = '${startDate.year}-${startDate.month.toString().padLeft(2, '0')}-${startDate.day.toString().padLeft(2, '0')}';
+            final dateKey =
+                '${startDate.year}-${startDate.month.toString().padLeft(2, '0')}-${startDate.day.toString().padLeft(2, '0')}';
             result[dateKey] = (result[dateKey] ?? 0.0) + totalHours;
           } else {
             // Sleep session spans midnight - split between days
             // Count most of the sleep for the wake-up day (end date)
-            final endDateKey = '${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}';
-            final startDateKey = '${startDate.year}-${startDate.month.toString().padLeft(2, '0')}-${startDate.day.toString().padLeft(2, '0')}';
-            
+            final endDateKey =
+                '${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}';
+            final startDateKey =
+                '${startDate.year}-${startDate.month.toString().padLeft(2, '0')}-${startDate.day.toString().padLeft(2, '0')}';
+
             // Calculate hours for each day
-            final hoursBeforeMidnight = DateTime(startDate.year, startDate.month, startDate.day, 23, 59, 59)
-                .difference(data.dateFrom)
-                .inSeconds / 3600.0;
+            final hoursBeforeMidnight = DateTime(startDate.year,
+                        startDate.month, startDate.day, 23, 59, 59)
+                    .difference(data.dateFrom)
+                    .inSeconds /
+                3600.0;
             final hoursAfterMidnight = totalHours - hoursBeforeMidnight;
-            
+
             // Add to both days
-            result[startDateKey] = (result[startDateKey] ?? 0.0) + hoursBeforeMidnight;
-            result[endDateKey] = (result[endDateKey] ?? 0.0) + hoursAfterMidnight;
+            result[startDateKey] =
+                (result[startDateKey] ?? 0.0) + hoursBeforeMidnight;
+            result[endDateKey] =
+                (result[endDateKey] ?? 0.0) + hoursAfterMidnight;
           }
         }
       } catch (e) {
@@ -866,30 +895,39 @@ class HealthDataService implements IHealthDataService {
           // Group by date and sum hours per day
           // For sleep sessions that span midnight, count the sleep for the day it ends (wake-up day)
           for (final data in sleepAsleepData) {
-            final startDate = DateTime(data.dateFrom.year, data.dateFrom.month, data.dateFrom.day);
-            final endDate = DateTime(data.dateTo.year, data.dateTo.month, data.dateTo.day);
-            
+            final startDate = DateTime(
+                data.dateFrom.year, data.dateFrom.month, data.dateFrom.day);
+            final endDate =
+                DateTime(data.dateTo.year, data.dateTo.month, data.dateTo.day);
+
             final duration = data.dateTo.difference(data.dateFrom);
             final totalHours = duration.inSeconds / 3600.0;
-            
+
             if (startDate == endDate) {
               // Sleep session is within a single day
-              final dateKey = '${startDate.year}-${startDate.month.toString().padLeft(2, '0')}-${startDate.day.toString().padLeft(2, '0')}';
+              final dateKey =
+                  '${startDate.year}-${startDate.month.toString().padLeft(2, '0')}-${startDate.day.toString().padLeft(2, '0')}';
               result[dateKey] = (result[dateKey] ?? 0.0) + totalHours;
             } else {
               // Sleep session spans midnight - split between days
-              final endDateKey = '${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}';
-              final startDateKey = '${startDate.year}-${startDate.month.toString().padLeft(2, '0')}-${startDate.day.toString().padLeft(2, '0')}';
-              
+              final endDateKey =
+                  '${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}';
+              final startDateKey =
+                  '${startDate.year}-${startDate.month.toString().padLeft(2, '0')}-${startDate.day.toString().padLeft(2, '0')}';
+
               // Calculate hours for each day
-              final hoursBeforeMidnight = DateTime(startDate.year, startDate.month, startDate.day, 23, 59, 59)
-                  .difference(data.dateFrom)
-                  .inSeconds / 3600.0;
+              final hoursBeforeMidnight = DateTime(startDate.year,
+                          startDate.month, startDate.day, 23, 59, 59)
+                      .difference(data.dateFrom)
+                      .inSeconds /
+                  3600.0;
               final hoursAfterMidnight = totalHours - hoursBeforeMidnight;
-              
+
               // Add to both days
-              result[startDateKey] = (result[startDateKey] ?? 0.0) + hoursBeforeMidnight;
-              result[endDateKey] = (result[endDateKey] ?? 0.0) + hoursAfterMidnight;
+              result[startDateKey] =
+                  (result[startDateKey] ?? 0.0) + hoursBeforeMidnight;
+              result[endDateKey] =
+                  (result[endDateKey] ?? 0.0) + hoursAfterMidnight;
             }
           }
         } catch (e) {
@@ -923,7 +961,7 @@ class HealthDataService implements IHealthDataService {
   @override
   Future<Map<String, int>> getAllStepsData() async {
     final result = <String, int>{};
-    
+
     try {
       await _initialize();
 
@@ -938,7 +976,8 @@ class HealthDataService implements IHealthDataService {
 
       // Query from a very early date to now to get all available data
       final now = DateTime.now();
-      final startDate = DateTime(2010, 1, 1); // Start from 2010 to capture all historical data
+      final startDate = DateTime(
+          2010, 1, 1); // Start from 2010 to capture all historical data
       final endDate = now.add(const Duration(days: 1)); // Include today
 
       Logger.info(
@@ -962,9 +1001,11 @@ class HealthDataService implements IHealthDataService {
       // Group by date and sum steps per day
       for (final data in stepsData) {
         if (data.value is NumericHealthValue) {
-          final date = DateTime(data.dateFrom.year, data.dateFrom.month, data.dateFrom.day);
-          final dateKey = '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
-          
+          final date = DateTime(
+              data.dateFrom.year, data.dateFrom.month, data.dateFrom.day);
+          final dateKey =
+              '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+
           final steps = (data.value as NumericHealthValue).numericValue.toInt();
           result[dateKey] = (result[dateKey] ?? 0) + steps;
         }
@@ -992,7 +1033,7 @@ class HealthDataService implements IHealthDataService {
   @override
   Future<Map<String, double>> getAllWaterData() async {
     final result = <String, double>{};
-    
+
     try {
       await _initialize();
 
@@ -1018,7 +1059,8 @@ class HealthDataService implements IHealthDataService {
 
       // Query from a very early date to now to get all available data
       final now = DateTime.now();
-      final startDate = DateTime(2010, 1, 1); // Start from 2010 to capture all historical data
+      final startDate = DateTime(
+          2010, 1, 1); // Start from 2010 to capture all historical data
       final endDate = now.add(const Duration(days: 1)); // Include today
 
       Logger.info(
@@ -1042,9 +1084,11 @@ class HealthDataService implements IHealthDataService {
       // Group by date and sum water per day
       for (final data in waterData) {
         if (data.value is NumericHealthValue) {
-          final date = DateTime(data.dateFrom.year, data.dateFrom.month, data.dateFrom.day);
-          final dateKey = '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
-          
+          final date = DateTime(
+              data.dateFrom.year, data.dateFrom.month, data.dateFrom.day);
+          final dateKey =
+              '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+
           final waterLiters = (data.value as NumericHealthValue).numericValue;
           result[dateKey] = (result[dateKey] ?? 0.0) + waterLiters;
         }

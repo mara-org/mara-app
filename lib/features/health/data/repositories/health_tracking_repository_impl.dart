@@ -97,11 +97,11 @@ class HealthTrackingRepositoryImpl implements HealthTrackingRepository {
     try {
       // Check local storage first
       final localEntry = await _localDataSource.getTodaySleep();
-      
+
       // Only sync if we don't have recent data (synced in last 5 minutes)
-      final shouldSync = localEntry == null || 
+      final shouldSync = localEntry == null ||
           DateTime.now().difference(localEntry.lastUpdatedAt).inMinutes > 5;
-      
+
       // First, try to get sleep data from HealthKit/Google Fit
       if (shouldSync && _healthDataService != null) {
         try {
@@ -111,7 +111,7 @@ class HealthTrackingRepositoryImpl implements HealthTrackingRepository {
             feature: 'health',
             screen: 'health_repository',
           );
-          
+
           if (hasPermissions) {
             final sleepHours = await _healthDataService!.getTodaySleepHours();
             Logger.info(
@@ -119,7 +119,7 @@ class HealthTrackingRepositoryImpl implements HealthTrackingRepository {
               feature: 'health',
               screen: 'health_repository',
             );
-            
+
             if (sleepHours != null && sleepHours > 0) {
               // Save to local storage
               final today = DateTime.now();
@@ -231,7 +231,7 @@ class HealthTrackingRepositoryImpl implements HealthTrackingRepository {
         // Return null to show 0L in UI
         return null;
       }
-      
+
       return localEntry;
     } catch (e, stackTrace) {
       Logger.error(
@@ -425,7 +425,7 @@ class HealthTrackingRepositoryImpl implements HealthTrackingRepository {
         );
 
         final allSleepData = await _healthDataService!.getAllSleepData();
-        
+
         for (final entry in allSleepData.entries) {
           try {
             // Parse date string (YYYY-MM-DD)
@@ -477,7 +477,7 @@ class HealthTrackingRepositoryImpl implements HealthTrackingRepository {
         );
 
         final allStepsData = await _healthDataService!.getAllStepsData();
-        
+
         for (final entry in allStepsData.entries) {
           try {
             // Parse date string (YYYY-MM-DD)
@@ -529,7 +529,7 @@ class HealthTrackingRepositoryImpl implements HealthTrackingRepository {
         );
 
         final allWaterData = await _healthDataService!.getAllWaterData();
-        
+
         for (final entry in allWaterData.entries) {
           try {
             // Parse date string (YYYY-MM-DD)

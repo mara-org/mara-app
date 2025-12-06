@@ -84,8 +84,14 @@ class _WaterInputDialogState extends ConsumerState<WaterInputDialog> {
     });
 
     try {
-      final entry = DailyWaterIntakeEntry.today(liters);
+      // Get today's current water intake if it exists, then add to it
       final repository = ref.read(healthTrackingRepositoryProvider);
+      final todayWater = await repository.getTodayWater();
+
+      final currentLiters = todayWater?.waterLiters ?? 0.0;
+      final newTotal = currentLiters + liters;
+
+      final entry = DailyWaterIntakeEntry.today(newTotal);
       await repository.saveWaterIntakeEntry(entry);
 
       // Refresh the provider
@@ -168,8 +174,10 @@ class _WaterInputDialogState extends ConsumerState<WaterInputDialog> {
             Row(
               children: [
                 Expanded(
-                    child: Divider(
-                        color: AppColors.textSecondary.withOpacity(0.3))),
+                  child: Divider(
+                    color: AppColors.textSecondary.withValues(alpha: 0.3),
+                  ),
+                ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Text(
@@ -182,8 +190,10 @@ class _WaterInputDialogState extends ConsumerState<WaterInputDialog> {
                   ),
                 ),
                 Expanded(
-                    child: Divider(
-                        color: AppColors.textSecondary.withOpacity(0.3))),
+                  child: Divider(
+                    color: AppColors.textSecondary.withValues(alpha: 0.3),
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 16),

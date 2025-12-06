@@ -51,7 +51,7 @@ class _SleepInputDialogState extends ConsumerState<SleepInputDialog> {
           }
           return;
         }
-        
+
         await Future.delayed(const Duration(milliseconds: 800));
         hasPermissions = await healthDataService.hasPermissions();
       }
@@ -87,13 +87,13 @@ class _SleepInputDialogState extends ConsumerState<SleepInputDialog> {
         if (sleepDays > 0) parts.add('$sleepDays days of sleep');
         if (stepsDays > 0) parts.add('$stepsDays days of steps');
         if (waterDays > 0) parts.add('$waterDays days of water');
-        
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              parts.isEmpty 
-                ? 'No new data to sync'
-                : 'Synced ${parts.join(', ')} data',
+              parts.isEmpty
+                  ? 'No new data to sync'
+                  : 'Synced ${parts.join(', ')} data',
             ),
             duration: const Duration(seconds: 4),
           ),
@@ -103,7 +103,7 @@ class _SleepInputDialogState extends ConsumerState<SleepInputDialog> {
     } catch (e, stackTrace) {
       debugPrint('Error syncing all historical data: $e');
       debugPrint('Stack trace: $stackTrace');
-      
+
       if (mounted) {
         final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
@@ -157,7 +157,7 @@ class _SleepInputDialogState extends ConsumerState<SleepInputDialog> {
           }
           return;
         }
-        
+
         // Re-check permissions after requesting (there may be a delay)
         // Wait a moment for permissions to propagate, especially on iOS
         await Future.delayed(const Duration(milliseconds: 800));
@@ -191,7 +191,7 @@ class _SleepInputDialogState extends ConsumerState<SleepInputDialog> {
         // No sleep data found - could be permissions or no data
         // Re-check permissions to give better error message
         final stillHasPermissions = await healthDataService.hasPermissions();
-        
+
         if (mounted) {
           if (!stillHasPermissions) {
             // Permissions were revoked or not properly granted
@@ -216,7 +216,7 @@ class _SleepInputDialogState extends ConsumerState<SleepInputDialog> {
       // Log the error for debugging
       debugPrint('Error syncing sleep data: $e');
       debugPrint('Stack trace: $stackTrace');
-      
+
       if (mounted) {
         final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
@@ -311,7 +311,8 @@ class _SleepInputDialogState extends ConsumerState<SleepInputDialog> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                onPressed: (_isSyncing || _isSyncingAll) ? null : _syncFromDevice,
+                onPressed:
+                    (_isSyncing || _isSyncingAll) ? null : _syncFromDevice,
                 icon: _isSyncing
                     ? const SizedBox(
                         width: 16,
@@ -339,7 +340,9 @@ class _SleepInputDialogState extends ConsumerState<SleepInputDialog> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                onPressed: (_isSyncing || _isSyncingAll) ? null : _syncAllHistoricalData,
+                onPressed: (_isSyncing || _isSyncingAll)
+                    ? null
+                    : _syncAllHistoricalData,
                 icon: _isSyncingAll
                     ? const SizedBox(
                         width: 16,
@@ -351,9 +354,12 @@ class _SleepInputDialogState extends ConsumerState<SleepInputDialog> {
                         ),
                       )
                     : const Icon(Icons.history),
-                label: Text(_isSyncingAll ? 'Syncing all data...' : 'Sync All Historical Data'),
+                label: Text(_isSyncingAll
+                    ? 'Syncing all data...'
+                    : 'Sync All Historical Data'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.languageButtonColor.withValues(alpha: 0.8),
+                  backgroundColor:
+                      AppColors.languageButtonColor.withValues(alpha: 0.8),
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
@@ -365,7 +371,9 @@ class _SleepInputDialogState extends ConsumerState<SleepInputDialog> {
             const SizedBox(height: 12),
             SecondaryButton(
               text: l10n.cancel,
-              onPressed: (_isSyncing || _isSyncingAll) ? null : () => Navigator.of(context).pop(),
+              onPressed: (_isSyncing || _isSyncingAll)
+                  ? null
+                  : () => Navigator.of(context).pop(),
             ),
           ],
         ),

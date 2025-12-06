@@ -7,7 +7,7 @@ import '../../../core/providers/chat_topic_provider.dart';
 import '../../../core/providers/health_tracking_providers.dart';
 import '../../../core/providers/steps_provider.dart';
 import '../../../core/providers/user_profile_provider.dart';
-import 'widgets/sleep_input_dialog.dart';
+import '../../../core/di/dependency_injection.dart';
 import 'widgets/water_input_dialog.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_colors_dark.dart';
@@ -27,6 +27,59 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   bool _isVitalSignsLoading = false;
   bool _isSummaryLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Automatically sync health data when screen loads
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _autoSyncHealthData();
+      // Set up periodic auto-sync every 5 minutes
+      _startPeriodicSync();
+    });
+  }
+
+  @override
+  void dispose() {
+    // Clean up any timers if needed
+    super.dispose();
+  }
+
+  /// Start periodic automatic syncing of health data
+  void _startPeriodicSync() {
+    // Refresh every 5 minutes
+    Future.delayed(const Duration(minutes: 5), () {
+      if (mounted) {
+        _autoSyncHealthData();
+        _startPeriodicSync(); // Schedule next sync
+      }
+    });
+  }
+
+  /// Automatically sync health data from device
+  Future<void> _autoSyncHealthData() async {
+    try {
+      final healthDataService = ref.read(healthDataServiceProvider);
+
+      // Check if we have permissions
+      final hasPermissions = await healthDataService.hasPermissions();
+      if (!hasPermissions) {
+        // Silently try to request permissions (won't show dialog if already denied)
+        await healthDataService.requestPermissions();
+        return;
+      }
+
+      // Sync today's data automatically
+      // The providers will automatically fetch and sync when accessed
+      // Just invalidate them to trigger refresh
+      ref.invalidate(todayStepsProvider);
+      ref.invalidate(todaySleepProvider);
+      ref.invalidate(todayWaterProvider);
+    } catch (e) {
+      // Silently fail - don't show errors for automatic sync
+      debugPrint('Auto-sync health data error: $e');
+    }
+  }
 
   void _onVitalSignsTap() {
     setState(() {
@@ -464,25 +517,10 @@ class _StepsCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
-    final steps = ref.watch(stepsProvider);
+    final stepsAsync = ref.watch(todayStepsProvider);
     final stepsGoal = ref.watch(stepsGoalProvider);
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-
-    // Format step count with commas
-    final formattedSteps = NumberFormat('#,###').format(steps);
-
-    // Determine what to display
-    final String displayValue;
-    final String? subtitle;
-
-    if (steps == 0) {
-      displayValue = '0';
-      subtitle = null;
-    } else {
-      displayValue = formattedSteps;
-      subtitle = l10n.ofSteps(stepsGoal);
-    }
 
     return Container(
       height: 100,
@@ -499,45 +537,112 @@ class _StepsCard extends ConsumerWidget {
           ),
         ],
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            l10n.steps,
-            style: TextStyle(
-              color: AppColors.languageButtonColor,
-              fontSize: 15,
-              fontWeight: FontWeight.normal,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Icon(
-            Icons.directions_walk,
-            color: AppColors.languageButtonColor,
-            size: 32,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            displayValue,
-            style: TextStyle(
-              color: AppColors.languageButtonColor,
-              fontSize: 13,
-              fontWeight: FontWeight.normal,
-            ),
-          ),
-          if (subtitle != null) ...[
-            const SizedBox(height: 2),
+      child: stepsAsync.when(
+        data: (entry) {
+          final steps = entry?.steps ?? 0;
+          final formattedSteps = NumberFormat('#,###').format(steps);
+
+          final String displayValue;
+          final String? subtitle;
+
+          if (steps == 0) {
+            displayValue = '0';
+            subtitle = null;
+          } else {
+            displayValue = formattedSteps;
+            subtitle = l10n.ofSteps(stepsGoal);
+          }
+
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                l10n.steps,
+                style: TextStyle(
+                  color: AppColors.languageButtonColor,
+                  fontSize: 15,
+                  fontWeight: FontWeight.normal,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Icon(
+                Icons.directions_walk,
+                color: AppColors.languageButtonColor,
+                size: 32,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                displayValue,
+                style: TextStyle(
+                  color: steps > 0
+                      ? AppColors.languageButtonColor
+                      : AppColors.languageButtonColor.withValues(alpha: 0.6),
+                  fontSize: steps > 0 ? 13 : 11,
+                  fontWeight: FontWeight.normal,
+                ),
+              ),
+              if (subtitle != null) ...[
+                const SizedBox(height: 2),
+                Text(
+                  subtitle,
+                  style: TextStyle(
+                    color: AppColors.languageButtonColor.withValues(alpha: 0.7),
+                    fontSize: 10,
+                    fontWeight: FontWeight.normal,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ],
+          );
+        },
+        loading: () => Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
             Text(
-              subtitle,
+              l10n.steps,
               style: TextStyle(
-                color: AppColors.languageButtonColor.withValues(alpha: 0.7),
-                fontSize: 10,
+                color: AppColors.languageButtonColor,
+                fontSize: 15,
                 fontWeight: FontWeight.normal,
               ),
-              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            const SizedBox(
+              width: 24,
+              height: 24,
+              child: CircularProgressIndicator(strokeWidth: 2),
             ),
           ],
-        ],
+        ),
+        error: (error, stack) => Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              l10n.steps,
+              style: TextStyle(
+                color: AppColors.languageButtonColor,
+                fontSize: 15,
+                fontWeight: FontWeight.normal,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Icon(
+              Icons.directions_walk,
+              color: AppColors.languageButtonColor.withValues(alpha: 0.5),
+              size: 32,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              '0',
+              style: TextStyle(
+                color: AppColors.languageButtonColor.withValues(alpha: 0.6),
+                fontSize: 11,
+                fontWeight: FontWeight.normal,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -547,13 +652,6 @@ class _StepsCard extends ConsumerWidget {
 class _SleepCard extends ConsumerWidget {
   const _SleepCard();
 
-  void _showSleepInputDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => const SleepInputDialog(),
-    );
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
@@ -561,84 +659,28 @@ class _SleepCard extends ConsumerWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    return GestureDetector(
-      onTap: () => _showSleepInputDialog(context),
-      child: Container(
-        height: 100,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          color: isDark
-              ? AppColorsDark.permissionCardBackground
-              : AppColors.permissionCardBackground,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.25),
-              offset: const Offset(0, 4),
-              blurRadius: 4,
-            ),
-          ],
-        ),
-        child: sleepAsync.when(
-          data: (entry) {
-            final hours = entry?.hours ?? 0.0;
-            final displayValue = hours > 0
-                ? '${hours.toStringAsFixed(1)}h'
-                : l10n.tapToSyncSleep;
-
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  l10n.sleep,
-                  style: TextStyle(
-                    color: AppColors.languageButtonColor,
-                    fontSize: 15,
-                    fontWeight: FontWeight.normal,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Icon(
-                  Icons.bedtime,
-                  color: AppColors.languageButtonColor,
-                  size: 32,
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  displayValue,
-                  style: TextStyle(
-                    color: hours > 0
-                        ? AppColors.languageButtonColor
-                        : AppColors.languageButtonColor.withValues(alpha: 0.6),
-                    fontSize: hours > 0 ? 13 : 11,
-                    fontWeight: FontWeight.normal,
-                  ),
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            );
-          },
-          loading: () => Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                l10n.sleep,
-                style: TextStyle(
-                  color: AppColors.languageButtonColor,
-                  fontSize: 15,
-                  fontWeight: FontWeight.normal,
-                ),
-              ),
-              const SizedBox(height: 8),
-              const SizedBox(
-                width: 24,
-                height: 24,
-                child: CircularProgressIndicator(strokeWidth: 2),
-              ),
-            ],
+    return Container(
+      height: 100,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        color: isDark
+            ? AppColorsDark.permissionCardBackground
+            : AppColors.permissionCardBackground,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.25),
+            offset: const Offset(0, 4),
+            blurRadius: 4,
           ),
-          error: (error, stack) => Column(
+        ],
+      ),
+      child: sleepAsync.when(
+        data: (entry) {
+          final hours = entry?.hours ?? 0.0;
+          final displayValue =
+              hours > 0 ? '${hours.toStringAsFixed(1)}h' : '--';
+
+          return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
@@ -652,21 +694,73 @@ class _SleepCard extends ConsumerWidget {
               const SizedBox(height: 8),
               Icon(
                 Icons.bedtime,
-                color: AppColors.languageButtonColor.withValues(alpha: 0.5),
+                color: AppColors.languageButtonColor,
                 size: 32,
               ),
               const SizedBox(height: 4),
               Text(
-                l10n.tapToAddData,
+                displayValue,
                 style: TextStyle(
-                  color: AppColors.languageButtonColor.withValues(alpha: 0.6),
-                  fontSize: 11,
+                  color: hours > 0
+                      ? AppColors.languageButtonColor
+                      : AppColors.languageButtonColor.withValues(alpha: 0.6),
+                  fontSize: hours > 0 ? 13 : 11,
                   fontWeight: FontWeight.normal,
                 ),
                 textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ],
-          ),
+          );
+        },
+        loading: () => Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              l10n.sleep,
+              style: TextStyle(
+                color: AppColors.languageButtonColor,
+                fontSize: 15,
+                fontWeight: FontWeight.normal,
+              ),
+            ),
+            const SizedBox(height: 8),
+            const SizedBox(
+              width: 24,
+              height: 24,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+          ],
+        ),
+        error: (error, stack) => Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              l10n.sleep,
+              style: TextStyle(
+                color: AppColors.languageButtonColor,
+                fontSize: 15,
+                fontWeight: FontWeight.normal,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Icon(
+              Icons.bedtime,
+              color: AppColors.languageButtonColor.withValues(alpha: 0.5),
+              size: 32,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              '--',
+              style: TextStyle(
+                color: AppColors.languageButtonColor.withValues(alpha: 0.6),
+                fontSize: 11,
+                fontWeight: FontWeight.normal,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
       ),
     );
@@ -711,9 +805,8 @@ class _WaterCard extends ConsumerWidget {
         child: waterAsync.when(
           data: (entry) {
             final liters = entry?.waterLiters ?? 0.0;
-            final displayValue = liters > 0
-                ? '${liters.toStringAsFixed(1)}L'
-                : l10n.tapToAddData;
+            final displayValue =
+                liters > 0 ? '${liters.toStringAsFixed(1)}L' : '--';
 
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -787,7 +880,7 @@ class _WaterCard extends ConsumerWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                l10n.tapToAddData,
+                '--',
                 style: TextStyle(
                   color: AppColors.languageButtonColor.withValues(alpha: 0.6),
                   fontSize: 11,
