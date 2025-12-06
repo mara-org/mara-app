@@ -40,7 +40,8 @@ void main() {
             // Override UserProfileProvider
             userProfileProvider.overrideWith((ref) => UserProfileNotifier()),
             // Mock health data service
-            healthDataServiceProvider.overrideWith((ref) => HealthDataService()),
+            healthDataServiceProvider
+                .overrideWith((ref) => HealthDataService()),
           ],
           child: MaterialApp.router(
             routerConfig: GoRouter(
@@ -105,7 +106,8 @@ void main() {
             // Override UserProfileProvider
             userProfileProvider.overrideWith((ref) => UserProfileNotifier()),
             // Mock health data service
-            healthDataServiceProvider.overrideWith((ref) => HealthDataService()),
+            healthDataServiceProvider
+                .overrideWith((ref) => HealthDataService()),
           ],
           child: MaterialApp.router(
             routerConfig: GoRouter(
@@ -164,7 +166,8 @@ void main() {
             // Override UserProfileProvider
             userProfileProvider.overrideWith((ref) => UserProfileNotifier()),
             // Mock health data service
-            healthDataServiceProvider.overrideWith((ref) => HealthDataService()),
+            healthDataServiceProvider
+                .overrideWith((ref) => HealthDataService()),
           ],
           child: MaterialApp.router(
             routerConfig: GoRouter(
