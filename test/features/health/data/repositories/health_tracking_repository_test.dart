@@ -2,9 +2,11 @@
 // Tests repository layer operations for health tracking
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mara_app/core/models/health/daily_sleep_entry.dart';
 import 'package:mara_app/core/models/health/daily_steps_entry.dart';
 import 'package:mara_app/core/models/health/daily_water_intake_entry.dart';
+import 'package:mara_app/core/storage/local_cache.dart';
 import 'package:mara_app/features/health/data/datasources/local_health_data_source.dart';
 import 'package:mara_app/features/health/data/repositories/health_tracking_repository_impl.dart';
 
@@ -13,7 +15,13 @@ void main() {
     late LocalHealthDataSource localDataSource;
     late HealthTrackingRepositoryImpl repository;
 
-    setUp(() {
+    setUp(() async {
+      // Initialize SharedPreferences with empty mock data
+      SharedPreferences.setMockInitialValues({});
+      // Initialize LocalCache
+      await LocalCache.init();
+      // Clear cache before each test
+      await LocalCache.clear();
       localDataSource = LocalHealthDataSource();
       repository = HealthTrackingRepositoryImpl(localDataSource);
     });

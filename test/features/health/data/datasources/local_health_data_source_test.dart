@@ -2,6 +2,7 @@
 // Tests local storage operations for health tracking data
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mara_app/core/models/health/daily_sleep_entry.dart';
 import 'package:mara_app/core/models/health/daily_steps_entry.dart';
 import 'package:mara_app/core/models/health/daily_water_intake_entry.dart';
@@ -12,10 +13,14 @@ void main() {
   group('LocalHealthDataSource', () {
     late LocalHealthDataSource dataSource;
 
-    setUp(() {
+    setUp(() async {
+      // Initialize SharedPreferences with empty mock data
+      SharedPreferences.setMockInitialValues({});
+      // Initialize LocalCache
+      await LocalCache.init();
+      // Clear cache before each test
+      await LocalCache.clear();
       dataSource = LocalHealthDataSource();
-      // Clear any existing data before each test
-      // Note: In a real scenario, we'd use a test-specific storage
     });
 
     group('Steps Entry Operations', () {
