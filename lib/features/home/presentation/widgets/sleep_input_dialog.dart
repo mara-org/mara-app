@@ -20,6 +20,107 @@ class SleepInputDialog extends ConsumerStatefulWidget {
 
 class _SleepInputDialogState extends ConsumerState<SleepInputDialog> {
   bool _isSyncing = false;
+  bool _isSyncingAll = false;
+
+  Future<void> _syncAllHistoricalData() async {
+    setState(() {
+      _isSyncingAll = true;
+    });
+
+    try {
+      final healthDataService = ref.read(healthDataServiceProvider);
+      final repository = ref.read(healthTrackingRepositoryProvider);
+      final l10n = AppLocalizations.of(context)!;
+
+      // Check permissions first
+      var hasPermissions = await healthDataService.hasPermissions();
+      if (!hasPermissions) {
+        // Request permissions
+        final granted = await healthDataService.requestPermissions();
+        if (!granted) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(l10n.healthPermissionsNotGranted),
+                duration: const Duration(seconds: 4),
+              ),
+            );
+            setState(() {
+              _isSyncingAll = false;
+            });
+          }
+          return;
+        }
+        
+        await Future.delayed(const Duration(milliseconds: 800));
+        hasPermissions = await healthDataService.hasPermissions();
+      }
+
+      if (!hasPermissions) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(l10n.healthPermissionsNotGranted),
+              duration: const Duration(seconds: 4),
+            ),
+          );
+          setState(() {
+            _isSyncingAll = false;
+          });
+        }
+        return;
+      }
+
+      // Sync all historical data
+      final result = await repository.syncAllHistoricalData();
+
+      // Refresh providers
+      ref.invalidate(todaySleepProvider);
+      ref.invalidate(todayStepsProvider);
+      ref.invalidate(todayWaterProvider);
+
+      if (mounted) {
+        final sleepDays = result['sleepDays'] ?? 0;
+        final stepsDays = result['stepsDays'] ?? 0;
+        final waterDays = result['waterDays'] ?? 0;
+        final parts = <String>[];
+        if (sleepDays > 0) parts.add('$sleepDays days of sleep');
+        if (stepsDays > 0) parts.add('$stepsDays days of steps');
+        if (waterDays > 0) parts.add('$waterDays days of water');
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              parts.isEmpty 
+                ? 'No new data to sync'
+                : 'Synced ${parts.join(', ')} data',
+            ),
+            duration: const Duration(seconds: 4),
+          ),
+        );
+        Navigator.of(context).pop();
+      }
+    } catch (e, stackTrace) {
+      debugPrint('Error syncing all historical data: $e');
+      debugPrint('Stack trace: $stackTrace');
+      
+      if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${l10n.errorSavingHealthData}: ${e.toString()}'),
+            duration: const Duration(seconds: 4),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSyncingAll = false;
+        });
+      }
+    }
+  }
 
   Future<void> _syncFromDevice() async {
     setState(() {
@@ -31,25 +132,41 @@ class _SleepInputDialogState extends ConsumerState<SleepInputDialog> {
       final l10n = AppLocalizations.of(context)!;
 
       // Check permissions first
-      final hasPermissions = await healthDataService.hasPermissions();
+      var hasPermissions = await healthDataService.hasPermissions();
       if (!hasPermissions) {
         // Request permissions
         final granted = await healthDataService.requestPermissions();
-        if (!granted && mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(l10n.healthPermissionsNotGranted),
-              duration: const Duration(seconds: 3),
-            ),
-          );
-          setState(() {
-            _isSyncing = false;
-          });
+        if (!granted) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(l10n.healthPermissionsNotGranted),
+                duration: const Duration(seconds: 4),
+                action: SnackBarAction(
+                  label: 'Settings',
+                  onPressed: () {
+                    // Open system settings - this will be handled by the system
+                    // The user can manually enable permissions there
+                  },
+                ),
+              ),
+            );
+            setState(() {
+              _isSyncing = false;
+            });
+          }
           return;
         }
+        
+        // Re-check permissions after requesting (there may be a delay)
+        // Wait a moment for permissions to propagate, especially on iOS
+        await Future.delayed(const Duration(milliseconds: 800));
+        hasPermissions = await healthDataService.hasPermissions();
       }
 
-      // Get sleep data from HealthKit/Google Fit
+      // Try to get sleep data - this will also verify permissions work
+      // If permissions aren't actually granted, getTodaySleepHours will return null
+      // and we'll show the appropriate message
       final sleepHours = await healthDataService.getTodaySleepHours();
 
       if (sleepHours != null && sleepHours > 0) {
@@ -70,21 +187,42 @@ class _SleepInputDialogState extends ConsumerState<SleepInputDialog> {
           );
           Navigator.of(context).pop();
         }
-      } else if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.noSleepDataAvailable),
-            duration: const Duration(seconds: 3),
-          ),
-        );
+      } else {
+        // No sleep data found - could be permissions or no data
+        // Re-check permissions to give better error message
+        final stillHasPermissions = await healthDataService.hasPermissions();
+        
+        if (mounted) {
+          if (!stillHasPermissions) {
+            // Permissions were revoked or not properly granted
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(l10n.healthPermissionsNotGranted),
+                duration: const Duration(seconds: 4),
+              ),
+            );
+          } else {
+            // Permissions are OK but no data available
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(l10n.noSleepDataAvailable),
+                duration: const Duration(seconds: 3),
+              ),
+            );
+          }
+        }
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      // Log the error for debugging
+      debugPrint('Error syncing sleep data: $e');
+      debugPrint('Stack trace: $stackTrace');
+      
       if (mounted) {
         final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(l10n.errorSavingHealthData),
-            duration: const Duration(seconds: 3),
+            content: Text('${l10n.errorSavingHealthData}: ${e.toString()}'),
+            duration: const Duration(seconds: 4),
           ),
         );
       }
@@ -169,11 +307,11 @@ class _SleepInputDialogState extends ConsumerState<SleepInputDialog> {
               ),
             ),
             const SizedBox(height: 24),
-            // Sync from device button
+            // Sync today's data button
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                onPressed: _isSyncing ? null : _syncFromDevice,
+                onPressed: (_isSyncing || _isSyncingAll) ? null : _syncFromDevice,
                 icon: _isSyncing
                     ? const SizedBox(
                         width: 16,
@@ -197,9 +335,37 @@ class _SleepInputDialogState extends ConsumerState<SleepInputDialog> {
               ),
             ),
             const SizedBox(height: 12),
+            // Sync all historical data button
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: (_isSyncing || _isSyncingAll) ? null : _syncAllHistoricalData,
+                icon: _isSyncingAll
+                    ? const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.white),
+                        ),
+                      )
+                    : const Icon(Icons.history),
+                label: Text(_isSyncingAll ? 'Syncing all data...' : 'Sync All Historical Data'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.languageButtonColor.withValues(alpha: 0.8),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
             SecondaryButton(
               text: l10n.cancel,
-              onPressed: _isSyncing ? null : () => Navigator.of(context).pop(),
+              onPressed: (_isSyncing || _isSyncingAll) ? null : () => Navigator.of(context).pop(),
             ),
           ],
         ),

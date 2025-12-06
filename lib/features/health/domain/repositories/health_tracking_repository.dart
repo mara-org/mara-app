@@ -62,6 +62,14 @@ abstract class HealthTrackingRepository {
   /// Use [limit] to restrict the number of entries returned.
   Future<List<DailyWaterIntakeEntry>> getWaterHistory({int? limit});
 
+  /// Syncs all historical sleep, steps, and water data from the device.
+  ///
+  /// Fetches all available sleep, steps, and water data from HealthKit/Google Fit
+  /// and saves it to local storage. Returns the number of days synced.
+  ///
+  /// Returns a map with 'sleepDays', 'stepsDays', and 'waterDays' counts.
+  Future<Map<String, int>> syncAllHistoricalData();
+
   /// Stub for future backend sync - currently a no-op.
   ///
   /// This method exists to prepare for future backend integration.
