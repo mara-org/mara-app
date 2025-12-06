@@ -1,3 +1,11 @@
+## [1.2.1+5] - 2025-12-06
+
+### Added
+
+### Fixed
+- fix: Downgrade health package to ^13.1.3 for Dart SDK compatibility (d93b68c)
+- fix: Resolve dependency conflicts and update package cache (0e34bc1)
+
 ## [1.2.0+4] - 2025-12-06
 
 ### Added
