@@ -41,7 +41,7 @@ void main() {
     // Initialize SharedPreferences with mock values
     SharedPreferences.setMockInitialValues({});
     await LocalCache.init();
-    
+
     // Suppress image loading errors for missing assets during tests
     FlutterError.onError = (FlutterErrorDetails details) {
       // Only suppress asset loading errors, let other errors through
