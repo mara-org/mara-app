@@ -28,7 +28,9 @@ class AppSettingsSection extends ConsumerWidget {
           child: Text(
             l10n.settingsTitle,
             style: TextStyle(
-              color: isDark ? AppColorsDark.textSecondary : AppColors.textSecondary,
+              color: isDark
+                  ? AppColorsDark.textSecondary
+                  : AppColors.textSecondary,
               fontSize: 14,
               fontWeight: FontWeight.w600,
             ),
@@ -40,7 +42,10 @@ class AppSettingsSection extends ConsumerWidget {
           decoration: BoxDecoration(
             color: isDark ? AppColorsDark.cardBackground : Colors.white,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: isDark ? AppColorsDark.borderColor : AppColors.borderColor, width: 1),
+            border: Border.all(
+                color:
+                    isDark ? AppColorsDark.borderColor : AppColors.borderColor,
+                width: 1),
           ),
           child: InkWell(
             onTap: () => context.push('/language-selector?from=profile'),
@@ -68,7 +73,9 @@ class AppSettingsSection extends ConsumerWidget {
                       Text(
                         l10n.appLanguage,
                         style: TextStyle(
-                          color: isDark ? AppColorsDark.textPrimary : const Color(0xFF0F172A),
+                          color: isDark
+                              ? AppColorsDark.textPrimary
+                              : const Color(0xFF0F172A),
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
                         ),
@@ -79,7 +86,9 @@ class AppSettingsSection extends ConsumerWidget {
                             ? l10n.english
                             : l10n.arabic,
                         style: TextStyle(
-                          color: isDark ? AppColorsDark.textSecondary : const Color(0xFF64748B),
+                          color: isDark
+                              ? AppColorsDark.textSecondary
+                              : const Color(0xFF64748B),
                           fontSize: 14,
                         ),
                       ),
@@ -89,7 +98,9 @@ class AppSettingsSection extends ConsumerWidget {
                 Icon(
                   Icons.arrow_forward_ios,
                   size: 16,
-                  color: isDark ? AppColorsDark.textSecondary : AppColors.textSecondary,
+                  color: isDark
+                      ? AppColorsDark.textSecondary
+                      : AppColors.textSecondary,
                 ),
               ],
             ),
@@ -102,7 +113,10 @@ class AppSettingsSection extends ConsumerWidget {
           decoration: BoxDecoration(
             color: isDark ? AppColorsDark.cardBackground : Colors.white,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: isDark ? AppColorsDark.borderColor : AppColors.borderColor, width: 1),
+            border: Border.all(
+                color:
+                    isDark ? AppColorsDark.borderColor : AppColors.borderColor,
+                width: 1),
           ),
           child: Row(
             children: [
@@ -127,7 +141,9 @@ class AppSettingsSection extends ConsumerWidget {
                     Text(
                       l10n.darkMode,
                       style: TextStyle(
-                        color: isDark ? AppColorsDark.textPrimary : const Color(0xFF0F172A),
+                        color: isDark
+                            ? AppColorsDark.textPrimary
+                            : const Color(0xFF0F172A),
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
                       ),
@@ -136,7 +152,9 @@ class AppSettingsSection extends ConsumerWidget {
                     Text(
                       l10n.darkModeDescription,
                       style: TextStyle(
-                        color: isDark ? AppColorsDark.textSecondary : const Color(0xFF64748B),
+                        color: isDark
+                            ? AppColorsDark.textSecondary
+                            : const Color(0xFF64748B),
                         fontSize: 14,
                       ),
                     ),
@@ -150,7 +168,8 @@ class AppSettingsSection extends ConsumerWidget {
                         value ? AppThemeMode.dark : AppThemeMode.light,
                       );
                 },
-                activeTrackColor: AppColors.languageButtonColor.withValues(alpha: 0.5),
+                activeTrackColor:
+                    AppColors.languageButtonColor.withValues(alpha: 0.5),
                 activeThumbColor: AppColors.languageButtonColor,
               ),
             ],
@@ -163,7 +182,10 @@ class AppSettingsSection extends ConsumerWidget {
           decoration: BoxDecoration(
             color: isDark ? AppColorsDark.cardBackground : Colors.white,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: isDark ? AppColorsDark.borderColor : AppColors.borderColor, width: 1),
+            border: Border.all(
+                color:
+                    isDark ? AppColorsDark.borderColor : AppColors.borderColor,
+                width: 1),
           ),
           child: InkWell(
             onTap: () => context.push('/settings/health-goals'),
@@ -191,7 +213,9 @@ class AppSettingsSection extends ConsumerWidget {
                       Text(
                         'Health Goals',
                         style: TextStyle(
-                          color: isDark ? AppColorsDark.textPrimary : const Color(0xFF0F172A),
+                          color: isDark
+                              ? AppColorsDark.textPrimary
+                              : const Color(0xFF0F172A),
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
                         ),
@@ -200,7 +224,9 @@ class AppSettingsSection extends ConsumerWidget {
                       Text(
                         'Set your daily health goals',
                         style: TextStyle(
-                          color: isDark ? AppColorsDark.textSecondary : const Color(0xFF64748B),
+                          color: isDark
+                              ? AppColorsDark.textSecondary
+                              : const Color(0xFF64748B),
                           fontSize: 14,
                         ),
                       ),
@@ -210,7 +236,9 @@ class AppSettingsSection extends ConsumerWidget {
                 Icon(
                   Icons.arrow_forward_ios,
                   size: 16,
-                  color: isDark ? AppColorsDark.textSecondary : AppColors.textSecondary,
+                  color: isDark
+                      ? AppColorsDark.textSecondary
+                      : AppColors.textSecondary,
                 ),
               ],
             ),
@@ -223,7 +251,10 @@ class AppSettingsSection extends ConsumerWidget {
           decoration: BoxDecoration(
             color: isDark ? AppColorsDark.cardBackground : Colors.white,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: isDark ? AppColorsDark.borderColor : AppColors.borderColor, width: 1),
+            border: Border.all(
+                color:
+                    isDark ? AppColorsDark.borderColor : AppColors.borderColor,
+                width: 1),
           ),
           child: Row(
             children: [
@@ -248,7 +279,9 @@ class AppSettingsSection extends ConsumerWidget {
                     Text(
                       l10n.healthReminders,
                       style: TextStyle(
-                        color: isDark ? AppColorsDark.textPrimary : const Color(0xFF0F172A),
+                        color: isDark
+                            ? AppColorsDark.textPrimary
+                            : const Color(0xFF0F172A),
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
                       ),
@@ -257,7 +290,9 @@ class AppSettingsSection extends ConsumerWidget {
                     Text(
                       l10n.healthRemindersSubtitle,
                       style: TextStyle(
-                        color: isDark ? AppColorsDark.textSecondary : const Color(0xFF64748B),
+                        color: isDark
+                            ? AppColorsDark.textSecondary
+                            : const Color(0xFF64748B),
                         fontSize: 14,
                       ),
                     ),
@@ -269,7 +304,8 @@ class AppSettingsSection extends ConsumerWidget {
                 onChanged: (value) {
                   ref.read(settingsProvider.notifier).setHealthReminders(value);
                 },
-                activeTrackColor: AppColors.languageButtonColor.withValues(alpha: 0.5),
+                activeTrackColor:
+                    AppColors.languageButtonColor.withValues(alpha: 0.5),
                 activeThumbColor: AppColors.languageButtonColor,
               ),
             ],
@@ -282,7 +318,10 @@ class AppSettingsSection extends ConsumerWidget {
           decoration: BoxDecoration(
             color: isDark ? AppColorsDark.cardBackground : Colors.white,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: isDark ? AppColorsDark.borderColor : AppColors.borderColor, width: 1),
+            border: Border.all(
+                color:
+                    isDark ? AppColorsDark.borderColor : AppColors.borderColor,
+                width: 1),
           ),
           child: Row(
             children: [
@@ -307,7 +346,9 @@ class AppSettingsSection extends ConsumerWidget {
                     Text(
                       l10n.emailNotifications,
                       style: TextStyle(
-                        color: isDark ? AppColorsDark.textPrimary : const Color(0xFF0F172A),
+                        color: isDark
+                            ? AppColorsDark.textPrimary
+                            : const Color(0xFF0F172A),
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
                       ),
@@ -316,7 +357,9 @@ class AppSettingsSection extends ConsumerWidget {
                     Text(
                       l10n.emailNotificationsSubtitle,
                       style: TextStyle(
-                        color: isDark ? AppColorsDark.textSecondary : const Color(0xFF64748B),
+                        color: isDark
+                            ? AppColorsDark.textSecondary
+                            : const Color(0xFF64748B),
                         fontSize: 14,
                       ),
                     ),
@@ -330,7 +373,8 @@ class AppSettingsSection extends ConsumerWidget {
                       .read(settingsProvider.notifier)
                       .setEmailNotifications(value);
                 },
-                activeTrackColor: AppColors.languageButtonColor.withValues(alpha: 0.5),
+                activeTrackColor:
+                    AppColors.languageButtonColor.withValues(alpha: 0.5),
                 activeThumbColor: AppColors.languageButtonColor,
               ),
             ],

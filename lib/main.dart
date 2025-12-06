@@ -63,7 +63,8 @@ class MaraApp extends ConsumerWidget {
     final isDarkMode = settings.themeMode == AppThemeMode.dark;
 
     return MaterialApp.router(
-      key: ValueKey('${locale.languageCode}_${isDarkMode}'), // Force rebuild when locale or theme changes
+      key: ValueKey(
+          '${locale.languageCode}_${isDarkMode}'), // Force rebuild when locale or theme changes
       title: 'Mara',
       locale: locale,
       supportedLocales: const [Locale('en'), Locale('ar')],

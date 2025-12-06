@@ -101,21 +101,24 @@ final notificationServiceProvider = Provider<INotificationService>((final ref) {
 /// Provider for [HealthInsightsService].
 ///
 /// This provides health insights generation from tracking data.
-final healthInsightsServiceProvider = Provider<HealthInsightsService>((final ref) {
+final healthInsightsServiceProvider =
+    Provider<HealthInsightsService>((final ref) {
   return HealthInsightsService();
 });
 
 /// Provider for [HealthSummaryService].
 ///
 /// This provides weekly and monthly health summaries.
-final healthSummaryServiceProvider = Provider<HealthSummaryService>((final ref) {
+final healthSummaryServiceProvider =
+    Provider<HealthSummaryService>((final ref) {
   return HealthSummaryService();
 });
 
 /// Provider for [HealthStatisticsService].
 ///
 /// This provides all-time health statistics.
-final healthStatisticsServiceProvider = Provider<HealthStatisticsService>((final ref) {
+final healthStatisticsServiceProvider =
+    Provider<HealthStatisticsService>((final ref) {
   return HealthStatisticsService();
 });
 
@@ -136,7 +139,8 @@ final achievementServiceProvider = Provider<AchievementService>((final ref) {
 /// Provider for [IBiometricAuthService].
 ///
 /// This provides biometric authentication (Face ID, Touch ID, Fingerprint).
-final biometricAuthServiceProvider = Provider<IBiometricAuthService>((final ref) {
+final biometricAuthServiceProvider =
+    Provider<IBiometricAuthService>((final ref) {
   return BiometricAuthService();
 });
 

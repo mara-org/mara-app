@@ -92,12 +92,16 @@ class MicrophonePermissionScreen extends ConsumerWidget {
                             text: l10n.allow,
                             onPressed: () async {
                               // Request native microphone permission
-                              final permissionService = NativePermissionService();
-                              final granted = await permissionService.requestMicrophonePermission();
-                              
+                              final permissionService =
+                                  NativePermissionService();
+                              final granted = await permissionService
+                                  .requestMicrophonePermission();
+
                               // Update provider state
-                              ref.read(permissionsProvider.notifier).setMicrophone(granted);
-                              
+                              ref
+                                  .read(permissionsProvider.notifier)
+                                  .setMicrophone(granted);
+
                               // Navigate to next screen
                               if (context.mounted) {
                                 context.push('/notifications-permission');

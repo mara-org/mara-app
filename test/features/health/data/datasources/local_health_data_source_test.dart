@@ -67,7 +67,8 @@ void main() {
     });
 
     group('Water Intake Entry Operations', () {
-      test('saveWaterIntakeEntry and getWaterIntakeEntry work correctly', () async {
+      test('saveWaterIntakeEntry and getWaterIntakeEntry work correctly',
+          () async {
         final entry = DailyWaterIntakeEntry.today(waterLiters: 2.5);
         await dataSource.saveWaterIntakeEntry(entry);
 
@@ -99,8 +100,10 @@ void main() {
         final history = await dataSource.getStepsHistory();
         expect(history.length, greaterThanOrEqualTo(2));
         // Should be sorted by date (most recent first)
-        expect(history.first.date.isAfter(history.last.date) ||
-            history.first.date.isAtSameMomentAs(history.last.date), isTrue);
+        expect(
+            history.first.date.isAfter(history.last.date) ||
+                history.first.date.isAtSameMomentAs(history.last.date),
+            isTrue);
       });
 
       test('getStepsHistory respects limit parameter', () async {
@@ -167,4 +170,3 @@ void main() {
     });
   });
 }
-

@@ -20,7 +20,9 @@ class DailySleepEntry {
 
   /// Validates if the sleep entry is valid.
   bool get isValid {
-    return hours >= 0 && hours <= 24 && date.isBefore(DateTime.now().add(const Duration(days: 1)));
+    return hours >= 0 &&
+        hours <= 24 &&
+        date.isBefore(DateTime.now().add(const Duration(days: 1)));
   }
 
   /// Creates a copy of this entry with updated fields.
@@ -58,9 +60,12 @@ class DailySleepEntry {
 
   @override
   int get hashCode =>
-      date.year.hashCode ^ date.month.hashCode ^ date.day.hashCode ^ hours.hashCode;
+      date.year.hashCode ^
+      date.month.hashCode ^
+      date.day.hashCode ^
+      hours.hashCode;
 
   @override
-  String toString() => 'DailySleepEntry(date: $date, hours: $hours, lastUpdatedAt: $lastUpdatedAt)';
+  String toString() =>
+      'DailySleepEntry(date: $date, hours: $hours, lastUpdatedAt: $lastUpdatedAt)';
 }
-

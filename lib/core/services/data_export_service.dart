@@ -31,7 +31,8 @@ class DataExportService {
       }
 
       final extension = format == ExportFormat.json ? 'json' : 'csv';
-      final name = fileName ?? 'mara_health_data_${DateTime.now().millisecondsSinceEpoch}';
+      final name = fileName ??
+          'mara_health_data_${DateTime.now().millisecondsSinceEpoch}';
       final file = File('${directory.path}/$name.$extension');
 
       String content;
@@ -70,7 +71,8 @@ class DataExportService {
         return directory;
       } else if (Platform.isIOS) {
         final directory = await getApplicationDocumentsDirectory();
-        return Directory('${directory.path}/exports')..createSync(recursive: true);
+        return Directory('${directory.path}/exports')
+          ..createSync(recursive: true);
       }
       return null;
     } catch (e, stackTrace) {
@@ -92,21 +94,27 @@ class DataExportService {
   }) {
     final data = {
       'exportDate': DateTime.now().toIso8601String(),
-      'steps': stepsHistory.map((e) => {
-            'date': e.date.toIso8601String(),
-            'steps': e.steps,
-            'lastUpdatedAt': e.lastUpdatedAt.toIso8601String(),
-          }).toList(),
-      'sleep': sleepHistory.map((e) => {
-            'date': e.date.toIso8601String(),
-            'hours': e.hours,
-            'lastUpdatedAt': e.lastUpdatedAt.toIso8601String(),
-          }).toList(),
-      'water': waterHistory.map((e) => {
-            'date': e.date.toIso8601String(),
-            'waterLiters': e.waterLiters,
-            'lastUpdatedAt': e.lastUpdatedAt.toIso8601String(),
-          }).toList(),
+      'steps': stepsHistory
+          .map((e) => {
+                'date': e.date.toIso8601String(),
+                'steps': e.steps,
+                'lastUpdatedAt': e.lastUpdatedAt.toIso8601String(),
+              })
+          .toList(),
+      'sleep': sleepHistory
+          .map((e) => {
+                'date': e.date.toIso8601String(),
+                'hours': e.hours,
+                'lastUpdatedAt': e.lastUpdatedAt.toIso8601String(),
+              })
+          .toList(),
+      'water': waterHistory
+          .map((e) => {
+                'date': e.date.toIso8601String(),
+                'waterLiters': e.waterLiters,
+                'lastUpdatedAt': e.lastUpdatedAt.toIso8601String(),
+              })
+          .toList(),
     };
 
     return JsonEncoder.withIndent('  ').convert(data);
@@ -118,7 +126,7 @@ class DataExportService {
     required List<DailyWaterIntakeEntry> waterHistory,
   }) {
     final rows = <List<dynamic>>[];
-    
+
     // Header
     rows.add(['Date', 'Steps', 'Sleep (hours)', 'Water (liters)']);
 
@@ -186,4 +194,3 @@ class DataExportService {
     return const ListToCsvConverter().convert(rows);
   }
 }
-

@@ -56,7 +56,8 @@ class StreakService {
           currentStreakStart = checkDate;
         }
         currentStreak++;
-        longestStreak = currentStreak > longestStreak ? currentStreak : longestStreak;
+        longestStreak =
+            currentStreak > longestStreak ? currentStreak : longestStreak;
         streakStartDate = currentStreakStart;
       } else {
         currentStreak = 0;
@@ -111,7 +112,8 @@ class StreakService {
           currentStreakStart = checkDate;
         }
         currentStreak++;
-        longestStreak = currentStreak > longestStreak ? currentStreak : longestStreak;
+        longestStreak =
+            currentStreak > longestStreak ? currentStreak : longestStreak;
         streakStartDate = currentStreakStart;
       } else {
         currentStreak = 0;
@@ -166,7 +168,8 @@ class StreakService {
           currentStreakStart = checkDate;
         }
         currentStreak++;
-        longestStreak = currentStreak > longestStreak ? currentStreak : longestStreak;
+        longestStreak =
+            currentStreak > longestStreak ? currentStreak : longestStreak;
         streakStartDate = currentStreakStart;
       } else {
         currentStreak = 0;
@@ -183,4 +186,3 @@ class StreakService {
     );
   }
 }
-

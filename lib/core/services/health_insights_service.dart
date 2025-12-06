@@ -38,18 +38,16 @@ class HealthInsightsService {
       // Analyze steps trends
       if (stepsHistory.length >= 7) {
         final lastWeek = stepsHistory.take(7).toList();
-        final previousWeek =
-            stepsHistory.skip(7).take(7).toList();
+        final previousWeek = stepsHistory.skip(7).take(7).toList();
 
         if (previousWeek.isNotEmpty) {
           final lastWeekAvg = _calculateAverageSteps(lastWeek);
           final previousWeekAvg = _calculateAverageSteps(previousWeek);
 
           if (lastWeekAvg > previousWeekAvg) {
-            final improvement = ((lastWeekAvg - previousWeekAvg) /
-                    previousWeekAvg *
-                    100)
-                .round();
+            final improvement =
+                ((lastWeekAvg - previousWeekAvg) / previousWeekAvg * 100)
+                    .round();
             insights.add(
               HealthInsight(
                 id: 'steps_improvement',
@@ -79,10 +77,8 @@ class HealthInsightsService {
         }
 
         if (weekdays.isNotEmpty && weekends.isNotEmpty) {
-          final weekdayAvg =
-              weekdays.reduce((a, b) => a + b) / weekdays.length;
-          final weekendAvg =
-              weekends.reduce((a, b) => a + b) / weekends.length;
+          final weekdayAvg = weekdays.reduce((a, b) => a + b) / weekdays.length;
+          final weekendAvg = weekends.reduce((a, b) => a + b) / weekends.length;
 
           if (weekendAvg > weekdayAvg + 0.5) {
             insights.add(
@@ -144,7 +140,7 @@ class HealthInsightsService {
     // Simple check - can be enhanced with actual goals
     int consecutive = 0;
     final today = DateTime.now();
-    
+
     for (int i = 0; i < 30; i++) {
       final date = today.subtract(Duration(days: i));
       final hasData = stepsHistory.any((e) =>
@@ -159,15 +155,14 @@ class HealthInsightsService {
               e.date.year == date.year &&
               e.date.month == date.month &&
               e.date.day == date.day);
-      
+
       if (hasData) {
         consecutive++;
       } else {
         break;
       }
     }
-    
+
     return consecutive;
   }
 }
-

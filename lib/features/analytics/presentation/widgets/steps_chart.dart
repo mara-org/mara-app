@@ -28,7 +28,9 @@ class StepsChart extends StatelessWidget {
     final now = DateTime.now();
     final startDate = now.subtract(Duration(days: days));
     final filteredEntries = sortedEntries
-        .where((entry) => entry.date.isAfter(startDate) || entry.date.isAtSameMomentAs(startDate))
+        .where((entry) =>
+            entry.date.isAfter(startDate) ||
+            entry.date.isAtSameMomentAs(startDate))
         .toList();
 
     if (filteredEntries.isEmpty) {
@@ -112,7 +114,8 @@ class StepsChart extends StatelessWidget {
           lineBarsData: [
             LineChartBarData(
               spots: filteredEntries.asMap().entries.map((entry) {
-                return FlSpot(entry.key.toDouble(), entry.value.steps.toDouble());
+                return FlSpot(
+                    entry.key.toDouble(), entry.value.steps.toDouble());
               }).toList(),
               isCurved: true,
               color: AppColors.languageButtonColor,
@@ -132,7 +135,8 @@ class StepsChart extends StatelessWidget {
 
   double _getMaxSteps(List<DailyStepsEntry> entries) {
     if (entries.isEmpty) return 10000;
-    return entries.map((e) => e.steps.toDouble()).reduce((a, b) => a > b ? a : b);
+    return entries
+        .map((e) => e.steps.toDouble())
+        .reduce((a, b) => a > b ? a : b);
   }
 }
-

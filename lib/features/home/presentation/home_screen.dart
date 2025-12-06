@@ -74,12 +74,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     } else {
       greeting = l10n.goodEvening;
     }
-    
+
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColorsDark.backgroundLight : AppColors.backgroundLight,
+      backgroundColor:
+          isDark ? AppColorsDark.backgroundLight : AppColors.backgroundLight,
       body: SafeArea(
         bottom: false,
         child: Column(

@@ -28,17 +28,15 @@ class OnboardingProgressIndicator extends StatelessWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
-    
+
     // Determine colors based on theme
-    final progressColor = isDark 
-        ? AppColorsDark.languageButtonColor 
+    final progressColor = isDark
+        ? AppColorsDark.languageButtonColor
         : AppColors.languageButtonColor;
-    final backgroundColor = isDark
-        ? AppColorsDark.borderColor
-        : AppColors.borderColor;
-    final textColor = isDark
-        ? AppColorsDark.textPrimary
-        : AppColors.textPrimary;
+    final backgroundColor =
+        isDark ? AppColorsDark.borderColor : AppColors.borderColor;
+    final textColor =
+        isDark ? AppColorsDark.textPrimary : AppColors.textPrimary;
 
     return Column(
       children: [
@@ -76,4 +74,3 @@ class OnboardingProgressIndicator extends StatelessWidget {
     );
   }
 }
-

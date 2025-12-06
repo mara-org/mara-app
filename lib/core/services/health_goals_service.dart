@@ -96,4 +96,3 @@ class HealthGoalsService {
     return await saveGoals(HealthGoals.defaultGoals());
   }
 }
-

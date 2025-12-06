@@ -199,9 +199,8 @@ class _HealthGoalsSettingsScreenState
     final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark
-          ? AppColorsDark.backgroundLight
-          : AppColors.backgroundLight,
+      backgroundColor:
+          isDark ? AppColorsDark.backgroundLight : AppColors.backgroundLight,
       appBar: AppBar(
         title: Text(l10n.healthGoals),
         backgroundColor: AppColors.homeHeaderBackground,
@@ -263,8 +262,9 @@ class _HealthGoalsSettingsScreenState
                                   )} ${l10n.steps}',
                               style: TextStyle(
                                 fontSize: isSelected ? 20 : 16,
-                                fontWeight:
-                                    isSelected ? FontWeight.w600 : FontWeight.normal,
+                                fontWeight: isSelected
+                                    ? FontWeight.w600
+                                    : FontWeight.normal,
                                 color: isSelected
                                     ? AppColors.languageButtonColor
                                     : (isDark
@@ -312,8 +312,9 @@ class _HealthGoalsSettingsScreenState
                               '${sleep.toStringAsFixed(1)} ${l10n.hours}',
                               style: TextStyle(
                                 fontSize: isSelected ? 20 : 16,
-                                fontWeight:
-                                    isSelected ? FontWeight.w600 : FontWeight.normal,
+                                fontWeight: isSelected
+                                    ? FontWeight.w600
+                                    : FontWeight.normal,
                                 color: isSelected
                                     ? AppColors.languageButtonColor
                                     : (isDark
@@ -361,8 +362,9 @@ class _HealthGoalsSettingsScreenState
                               '${water.toStringAsFixed(2)} ${l10n.liters}',
                               style: TextStyle(
                                 fontSize: isSelected ? 20 : 16,
-                                fontWeight:
-                                    isSelected ? FontWeight.w600 : FontWeight.normal,
+                                fontWeight: isSelected
+                                    ? FontWeight.w600
+                                    : FontWeight.normal,
                                 color: isSelected
                                     ? AppColors.languageButtonColor
                                     : (isDark
@@ -426,9 +428,8 @@ class _HealthGoalsSettingsScreenState
             child: Text(
               'Error loading goals: $error',
               style: TextStyle(
-                color: isDark
-                    ? AppColorsDark.textPrimary
-                    : AppColors.textPrimary,
+                color:
+                    isDark ? AppColorsDark.textPrimary : AppColors.textPrimary,
               ),
               textAlign: TextAlign.center,
             ),

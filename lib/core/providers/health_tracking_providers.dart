@@ -71,4 +71,3 @@ final waterHistoryProvider =
   final repository = ref.read(healthTrackingRepositoryProvider);
   return await repository.getWaterHistory(limit: limit);
 });
-

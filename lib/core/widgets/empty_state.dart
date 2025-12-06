@@ -39,15 +39,12 @@ class EmptyState extends StatelessWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    final iconColor = isDark
-        ? AppColorsDark.textSecondary
-        : AppColors.textSecondary;
-    final textColor = isDark
-        ? AppColorsDark.textPrimary
-        : AppColors.textPrimary;
-    final subtitleColor = isDark
-        ? AppColorsDark.textSecondary
-        : AppColors.textSecondary;
+    final iconColor =
+        isDark ? AppColorsDark.textSecondary : AppColors.textSecondary;
+    final textColor =
+        isDark ? AppColorsDark.textPrimary : AppColors.textPrimary;
+    final subtitleColor =
+        isDark ? AppColorsDark.textSecondary : AppColors.textSecondary;
     final buttonColor = isDark
         ? AppColorsDark.languageButtonColor
         : AppColors.languageButtonColor;
@@ -105,4 +102,3 @@ class EmptyState extends StatelessWidget {
     );
   }
 }
-

@@ -16,10 +16,12 @@ class AnalystDashboardScreen extends ConsumerStatefulWidget {
   const AnalystDashboardScreen({super.key});
 
   @override
-  ConsumerState<AnalystDashboardScreen> createState() => _AnalystDashboardScreenState();
+  ConsumerState<AnalystDashboardScreen> createState() =>
+      _AnalystDashboardScreenState();
 }
 
-class _AnalystDashboardScreenState extends ConsumerState<AnalystDashboardScreen> {
+class _AnalystDashboardScreenState
+    extends ConsumerState<AnalystDashboardScreen> {
   int _selectedDays = 7;
 
   @override
@@ -33,9 +35,8 @@ class _AnalystDashboardScreenState extends ConsumerState<AnalystDashboardScreen>
     final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark
-          ? AppColorsDark.backgroundLight
-          : AppColors.backgroundLight,
+      backgroundColor:
+          isDark ? AppColorsDark.backgroundLight : AppColors.backgroundLight,
       appBar: AppBar(
         title: Row(
           children: [
@@ -201,7 +202,8 @@ class _AnalystDashboardScreenState extends ConsumerState<AnalystDashboardScreen>
 
   double _calculateAverageSteps(List<dynamic> entries) {
     if (entries.isEmpty) return 0;
-    final sum = entries.fold<double>(0.0, (sum, entry) => sum + entry.steps.toDouble());
+    final sum =
+        entries.fold<double>(0.0, (sum, entry) => sum + entry.steps.toDouble());
     return sum / entries.length;
   }
 
@@ -213,7 +215,8 @@ class _AnalystDashboardScreenState extends ConsumerState<AnalystDashboardScreen>
 
   double _calculateAverageWater(List<dynamic> entries) {
     if (entries.isEmpty) return 0;
-    final sum = entries.fold<double>(0, (sum, entry) => sum + entry.waterLiters);
+    final sum =
+        entries.fold<double>(0, (sum, entry) => sum + entry.waterLiters);
     return sum / entries.length;
   }
 }
@@ -247,9 +250,7 @@ class _TimePeriodButton extends StatelessWidget {
           child: Text(
             label,
             style: TextStyle(
-              color: isSelected
-                  ? Colors.white
-                  : AppColors.textPrimary,
+              color: isSelected ? Colors.white : AppColors.textPrimary,
               fontSize: 14,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
             ),

@@ -19,8 +19,7 @@ class MaraChatHistoryScreen extends ConsumerStatefulWidget {
       _MaraChatHistoryScreenState();
 }
 
-class _MaraChatHistoryScreenState
-    extends ConsumerState<MaraChatHistoryScreen> {
+class _MaraChatHistoryScreenState extends ConsumerState<MaraChatHistoryScreen> {
   final TextEditingController _searchController = TextEditingController();
   final ChatExportService _exportService = ChatExportService();
   bool _isSearching = false;
@@ -88,7 +87,8 @@ class _MaraChatHistoryScreenState
                 style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
                   hintText: l10n.searchConversations,
-                  hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.7)),
+                  hintStyle:
+                      TextStyle(color: Colors.white.withValues(alpha: 0.7)),
                   border: InputBorder.none,
                 ),
                 onChanged: (value) {
@@ -207,9 +207,8 @@ class _MaraChatHistoryScreenState
                       scaffoldMessenger.hideCurrentSnackBar();
                       scaffoldMessenger.showSnackBar(
                         SnackBar(
-                          content: Text(success
-                              ? l10n.exportSuccess
-                              : l10n.exportError),
+                          content: Text(
+                              success ? l10n.exportSuccess : l10n.exportError),
                         ),
                       );
                     }

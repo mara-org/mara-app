@@ -34,20 +34,20 @@ class SettingsNotifier extends StateNotifier<SettingsState> {
 
   Future<void> _loadSettings() async {
     await LocalCache.init();
-    
+
     // Load theme mode
     final themeModeIndex = LocalCache.getInt('themeMode');
     if (themeModeIndex != null) {
       final themeMode = AppThemeMode.values[themeModeIndex];
       state = state.copyWith(themeMode: themeMode);
     }
-    
+
     // Load health reminders
     final healthReminders = LocalCache.getBool('healthReminders');
     if (healthReminders != null) {
       state = state.copyWith(healthReminders: healthReminders);
     }
-    
+
     // Load email notifications
     final emailNotifications = LocalCache.getBool('emailNotifications');
     if (emailNotifications != null) {

@@ -29,7 +29,7 @@ class _SleepInputDialogState extends ConsumerState<SleepInputDialog> {
     try {
       final healthDataService = ref.read(healthDataServiceProvider);
       final l10n = AppLocalizations.of(context)!;
-      
+
       // Check permissions first
       final hasPermissions = await healthDataService.hasPermissions();
       if (!hasPermissions) {
@@ -51,7 +51,7 @@ class _SleepInputDialogState extends ConsumerState<SleepInputDialog> {
 
       // Get sleep data from HealthKit/Google Fit
       final sleepHours = await healthDataService.getTodaySleepHours();
-      
+
       if (sleepHours != null && sleepHours > 0) {
         // Save to local storage
         final entry = DailySleepEntry.today(sleepHours);
@@ -118,9 +118,8 @@ class _SleepInputDialogState extends ConsumerState<SleepInputDialog> {
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
-                color: isDark
-                    ? AppColorsDark.textPrimary
-                    : AppColors.textPrimary,
+                color:
+                    isDark ? AppColorsDark.textPrimary : AppColors.textPrimary,
               ),
             ),
             const SizedBox(height: 8),
@@ -181,7 +180,8 @@ class _SleepInputDialogState extends ConsumerState<SleepInputDialog> {
                         height: 16,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.white),
                         ),
                       )
                     : const Icon(Icons.sync),

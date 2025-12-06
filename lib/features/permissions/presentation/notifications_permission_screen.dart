@@ -93,12 +93,16 @@ class NotificationsPermissionScreen extends ConsumerWidget {
                             text: l10n.allowNotifications,
                             onPressed: () async {
                               // Request native notification permission
-                              final permissionService = NativePermissionService();
-                              final granted = await permissionService.requestNotificationPermission();
-                              
+                              final permissionService =
+                                  NativePermissionService();
+                              final granted = await permissionService
+                                  .requestNotificationPermission();
+
                               // Update provider state
-                              ref.read(permissionsProvider.notifier).setNotifications(granted);
-                              
+                              ref
+                                  .read(permissionsProvider.notifier)
+                                  .setNotifications(granted);
+
                               // Show capability activation dialog if granted
                               if (granted && context.mounted) {
                                 await CapabilityActivationDialog.show(

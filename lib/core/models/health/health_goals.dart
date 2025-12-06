@@ -96,4 +96,3 @@ class HealthGoals {
   String toString() =>
       'HealthGoals(steps: $dailyStepsGoal, sleep: ${dailySleepGoal}h, water: ${dailyWaterGoal}L)';
 }
-

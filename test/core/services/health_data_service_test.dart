@@ -81,7 +81,7 @@ void main() {
     test('interface defines all required methods', () {
       // Verify interface structure
       expect(IHealthDataService, isNotNull);
-      
+
       // Verify methods exist on any implementation
       final service = HealthDataService();
       expect(service.requestPermissions, isA<Function>());
@@ -92,4 +92,3 @@ void main() {
     });
   });
 }
-

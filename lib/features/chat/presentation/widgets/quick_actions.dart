@@ -13,8 +13,7 @@ class ChatQuickActions extends ConsumerWidget {
 
   const ChatQuickActions({super.key, this.onActionSelected});
 
-  void _sendQuickMessage(
-      BuildContext context, WidgetRef ref, String message) {
+  void _sendQuickMessage(BuildContext context, WidgetRef ref, String message) {
     if (onActionSelected != null) {
       onActionSelected!(message);
     } else {
@@ -29,12 +28,10 @@ class ChatQuickActions extends ConsumerWidget {
     final isDark = theme.brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
 
-    final backgroundColor = isDark
-        ? AppColorsDark.cardBackground
-        : AppColors.cardBackground;
-    final textColor = isDark
-        ? AppColorsDark.textPrimary
-        : AppColors.textPrimary;
+    final backgroundColor =
+        isDark ? AppColorsDark.cardBackground : AppColors.cardBackground;
+    final textColor =
+        isDark ? AppColorsDark.textPrimary : AppColors.textPrimary;
     final buttonColor = isDark
         ? AppColorsDark.languageButtonColor
         : AppColors.languageButtonColor;
@@ -147,4 +144,3 @@ class _QuickActionChip extends StatelessWidget {
     );
   }
 }
-

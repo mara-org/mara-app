@@ -34,7 +34,8 @@ class LocalHealthDataSource {
       return null;
     }
     try {
-      return _stepsEntryFromJson(json.decode(jsonString) as Map<String, dynamic>);
+      return _stepsEntryFromJson(
+          json.decode(jsonString) as Map<String, dynamic>);
     } catch (e) {
       if (kDebugMode) {
         debugPrint('Failed to parse steps entry: $e');
@@ -67,7 +68,8 @@ class LocalHealthDataSource {
       return null;
     }
     try {
-      return _sleepEntryFromJson(json.decode(jsonString) as Map<String, dynamic>);
+      return _sleepEntryFromJson(
+          json.decode(jsonString) as Map<String, dynamic>);
     } catch (e) {
       if (kDebugMode) {
         debugPrint('Failed to parse sleep entry: $e');
@@ -100,7 +102,8 @@ class LocalHealthDataSource {
       return null;
     }
     try {
-      return _waterEntryFromJson(json.decode(jsonString) as Map<String, dynamic>);
+      return _waterEntryFromJson(
+          json.decode(jsonString) as Map<String, dynamic>);
     } catch (e) {
       if (kDebugMode) {
         debugPrint('Failed to parse water entry: $e');
@@ -276,4 +279,3 @@ class LocalHealthDataSource {
     );
   }
 }
-

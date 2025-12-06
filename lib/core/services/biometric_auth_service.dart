@@ -100,4 +100,3 @@ class BiometricAuthService implements IBiometricAuthService {
     }
   }
 }
-

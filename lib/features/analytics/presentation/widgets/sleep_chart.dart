@@ -28,7 +28,9 @@ class SleepChart extends StatelessWidget {
     final now = DateTime.now();
     final startDate = now.subtract(Duration(days: days));
     final filteredEntries = sortedEntries
-        .where((entry) => entry.date.isAfter(startDate) || entry.date.isAtSameMomentAs(startDate))
+        .where((entry) =>
+            entry.date.isAfter(startDate) ||
+            entry.date.isAtSameMomentAs(startDate))
         .toList();
 
     if (filteredEntries.isEmpty) {
@@ -130,4 +132,3 @@ class SleepChart extends StatelessWidget {
     );
   }
 }
-

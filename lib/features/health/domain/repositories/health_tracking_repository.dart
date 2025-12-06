@@ -72,4 +72,3 @@ abstract class HealthTrackingRepository {
     // Future implementation will sync with backend
   }
 }
-

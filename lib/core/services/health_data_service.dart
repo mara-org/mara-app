@@ -255,7 +255,8 @@ class HealthDataService implements IHealthDataService {
 
           // Collect all sleep segments
           for (final data in sleepInBedData) {
-            sleepSegments.add(_DateTimeRange(start: data.dateFrom, end: data.dateTo));
+            sleepSegments
+                .add(_DateTimeRange(start: data.dateFrom, end: data.dateTo));
           }
 
           // Merge overlapping segments and calculate total duration
@@ -325,7 +326,8 @@ class HealthDataService implements IHealthDataService {
           final sleepSegments = <_DateTimeRange>[];
 
           for (final data in sleepAsleepData) {
-            sleepSegments.add(_DateTimeRange(start: data.dateFrom, end: data.dateTo));
+            sleepSegments
+                .add(_DateTimeRange(start: data.dateFrom, end: data.dateTo));
           }
 
           if (sleepSegments.isNotEmpty) {

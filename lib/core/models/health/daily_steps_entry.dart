@@ -20,7 +20,8 @@ class DailyStepsEntry {
 
   /// Validates if the steps entry is valid.
   bool get isValid {
-    return steps >= 0 && date.isBefore(DateTime.now().add(const Duration(days: 1)));
+    return steps >= 0 &&
+        date.isBefore(DateTime.now().add(const Duration(days: 1)));
   }
 
   /// Creates a copy of this entry with updated fields.
@@ -57,9 +58,13 @@ class DailyStepsEntry {
           steps == other.steps;
 
   @override
-  int get hashCode => date.year.hashCode ^ date.month.hashCode ^ date.day.hashCode ^ steps.hashCode;
+  int get hashCode =>
+      date.year.hashCode ^
+      date.month.hashCode ^
+      date.day.hashCode ^
+      steps.hashCode;
 
   @override
-  String toString() => 'DailyStepsEntry(date: $date, steps: $steps, lastUpdatedAt: $lastUpdatedAt)';
+  String toString() =>
+      'DailyStepsEntry(date: $date, steps: $steps, lastUpdatedAt: $lastUpdatedAt)';
 }
-

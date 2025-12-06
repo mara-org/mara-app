@@ -160,9 +160,8 @@ class _MaraChatScreenState extends ConsumerState<MaraChatScreen> {
     final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark
-          ? AppColorsDark.backgroundLight
-          : AppColors.backgroundLight,
+      backgroundColor:
+          isDark ? AppColorsDark.backgroundLight : AppColors.backgroundLight,
       appBar: AppBar(
         title: Row(
           children: [
@@ -221,7 +220,8 @@ class _MaraChatScreenState extends ConsumerState<MaraChatScreen> {
                       itemBuilder: (context, index) {
                         final message = messages[index];
                         final showTimestamp = index == 0 ||
-                            messages[index - 1].timestamp
+                            messages[index - 1]
+                                    .timestamp
                                     .difference(message.timestamp)
                                     .inMinutes >
                                 5;
@@ -236,9 +236,7 @@ class _MaraChatScreenState extends ConsumerState<MaraChatScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
-                color: isDark
-                    ? AppColorsDark.cardBackground
-                    : Colors.white,
+                color: isDark ? AppColorsDark.cardBackground : Colors.white,
                 boxShadow: [
                   BoxShadow(
                     color: Colors.grey.withValues(alpha: 0.1),
@@ -444,7 +442,8 @@ class _MessageBubble extends StatelessWidget {
   String _formatTimestamp(DateTime timestamp, AppLocalizations l10n) {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
-    final messageDate = DateTime(timestamp.year, timestamp.month, timestamp.day);
+    final messageDate =
+        DateTime(timestamp.year, timestamp.month, timestamp.day);
 
     if (messageDate == today) {
       return 'Today';

@@ -94,12 +94,16 @@ class HealthDataPermissionScreen extends ConsumerWidget {
                             text: l10n.connectHealthData,
                             onPressed: () async {
                               // Request native health data permission (HealthKit/Google Fit)
-                              final permissionService = NativePermissionService();
-                              final granted = await permissionService.requestHealthDataPermission();
-                              
+                              final permissionService =
+                                  NativePermissionService();
+                              final granted = await permissionService
+                                  .requestHealthDataPermission();
+
                               // Update provider state
-                              ref.read(permissionsProvider.notifier).setHealthData(granted);
-                              
+                              ref
+                                  .read(permissionsProvider.notifier)
+                                  .setHealthData(granted);
+
                               // Show capability activation dialog if granted
                               if (granted && context.mounted) {
                                 await CapabilityActivationDialog.show(

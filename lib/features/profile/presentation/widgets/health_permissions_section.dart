@@ -25,7 +25,7 @@ class HealthPermissionsSection extends ConsumerWidget {
 
     try {
       final granted = await healthDataService.requestPermissions();
-      
+
       // Invalidate the provider to refresh status
       ref.invalidate(healthPermissionsStatusProvider);
 
@@ -117,7 +117,8 @@ class HealthPermissionsSection extends ConsumerWidget {
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: AppColors.languageButtonColor.withValues(alpha: 0.1),
+                      color:
+                          AppColors.languageButtonColor.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Icon(
@@ -146,9 +147,7 @@ class HealthPermissionsSection extends ConsumerWidget {
                         const SizedBox(height: 4),
                         permissionsStatus.when(
                           data: (hasPermissions) => Text(
-                            hasPermissions
-                                ? l10n.connected
-                                : l10n.notConnected,
+                            hasPermissions ? l10n.connected : l10n.notConnected,
                             style: TextStyle(
                               color: hasPermissions
                                   ? Colors.green

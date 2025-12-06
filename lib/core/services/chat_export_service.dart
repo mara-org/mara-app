@@ -141,7 +141,8 @@ class ChatExportService {
         return directory;
       } else if (Platform.isIOS) {
         final directory = await getApplicationDocumentsDirectory();
-        return Directory('${directory.path}/exports')..createSync(recursive: true);
+        return Directory('${directory.path}/exports')
+          ..createSync(recursive: true);
       }
       return null;
     } catch (e, stackTrace) {

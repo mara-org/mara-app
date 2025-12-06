@@ -55,7 +55,7 @@ class ProfileScreen extends ConsumerWidget {
 
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    
+
     return Scaffold(
       backgroundColor: isDark ? AppColorsDark.backgroundLight : Colors.white,
       body: SafeArea(
@@ -342,7 +342,7 @@ class _ProfileMenuItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
@@ -525,7 +525,7 @@ class _DeveloperInfoItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    
+
     final card = Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(

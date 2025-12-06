@@ -182,7 +182,10 @@ class HealthTrackingRepositoryImpl implements HealthTrackingRepository {
         'HealthTrackingRepository: Water intake entry saved',
         feature: 'health',
         screen: 'health_repository',
-        extra: {'waterLiters': entry.waterLiters, 'date': entry.date.toString()},
+        extra: {
+          'waterLiters': entry.waterLiters,
+          'date': entry.date.toString()
+        },
       );
     } catch (e, stackTrace) {
       Logger.error(
@@ -250,4 +253,3 @@ class HealthTrackingRepositoryImpl implements HealthTrackingRepository {
     // Future implementation will sync with backend
   }
 }
-

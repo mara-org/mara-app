@@ -12,7 +12,7 @@ class SubscriptionBanner extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    
+
     return InkWell(
       onTap: () => context.go('/subscription'),
       borderRadius: BorderRadius.circular(16),

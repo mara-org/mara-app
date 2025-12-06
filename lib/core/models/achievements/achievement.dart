@@ -56,4 +56,3 @@ enum AchievementCategory {
   water,
   general,
 }
-

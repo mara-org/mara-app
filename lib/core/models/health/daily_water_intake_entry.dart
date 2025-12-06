@@ -20,7 +20,8 @@ class DailyWaterIntakeEntry {
 
   /// Validates if the water intake entry is valid.
   bool get isValid {
-    return waterLiters >= 0 && date.isBefore(DateTime.now().add(const Duration(days: 1)));
+    return waterLiters >= 0 &&
+        date.isBefore(DateTime.now().add(const Duration(days: 1)));
   }
 
   /// Creates a copy of this entry with updated fields.
@@ -67,4 +68,3 @@ class DailyWaterIntakeEntry {
   String toString() =>
       'DailyWaterIntakeEntry(date: $date, waterLiters: $waterLiters, lastUpdatedAt: $lastUpdatedAt)';
 }
-

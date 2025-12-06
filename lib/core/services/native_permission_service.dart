@@ -13,7 +13,7 @@ class NativePermissionService {
     try {
       // Check current status first
       final currentStatus = await Permission.camera.status;
-      
+
       // If already granted, return true
       if (currentStatus.isGranted) {
         Logger.info(
@@ -23,7 +23,7 @@ class NativePermissionService {
         );
         return true;
       }
-      
+
       // Request permission - this will show native system dialog
       final status = await Permission.camera.request();
       final granted = status.isGranted;
@@ -54,7 +54,7 @@ class NativePermissionService {
     try {
       // Check current status first
       final currentStatus = await Permission.microphone.status;
-      
+
       // If already granted, return true
       if (currentStatus.isGranted) {
         Logger.info(
@@ -64,7 +64,7 @@ class NativePermissionService {
         );
         return true;
       }
-      
+
       // Request permission - this will show native system dialog
       final status = await Permission.microphone.request();
       final granted = status.isGranted;
@@ -97,7 +97,7 @@ class NativePermissionService {
         // On iOS, use NotificationService which properly requests via UserNotifications framework
         final notificationService = NotificationService();
         await notificationService.initialize();
-        
+
         // Request permissions using flutter_local_notifications (shows native iOS dialog)
         final granted = await notificationService.requestPermissionsIfNeeded();
 
@@ -111,7 +111,7 @@ class NativePermissionService {
       } else {
         // On Android, use permission_handler
         final currentStatus = await Permission.notification.status;
-        
+
         if (currentStatus.isGranted) {
           Logger.info(
             'NativePermissionService: Notification permission already granted',
@@ -120,7 +120,7 @@ class NativePermissionService {
           );
           return true;
         }
-        
+
         final status = await Permission.notification.request();
         final granted = status.isGranted;
 
@@ -219,4 +219,3 @@ class NativePermissionService {
     }
   }
 }
-

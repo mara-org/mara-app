@@ -64,4 +64,3 @@ class AppColorsDark {
   // Water color for charts
   static const Color waterColor = Color(0xFF0EA5C6);
 }
-

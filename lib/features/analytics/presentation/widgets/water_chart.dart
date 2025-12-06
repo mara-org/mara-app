@@ -28,7 +28,9 @@ class WaterChart extends StatelessWidget {
     final now = DateTime.now();
     final startDate = now.subtract(Duration(days: days));
     final filteredEntries = sortedEntries
-        .where((entry) => entry.date.isAfter(startDate) || entry.date.isAtSameMomentAs(startDate))
+        .where((entry) =>
+            entry.date.isAfter(startDate) ||
+            entry.date.isAtSameMomentAs(startDate))
         .toList();
 
     if (filteredEntries.isEmpty) {
@@ -115,7 +117,8 @@ class WaterChart extends StatelessWidget {
                   toY: entry.value.waterLiters,
                   color: AppColors.languageButtonColor,
                   width: 12,
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(4)),
                 ),
               ],
             );
@@ -130,4 +133,3 @@ class WaterChart extends StatelessWidget {
     return entries.map((e) => e.waterLiters).reduce((a, b) => a > b ? a : b);
   }
 }
-

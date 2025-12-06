@@ -78,7 +78,8 @@ class HealthStatisticsService {
     }
 
     for (final entry in waterHistory) {
-      if (bestWaterDay == null || entry.waterLiters > bestWaterDay.waterLiters) {
+      if (bestWaterDay == null ||
+          entry.waterLiters > bestWaterDay.waterLiters) {
         bestWaterDay = entry;
       }
     }
@@ -112,4 +113,3 @@ class HealthStatisticsService {
     );
   }
 }
-

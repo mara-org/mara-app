@@ -32,4 +32,3 @@ final updateHealthGoalsProvider = FutureProvider.family<bool, HealthGoals>(
     return saved;
   },
 );
-

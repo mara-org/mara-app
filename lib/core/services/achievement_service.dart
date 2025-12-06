@@ -62,7 +62,8 @@ class AchievementService {
       // Check first steps achievement
       if (stepsHistory.isNotEmpty &&
           !alreadyUnlocked.any((a) => a.id == 'first_steps')) {
-        unlocked.add(_allAchievements.firstWhere((a) => a.id == 'first_steps')
+        unlocked.add(_allAchievements
+            .firstWhere((a) => a.id == 'first_steps')
             .copyWith(unlockedAt: DateTime.now()));
       }
 
@@ -211,4 +212,3 @@ class AchievementService {
     );
   }
 }
-

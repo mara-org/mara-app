@@ -79,11 +79,14 @@ class CameraPermissionScreen extends ConsumerWidget {
                           onPressed: () async {
                             // Request native camera permission
                             final permissionService = NativePermissionService();
-                            final granted = await permissionService.requestCameraPermission();
-                            
+                            final granted = await permissionService
+                                .requestCameraPermission();
+
                             // Update provider state
-                            ref.read(permissionsProvider.notifier).setCamera(granted);
-                            
+                            ref
+                                .read(permissionsProvider.notifier)
+                                .setCamera(granted);
+
                             // Navigate to next screen
                             if (context.mounted) {
                               context.push('/microphone-permission');

@@ -36,7 +36,7 @@ class _WaterInputDialogState extends ConsumerState<WaterInputDialog> {
       // Get today's current water intake if it exists
       final repository = ref.read(healthTrackingRepositoryProvider);
       final todayWater = await repository.getTodayWater();
-      
+
       final currentLiters = todayWater?.waterLiters ?? 0.0;
       final newTotal = currentLiters + liters;
 
@@ -167,7 +167,9 @@ class _WaterInputDialogState extends ConsumerState<WaterInputDialog> {
             // Divider with "or"
             Row(
               children: [
-                Expanded(child: Divider(color: AppColors.textSecondary.withOpacity(0.3))),
+                Expanded(
+                    child: Divider(
+                        color: AppColors.textSecondary.withOpacity(0.3))),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Text(
@@ -179,14 +181,17 @@ class _WaterInputDialogState extends ConsumerState<WaterInputDialog> {
                     ),
                   ),
                 ),
-                Expanded(child: Divider(color: AppColors.textSecondary.withOpacity(0.3))),
+                Expanded(
+                    child: Divider(
+                        color: AppColors.textSecondary.withOpacity(0.3))),
               ],
             ),
             const SizedBox(height: 16),
             // Manual input
             TextField(
               controller: _litersController,
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              keyboardType:
+                  const TextInputType.numberWithOptions(decimal: true),
               inputFormatters: [
                 FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
               ],
@@ -206,9 +211,8 @@ class _WaterInputDialogState extends ConsumerState<WaterInputDialog> {
                 Expanded(
                   child: SecondaryButton(
                     text: l10n.cancel,
-                    onPressed: _isSaving
-                        ? null
-                        : () => Navigator.of(context).pop(),
+                    onPressed:
+                        _isSaving ? null : () => Navigator.of(context).pop(),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -226,4 +230,3 @@ class _WaterInputDialogState extends ConsumerState<WaterInputDialog> {
     );
   }
 }
-

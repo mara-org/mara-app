@@ -74,17 +74,20 @@ class HealthSummaryService {
   }) {
     // Filter entries within date range
     final stepsInRange = stepsHistory
-        .where((e) => e.date.isAfter(startDate.subtract(const Duration(days: 1))) &&
+        .where((e) =>
+            e.date.isAfter(startDate.subtract(const Duration(days: 1))) &&
             e.date.isBefore(endDate.add(const Duration(days: 1))))
         .toList();
 
     final sleepInRange = sleepHistory
-        .where((e) => e.date.isAfter(startDate.subtract(const Duration(days: 1))) &&
+        .where((e) =>
+            e.date.isAfter(startDate.subtract(const Duration(days: 1))) &&
             e.date.isBefore(endDate.add(const Duration(days: 1))))
         .toList();
 
     final waterInRange = waterHistory
-        .where((e) => e.date.isAfter(startDate.subtract(const Duration(days: 1))) &&
+        .where((e) =>
+            e.date.isAfter(startDate.subtract(const Duration(days: 1))) &&
             e.date.isBefore(endDate.add(const Duration(days: 1))))
         .toList();
 
@@ -127,4 +130,3 @@ class HealthSummaryService {
     );
   }
 }
-

@@ -98,9 +98,12 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            stepsHistoryProvider.overrideWith((ref, limit) async => stepsEntries),
-            sleepHistoryProvider.overrideWith((ref, limit) async => sleepEntries),
-            waterHistoryProvider.overrideWith((ref, limit) async => waterEntries),
+            stepsHistoryProvider
+                .overrideWith((ref, limit) async => stepsEntries),
+            sleepHistoryProvider
+                .overrideWith((ref, limit) async => sleepEntries),
+            waterHistoryProvider
+                .overrideWith((ref, limit) async => waterEntries),
           ],
           child: MaterialApp(
             localizationsDelegates: const [
@@ -174,16 +177,14 @@ void main() {
       await tester.pumpAndSettle();
 
       final last30DaysButton = find.textContaining('30');
-      
+
       if (last30DaysButton.evaluate().isNotEmpty) {
         await tester.tap(last30DaysButton.first);
         await tester.pumpAndSettle();
-        
+
         // UI should update (visual verification)
         expect(find.byType(AnalystDashboardScreen), findsOneWidget);
       }
     });
   });
 }
-
-
