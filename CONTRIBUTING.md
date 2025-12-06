@@ -10,7 +10,7 @@ Thank you for your interest in contributing to the Mara mobile application! This
 
 ## Getting Started
 
-### Prerequisites
+### Prerequisites..
 
 - Flutter SDK 3.27.0 or higher
 - Dart SDK 3.0.0 or higher
