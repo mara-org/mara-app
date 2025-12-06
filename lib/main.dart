@@ -6,8 +6,10 @@ import 'l10n/app_localizations.dart';
 import 'core/routing/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'core/providers/language_provider.dart';
+import 'core/providers/settings_provider.dart';
 import 'core/utils/crash_reporter.dart';
 import 'core/utils/logger.dart';
+import 'core/services/app_initialization_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,6 +30,10 @@ void main() async {
     screen: 'main',
     feature: 'app_init',
   );
+
+  // Initialize all app services and Xcode-configured capabilities
+  // This initializes: NotificationService, HealthDataService, BiometricAuthService
+  await AppInitializationService.initialize();
 
   // Set system UI overlay style for both platforms
   SystemChrome.setSystemUIOverlayStyle(
@@ -53,9 +59,11 @@ class MaraApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final locale = ref.watch(appLocaleProvider);
+    final settings = ref.watch(settingsProvider);
+    final isDarkMode = settings.themeMode == AppThemeMode.dark;
 
     return MaterialApp.router(
-      key: ValueKey(locale.languageCode), // Force rebuild when locale changes
+      key: ValueKey('${locale.languageCode}_${isDarkMode}'), // Force rebuild when locale or theme changes
       title: 'Mara',
       locale: locale,
       supportedLocales: const [Locale('en'), Locale('ar')],
@@ -66,6 +74,8 @@ class MaraApp extends ConsumerWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
       routerConfig: AppRouter.router,
       debugShowCheckedModeBanner: false,
       // Support for both platforms

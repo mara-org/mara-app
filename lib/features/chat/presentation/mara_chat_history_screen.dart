@@ -5,28 +5,148 @@ import 'package:intl/intl.dart';
 
 import '../../../core/models/conversation.dart';
 import '../../../core/providers/chat_history_provider.dart';
+import '../../../core/services/chat_export_service.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_colors_dark.dart';
 import '../../../core/widgets/mara_logo.dart';
 import '../../../l10n/app_localizations.dart';
 
-class MaraChatHistoryScreen extends ConsumerWidget {
+class MaraChatHistoryScreen extends ConsumerStatefulWidget {
   const MaraChatHistoryScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<MaraChatHistoryScreen> createState() =>
+      _MaraChatHistoryScreenState();
+}
+
+class _MaraChatHistoryScreenState
+    extends ConsumerState<MaraChatHistoryScreen> {
+  final TextEditingController _searchController = TextEditingController();
+  final ChatExportService _exportService = ChatExportService();
+  bool _isSearching = false;
+  String _searchQuery = '';
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  List<Conversation> _filterConversations(
+      List<Conversation> conversations, String query) {
+    if (query.isEmpty) return conversations;
+
+    final lowerQuery = query.toLowerCase();
+    return conversations.where((conv) {
+      return conv.title.toLowerCase().contains(lowerQuery) ||
+          conv.preview.toLowerCase().contains(lowerQuery) ||
+          (conv.topic?.toLowerCase().contains(lowerQuery) ?? false);
+    }).toList();
+  }
+
+  Future<void> _exportAllConversations(
+      BuildContext context, List<Conversation> conversations) async {
+    if (conversations.isEmpty) return;
+
     final l10n = AppLocalizations.of(context)!;
-    final conversations = ref.watch(chatHistoryProvider);
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+
+    scaffoldMessenger.showSnackBar(
+      SnackBar(content: Text(l10n.exporting)),
+    );
+
+    final success = await _exportService.exportAllConversations(conversations);
+
+    if (mounted) {
+      scaffoldMessenger.hideCurrentSnackBar();
+      scaffoldMessenger.showSnackBar(
+        SnackBar(
+          content: Text(success ? l10n.exportSuccess : l10n.exportError),
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final allConversations = ref.watch(chatHistoryProvider);
+    final filteredConversations =
+        _filterConversations(allConversations, _searchQuery);
     final locale = Localizations.localeOf(context);
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor:
+          isDark ? AppColorsDark.backgroundLight : AppColors.backgroundLight,
       appBar: AppBar(
-        title: Text(l10n.chatHistory),
+        title: _isSearching
+            ? TextField(
+                controller: _searchController,
+                autofocus: true,
+                style: const TextStyle(color: Colors.white),
+                decoration: InputDecoration(
+                  hintText: l10n.searchConversations,
+                  hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.7)),
+                  border: InputBorder.none,
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    _searchQuery = value;
+                  });
+                },
+              )
+            : Text(l10n.chatHistory),
         backgroundColor: AppColors.homeHeaderBackground,
         foregroundColor: Colors.white,
         elevation: 0,
+        actions: [
+          if (!_isSearching && allConversations.isNotEmpty)
+            IconButton(
+              icon: const Icon(Icons.search),
+              onPressed: () {
+                setState(() {
+                  _isSearching = true;
+                });
+              },
+              tooltip: l10n.searchChatHistory,
+            ),
+          if (!_isSearching && allConversations.isNotEmpty)
+            PopupMenuButton<String>(
+              icon: const Icon(Icons.more_vert),
+              onSelected: (value) async {
+                if (value == 'export_all') {
+                  await _exportAllConversations(context, allConversations);
+                }
+              },
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                  value: 'export_all',
+                  child: Row(
+                    children: [
+                      const Icon(Icons.download),
+                      const SizedBox(width: 8),
+                      Text(l10n.exportAllConversations),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          if (_isSearching)
+            IconButton(
+              icon: const Icon(Icons.close),
+              onPressed: () {
+                setState(() {
+                  _isSearching = false;
+                  _searchQuery = '';
+                  _searchController.clear();
+                });
+              },
+            ),
+        ],
       ),
-      body: conversations.isEmpty
+      body: filteredConversations.isEmpty
           ? Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -34,13 +154,20 @@ class MaraChatHistoryScreen extends ConsumerWidget {
                   Icon(
                     Icons.chat_bubble_outline,
                     size: 64,
-                    color: AppColors.textSecondary.withOpacity(0.5),
+                    color: (isDark
+                            ? AppColorsDark.textSecondary
+                            : AppColors.textSecondary)
+                        .withValues(alpha: 0.5),
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    l10n.noConversationsYet,
+                    _searchQuery.isEmpty
+                        ? l10n.noConversationsYet
+                        : l10n.noResultsFound,
                     style: TextStyle(
-                      color: AppColors.textSecondary,
+                      color: isDark
+                          ? AppColorsDark.textSecondary
+                          : AppColors.textSecondary,
                       fontSize: 16,
                     ),
                   ),
@@ -49,12 +176,13 @@ class MaraChatHistoryScreen extends ConsumerWidget {
             )
           : ListView.builder(
               padding: const EdgeInsets.all(16),
-              itemCount: conversations.length,
+              itemCount: filteredConversations.length,
               itemBuilder: (context, index) {
-                final conversation = conversations[index];
+                final conversation = filteredConversations[index];
                 return _ConversationCard(
                   conversation: conversation,
                   locale: locale,
+                  isDark: isDark,
                   onTap: () {
                     // Navigate to chat with conversation ID
                     final uri = Uri(
@@ -65,6 +193,26 @@ class MaraChatHistoryScreen extends ConsumerWidget {
                   },
                   onDelete: () {
                     _showDeleteConfirmation(context, ref, conversation, l10n);
+                  },
+                  onExport: () async {
+                    final scaffoldMessenger = ScaffoldMessenger.of(context);
+                    scaffoldMessenger.showSnackBar(
+                      SnackBar(content: Text(l10n.exporting)),
+                    );
+
+                    final success =
+                        await _exportService.exportConversation(conversation);
+
+                    if (mounted) {
+                      scaffoldMessenger.hideCurrentSnackBar();
+                      scaffoldMessenger.showSnackBar(
+                        SnackBar(
+                          content: Text(success
+                              ? l10n.exportSuccess
+                              : l10n.exportError),
+                        ),
+                      );
+                    }
                   },
                 );
               },
@@ -113,14 +261,18 @@ class MaraChatHistoryScreen extends ConsumerWidget {
 class _ConversationCard extends StatelessWidget {
   final Conversation conversation;
   final Locale locale;
+  final bool isDark;
   final VoidCallback onTap;
   final VoidCallback onDelete;
+  final VoidCallback onExport;
 
   const _ConversationCard({
     required this.conversation,
     required this.locale,
+    required this.isDark,
     required this.onTap,
     required this.onDelete,
+    required this.onExport,
   });
 
   @override
@@ -172,11 +324,11 @@ class _ConversationCard extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDark ? AppColorsDark.cardBackground : Colors.white,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               offset: const Offset(0, 2),
               blurRadius: 8,
               spreadRadius: 0,
@@ -204,8 +356,10 @@ class _ConversationCard extends StatelessWidget {
                         // Title
                         Text(
                           conversation.title,
-                          style: const TextStyle(
-                            color: AppColors.textPrimary,
+                          style: TextStyle(
+                            color: isDark
+                                ? AppColorsDark.textPrimary
+                                : AppColors.textPrimary,
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                           ),
@@ -217,7 +371,9 @@ class _ConversationCard extends StatelessWidget {
                         Text(
                           conversation.preview,
                           style: TextStyle(
-                            color: AppColors.textSecondary,
+                            color: isDark
+                                ? AppColorsDark.textSecondary
+                                : AppColors.textSecondary,
                             fontSize: 14,
                             fontWeight: FontWeight.normal,
                           ),
@@ -229,7 +385,10 @@ class _ConversationCard extends StatelessWidget {
                         Text(
                           '$dateText • $timeText',
                           style: TextStyle(
-                            color: AppColors.textSecondary.withOpacity(0.7),
+                            color: (isDark
+                                    ? AppColorsDark.textSecondary
+                                    : AppColors.textSecondary)
+                                .withValues(alpha: 0.7),
                             fontSize: 12,
                             fontWeight: FontWeight.normal,
                           ),
@@ -238,10 +397,42 @@ class _ConversationCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  // Arrow icon
+                  // Export and arrow icons
+                  PopupMenuButton<String>(
+                    icon: Icon(
+                      Icons.more_vert,
+                      color: (isDark
+                              ? AppColorsDark.textSecondary
+                              : AppColors.textSecondary)
+                          .withValues(alpha: 0.5),
+                      size: 20,
+                    ),
+                    onSelected: (value) {
+                      if (value == 'export') {
+                        onExport();
+                      }
+                    },
+                    itemBuilder: (context) => [
+                      PopupMenuItem(
+                        value: 'export',
+                        child: Row(
+                          children: [
+                            const Icon(Icons.download, size: 20),
+                            const SizedBox(width: 8),
+                            Text(AppLocalizations.of(context)!
+                                .exportConversation),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(width: 4),
                   Icon(
                     Icons.chevron_right,
-                    color: AppColors.textSecondary.withOpacity(0.5),
+                    color: (isDark
+                            ? AppColorsDark.textSecondary
+                            : AppColors.textSecondary)
+                        .withValues(alpha: 0.5),
                     size: 24,
                   ),
                 ],
@@ -311,7 +502,7 @@ class _TopicIcon extends StatelessWidget {
       width: 40,
       height: 40,
       decoration: BoxDecoration(
-        color: iconColor.withOpacity(0.1),
+        color: iconColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Icon(iconData, color: iconColor, size: 24),

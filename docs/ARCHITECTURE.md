@@ -211,6 +211,28 @@ The app follows a layered architecture pattern:
 - Local defaults for development
 - Implementation: `lib/core/feature_flags/firebase_remote_config_service.dart`
 
+### Health Data Service
+
+**Health Data Service**: `lib/core/services/health_data_service.dart`
+- Abstract interface for platform-specific health data access
+- iOS: Integrates with HealthKit via `health` package
+- Android: Integrates with Google Fit via `health` package
+- Methods: `requestPermissions()`, `hasPermissions()`, `getTodaySteps()`, `getTodaySleepHours()`, `getTodayWaterLiters()`
+- Handles permission requests and errors gracefully
+- Registered in dependency injection for easy testing and mocking
+- See [Health Tracking Documentation](HEALTH_TRACKING.md) for detailed implementation
+
+### Health Tracking Repository
+
+**Health Tracking Repository**: `lib/features/health/domain/repositories/health_tracking_repository.dart`
+- Domain interface for health tracking operations
+- Implementation: `lib/features/health/data/repositories/health_tracking_repository_impl.dart`
+- Local data source: `lib/features/health/data/datasources/local_health_data_source.dart`
+- Stores daily health entries (steps, sleep, water) locally using SharedPreferences
+- Supports history retrieval with date filtering
+- Prepared for future backend sync integration
+- See [Health Tracking Documentation](HEALTH_TRACKING.md) for architecture details
+
 ### State Management
 
 - **Riverpod**: Primary state management solution

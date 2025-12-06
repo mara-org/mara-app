@@ -91,7 +91,7 @@ class PermissionsSummaryScreen extends ConsumerWidget {
                     l10n.yourPrivacyIsAlwaysOurTopPriority,
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: AppColors.textSecondary.withOpacity(0.7),
+                      color: AppColors.textSecondary.withValues(alpha: 0.7),
                       fontSize: 13,
                       fontWeight: FontWeight.normal,
                       height: 1.5,
@@ -130,7 +130,7 @@ class _PermissionItem extends StatelessWidget {
           style: TextStyle(
             color:
                 isEnabled ? const Color(0xFF10A9CC) : const Color(0xFFFCFEFF),
-            fontSize: isEnabled ? 20 : 16,
+            fontSize: 20,
             fontWeight: FontWeight.normal,
             height: 1,
           ),

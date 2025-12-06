@@ -9,6 +9,7 @@ import '../../../core/providers/subscription_provider.dart';
 import '../../../core/services/app_review_service.dart';
 import '../../../core/services/share_app_service.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_colors_dark.dart';
 import '../../../core/utils/cache_utils.dart';
 import '../../../core/utils/platform_utils.dart';
 import '../../../l10n/app_localizations.dart';
@@ -52,14 +53,17 @@ class ProfileScreen extends ConsumerWidget {
     final email =
         ref.watch(emailProvider) ?? 'No email'; // Get email from provider
 
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
     return Scaffold(
-      backgroundColor: Colors.white, // Pure white background
+      backgroundColor: isDark ? AppColorsDark.backgroundLight : Colors.white,
       body: SafeArea(
         child: Column(
           children: [
             // Simple AppBar-style header
             Container(
-              color: Colors.white,
+              color: isDark ? AppColorsDark.backgroundLight : Colors.white,
               padding: EdgeInsets.only(
                 left: PlatformUtils.getDefaultPadding(context).left,
                 right: PlatformUtils.getDefaultPadding(context).right,
@@ -89,7 +93,9 @@ class ProfileScreen extends ConsumerWidget {
                       child: Text(
                         l10n.profileTitle,
                         style: TextStyle(
-                          color: const Color(0xFF0F172A), // #0F172A
+                          color: isDark
+                              ? AppColorsDark.textPrimary
+                              : const Color(0xFF0F172A),
                           fontSize: 22,
                           fontWeight: FontWeight.w600,
                         ),
@@ -163,7 +169,9 @@ class ProfileScreen extends ConsumerWidget {
                             child: Text(
                               l10n.user,
                               style: TextStyle(
-                                color: AppColors.textSecondary,
+                                color: isDark
+                                    ? AppColorsDark.textSecondary
+                                    : AppColors.textSecondary,
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -172,10 +180,14 @@ class ProfileScreen extends ConsumerWidget {
                           Container(
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
-                              color: Colors.white,
+                              color: isDark
+                                  ? AppColorsDark.cardBackground
+                                  : Colors.white,
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
-                                color: AppColors.borderColor,
+                                color: isDark
+                                    ? AppColorsDark.borderColor
+                                    : AppColors.borderColor,
                                 width: 1,
                               ),
                             ),
@@ -189,9 +201,9 @@ class ProfileScreen extends ConsumerWidget {
                                       Text(
                                         l10n.emailLabel,
                                         style: TextStyle(
-                                          color: const Color(
-                                            0xFF0F172A,
-                                          ), // #0F172A
+                                          color: isDark
+                                              ? AppColorsDark.textPrimary
+                                              : const Color(0xFF0F172A),
                                           fontSize: 16,
                                           fontWeight: FontWeight.w500,
                                         ),
@@ -200,9 +212,9 @@ class ProfileScreen extends ConsumerWidget {
                                       Text(
                                         email,
                                         style: TextStyle(
-                                          color: const Color(
-                                            0xFF64748B,
-                                          ), // #64748B
+                                          color: isDark
+                                              ? AppColorsDark.textSecondary
+                                              : const Color(0xFF64748B),
                                           fontSize: 14,
                                         ),
                                       ),
@@ -328,15 +340,21 @@ class _ProfileMenuItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDark ? AppColorsDark.cardBackground : Colors.white,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.borderColor, width: 1),
+          border: Border.all(
+            color: isDark ? AppColorsDark.borderColor : AppColors.borderColor,
+            width: 1,
+          ),
         ),
         child: Row(
           children: [
@@ -344,7 +362,7 @@ class _ProfileMenuItem extends StatelessWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: AppColors.languageButtonColor.withOpacity(0.1),
+                color: AppColors.languageButtonColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(icon, color: AppColors.languageButtonColor, size: 24),
@@ -357,7 +375,9 @@ class _ProfileMenuItem extends StatelessWidget {
                   Text(
                     title,
                     style: TextStyle(
-                      color: const Color(0xFF0F172A), // #0F172A
+                      color: isDark
+                          ? AppColorsDark.textPrimary
+                          : const Color(0xFF0F172A),
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
                     ),
@@ -367,7 +387,9 @@ class _ProfileMenuItem extends StatelessWidget {
                     Text(
                       subtitle!,
                       style: TextStyle(
-                        color: AppColors.textSecondary,
+                        color: isDark
+                            ? AppColorsDark.textSecondary
+                            : AppColors.textSecondary,
                         fontSize: 14,
                       ),
                     ),
@@ -378,7 +400,9 @@ class _ProfileMenuItem extends StatelessWidget {
             Icon(
               Icons.arrow_forward_ios,
               size: 16,
-              color: AppColors.textSecondary,
+              color: isDark
+                  ? AppColorsDark.textSecondary
+                  : AppColors.textSecondary,
             ),
           ],
         ),
@@ -499,12 +523,18 @@ class _DeveloperInfoItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
     final card = Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? AppColorsDark.cardBackground : Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.borderColor, width: 1),
+        border: Border.all(
+          color: isDark ? AppColorsDark.borderColor : AppColors.borderColor,
+          width: 1,
+        ),
       ),
       child: Row(
         children: [
@@ -512,7 +542,7 @@ class _DeveloperInfoItem extends StatelessWidget {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: AppColors.languageButtonColor.withOpacity(0.1),
+              color: AppColors.languageButtonColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(icon, color: AppColors.languageButtonColor, size: 24),
@@ -525,7 +555,9 @@ class _DeveloperInfoItem extends StatelessWidget {
                 Text(
                   title,
                   style: TextStyle(
-                    color: const Color(0xFF0F172A), // #0F172A
+                    color: isDark
+                        ? AppColorsDark.textPrimary
+                        : const Color(0xFF0F172A),
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
                   ),
@@ -535,7 +567,9 @@ class _DeveloperInfoItem extends StatelessWidget {
                   Text(
                     value!,
                     style: TextStyle(
-                      color: const Color(0xFF64748B), // #64748B
+                      color: isDark
+                          ? AppColorsDark.textSecondary
+                          : const Color(0xFF64748B),
                       fontSize: 14,
                     ),
                   ),

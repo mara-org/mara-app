@@ -81,4 +81,13 @@ class AppColors {
   static const Color homeTipBackground = Color(
     0xFFF1F5F9,
   ); // RGB(241, 245, 249)
+
+  // Card background
+  static const Color cardBackground = Color(0xFFFFFFFF);
+
+  // Accent color
+  static const Color accent = Color(0xFF0EA5C6);
+
+  // Water color for charts
+  static const Color waterColor = Color(0xFF0EA5C6);
 }

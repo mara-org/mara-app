@@ -7,9 +7,11 @@ import '../../../core/providers/chat_history_provider.dart';
 import '../../../core/providers/chat_messages_provider.dart';
 import '../../../core/providers/chat_topic_provider.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_colors_dark.dart';
 import '../../../core/widgets/main_bottom_navigation.dart';
 import '../../../core/widgets/mara_logo.dart';
 import '../../../l10n/app_localizations.dart';
+import 'widgets/quick_actions.dart';
 
 class MaraChatScreen extends ConsumerStatefulWidget {
   final String? conversationId;
@@ -74,9 +76,9 @@ class _MaraChatScreenState extends ConsumerState<MaraChatScreen> {
     super.dispose();
   }
 
-  void _sendMessage() {
-    final text = _messageController.text.trim();
-    if (text.isEmpty) return;
+  void _sendMessage([String? text]) {
+    final messageText = text ?? _messageController.text.trim();
+    if (messageText.isEmpty) return;
 
     final messages = ref.read(chatMessagesProvider);
     final isFirstMessage = messages.isEmpty;
@@ -84,21 +86,23 @@ class _MaraChatScreenState extends ConsumerState<MaraChatScreen> {
     // Add user message
     ref
         .read(chatMessagesProvider.notifier)
-        .addMessage(ChatMessage(text: text, type: MessageType.user));
+        .addMessage(ChatMessage(text: messageText, type: MessageType.user));
 
     // Save topic from first user message
     if (isFirstMessage) {
       // Extract topic: take first few words (up to 3-4 words) or first sentence
-      final words = text.split(' ');
+      final words = messageText.split(' ');
       final topic = words.length > 4
           ? words.take(4).join(' ') + '...'
-          : text.length > 30
-              ? text.substring(0, 30) + '...'
-              : text;
+          : messageText.length > 30
+              ? messageText.substring(0, 30) + '...'
+              : messageText;
       ref.read(lastConversationTopicProvider.notifier).state = topic;
     }
 
-    _messageController.clear();
+    if (text == null) {
+      _messageController.clear();
+    }
 
     // Scroll to bottom
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -152,9 +156,13 @@ class _MaraChatScreenState extends ConsumerState<MaraChatScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final messages = ref.watch(chatMessagesProvider);
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: isDark
+          ? AppColorsDark.backgroundLight
+          : AppColors.backgroundLight,
       appBar: AppBar(
         title: Row(
           children: [
@@ -183,13 +191,27 @@ class _MaraChatScreenState extends ConsumerState<MaraChatScreen> {
             // Messages list
             Expanded(
               child: messages.isEmpty
-                  ? Center(
-                      child: Text(
-                        l10n.whatsInYourHead,
-                        style: TextStyle(
-                          color: AppColors.textSecondary,
-                          fontSize: 16,
-                        ),
+                  ? SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 40),
+                          Text(
+                            l10n.whatsInYourHead,
+                            style: TextStyle(
+                              color: isDark
+                                  ? AppColorsDark.textSecondary
+                                  : AppColors.textSecondary,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(height: 32),
+                          ChatQuickActions(
+                            onActionSelected: (message) {
+                              _sendMessage(message);
+                            },
+                          ),
+                        ],
                       ),
                     )
                   : ListView.builder(
@@ -198,7 +220,15 @@ class _MaraChatScreenState extends ConsumerState<MaraChatScreen> {
                       itemCount: messages.length,
                       itemBuilder: (context, index) {
                         final message = messages[index];
-                        return _MessageBubble(message: message);
+                        final showTimestamp = index == 0 ||
+                            messages[index - 1].timestamp
+                                    .difference(message.timestamp)
+                                    .inMinutes >
+                                5;
+                        return _MessageBubble(
+                          message: message,
+                          showTimestamp: showTimestamp,
+                        );
                       },
                     ),
             ),
@@ -206,10 +236,12 @@ class _MaraChatScreenState extends ConsumerState<MaraChatScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: isDark
+                    ? AppColorsDark.cardBackground
+                    : Colors.white,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.grey.withOpacity(0.1),
+                    color: Colors.grey.withValues(alpha: 0.1),
                     offset: const Offset(0, -2),
                     blurRadius: 4,
                   ),
@@ -224,7 +256,9 @@ class _MaraChatScreenState extends ConsumerState<MaraChatScreen> {
                         decoration: InputDecoration(
                           hintText: l10n.whatsInYourHead,
                           hintStyle: TextStyle(
-                            color: AppColors.textSecondary,
+                            color: isDark
+                                ? AppColorsDark.textSecondary
+                                : AppColors.textSecondary,
                             fontSize: 16,
                           ),
                           border: OutlineInputBorder(
@@ -288,40 +322,144 @@ class _MaraChatScreenState extends ConsumerState<MaraChatScreen> {
 
 class _MessageBubble extends StatelessWidget {
   final ChatMessage message;
+  final bool showTimestamp;
 
-  const _MessageBubble({required this.message});
+  const _MessageBubble({
+    required this.message,
+    this.showTimestamp = false,
+  });
 
   @override
   Widget build(BuildContext context) {
     final isUser = message.type == MessageType.user;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context)!;
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: Row(
-        mainAxisAlignment:
-            isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Column(
+        crossAxisAlignment:
+            isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         children: [
-          Flexible(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              decoration: BoxDecoration(
-                color: isUser
-                    ? AppColors.languageButtonColor
-                    : AppColors.permissionCardBackground,
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Text(
-                message.text,
-                style: TextStyle(
-                  color: isUser ? Colors.white : AppColors.textPrimary,
-                  fontSize: 16,
-                  fontWeight: FontWeight.normal,
+          if (showTimestamp)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Center(
+                child: Text(
+                  _formatTimestamp(message.timestamp, l10n),
+                  style: TextStyle(
+                    color: isDark
+                        ? AppColorsDark.textSecondary
+                        : AppColors.textSecondary,
+                    fontSize: 12,
+                    fontWeight: FontWeight.normal,
+                  ),
                 ),
+              ),
+            ),
+          Row(
+            mainAxisAlignment:
+                isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              if (!isUser) ...[
+                Container(
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [
+                        AppColors.gradientStart,
+                        AppColors.languageButtonColor,
+                      ],
+                    ),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.smart_toy,
+                    color: Colors.white,
+                    size: 18,
+                  ),
+                ),
+                const SizedBox(width: 8),
+              ],
+              Flexible(
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  decoration: BoxDecoration(
+                    color: isUser
+                        ? AppColors.languageButtonColor
+                        : (isDark
+                            ? AppColorsDark.permissionCardBackground
+                            : AppColors.permissionCardBackground),
+                    borderRadius: BorderRadius.only(
+                      topLeft: const Radius.circular(16),
+                      topRight: const Radius.circular(16),
+                      bottomLeft: Radius.circular(isUser ? 16 : 4),
+                      bottomRight: Radius.circular(isUser ? 4 : 16),
+                    ),
+                  ),
+                  child: Text(
+                    message.text,
+                    style: TextStyle(
+                      color: isUser
+                          ? Colors.white
+                          : (isDark
+                              ? AppColorsDark.textPrimary
+                              : AppColors.textPrimary),
+                      fontSize: 15,
+                      fontWeight: FontWeight.normal,
+                      height: 1.4,
+                    ),
+                  ),
+                ),
+              ),
+              if (isUser) const SizedBox(width: 40),
+            ],
+          ),
+          Padding(
+            padding: EdgeInsets.only(
+              top: 4,
+              left: isUser ? 0 : 40,
+              right: isUser ? 0 : 0,
+            ),
+            child: Text(
+              _formatMessageTime(message.timestamp),
+              style: TextStyle(
+                color: isDark
+                    ? AppColorsDark.textSecondary
+                    : AppColors.textSecondary,
+                fontSize: 11,
+                fontWeight: FontWeight.normal,
               ),
             ),
           ),
         ],
       ),
     );
+  }
+
+  String _formatTimestamp(DateTime timestamp, AppLocalizations l10n) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final messageDate = DateTime(timestamp.year, timestamp.month, timestamp.day);
+
+    if (messageDate == today) {
+      return 'Today';
+    } else if (messageDate == today.subtract(const Duration(days: 1))) {
+      return 'Yesterday';
+    } else {
+      return '${timestamp.day}/${timestamp.month}/${timestamp.year}';
+    }
+  }
+
+  String _formatMessageTime(DateTime timestamp) {
+    final hour = timestamp.hour;
+    final minute = timestamp.minute.toString().padLeft(2, '0');
+    final period = hour >= 12 ? 'PM' : 'AM';
+    final displayHour = hour > 12 ? hour - 12 : (hour == 0 ? 12 : hour);
+    return '$displayHour:$minute $period';
   }
 }

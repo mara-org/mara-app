@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/providers/user_profile_provider.dart';
 import '../../../../core/models/user_profile_setup.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_colors_dark.dart';
 import '../../../../l10n/app_localizations.dart';
 
 class HealthProfileSection extends ConsumerWidget {
@@ -15,6 +16,8 @@ class HealthProfileSection extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final profile = ref.watch(userProfileProvider);
     final locale = Localizations.localeOf(context);
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -24,7 +27,9 @@ class HealthProfileSection extends ConsumerWidget {
           child: Text(
             l10n.healthProfileTitle,
             style: TextStyle(
-              color: AppColors.textSecondary,
+              color: isDark
+                  ? AppColorsDark.textSecondary
+                  : AppColors.textSecondary,
               fontSize: 14,
               fontWeight: FontWeight.w600,
             ),
@@ -33,9 +38,12 @@ class HealthProfileSection extends ConsumerWidget {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: isDark ? AppColorsDark.cardBackground : Colors.white,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColors.borderColor, width: 1),
+            border: Border.all(
+              color: isDark ? AppColorsDark.borderColor : AppColors.borderColor,
+              width: 1,
+            ),
           ),
           child: Column(
             children: [
@@ -150,6 +158,9 @@ class _HealthProfileRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(8),
@@ -161,7 +172,9 @@ class _HealthProfileRow extends StatelessWidget {
             Text(
               label,
               style: TextStyle(
-                color: const Color(0xFF0F172A), // #0F172A
+                color: isDark
+                    ? AppColorsDark.textPrimary
+                    : const Color(0xFF0F172A),
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
               ),
@@ -172,7 +185,9 @@ class _HealthProfileRow extends StatelessWidget {
                 child: Text(
                   value,
                   style: TextStyle(
-                    color: const Color(0xFF64748B), // #64748B
+                    color: isDark
+                        ? AppColorsDark.textSecondary
+                        : const Color(0xFF64748B),
                     fontSize: 14,
                   ),
                   textAlign: TextAlign.end,
@@ -183,7 +198,9 @@ class _HealthProfileRow extends StatelessWidget {
             Icon(
               Icons.arrow_forward_ios,
               size: 14,
-              color: AppColors.textSecondary,
+              color: isDark
+                  ? AppColorsDark.textSecondary
+                  : AppColors.textSecondary,
             ),
           ],
         ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_colors_dark.dart';
 
 class ContactUsSection extends StatelessWidget {
   const ContactUsSection({super.key});
@@ -15,6 +16,9 @@ class ContactUsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -23,7 +27,9 @@ class ContactUsSection extends StatelessWidget {
           child: Text(
             'Contact us',
             style: TextStyle(
-              color: AppColors.textSecondary,
+              color: isDark
+                  ? AppColorsDark.textSecondary
+                  : AppColors.textSecondary,
               fontSize: 14,
               fontWeight: FontWeight.w600,
             ),
@@ -88,7 +94,7 @@ const List<_SocialButtonData> _socialButtons = [
     url: 'https://www.linkedin.com/company/yourmara/',
   ),
   const _SocialButtonData(
-    assetPath: 'assets/socialMedia/Discord-Symbol-Blurple.PNG',
+    assetPath: 'assets/socialMedia/Discord-Symbol-Blurple.png',
     url: 'https://discord.com/invite/hVxvU4ekhJ',
   ),
   const _SocialButtonData(
@@ -114,18 +120,24 @@ class _SocialIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
     return GestureDetector(
       onTap: onTap,
       child: Container(
         width: 45,
         height: 45,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDark ? AppColorsDark.cardBackground : Colors.white,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppColors.borderColor, width: 1),
+          border: Border.all(
+            color: isDark ? AppColorsDark.borderColor : AppColors.borderColor,
+            width: 1,
+          ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 4,
               offset: const Offset(0, 2),
             ),
@@ -143,11 +155,19 @@ class _SocialIconButton extends StatelessWidget {
                     return Icon(
                       icon ?? Icons.link,
                       size: 28,
-                      color: AppColors.textPrimary,
+                      color: isDark
+                          ? AppColorsDark.textPrimary
+                          : AppColors.textPrimary,
                     );
                   },
                 )
-              : Icon(icon, size: 28, color: AppColors.textPrimary),
+              : Icon(
+                  icon,
+                  size: 28,
+                  color: isDark
+                      ? AppColorsDark.textPrimary
+                      : AppColors.textPrimary,
+                ),
         ),
       ),
     );

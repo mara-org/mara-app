@@ -4,9 +4,13 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/providers/chat_topic_provider.dart';
+import '../../../core/providers/health_tracking_providers.dart';
 import '../../../core/providers/steps_provider.dart';
 import '../../../core/providers/user_profile_provider.dart';
+import 'widgets/sleep_input_dialog.dart';
+import 'widgets/water_input_dialog.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_colors_dark.dart';
 import '../../../core/utils/platform_utils.dart';
 import '../../../core/widgets/main_bottom_navigation.dart';
 import '../../../core/widgets/mara_logo.dart';
@@ -70,9 +74,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     } else {
       greeting = l10n.goodEvening;
     }
+    
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: isDark ? AppColorsDark.backgroundLight : AppColors.backgroundLight,
       body: SafeArea(
         bottom: false,
         child: Column(
@@ -119,7 +126,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               Text(
                                 dateText,
                                 style: TextStyle(
-                                  color: Colors.white.withOpacity(0.9),
+                                  color: Colors.white.withValues(alpha: 0.9),
                                   fontSize: 12,
                                   fontWeight: FontWeight.normal,
                                 ),
@@ -136,7 +143,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             width: 40,
                             height: 40,
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
+                              color: Colors.white.withValues(alpha: 0.2),
                               shape: BoxShape.circle,
                             ),
                             child: const Icon(
@@ -189,10 +196,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               padding: const EdgeInsets.all(20),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(20),
-                                color: Colors.white,
+                                color: isDark
+                                    ? AppColorsDark.cardBackground
+                                    : Colors.white,
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.grey.withOpacity(0.1),
+                                    color: Colors.grey.withValues(alpha: 0.1),
                                     offset: const Offset(0, 1),
                                     blurRadius: 13,
                                   ),
@@ -243,7 +252,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       Text(
                         l10n.yourDailyInsights,
                         style: TextStyle(
-                          color: AppColors.textPrimary,
+                          color: isDark
+                              ? AppColorsDark.textPrimary
+                              : AppColors.textPrimary,
                           fontSize: 16,
                           fontWeight: FontWeight.normal,
                         ),
@@ -254,21 +265,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         children: [
                           Expanded(child: _StepsCard()),
                           const SizedBox(width: 12),
-                          Expanded(
-                            child: _InsightCard(
-                              label: l10n.sleep,
-                              value: '0h',
-                              icon: Icons.bedtime,
-                            ),
-                          ),
+                          const Expanded(child: _SleepCard()),
                           const SizedBox(width: 12),
-                          Expanded(
-                            child: _InsightCard(
-                              label: l10n.water,
-                              value: '0L',
-                              icon: Icons.water_drop,
-                            ),
-                          ),
+                          const Expanded(child: _WaterCard()),
                         ],
                       ),
                       const SizedBox(height: 24),
@@ -285,7 +284,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 : AppColors.homeVitalSignsBackground,
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.25),
+                                color: Colors.black.withValues(alpha: 0.25),
                                 offset: const Offset(0, 4),
                                 blurRadius: 4,
                               ),
@@ -351,10 +350,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             borderRadius: BorderRadius.circular(16),
                             color: _isSummaryLoading
                                 ? Colors.grey
-                                : AppColors.homeCardBackground,
+                                : (isDark
+                                    ? AppColorsDark.homeCardBackground
+                                    : AppColors.homeCardBackground),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.25),
+                                color: Colors.black.withValues(alpha: 0.25),
                                 offset: const Offset(0, 4),
                                 blurRadius: 4,
                               ),
@@ -415,7 +416,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(16),
-                          color: AppColors.homeTipBackground,
+                          color: isDark
+                              ? AppColorsDark.homeTipBackground
+                              : AppColors.homeTipBackground,
                         ),
                         child: Row(
                           children: [
@@ -429,7 +432,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               child: Text(
                                 l10n.drinkGlassOfWaterEveryMorning,
                                 style: TextStyle(
-                                  color: Colors.black,
+                                  color: isDark
+                                      ? AppColorsDark.textPrimary
+                                      : Colors.black,
                                   fontSize: 13,
                                   fontWeight: FontWeight.normal,
                                 ),
@@ -460,6 +465,8 @@ class _StepsCard extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final steps = ref.watch(stepsProvider);
     final stepsGoal = ref.watch(stepsGoalProvider);
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     // Format step count with commas
     final formattedSteps = NumberFormat('#,###').format(steps);
@@ -480,10 +487,12 @@ class _StepsCard extends ConsumerWidget {
       height: 100,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
-        color: AppColors.permissionCardBackground,
+        color: isDark
+            ? AppColorsDark.permissionCardBackground
+            : AppColors.permissionCardBackground,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.25),
+            color: Colors.black.withValues(alpha: 0.25),
             offset: const Offset(0, 4),
             blurRadius: 4,
           ),
@@ -520,7 +529,7 @@ class _StepsCard extends ConsumerWidget {
             Text(
               subtitle,
               style: TextStyle(
-                color: AppColors.languageButtonColor.withOpacity(0.7),
+                color: AppColors.languageButtonColor.withValues(alpha: 0.7),
                 fontSize: 10,
                 fontWeight: FontWeight.normal,
               ),
@@ -533,55 +542,261 @@ class _StepsCard extends ConsumerWidget {
   }
 }
 
-class _InsightCard extends StatelessWidget {
-  final String label;
-  final String value;
-  final IconData icon;
+/// Sleep tracking card with real data from health providers.
+class _SleepCard extends ConsumerWidget {
+  const _SleepCard();
 
-  const _InsightCard({
-    required this.label,
-    required this.value,
-    required this.icon,
-  });
+  void _showSleepInputDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => const SleepInputDialog(),
+    );
+  }
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 100,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        color: AppColors.permissionCardBackground,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.25),
-            offset: const Offset(0, 4),
-            blurRadius: 4,
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final sleepAsync = ref.watch(todaySleepProvider);
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    return GestureDetector(
+      onTap: () => _showSleepInputDialog(context),
+      child: Container(
+        height: 100,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          color: isDark
+              ? AppColorsDark.permissionCardBackground
+              : AppColors.permissionCardBackground,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.25),
+              offset: const Offset(0, 4),
+              blurRadius: 4,
+            ),
+          ],
+        ),
+        child: sleepAsync.when(
+          data: (entry) {
+            final hours = entry?.hours ?? 0.0;
+            final displayValue = hours > 0
+                ? '${hours.toStringAsFixed(1)}h'
+                : l10n.tapToSyncSleep;
+
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  l10n.sleep,
+                  style: TextStyle(
+                    color: AppColors.languageButtonColor,
+                    fontSize: 15,
+                    fontWeight: FontWeight.normal,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Icon(
+                  Icons.bedtime,
+                  color: AppColors.languageButtonColor,
+                  size: 32,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  displayValue,
+                  style: TextStyle(
+                    color: hours > 0
+                        ? AppColors.languageButtonColor
+                        : AppColors.languageButtonColor.withValues(alpha: 0.6),
+                    fontSize: hours > 0 ? 13 : 11,
+                    fontWeight: FontWeight.normal,
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            );
+          },
+          loading: () => Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                l10n.sleep,
+                style: TextStyle(
+                  color: AppColors.languageButtonColor,
+                  fontSize: 15,
+                  fontWeight: FontWeight.normal,
+                ),
+              ),
+              const SizedBox(height: 8),
+              const SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+            ],
           ),
-        ],
+          error: (error, stack) => Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                l10n.sleep,
+                style: TextStyle(
+                  color: AppColors.languageButtonColor,
+                  fontSize: 15,
+                  fontWeight: FontWeight.normal,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Icon(
+                Icons.bedtime,
+                color: AppColors.languageButtonColor.withValues(alpha: 0.5),
+                size: 32,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                l10n.tapToAddData,
+                style: TextStyle(
+                  color: AppColors.languageButtonColor.withValues(alpha: 0.6),
+                  fontSize: 11,
+                  fontWeight: FontWeight.normal,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              color: AppColors.languageButtonColor,
-              fontSize: 15,
-              fontWeight: FontWeight.normal,
+    );
+  }
+}
+
+/// Water intake tracking card with real data from health providers.
+class _WaterCard extends ConsumerWidget {
+  const _WaterCard();
+
+  void _showWaterInputDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => const WaterInputDialog(),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final waterAsync = ref.watch(todayWaterProvider);
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    return GestureDetector(
+      onTap: () => _showWaterInputDialog(context),
+      child: Container(
+        height: 100,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          color: isDark
+              ? AppColorsDark.permissionCardBackground
+              : AppColors.permissionCardBackground,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.25),
+              offset: const Offset(0, 4),
+              blurRadius: 4,
             ),
+          ],
+        ),
+        child: waterAsync.when(
+          data: (entry) {
+            final liters = entry?.waterLiters ?? 0.0;
+            final displayValue = liters > 0
+                ? '${liters.toStringAsFixed(1)}L'
+                : l10n.tapToAddData;
+
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  l10n.water,
+                  style: TextStyle(
+                    color: AppColors.languageButtonColor,
+                    fontSize: 15,
+                    fontWeight: FontWeight.normal,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Icon(
+                  Icons.water_drop,
+                  color: AppColors.languageButtonColor,
+                  size: 32,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  displayValue,
+                  style: TextStyle(
+                    color: liters > 0
+                        ? AppColors.languageButtonColor
+                        : AppColors.languageButtonColor.withValues(alpha: 0.6),
+                    fontSize: liters > 0 ? 13 : 11,
+                    fontWeight: FontWeight.normal,
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            );
+          },
+          loading: () => Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                l10n.water,
+                style: TextStyle(
+                  color: AppColors.languageButtonColor,
+                  fontSize: 15,
+                  fontWeight: FontWeight.normal,
+                ),
+              ),
+              const SizedBox(height: 8),
+              const SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+            ],
           ),
-          const SizedBox(height: 8),
-          Icon(icon, color: AppColors.languageButtonColor, size: 32),
-          const SizedBox(height: 4),
-          Text(
-            value,
-            style: TextStyle(
-              color: AppColors.languageButtonColor,
-              fontSize: 13,
-              fontWeight: FontWeight.normal,
-            ),
+          error: (error, stack) => Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                l10n.water,
+                style: TextStyle(
+                  color: AppColors.languageButtonColor,
+                  fontSize: 15,
+                  fontWeight: FontWeight.normal,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Icon(
+                Icons.water_drop,
+                color: AppColors.languageButtonColor.withValues(alpha: 0.5),
+                size: 32,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                l10n.tapToAddData,
+                style: TextStyle(
+                  color: AppColors.languageButtonColor.withValues(alpha: 0.6),
+                  fontSize: 11,
+                  fontWeight: FontWeight.normal,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

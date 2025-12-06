@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_colors_dark.dart';
 import '../../../../l10n/app_localizations.dart';
 
 class SubscriptionBanner extends StatelessWidget {
@@ -9,15 +10,21 @@ class SubscriptionBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
     return InkWell(
       onTap: () => context.go('/subscription'),
       borderRadius: BorderRadius.circular(16),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDark ? AppColorsDark.cardBackground : Colors.white,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppColors.borderColor, width: 1),
+          border: Border.all(
+            color: isDark ? AppColorsDark.borderColor : AppColors.borderColor,
+            width: 1,
+          ),
         ),
         child: Row(
           children: [
@@ -26,7 +33,7 @@ class SubscriptionBanner extends StatelessWidget {
               width: 36,
               height: 36,
               decoration: BoxDecoration(
-                color: AppColors.languageButtonColor.withOpacity(0.1),
+                color: AppColors.languageButtonColor.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -44,7 +51,9 @@ class SubscriptionBanner extends StatelessWidget {
                   Text(
                     l10n.upgradeYourMaraAccount,
                     style: TextStyle(
-                      color: AppColors.textPrimary,
+                      color: isDark
+                          ? AppColorsDark.textPrimary
+                          : AppColors.textPrimary,
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
                     ),
@@ -53,7 +62,9 @@ class SubscriptionBanner extends StatelessWidget {
                   Text(
                     l10n.upgradeSubtitle,
                     style: TextStyle(
-                      color: AppColors.textSecondary,
+                      color: isDark
+                          ? AppColorsDark.textSecondary
+                          : AppColors.textSecondary,
                       fontSize: 13,
                     ),
                   ),

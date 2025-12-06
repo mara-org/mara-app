@@ -32,6 +32,7 @@ import '../../features/settings/presentation/delete_account/delete_account_verif
 import '../../features/settings/presentation/logout_confirmation_screen.dart';
 import '../../features/settings/presentation/privacy_policy_screen.dart';
 import '../../features/settings/presentation/settings_screen.dart';
+import '../../features/settings/presentation/health_goals_settings_screen.dart';
 import '../../features/settings/presentation/terms_of_service_screen.dart';
 import '../../features/setup/presentation/blood_type_screen.dart';
 import '../../features/setup/presentation/dob_input_screen.dart';
@@ -229,6 +230,10 @@ class AppRouter {
       GoRoute(
         path: '/settings',
         builder: (context, state) => const SettingsScreen(),
+      ),
+      GoRoute(
+        path: '/settings/health-goals',
+        builder: (context, state) => const HealthGoalsSettingsScreen(),
       ),
       GoRoute(
         path: '/privacy-policy',

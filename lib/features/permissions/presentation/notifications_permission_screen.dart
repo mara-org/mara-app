@@ -5,6 +5,8 @@ import '../../../core/widgets/primary_button.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/platform_utils.dart';
 import '../../../core/providers/permissions_provider.dart';
+import '../../../core/services/native_permission_service.dart';
+import 'widgets/capability_activation_dialog.dart';
 import '../../../l10n/app_localizations.dart';
 
 class NotificationsPermissionScreen extends ConsumerWidget {
@@ -89,11 +91,30 @@ class NotificationsPermissionScreen extends ConsumerWidget {
                           // Allow button
                           PrimaryButton(
                             text: l10n.allowNotifications,
-                            onPressed: () {
-                              ref
-                                  .read(permissionsProvider.notifier)
-                                  .setNotifications(true);
-                              context.push('/health-data-permission');
+                            onPressed: () async {
+                              // Request native notification permission
+                              final permissionService = NativePermissionService();
+                              final granted = await permissionService.requestNotificationPermission();
+                              
+                              // Update provider state
+                              ref.read(permissionsProvider.notifier).setNotifications(granted);
+                              
+                              // Show capability activation dialog if granted
+                              if (granted && context.mounted) {
+                                await CapabilityActivationDialog.show(
+                                  context: context,
+                                  title: l10n.notificationsActivated,
+                                  message: l10n.notificationsActivatedMessage,
+                                  onContinue: () {
+                                    if (context.mounted) {
+                                      context.push('/health-data-permission');
+                                    }
+                                  },
+                                );
+                              } else if (context.mounted) {
+                                // Navigate to next screen if not granted
+                                context.push('/health-data-permission');
+                              }
                             },
                           ),
                           const SizedBox(height: 16),

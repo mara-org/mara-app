@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../core/providers/language_provider.dart';
 import '../../../core/providers/settings_provider.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_colors_dark.dart';
 import '../../../core/utils/platform_utils.dart';
 import '../../../core/widgets/mara_logo.dart';
 
@@ -16,9 +17,13 @@ class SettingsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final settings = ref.watch(settingsProvider);
     final language = ref.watch(languageProvider);
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: isDark
+          ? AppColorsDark.backgroundLight
+          : AppColors.backgroundLight,
       appBar: AppBar(
         title: Row(
           children: [
@@ -66,6 +71,62 @@ class SettingsScreen extends ConsumerWidget {
                   icon: Icons.language,
                   onTap: () {
                     _showLanguagePicker(context, ref);
+                  },
+                ),
+                const SizedBox(height: 12),
+                // Dark mode toggle
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: AppColors.borderColor, width: 1),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Dark Mode',
+                              style: TextStyle(
+                                color: AppColors.textPrimary,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Switch between light and dark themes',
+                              style: TextStyle(
+                                color: AppColors.textSecondary,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Switch(
+                        value: settings.themeMode == AppThemeMode.dark,
+                        onChanged: (value) {
+                          ref.read(settingsProvider.notifier).setThemeMode(
+                                value ? AppThemeMode.dark : AppThemeMode.light,
+                              );
+                        },
+                        activeColor: AppColors.languageButtonColor,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 12),
+                // Health Goals
+                _SettingsRow(
+                  title: 'Health Goals',
+                  subtitle: 'Set your daily health goals',
+                  icon: Icons.flag,
+                  onTap: () {
+                    context.push('/settings/health-goals');
                   },
                 ),
                 const SizedBox(height: 32),

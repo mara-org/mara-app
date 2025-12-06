@@ -34,6 +34,25 @@ dependencies:
   firebase_remote_config: ^5.0.0
   # Network - HTTP client with retry support
   dio: ^5.4.0
+  # Health data integration - Apple Health / Google Fit
+  health: ^13.1.4
+  # Charts for analytics dashboard
+  fl_chart: ^0.69.0
+  # Notifications
+  flutter_local_notifications: ^17.2.4
+  timezone: ^0.9.4
+  # Biometric authentication
+  local_auth: ^2.3.0
+  # Connectivity
+  connectivity_plus: ^6.1.2
+  # Data export
+  csv: ^6.0.0
+  # Screenshots for chart export
+  screenshot: ^2.3.0
+  # Quick actions / app shortcuts
+  quick_actions: ^1.1.0
+  # Native permissions
+  permission_handler: ^12.0.1
 
 dev_dependencies:
   flutter_test:

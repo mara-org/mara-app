@@ -1574,6 +1574,54 @@ abstract class AppLocalizations {
   /// **'Delete'**
   String get delete;
 
+  /// No description provided for @searchConversations.
+  ///
+  /// In en, this message translates to:
+  /// **'Search conversations...'**
+  String get searchConversations;
+
+  /// No description provided for @searchChatHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Search Chat History'**
+  String get searchChatHistory;
+
+  /// No description provided for @noResultsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No results found'**
+  String get noResultsFound;
+
+  /// No description provided for @exportConversation.
+  ///
+  /// In en, this message translates to:
+  /// **'Export Conversation'**
+  String get exportConversation;
+
+  /// No description provided for @exportAllConversations.
+  ///
+  /// In en, this message translates to:
+  /// **'Export All Conversations'**
+  String get exportAllConversations;
+
+  /// No description provided for @exporting.
+  ///
+  /// In en, this message translates to:
+  /// **'Exporting...'**
+  String get exporting;
+
+  /// No description provided for @exportSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Export successful'**
+  String get exportSuccess;
+
+  /// No description provided for @exportError.
+  ///
+  /// In en, this message translates to:
+  /// **'Export failed. Please try again.'**
+  String get exportError;
+
   /// No description provided for @profileRateAppTitle.
   ///
   /// In en, this message translates to:
@@ -1615,6 +1663,474 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Check out Mara – your smart health companion. Download it here: {link}'**
   String shareAppMessage(Object link);
+
+  /// No description provided for @noDataYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No data yet'**
+  String get noDataYet;
+
+  /// No description provided for @addSleep.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Sleep'**
+  String get addSleep;
+
+  /// No description provided for @addWater.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Water'**
+  String get addWater;
+
+  /// No description provided for @logSleepHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Log Sleep Hours'**
+  String get logSleepHours;
+
+  /// No description provided for @howManyHoursDidYouSleep.
+  ///
+  /// In en, this message translates to:
+  /// **'How many hours did you sleep?'**
+  String get howManyHoursDidYouSleep;
+
+  /// No description provided for @hours.
+  ///
+  /// In en, this message translates to:
+  /// **'hours'**
+  String get hours;
+
+  /// No description provided for @logWaterIntake.
+  ///
+  /// In en, this message translates to:
+  /// **'Log Water Intake'**
+  String get logWaterIntake;
+
+  /// No description provided for @howMuchWaterDidYouDrink.
+  ///
+  /// In en, this message translates to:
+  /// **'How much water did you drink today?'**
+  String get howMuchWaterDidYouDrink;
+
+  /// No description provided for @liters.
+  ///
+  /// In en, this message translates to:
+  /// **'liters'**
+  String get liters;
+
+  /// No description provided for @addGlass.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Glass'**
+  String get addGlass;
+
+  /// No description provided for @oneGlass.
+  ///
+  /// In en, this message translates to:
+  /// **'One glass (250ml)'**
+  String get oneGlass;
+
+  /// No description provided for @healthDataSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Health data saved successfully'**
+  String get healthDataSaved;
+
+  /// No description provided for @errorSavingHealthData.
+  ///
+  /// In en, this message translates to:
+  /// **'Error saving health data. Please try again.'**
+  String get errorSavingHealthData;
+
+  /// No description provided for @tapToAddData.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to add data'**
+  String get tapToAddData;
+
+  /// No description provided for @last7Days.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 7 Days'**
+  String get last7Days;
+
+  /// No description provided for @last30Days.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 30 Days'**
+  String get last30Days;
+
+  /// No description provided for @averageSteps.
+  ///
+  /// In en, this message translates to:
+  /// **'Average Steps'**
+  String get averageSteps;
+
+  /// No description provided for @averageSleep.
+  ///
+  /// In en, this message translates to:
+  /// **'Average Sleep'**
+  String get averageSleep;
+
+  /// No description provided for @averageWater.
+  ///
+  /// In en, this message translates to:
+  /// **'Average Water'**
+  String get averageWater;
+
+  /// No description provided for @stepsTrend.
+  ///
+  /// In en, this message translates to:
+  /// **'Steps Trend'**
+  String get stepsTrend;
+
+  /// No description provided for @sleepTrend.
+  ///
+  /// In en, this message translates to:
+  /// **'Sleep Trend'**
+  String get sleepTrend;
+
+  /// No description provided for @waterTrend.
+  ///
+  /// In en, this message translates to:
+  /// **'Water Trend'**
+  String get waterTrend;
+
+  /// No description provided for @noHealthDataAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No health data available yet. Start tracking to see your analytics here.'**
+  String get noHealthDataAvailable;
+
+  /// No description provided for @hoursAbbreviation.
+  ///
+  /// In en, this message translates to:
+  /// **'h'**
+  String get hoursAbbreviation;
+
+  /// No description provided for @litersAbbreviation.
+  ///
+  /// In en, this message translates to:
+  /// **'L'**
+  String get litersAbbreviation;
+
+  /// No description provided for @healthGoals.
+  ///
+  /// In en, this message translates to:
+  /// **'Health Goals'**
+  String get healthGoals;
+
+  /// No description provided for @setDailyGoals.
+  ///
+  /// In en, this message translates to:
+  /// **'Set Daily Goals'**
+  String get setDailyGoals;
+
+  /// No description provided for @saveGoals.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Goals'**
+  String get saveGoals;
+
+  /// No description provided for @dailyStepsGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Steps Goal'**
+  String get dailyStepsGoal;
+
+  /// No description provided for @dailySleepGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Sleep Goal (hours)'**
+  String get dailySleepGoal;
+
+  /// No description provided for @dailyWaterGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Water Goal (liters)'**
+  String get dailyWaterGoal;
+
+  /// No description provided for @goalsSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Goals saved successfully'**
+  String get goalsSaved;
+
+  /// No description provided for @goalsSavedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Goals saved successfully'**
+  String get goalsSavedSuccessfully;
+
+  /// No description provided for @errorSavingGoals.
+  ///
+  /// In en, this message translates to:
+  /// **'Error saving goals. Please try again.'**
+  String get errorSavingGoals;
+
+  /// No description provided for @progress.
+  ///
+  /// In en, this message translates to:
+  /// **'Progress'**
+  String get progress;
+
+  /// No description provided for @ofGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'of {goal}'**
+  String ofGoal(String goal);
+
+  /// No description provided for @goalMet.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal met! 🎉'**
+  String get goalMet;
+
+  /// No description provided for @editGoals.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Goals'**
+  String get editGoals;
+
+  /// No description provided for @morningReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Morning Reminder'**
+  String get morningReminder;
+
+  /// No description provided for @afternoonReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Afternoon Reminder'**
+  String get afternoonReminder;
+
+  /// No description provided for @eveningReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Evening Reminder'**
+  String get eveningReminder;
+
+  /// No description provided for @reminderTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder Time'**
+  String get reminderTime;
+
+  /// No description provided for @reminderEnabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder Enabled'**
+  String get reminderEnabled;
+
+  /// No description provided for @morningReminderMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t forget your steps goal today! 🚶'**
+  String get morningReminderMessage;
+
+  /// No description provided for @afternoonReminderMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Time to hydrate! 💧'**
+  String get afternoonReminderMessage;
+
+  /// No description provided for @eveningReminderMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Log your sleep and water for today 📊'**
+  String get eveningReminderMessage;
+
+  /// No description provided for @darkMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark Mode'**
+  String get darkMode;
+
+  /// No description provided for @darkModeDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch between light and dark themes'**
+  String get darkModeDescription;
+
+  /// No description provided for @lightMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Light Mode'**
+  String get lightMode;
+
+  /// No description provided for @systemTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'System Theme'**
+  String get systemTheme;
+
+  /// No description provided for @stepXOfY.
+  ///
+  /// In en, this message translates to:
+  /// **'Step {current} of {total}'**
+  String stepXOfY(int current, int total);
+
+  /// No description provided for @quickActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Actions'**
+  String get quickActions;
+
+  /// No description provided for @howAreMyStepsToday.
+  ///
+  /// In en, this message translates to:
+  /// **'How are my steps today?'**
+  String get howAreMyStepsToday;
+
+  /// No description provided for @howWasMySleepThisWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'How was my sleep this week?'**
+  String get howWasMySleepThisWeek;
+
+  /// No description provided for @howMuchWaterDidIDrinkToday.
+  ///
+  /// In en, this message translates to:
+  /// **'How much water did I drink today?'**
+  String get howMuchWaterDidIDrinkToday;
+
+  /// No description provided for @showMeMyHealthDashboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Show me my health dashboard'**
+  String get showMeMyHealthDashboard;
+
+  /// No description provided for @appleHealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Apple Health'**
+  String get appleHealth;
+
+  /// No description provided for @googleFit.
+  ///
+  /// In en, this message translates to:
+  /// **'Google Fit'**
+  String get googleFit;
+
+  /// No description provided for @connected.
+  ///
+  /// In en, this message translates to:
+  /// **'Connected'**
+  String get connected;
+
+  /// No description provided for @notConnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Not connected'**
+  String get notConnected;
+
+  /// No description provided for @checking.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking...'**
+  String get checking;
+
+  /// No description provided for @unknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown'**
+  String get unknown;
+
+  /// No description provided for @manageInSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage in Settings'**
+  String get manageInSettings;
+
+  /// No description provided for @connect.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect'**
+  String get connect;
+
+  /// No description provided for @healthPermissionsGranted.
+  ///
+  /// In en, this message translates to:
+  /// **'Health permissions granted successfully'**
+  String get healthPermissionsGranted;
+
+  /// No description provided for @healthPermissionsNotGranted.
+  ///
+  /// In en, this message translates to:
+  /// **'Health permissions were not granted. You can enable them in Settings.'**
+  String get healthPermissionsNotGranted;
+
+  /// No description provided for @errorRequestingPermissions.
+  ///
+  /// In en, this message translates to:
+  /// **'Error requesting permissions. Please try again.'**
+  String get errorRequestingPermissions;
+
+  /// No description provided for @syncSleepFromDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync Sleep from Device'**
+  String get syncSleepFromDevice;
+
+  /// No description provided for @sleepDataFromDeviceOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Sleep data can only be synced from your device\'s health app.'**
+  String get sleepDataFromDeviceOnly;
+
+  /// No description provided for @sleepDataSyncOnlyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Sleep data is automatically collected from Apple Health or Google Fit. Tap \'Sync from Device\' to update your sleep data.'**
+  String get sleepDataSyncOnlyMessage;
+
+  /// No description provided for @tapToSyncSleep.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to sync from device'**
+  String get tapToSyncSleep;
+
+  /// No description provided for @noSleepDataAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No sleep data available from device. Make sure you have sleep tracking enabled.'**
+  String get noSleepDataAvailable;
+
+  /// No description provided for @syncing.
+  ///
+  /// In en, this message translates to:
+  /// **'Syncing...'**
+  String get syncing;
+
+  /// No description provided for @syncFromDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync from Device'**
+  String get syncFromDevice;
+
+  /// No description provided for @notificationsActivated.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications Activated'**
+  String get notificationsActivated;
+
+  /// No description provided for @notificationsActivatedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Push notifications are now enabled. You\'ll receive health reminders and updates.'**
+  String get notificationsActivatedMessage;
+
+  /// No description provided for @healthKitActivated.
+  ///
+  /// In en, this message translates to:
+  /// **'HealthKit Activated'**
+  String get healthKitActivated;
+
+  /// No description provided for @healthKitActivatedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'HealthKit is now connected. Your health data will sync automatically from your device.'**
+  String get healthKitActivatedMessage;
 }
 
 class _AppLocalizationsDelegate

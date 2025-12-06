@@ -5,6 +5,7 @@ import '../../../core/widgets/primary_button.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/platform_utils.dart';
 import '../../../core/providers/permissions_provider.dart';
+import '../../../core/services/native_permission_service.dart';
 import '../../../l10n/app_localizations.dart';
 
 class CameraPermissionScreen extends ConsumerWidget {
@@ -75,11 +76,18 @@ class CameraPermissionScreen extends ConsumerWidget {
                         // Allow button
                         PrimaryButton(
                           text: l10n.allow,
-                          onPressed: () {
-                            ref
-                                .read(permissionsProvider.notifier)
-                                .setCamera(true);
-                            context.push('/microphone-permission');
+                          onPressed: () async {
+                            // Request native camera permission
+                            final permissionService = NativePermissionService();
+                            final granted = await permissionService.requestCameraPermission();
+                            
+                            // Update provider state
+                            ref.read(permissionsProvider.notifier).setCamera(granted);
+                            
+                            // Navigate to next screen
+                            if (context.mounted) {
+                              context.push('/microphone-permission');
+                            }
                           },
                         ),
                         const SizedBox(height: 16),

@@ -800,6 +800,30 @@ class AppLocalizationsAr extends AppLocalizations {
   String get delete => 'حذف';
 
   @override
+  String get searchConversations => 'بحث في المحادثات...';
+
+  @override
+  String get searchChatHistory => 'البحث في سجل المحادثات';
+
+  @override
+  String get noResultsFound => 'لم يتم العثور على نتائج';
+
+  @override
+  String get exportConversation => 'تصدير المحادثة';
+
+  @override
+  String get exportAllConversations => 'تصدير جميع المحادثات';
+
+  @override
+  String get exporting => 'جاري التصدير...';
+
+  @override
+  String get exportSuccess => 'تم التصدير بنجاح';
+
+  @override
+  String get exportError => 'فشل التصدير. يرجى المحاولة مرة أخرى.';
+
+  @override
   String get profileRateAppTitle => 'قيّم تطبيق مرا';
 
   @override
@@ -824,4 +848,251 @@ class AppLocalizationsAr extends AppLocalizations {
   String shareAppMessage(Object link) {
     return 'جرّب تطبيق مرا، رفيقك الذكي للصحة. لتحميله: $link';
   }
+
+  @override
+  String get noDataYet => 'لا توجد بيانات بعد';
+
+  @override
+  String get addSleep => 'إضافة النوم';
+
+  @override
+  String get addWater => 'إضافة الماء';
+
+  @override
+  String get logSleepHours => 'تسجيل ساعات النوم';
+
+  @override
+  String get howManyHoursDidYouSleep => 'كم ساعة نمت؟';
+
+  @override
+  String get hours => 'ساعات';
+
+  @override
+  String get logWaterIntake => 'تسجيل استهلاك الماء';
+
+  @override
+  String get howMuchWaterDidYouDrink => 'كم شربت من الماء اليوم؟';
+
+  @override
+  String get liters => 'لتر';
+
+  @override
+  String get addGlass => 'إضافة كوب';
+
+  @override
+  String get oneGlass => 'كوب واحد (250 مل)';
+
+  @override
+  String get healthDataSaved => 'تم حفظ البيانات الصحية بنجاح';
+
+  @override
+  String get errorSavingHealthData =>
+      'خطأ في حفظ البيانات الصحية. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get tapToAddData => 'اضغط لإضافة البيانات';
+
+  @override
+  String get last7Days => 'آخر 7 أيام';
+
+  @override
+  String get last30Days => 'آخر 30 يومًا';
+
+  @override
+  String get averageSteps => 'متوسط الخطوات';
+
+  @override
+  String get averageSleep => 'متوسط النوم';
+
+  @override
+  String get averageWater => 'متوسط الماء';
+
+  @override
+  String get stepsTrend => 'اتجاه الخطوات';
+
+  @override
+  String get sleepTrend => 'اتجاه النوم';
+
+  @override
+  String get waterTrend => 'اتجاه الماء';
+
+  @override
+  String get noHealthDataAvailable =>
+      'لا توجد بيانات صحية متاحة بعد. ابدأ التتبع لرؤية التحليلات هنا.';
+
+  @override
+  String get hoursAbbreviation => 'س';
+
+  @override
+  String get litersAbbreviation => 'ل';
+
+  @override
+  String get healthGoals => 'الأهداف الصحية';
+
+  @override
+  String get setDailyGoals => 'تعيين الأهداف اليومية';
+
+  @override
+  String get saveGoals => 'حفظ الأهداف';
+
+  @override
+  String get dailyStepsGoal => 'هدف الخطوات اليومي';
+
+  @override
+  String get dailySleepGoal => 'هدف النوم اليومي (ساعات)';
+
+  @override
+  String get dailyWaterGoal => 'هدف الماء اليومي (لتر)';
+
+  @override
+  String get goalsSaved => 'تم حفظ الأهداف بنجاح';
+
+  @override
+  String get goalsSavedSuccessfully => 'Goals saved successfully';
+
+  @override
+  String get errorSavingGoals => 'خطأ في حفظ الأهداف. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get progress => 'التقدم';
+
+  @override
+  String ofGoal(String goal) {
+    return 'من $goal';
+  }
+
+  @override
+  String get goalMet => 'تم تحقيق الهدف! 🎉';
+
+  @override
+  String get editGoals => 'تعديل الأهداف';
+
+  @override
+  String get morningReminder => 'تذكير الصباح';
+
+  @override
+  String get afternoonReminder => 'تذكير بعد الظهر';
+
+  @override
+  String get eveningReminder => 'تذكير المساء';
+
+  @override
+  String get reminderTime => 'وقت التذكير';
+
+  @override
+  String get reminderEnabled => 'التذكير مفعّل';
+
+  @override
+  String get morningReminderMessage => 'لا تنس هدف الخطوات اليوم! 🚶';
+
+  @override
+  String get afternoonReminderMessage => 'حان وقت الترطيب! 💧';
+
+  @override
+  String get eveningReminderMessage => 'سجّل نومك وماءك لليوم 📊';
+
+  @override
+  String get darkMode => 'الوضع الداكن';
+
+  @override
+  String get darkModeDescription => 'التبديل بين الوضع الفاتح والداكن';
+
+  @override
+  String get lightMode => 'الوضع الفاتح';
+
+  @override
+  String get systemTheme => 'موضوع النظام';
+
+  @override
+  String stepXOfY(int current, int total) {
+    return 'الخطوة $current من $total';
+  }
+
+  @override
+  String get quickActions => 'Quick Actions';
+
+  @override
+  String get howAreMyStepsToday => 'How are my steps today?';
+
+  @override
+  String get howWasMySleepThisWeek => 'How was my sleep this week?';
+
+  @override
+  String get howMuchWaterDidIDrinkToday => 'How much water did I drink today?';
+
+  @override
+  String get showMeMyHealthDashboard => 'Show me my health dashboard';
+
+  @override
+  String get appleHealth => 'صحة Apple';
+
+  @override
+  String get googleFit => 'Google Fit';
+
+  @override
+  String get connected => 'متصل';
+
+  @override
+  String get notConnected => 'غير متصل';
+
+  @override
+  String get checking => 'جاري التحقق...';
+
+  @override
+  String get unknown => 'غير معروف';
+
+  @override
+  String get manageInSettings => 'إدارة في الإعدادات';
+
+  @override
+  String get connect => 'اتصال';
+
+  @override
+  String get healthPermissionsGranted => 'تم منح أذونات الصحة بنجاح';
+
+  @override
+  String get healthPermissionsNotGranted =>
+      'لم يتم منح أذونات الصحة. يمكنك تمكينها في الإعدادات.';
+
+  @override
+  String get errorRequestingPermissions =>
+      'خطأ في طلب الأذونات. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get syncSleepFromDevice => 'مزامنة النوم من الجهاز';
+
+  @override
+  String get sleepDataFromDeviceOnly =>
+      'يمكن مزامنة بيانات النوم فقط من تطبيق الصحة في جهازك.';
+
+  @override
+  String get sleepDataSyncOnlyMessage =>
+      'يتم جمع بيانات النوم تلقائيًا من Apple Health أو Google Fit. اضغط على \'مزامنة من الجهاز\' لتحديث بيانات النوم.';
+
+  @override
+  String get tapToSyncSleep => 'اضغط للمزامنة من الجهاز';
+
+  @override
+  String get noSleepDataAvailable =>
+      'لا توجد بيانات نوم متاحة من الجهاز. تأكد من تمكين تتبع النوم.';
+
+  @override
+  String get syncing => 'جاري المزامنة...';
+
+  @override
+  String get syncFromDevice => 'مزامنة من الجهاز';
+
+  @override
+  String get notificationsActivated => 'تم تفعيل الإشعارات';
+
+  @override
+  String get notificationsActivatedMessage =>
+      'تم تمكين الإشعارات الفورية الآن. ستتلقى تذكيرات صحية وتحديثات.';
+
+  @override
+  String get healthKitActivated => 'تم تفعيل HealthKit';
+
+  @override
+  String get healthKitActivatedMessage =>
+      'تم الاتصال بـ HealthKit الآن. سوف تتم مزامنة بياناتك الصحية تلقائيًا من جهازك.';
 }

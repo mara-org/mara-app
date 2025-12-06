@@ -1,3 +1,20 @@
+## [1.1.0+4] - 2025-12-05
+
+### Added
+- feat(health): comprehensive health tracking system with analytics dashboard
+  - Daily health tracking: steps, sleep duration, water intake
+  - Interactive analytics dashboard with charts (last 7/30 days views)
+  - Health data models with validation and JSON serialization
+  - Local storage for health entries with history tracking
+  - Health Data Service abstraction for platform integration (HealthKit/Google Fit)
+  - Input dialogs for logging sleep and water intake
+  - Chart widgets for steps, sleep, and water trends using fl_chart
+  - Comprehensive unit and widget tests for health tracking
+  - Full localization support (English/Arabic) for all health features
+  - Documentation: HEALTH_TRACKING.md with architecture and setup guides
+- feat(deps): add health package (^13.1.4) for HealthKit/Google Fit integration
+- feat(deps): add fl_chart package (^0.69.0) for analytics visualization
+
 ## [1.1.0+3] - 2025-12-05
 
 ### Added

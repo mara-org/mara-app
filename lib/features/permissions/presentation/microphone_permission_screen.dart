@@ -5,6 +5,7 @@ import '../../../core/widgets/primary_button.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/platform_utils.dart';
 import '../../../core/providers/permissions_provider.dart';
+import '../../../core/services/native_permission_service.dart';
 import '../../../l10n/app_localizations.dart';
 
 class MicrophonePermissionScreen extends ConsumerWidget {
@@ -89,11 +90,18 @@ class MicrophonePermissionScreen extends ConsumerWidget {
                           // Allow button
                           PrimaryButton(
                             text: l10n.allow,
-                            onPressed: () {
-                              ref
-                                  .read(permissionsProvider.notifier)
-                                  .setMicrophone(true);
-                              context.push('/notifications-permission');
+                            onPressed: () async {
+                              // Request native microphone permission
+                              final permissionService = NativePermissionService();
+                              final granted = await permissionService.requestMicrophonePermission();
+                              
+                              // Update provider state
+                              ref.read(permissionsProvider.notifier).setMicrophone(granted);
+                              
+                              // Navigate to next screen
+                              if (context.mounted) {
+                                context.push('/notifications-permission');
+                              }
                             },
                           ),
                           const SizedBox(height: 16),

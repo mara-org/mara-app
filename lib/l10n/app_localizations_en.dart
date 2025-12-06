@@ -807,6 +807,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get delete => 'Delete';
 
   @override
+  String get searchConversations => 'Search conversations...';
+
+  @override
+  String get searchChatHistory => 'Search Chat History';
+
+  @override
+  String get noResultsFound => 'No results found';
+
+  @override
+  String get exportConversation => 'Export Conversation';
+
+  @override
+  String get exportAllConversations => 'Export All Conversations';
+
+  @override
+  String get exporting => 'Exporting...';
+
+  @override
+  String get exportSuccess => 'Export successful';
+
+  @override
+  String get exportError => 'Export failed. Please try again.';
+
+  @override
   String get profileRateAppTitle => 'Rate Mara App';
 
   @override
@@ -831,4 +855,253 @@ class AppLocalizationsEn extends AppLocalizations {
   String shareAppMessage(Object link) {
     return 'Check out Mara – your smart health companion. Download it here: $link';
   }
+
+  @override
+  String get noDataYet => 'No data yet';
+
+  @override
+  String get addSleep => 'Add Sleep';
+
+  @override
+  String get addWater => 'Add Water';
+
+  @override
+  String get logSleepHours => 'Log Sleep Hours';
+
+  @override
+  String get howManyHoursDidYouSleep => 'How many hours did you sleep?';
+
+  @override
+  String get hours => 'hours';
+
+  @override
+  String get logWaterIntake => 'Log Water Intake';
+
+  @override
+  String get howMuchWaterDidYouDrink => 'How much water did you drink today?';
+
+  @override
+  String get liters => 'liters';
+
+  @override
+  String get addGlass => 'Add Glass';
+
+  @override
+  String get oneGlass => 'One glass (250ml)';
+
+  @override
+  String get healthDataSaved => 'Health data saved successfully';
+
+  @override
+  String get errorSavingHealthData =>
+      'Error saving health data. Please try again.';
+
+  @override
+  String get tapToAddData => 'Tap to add data';
+
+  @override
+  String get last7Days => 'Last 7 Days';
+
+  @override
+  String get last30Days => 'Last 30 Days';
+
+  @override
+  String get averageSteps => 'Average Steps';
+
+  @override
+  String get averageSleep => 'Average Sleep';
+
+  @override
+  String get averageWater => 'Average Water';
+
+  @override
+  String get stepsTrend => 'Steps Trend';
+
+  @override
+  String get sleepTrend => 'Sleep Trend';
+
+  @override
+  String get waterTrend => 'Water Trend';
+
+  @override
+  String get noHealthDataAvailable =>
+      'No health data available yet. Start tracking to see your analytics here.';
+
+  @override
+  String get hoursAbbreviation => 'h';
+
+  @override
+  String get litersAbbreviation => 'L';
+
+  @override
+  String get healthGoals => 'Health Goals';
+
+  @override
+  String get setDailyGoals => 'Set Daily Goals';
+
+  @override
+  String get saveGoals => 'Save Goals';
+
+  @override
+  String get dailyStepsGoal => 'Daily Steps Goal';
+
+  @override
+  String get dailySleepGoal => 'Daily Sleep Goal (hours)';
+
+  @override
+  String get dailyWaterGoal => 'Daily Water Goal (liters)';
+
+  @override
+  String get goalsSaved => 'Goals saved successfully';
+
+  @override
+  String get goalsSavedSuccessfully => 'Goals saved successfully';
+
+  @override
+  String get errorSavingGoals => 'Error saving goals. Please try again.';
+
+  @override
+  String get progress => 'Progress';
+
+  @override
+  String ofGoal(String goal) {
+    return 'of $goal';
+  }
+
+  @override
+  String get goalMet => 'Goal met! 🎉';
+
+  @override
+  String get editGoals => 'Edit Goals';
+
+  @override
+  String get morningReminder => 'Morning Reminder';
+
+  @override
+  String get afternoonReminder => 'Afternoon Reminder';
+
+  @override
+  String get eveningReminder => 'Evening Reminder';
+
+  @override
+  String get reminderTime => 'Reminder Time';
+
+  @override
+  String get reminderEnabled => 'Reminder Enabled';
+
+  @override
+  String get morningReminderMessage =>
+      'Don\'t forget your steps goal today! 🚶';
+
+  @override
+  String get afternoonReminderMessage => 'Time to hydrate! 💧';
+
+  @override
+  String get eveningReminderMessage => 'Log your sleep and water for today 📊';
+
+  @override
+  String get darkMode => 'Dark Mode';
+
+  @override
+  String get darkModeDescription => 'Switch between light and dark themes';
+
+  @override
+  String get lightMode => 'Light Mode';
+
+  @override
+  String get systemTheme => 'System Theme';
+
+  @override
+  String stepXOfY(int current, int total) {
+    return 'Step $current of $total';
+  }
+
+  @override
+  String get quickActions => 'Quick Actions';
+
+  @override
+  String get howAreMyStepsToday => 'How are my steps today?';
+
+  @override
+  String get howWasMySleepThisWeek => 'How was my sleep this week?';
+
+  @override
+  String get howMuchWaterDidIDrinkToday => 'How much water did I drink today?';
+
+  @override
+  String get showMeMyHealthDashboard => 'Show me my health dashboard';
+
+  @override
+  String get appleHealth => 'Apple Health';
+
+  @override
+  String get googleFit => 'Google Fit';
+
+  @override
+  String get connected => 'Connected';
+
+  @override
+  String get notConnected => 'Not connected';
+
+  @override
+  String get checking => 'Checking...';
+
+  @override
+  String get unknown => 'Unknown';
+
+  @override
+  String get manageInSettings => 'Manage in Settings';
+
+  @override
+  String get connect => 'Connect';
+
+  @override
+  String get healthPermissionsGranted =>
+      'Health permissions granted successfully';
+
+  @override
+  String get healthPermissionsNotGranted =>
+      'Health permissions were not granted. You can enable them in Settings.';
+
+  @override
+  String get errorRequestingPermissions =>
+      'Error requesting permissions. Please try again.';
+
+  @override
+  String get syncSleepFromDevice => 'Sync Sleep from Device';
+
+  @override
+  String get sleepDataFromDeviceOnly =>
+      'Sleep data can only be synced from your device\'s health app.';
+
+  @override
+  String get sleepDataSyncOnlyMessage =>
+      'Sleep data is automatically collected from Apple Health or Google Fit. Tap \'Sync from Device\' to update your sleep data.';
+
+  @override
+  String get tapToSyncSleep => 'Tap to sync from device';
+
+  @override
+  String get noSleepDataAvailable =>
+      'No sleep data available from device. Make sure you have sleep tracking enabled.';
+
+  @override
+  String get syncing => 'Syncing...';
+
+  @override
+  String get syncFromDevice => 'Sync from Device';
+
+  @override
+  String get notificationsActivated => 'Notifications Activated';
+
+  @override
+  String get notificationsActivatedMessage =>
+      'Push notifications are now enabled. You\'ll receive health reminders and updates.';
+
+  @override
+  String get healthKitActivated => 'HealthKit Activated';
+
+  @override
+  String get healthKitActivatedMessage =>
+      'HealthKit is now connected. Your health data will sync automatically from your device.';
 }

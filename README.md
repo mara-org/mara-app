@@ -124,8 +124,9 @@
 ### Core Functionality
 - **AI Health Assistant**: Chat with Mara to get instant, accurate medical insights powered by trusted health data
 - **Personalized Insights**: Get health recommendations tailored to your daily patterns and goals
-- **Health Tracking**: Monitor vital signs, mood, sleep, and hydration
-- **Analytics Dashboard**: View detailed analytics about your health data
+- **Health Tracking**: Track daily steps, sleep duration, and water intake with manual entry and device sync
+- **Analytics Dashboard**: Interactive charts and trends for health metrics (last 7/30 days) with averages
+- **Health Data Integration**: Sync with HealthKit (iOS) and Google Fit (Android) for automatic data collection
 - **Multi-language Support**: Understands 100+ languages for natural conversation
 
 ### Key Screens
