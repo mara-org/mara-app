@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../core/widgets/mara_logo.dart';
-import '../../../core/widgets/primary_button.dart';
+
+import '../../../core/providers/permissions_provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/platform_utils.dart';
-import '../../../core/providers/permissions_provider.dart';
+import '../../../core/widgets/mara_logo.dart';
+import '../../../core/widgets/primary_button.dart';
 import '../../../l10n/app_localizations.dart';
 
 class PermissionsSummaryScreen extends ConsumerWidget {
@@ -56,16 +57,6 @@ class PermissionsSummaryScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: 40),
                 // Permission list
-                _PermissionItem(
-                  title: l10n.camera,
-                  isEnabled: permissions.camera,
-                ),
-                const SizedBox(height: 16),
-                _PermissionItem(
-                  title: l10n.microphone,
-                  isEnabled: permissions.microphone,
-                ),
-                const SizedBox(height: 16),
                 _PermissionItem(
                   title: l10n.notifications,
                   isEnabled: permissions.notifications,

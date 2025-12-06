@@ -81,8 +81,8 @@ class WelcomePersonalScreen extends ConsumerWidget {
                 PrimaryButton(
                   text: l10n.startSetup,
                   onPressed: () {
-                    // Navigate to first permission screen
-                    context.push('/camera-permission');
+                    // Navigate directly to notifications permission (camera and microphone removed)
+                    context.push('/notifications-permission');
                   },
                 ),
                 const SizedBox(height: 20),
