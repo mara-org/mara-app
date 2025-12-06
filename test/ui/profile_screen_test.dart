@@ -297,12 +297,18 @@ void main() {
         // Use the English localization directly for testing
         final l10n = AppLocalizationsEn();
         // Use find.byWidgetPredicate for more robust text finding
-        expect(find.byWidgetPredicate(
-          (widget) => widget is Text && widget.data == l10n.profileRateAppTitle,
-        ), findsOneWidget);
-        expect(find.byWidgetPredicate(
-          (widget) => widget is Text && widget.data == l10n.profileRateAppSubtitle,
-        ), findsOneWidget);
+        expect(
+            find.byWidgetPredicate(
+              (widget) =>
+                  widget is Text && widget.data == l10n.profileRateAppTitle,
+            ),
+            findsOneWidget);
+        expect(
+            find.byWidgetPredicate(
+              (widget) =>
+                  widget is Text && widget.data == l10n.profileRateAppSubtitle,
+            ),
+            findsOneWidget);
       }, (error, stack) {
         if (error is AssertionError &&
             error.toString().contains('Unable to load asset')) {
@@ -444,12 +450,18 @@ void main() {
         // Verify Share App menu item exists
         // Use the English localization directly for testing
         final l10n = AppLocalizationsEn();
-        expect(find.byWidgetPredicate(
-          (widget) => widget is Text && widget.data == l10n.profileShareAppTitle,
-        ), findsOneWidget);
-        expect(find.byWidgetPredicate(
-          (widget) => widget is Text && widget.data == l10n.profileShareAppSubtitle,
-        ), findsOneWidget);
+        expect(
+            find.byWidgetPredicate(
+              (widget) =>
+                  widget is Text && widget.data == l10n.profileShareAppTitle,
+            ),
+            findsOneWidget);
+        expect(
+            find.byWidgetPredicate(
+              (widget) =>
+                  widget is Text && widget.data == l10n.profileShareAppSubtitle,
+            ),
+            findsOneWidget);
       }, (error, stack) {
         if (error is AssertionError &&
             error.toString().contains('Unable to load asset')) {
@@ -515,7 +527,8 @@ void main() {
         // Find and tap the Share App menu item
         final l10n = AppLocalizationsEn();
         final shareAppFinder = find.byWidgetPredicate(
-          (widget) => widget is Text && widget.data == l10n.profileShareAppTitle,
+          (widget) =>
+              widget is Text && widget.data == l10n.profileShareAppTitle,
         );
         expect(shareAppFinder, findsOneWidget);
 
