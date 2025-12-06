@@ -9,7 +9,9 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mara_app/core/di/dependency_injection.dart';
+import 'package:mara_app/core/storage/local_cache.dart';
 import 'package:mara_app/core/providers/email_provider.dart';
 import 'package:mara_app/core/providers/subscription_provider.dart';
 import 'package:mara_app/core/providers/user_profile_provider.dart';
@@ -35,7 +37,11 @@ class TestAssetBundle extends CachingAssetBundle {
 
 void main() {
   // Suppress asset loading errors in tests
-  setUpAll(() {
+  setUpAll(() async {
+    // Initialize SharedPreferences with mock values
+    SharedPreferences.setMockInitialValues({});
+    await LocalCache.init();
+    
     // Suppress image loading errors for missing assets during tests
     FlutterError.onError = (FlutterErrorDetails details) {
       // Only suppress asset loading errors, let other errors through
