@@ -12,6 +12,8 @@ import 'package:mara_app/core/providers/health_tracking_providers.dart';
 import 'package:mara_app/core/providers/steps_provider.dart';
 import 'package:mara_app/core/providers/chat_topic_provider.dart';
 import 'package:mara_app/core/providers/user_profile_provider.dart';
+import 'package:mara_app/core/di/dependency_injection.dart';
+import 'package:mara_app/core/services/health_data_service.dart';
 import 'package:mara_app/features/home/presentation/home_screen.dart';
 import 'package:mara_app/l10n/app_localizations.dart';
 
@@ -29,14 +31,16 @@ void main() {
         ProviderScope(
           overrides: [
             // Override FutureProviders to return immediate values
+            todayStepsProvider.overrideWith((ref) => Future.value(null)),
             todaySleepProvider.overrideWith((ref) => Future.value(null)),
             todayWaterProvider.overrideWith((ref) => Future.value(null)),
             // Override StateProviders
-            stepsProvider.overrideWith((ref) => 0),
             stepsGoalProvider.overrideWith((ref) => 10000),
             lastConversationTopicProvider.overrideWith((ref) => null),
             // Override UserProfileProvider
             userProfileProvider.overrideWith((ref) => UserProfileNotifier()),
+            // Mock health data service
+            healthDataServiceProvider.overrideWith((ref) => HealthDataService()),
           ],
           child: const MaterialApp(
             localizationsDelegates: [

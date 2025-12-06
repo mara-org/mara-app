@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -28,6 +30,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   bool _isVitalSignsLoading = false;
   bool _isSummaryLoading = false;
 
+  Timer? _periodicSyncTimer;
+
   @override
   void initState() {
     super.initState();
@@ -41,14 +45,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   void dispose() {
-    // Clean up any timers if needed
+    // Cancel periodic sync timer
+    _periodicSyncTimer?.cancel();
+    _periodicSyncTimer = null;
     super.dispose();
   }
 
   /// Start periodic automatic syncing of health data
   void _startPeriodicSync() {
+    // Cancel existing timer if any
+    _periodicSyncTimer?.cancel();
     // Refresh every 5 minutes
-    Future.delayed(const Duration(minutes: 5), () {
+    _periodicSyncTimer = Timer(const Duration(minutes: 5), () {
       if (mounted) {
         _autoSyncHealthData();
         _startPeriodicSync(); // Schedule next sync
