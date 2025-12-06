@@ -102,7 +102,7 @@ class NotificationService implements INotificationService {
 
       // Request permissions for iOS - this will show native system dialog
       final iosImplementation =
-          await _notificationsPlugin.resolvePlatformSpecificImplementation<
+          _notificationsPlugin.resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>();
       if (iosImplementation != null) {
         final granted = await iosImplementation.requestPermissions(
@@ -120,9 +120,11 @@ class NotificationService implements INotificationService {
 
       // Request permissions for Android
       final android =
-          await _notificationsPlugin.resolvePlatformSpecificImplementation<
+          _notificationsPlugin.resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>();
-      await android?.requestNotificationsPermission();
+      if (android != null) {
+        await android.requestNotificationsPermission();
+      }
 
       return true;
     } catch (e, stackTrace) {

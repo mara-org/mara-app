@@ -170,7 +170,6 @@ class AppSettingsSection extends ConsumerWidget {
                 },
                 activeTrackColor:
                     AppColors.languageButtonColor.withValues(alpha: 0.5),
-                activeThumbColor: AppColors.languageButtonColor,
               ),
             ],
           ),
@@ -306,7 +305,6 @@ class AppSettingsSection extends ConsumerWidget {
                 },
                 activeTrackColor:
                     AppColors.languageButtonColor.withValues(alpha: 0.5),
-                activeThumbColor: AppColors.languageButtonColor,
               ),
             ],
           ),
@@ -375,7 +373,6 @@ class AppSettingsSection extends ConsumerWidget {
                 },
                 activeTrackColor:
                     AppColors.languageButtonColor.withValues(alpha: 0.5),
-                activeThumbColor: AppColors.languageButtonColor,
               ),
             ],
           ),

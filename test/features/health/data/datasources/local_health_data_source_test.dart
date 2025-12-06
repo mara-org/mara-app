@@ -19,67 +19,89 @@ void main() {
     });
 
     group('Steps Entry Operations', () {
+      String _dateToString(DateTime date) {
+        return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+      }
+
       test('saveStepsEntry and getStepsEntry work correctly', () async {
-        final entry = DailyStepsEntry.today(steps: 5000);
+        final entry = DailyStepsEntry.today(5000);
         await dataSource.saveStepsEntry(entry);
 
-        final retrieved = await dataSource.getStepsEntry(DateTime.now());
+        final now = DateTime.now();
+        final dateString = _dateToString(now);
+        final retrieved = await dataSource.getStepsEntry(dateString);
         expect(retrieved, isNotNull);
         expect(retrieved?.steps, equals(5000));
-        expect(retrieved?.date.day, equals(DateTime.now().day));
-        expect(retrieved?.date.month, equals(DateTime.now().month));
-        expect(retrieved?.date.year, equals(DateTime.now().year));
+        expect(retrieved?.date.day, equals(now.day));
+        expect(retrieved?.date.month, equals(now.month));
+        expect(retrieved?.date.year, equals(now.year));
       });
 
       test('getStepsEntry returns null for non-existent entry', () async {
         final yesterday = DateTime.now().subtract(const Duration(days: 1));
-        final retrieved = await dataSource.getStepsEntry(yesterday);
+        final dateString = _dateToString(yesterday);
+        final retrieved = await dataSource.getStepsEntry(dateString);
         expect(retrieved, isNull);
       });
 
       test('saveStepsEntry updates existing entry', () async {
-        final entry1 = DailyStepsEntry.today(steps: 5000);
+        final entry1 = DailyStepsEntry.today(5000);
         await dataSource.saveStepsEntry(entry1);
 
-        final entry2 = DailyStepsEntry.today(steps: 7000);
+        final entry2 = DailyStepsEntry.today(7000);
         await dataSource.saveStepsEntry(entry2);
 
-        final retrieved = await dataSource.getStepsEntry(DateTime.now());
+        final now = DateTime.now();
+        final dateString = _dateToString(now);
+        final retrieved = await dataSource.getStepsEntry(dateString);
         expect(retrieved?.steps, equals(7000));
       });
     });
 
     group('Sleep Entry Operations', () {
+      String _dateToString(DateTime date) {
+        return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+      }
+
       test('saveSleepEntry and getSleepEntry work correctly', () async {
-        final entry = DailySleepEntry.today(hours: 7.5);
+        final entry = DailySleepEntry.today(7.5);
         await dataSource.saveSleepEntry(entry);
 
-        final retrieved = await dataSource.getSleepEntry(DateTime.now());
+        final now = DateTime.now();
+        final dateString = _dateToString(now);
+        final retrieved = await dataSource.getSleepEntry(dateString);
         expect(retrieved, isNotNull);
         expect(retrieved?.hours, equals(7.5));
       });
 
       test('getSleepEntry returns null for non-existent entry', () async {
         final yesterday = DateTime.now().subtract(const Duration(days: 1));
-        final retrieved = await dataSource.getSleepEntry(yesterday);
+        final dateString = _dateToString(yesterday);
+        final retrieved = await dataSource.getSleepEntry(dateString);
         expect(retrieved, isNull);
       });
     });
 
     group('Water Intake Entry Operations', () {
-      test('saveWaterIntakeEntry and getWaterIntakeEntry work correctly',
-          () async {
-        final entry = DailyWaterIntakeEntry.today(waterLiters: 2.5);
+      String _dateToString(DateTime date) {
+        return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+      }
+
+      test('saveWaterIntakeEntry and getWaterEntry work correctly', () async {
+        final entry = DailyWaterIntakeEntry.today(2.5);
         await dataSource.saveWaterIntakeEntry(entry);
 
-        final retrieved = await dataSource.getWaterIntakeEntry(DateTime.now());
+        final now = DateTime.now();
+        final dateString = _dateToString(now);
+        final retrieved = await dataSource.getWaterEntry(dateString);
         expect(retrieved, isNotNull);
         expect(retrieved?.waterLiters, equals(2.5));
       });
 
-      test('getWaterIntakeEntry returns null for non-existent entry', () async {
+      test('getWaterEntry returns null for non-existent entry', () async {
         final yesterday = DateTime.now().subtract(const Duration(days: 1));
-        final retrieved = await dataSource.getWaterIntakeEntry(yesterday);
+        final dateString = _dateToString(yesterday);
+        final retrieved = await dataSource.getWaterEntry(dateString);
         expect(retrieved, isNull);
       });
     });
@@ -87,7 +109,7 @@ void main() {
     group('History Operations', () {
       test('getStepsHistory returns all entries sorted by date', () async {
         // Create entries for different dates
-        final today = DailyStepsEntry.today(steps: 5000);
+        final today = DailyStepsEntry.today(5000);
         final yesterday = DailyStepsEntry(
           date: DateTime.now().subtract(const Duration(days: 1)),
           steps: 3000,
@@ -122,7 +144,7 @@ void main() {
       });
 
       test('getSleepHistory returns all entries', () async {
-        final entry = DailySleepEntry.today(hours: 8.0);
+        final entry = DailySleepEntry.today(8.0);
         await dataSource.saveSleepEntry(entry);
 
         final history = await dataSource.getSleepHistory();
@@ -131,7 +153,7 @@ void main() {
       });
 
       test('getWaterHistory returns all entries', () async {
-        final entry = DailyWaterIntakeEntry.today(waterLiters: 2.0);
+        final entry = DailyWaterIntakeEntry.today(2.0);
         await dataSource.saveWaterIntakeEntry(entry);
 
         final history = await dataSource.getWaterHistory();
@@ -142,7 +164,7 @@ void main() {
 
     group('Today Operations', () {
       test('getTodaySteps returns today\'s entry', () async {
-        final entry = DailyStepsEntry.today(steps: 6000);
+        final entry = DailyStepsEntry.today(6000);
         await dataSource.saveStepsEntry(entry);
 
         final todayEntry = await dataSource.getTodaySteps();
@@ -151,7 +173,7 @@ void main() {
       });
 
       test('getTodaySleep returns today\'s entry', () async {
-        final entry = DailySleepEntry.today(hours: 7.0);
+        final entry = DailySleepEntry.today(7.0);
         await dataSource.saveSleepEntry(entry);
 
         final todayEntry = await dataSource.getTodaySleep();
@@ -160,7 +182,7 @@ void main() {
       });
 
       test('getTodayWater returns today\'s entry', () async {
-        final entry = DailyWaterIntakeEntry.today(waterLiters: 3.0);
+        final entry = DailyWaterIntakeEntry.today(3.0);
         await dataSource.saveWaterIntakeEntry(entry);
 
         final todayEntry = await dataSource.getTodayWater();

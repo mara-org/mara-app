@@ -20,7 +20,7 @@ void main() {
 
     group('Steps Operations', () {
       test('getTodaySteps retrieves today\'s steps', () async {
-        final entry = DailyStepsEntry.today(steps: 5000);
+        final entry = DailyStepsEntry.today(5000);
         await localDataSource.saveStepsEntry(entry);
 
         final result = await repository.getTodaySteps();
@@ -29,7 +29,7 @@ void main() {
       });
 
       test('saveStepsEntry saves steps entry', () async {
-        final entry = DailyStepsEntry.today(steps: 6000);
+        final entry = DailyStepsEntry.today(6000);
         await repository.saveStepsEntry(entry);
 
         final retrieved = await repository.getTodaySteps();
@@ -37,7 +37,7 @@ void main() {
       });
 
       test('getStepsHistory retrieves history', () async {
-        final entry = DailyStepsEntry.today(steps: 5000);
+        final entry = DailyStepsEntry.today(5000);
         await repository.saveStepsEntry(entry);
 
         final history = await repository.getStepsHistory();
@@ -47,7 +47,7 @@ void main() {
 
     group('Sleep Operations', () {
       test('getTodaySleep retrieves today\'s sleep', () async {
-        final entry = DailySleepEntry.today(hours: 8.0);
+        final entry = DailySleepEntry.today(8.0);
         await localDataSource.saveSleepEntry(entry);
 
         final result = await repository.getTodaySleep();
@@ -56,7 +56,7 @@ void main() {
       });
 
       test('saveSleepEntry saves sleep entry', () async {
-        final entry = DailySleepEntry.today(hours: 7.5);
+        final entry = DailySleepEntry.today(7.5);
         await repository.saveSleepEntry(entry);
 
         final retrieved = await repository.getTodaySleep();
@@ -64,7 +64,7 @@ void main() {
       });
 
       test('getSleepHistory retrieves history', () async {
-        final entry = DailySleepEntry.today(hours: 8.0);
+        final entry = DailySleepEntry.today(8.0);
         await repository.saveSleepEntry(entry);
 
         final history = await repository.getSleepHistory();
@@ -74,7 +74,7 @@ void main() {
 
     group('Water Operations', () {
       test('getTodayWater retrieves today\'s water', () async {
-        final entry = DailyWaterIntakeEntry.today(waterLiters: 2.5);
+        final entry = DailyWaterIntakeEntry.today(2.5);
         await localDataSource.saveWaterIntakeEntry(entry);
 
         final result = await repository.getTodayWater();
@@ -83,7 +83,7 @@ void main() {
       });
 
       test('saveWaterIntakeEntry saves water entry', () async {
-        final entry = DailyWaterIntakeEntry.today(waterLiters: 3.0);
+        final entry = DailyWaterIntakeEntry.today(3.0);
         await repository.saveWaterIntakeEntry(entry);
 
         final retrieved = await repository.getTodayWater();
@@ -91,7 +91,7 @@ void main() {
       });
 
       test('getWaterHistory retrieves history', () async {
-        final entry = DailyWaterIntakeEntry.today(waterLiters: 2.5);
+        final entry = DailyWaterIntakeEntry.today(2.5);
         await repository.saveWaterIntakeEntry(entry);
 
         final history = await repository.getWaterHistory();
