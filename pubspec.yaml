@@ -35,7 +35,7 @@ dependencies:
   # Network - HTTP client with retry support
   dio: ^5.4.0
   # Health data integration - Apple Health / Google Fit
-  health: ^13.1.4
+  health: ^13.1.3
   # Charts for analytics dashboard
   fl_chart: ^0.69.0
   # Notifications
