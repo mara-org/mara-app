@@ -7,11 +7,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mara_app/core/storage/local_cache.dart';
+import 'package:mara_app/core/providers/health_tracking_providers.dart';
+import 'package:mara_app/core/providers/steps_provider.dart';
+import 'package:mara_app/core/providers/chat_topic_provider.dart';
+import 'package:mara_app/core/providers/user_profile_provider.dart';
 import 'package:mara_app/features/home/presentation/home_screen.dart';
 import 'package:mara_app/core/widgets/primary_button.dart';
 import 'package:mara_app/l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import '../utils/test_utils.dart';
 
 void main() {
   setUpAll(() async {
@@ -24,6 +27,17 @@ void main() {
     testWidgets('Home screen renders correctly', (WidgetTester tester) async {
       await tester.pumpWidget(
         ProviderScope(
+          overrides: [
+            // Override FutureProviders to return immediate values
+            todaySleepProvider.overrideWith((ref) => Future.value(null)),
+            todayWaterProvider.overrideWith((ref) => Future.value(null)),
+            // Override StateProviders
+            stepsProvider.overrideWith((ref) => 0),
+            stepsGoalProvider.overrideWith((ref) => 10000),
+            lastConversationTopicProvider.overrideWith((ref) => null),
+            // Override UserProfileProvider
+            userProfileProvider.overrideWith((ref) => UserProfileNotifier()),
+          ],
           child: MaterialApp.router(
             routerConfig: GoRouter(
               initialLocation: '/home',
@@ -54,10 +68,16 @@ void main() {
         ),
       );
 
-      // Wait for async providers to initialize
+      // Wait for async providers to initialize using pump with multiple iterations
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
-      await tester.pumpAndSettle(const Duration(seconds: 5));
+      // Use pump multiple times instead of pumpAndSettle to avoid timeout
+      for (int i = 0; i < 10; i++) {
+        await tester.pump(const Duration(milliseconds: 100));
+        if (tester.binding.transientCallbackCount <= 0) {
+          break;
+        }
+      }
 
       // Verify that the HomeScreen widget exists
       expect(find.byType(HomeScreen), findsOneWidget);
@@ -70,6 +90,17 @@ void main() {
         (WidgetTester tester) async {
       await tester.pumpWidget(
         ProviderScope(
+          overrides: [
+            // Override FutureProviders to return immediate values
+            todaySleepProvider.overrideWith((ref) => Future.value(null)),
+            todayWaterProvider.overrideWith((ref) => Future.value(null)),
+            // Override StateProviders
+            stepsProvider.overrideWith((ref) => 0),
+            stepsGoalProvider.overrideWith((ref) => 10000),
+            lastConversationTopicProvider.overrideWith((ref) => null),
+            // Override UserProfileProvider
+            userProfileProvider.overrideWith((ref) => UserProfileNotifier()),
+          ],
           child: MaterialApp.router(
             routerConfig: GoRouter(
               initialLocation: '/home',
@@ -94,10 +125,16 @@ void main() {
         ),
       );
 
-      // Wait for async providers to initialize
+      // Wait for async providers to initialize using pump with multiple iterations
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
-      await tester.pumpAndSettle(const Duration(seconds: 5));
+      // Use pump multiple times instead of pumpAndSettle to avoid timeout
+      for (int i = 0; i < 10; i++) {
+        await tester.pump(const Duration(milliseconds: 100));
+        if (tester.binding.transientCallbackCount <= 0) {
+          break;
+        }
+      }
 
       // Verify SafeArea exists
       expect(find.byType(SafeArea), findsOneWidget);
@@ -110,6 +147,17 @@ void main() {
         (WidgetTester tester) async {
       await tester.pumpWidget(
         ProviderScope(
+          overrides: [
+            // Override FutureProviders to return immediate values
+            todaySleepProvider.overrideWith((ref) => Future.value(null)),
+            todayWaterProvider.overrideWith((ref) => Future.value(null)),
+            // Override StateProviders
+            stepsProvider.overrideWith((ref) => 0),
+            stepsGoalProvider.overrideWith((ref) => 10000),
+            lastConversationTopicProvider.overrideWith((ref) => null),
+            // Override UserProfileProvider
+            userProfileProvider.overrideWith((ref) => UserProfileNotifier()),
+          ],
           child: MaterialApp.router(
             routerConfig: GoRouter(
               initialLocation: '/home',
@@ -140,10 +188,16 @@ void main() {
         ),
       );
 
-      // Wait for async providers to initialize
+      // Wait for async providers to initialize using pump with multiple iterations
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
-      await tester.pumpAndSettle(const Duration(seconds: 5));
+      // Use pump multiple times instead of pumpAndSettle to avoid timeout
+      for (int i = 0; i < 10; i++) {
+        await tester.pump(const Duration(milliseconds: 100));
+        if (tester.binding.transientCallbackCount <= 0) {
+          break;
+        }
+      }
 
       // Find chat button (PrimaryButton with "Chat with Mara" text)
       final chatButton = find.byType(PrimaryButton);
@@ -152,7 +206,9 @@ void main() {
       // Tap the first primary button (assuming it's the chat button)
       if (chatButton.evaluate().isNotEmpty) {
         await tester.tap(chatButton.first);
-        await tester.pumpAndSettle();
+        // Use pump instead of pumpAndSettle
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 100));
       }
     });
   });

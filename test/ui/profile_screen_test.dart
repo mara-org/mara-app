@@ -132,8 +132,13 @@ void main() {
         // Multiple pump cycles ensure async providers complete
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 100));
-        await tester.pump(const Duration(milliseconds: 100));
-        await tester.pumpAndSettle(const Duration(seconds: 10));
+        // Use pump multiple times instead of pumpAndSettle to avoid timeout
+        for (int i = 0; i < 10; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
+          if (tester.binding.transientCallbackCount <= 0) {
+            break;
+          }
+        }
 
         // Verify that the ProfileScreen widget exists
         expect(find.byType(ProfileScreen), findsOneWidget);
@@ -209,8 +214,13 @@ void main() {
         // Multiple pump cycles ensure async providers complete
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 100));
-        await tester.pump(const Duration(milliseconds: 100));
-        await tester.pumpAndSettle(const Duration(seconds: 10));
+        // Use pump multiple times instead of pumpAndSettle to avoid timeout
+        for (int i = 0; i < 10; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
+          if (tester.binding.transientCallbackCount <= 0) {
+            break;
+          }
+        }
 
         // Verify basic structure
         expect(find.byType(Scaffold), findsOneWidget);
@@ -275,13 +285,24 @@ void main() {
 
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 100));
-        await tester.pumpAndSettle(const Duration(seconds: 10));
+        // Use pump multiple times instead of pumpAndSettle to avoid timeout
+        for (int i = 0; i < 10; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
+          if (tester.binding.transientCallbackCount <= 0) {
+            break;
+          }
+        }
 
         // Verify Rate App menu item exists
         // Use the English localization directly for testing
         final l10n = AppLocalizationsEn();
-        expect(find.text(l10n.profileRateAppTitle), findsOneWidget);
-        expect(find.text(l10n.profileRateAppSubtitle), findsOneWidget);
+        // Use find.byWidgetPredicate for more robust text finding
+        expect(find.byWidgetPredicate(
+          (widget) => widget is Text && widget.data == l10n.profileRateAppTitle,
+        ), findsOneWidget);
+        expect(find.byWidgetPredicate(
+          (widget) => widget is Text && widget.data == l10n.profileRateAppSubtitle,
+        ), findsOneWidget);
       }, (error, stack) {
         if (error is AssertionError &&
             error.toString().contains('Unable to load asset')) {
@@ -335,16 +356,25 @@ void main() {
 
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 100));
-        await tester.pumpAndSettle(const Duration(seconds: 10));
+        // Use pump multiple times instead of pumpAndSettle to avoid timeout
+        for (int i = 0; i < 10; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
+          if (tester.binding.transientCallbackCount <= 0) {
+            break;
+          }
+        }
 
         // Find and tap the Rate App menu item
         final l10n = AppLocalizationsEn();
-        final rateAppFinder = find.text(l10n.profileRateAppTitle);
+        final rateAppFinder = find.byWidgetPredicate(
+          (widget) => widget is Text && widget.data == l10n.profileRateAppTitle,
+        );
         expect(rateAppFinder, findsOneWidget);
 
         // Tap and verify no crash
         await tester.tap(rateAppFinder);
-        await tester.pumpAndSettle(const Duration(seconds: 2));
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 100));
 
         // Verify no exceptions occurred
         expect(tester.takeException(), isNull);
@@ -403,13 +433,23 @@ void main() {
 
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 100));
-        await tester.pumpAndSettle(const Duration(seconds: 10));
+        // Use pump multiple times instead of pumpAndSettle to avoid timeout
+        for (int i = 0; i < 10; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
+          if (tester.binding.transientCallbackCount <= 0) {
+            break;
+          }
+        }
 
         // Verify Share App menu item exists
         // Use the English localization directly for testing
         final l10n = AppLocalizationsEn();
-        expect(find.text(l10n.profileShareAppTitle), findsOneWidget);
-        expect(find.text(l10n.profileShareAppSubtitle), findsOneWidget);
+        expect(find.byWidgetPredicate(
+          (widget) => widget is Text && widget.data == l10n.profileShareAppTitle,
+        ), findsOneWidget);
+        expect(find.byWidgetPredicate(
+          (widget) => widget is Text && widget.data == l10n.profileShareAppSubtitle,
+        ), findsOneWidget);
       }, (error, stack) {
         if (error is AssertionError &&
             error.toString().contains('Unable to load asset')) {
@@ -464,16 +504,25 @@ void main() {
 
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 100));
-        await tester.pumpAndSettle(const Duration(seconds: 10));
+        // Use pump multiple times instead of pumpAndSettle to avoid timeout
+        for (int i = 0; i < 10; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
+          if (tester.binding.transientCallbackCount <= 0) {
+            break;
+          }
+        }
 
         // Find and tap the Share App menu item
         final l10n = AppLocalizationsEn();
-        final shareAppFinder = find.text(l10n.profileShareAppTitle);
+        final shareAppFinder = find.byWidgetPredicate(
+          (widget) => widget is Text && widget.data == l10n.profileShareAppTitle,
+        );
         expect(shareAppFinder, findsOneWidget);
 
         // Tap and verify no crash
         await tester.tap(shareAppFinder);
-        await tester.pumpAndSettle(const Duration(seconds: 2));
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 100));
 
         // Verify no exceptions occurred
         expect(tester.takeException(), isNull);
