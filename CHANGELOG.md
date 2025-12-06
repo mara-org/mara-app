@@ -1,3 +1,20 @@
+## [1.2.0+4] - 2025-12-06
+
+### Added
+- feat: Add native permission dialogs with capability activation (995eb62)
+
+### Fixed
+- fix(tests): simplify widget tests to verify UI behavior rather than service calls (69d4dd0)
+- fix(tests): add missing shareAppServiceProvider override in Rate App test (707001f)
+- fix(tests): improve async handling in profile screen widget tests (69a0f5e)
+- fix(tests): fix undefined 'service' variable in app_review_service_test (46eb748)
+- fix(tests): improve widget test async handling for Rate/Share App taps (9ef8e0c)
+- fix(tests): simplify service tests to avoid platform API calls in CI (03c3ca0)
+- fix(tests): fix test errors in app review and share app service tests (0655c84)
+
+### Other
+- style: format code to pass CI formatting checks (e4bd06d)
+
 ## [1.1.0+4] - 2025-12-05
 
 ### Added
