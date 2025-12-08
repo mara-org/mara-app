@@ -28,10 +28,10 @@ dependencies:
   # Observability - Sentry for crash reporting
   sentry_flutter: ^8.0.0
   # Observability - Firebase for analytics (optional, can be configured later)
-  firebase_core: ^3.0.0
-  firebase_analytics: ^11.0.0
-  firebase_crashlytics: ^4.0.0
-  firebase_remote_config: ^5.0.0
+  firebase_core: ^4.2.1
+  firebase_analytics: ^12.0.4
+  firebase_crashlytics: ^5.0.5
+  firebase_remote_config: ^6.1.2
   # Network - HTTP client with retry support
   dio: ^5.4.0
   # Health data integration - Apple Health / Google Fit
