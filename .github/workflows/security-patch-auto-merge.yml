@@ -72,7 +72,7 @@ jobs:
 
       - name: Comment if not auto-merged
         if: steps.verify_deps_only.outputs.deps_only != 'true'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const prNumber = context.payload.pull_request.number;
