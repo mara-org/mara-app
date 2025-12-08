@@ -48,7 +48,7 @@ dependencies:
   # Data export
   csv: ^6.0.0
   # Screenshots for chart export
-  screenshot: ^2.3.0
+  screenshot: ^3.0.0
   # Quick actions / app shortcuts
   quick_actions: ^1.1.0
   # Native permissions
