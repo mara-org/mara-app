@@ -42,7 +42,7 @@ dependencies:
   flutter_local_notifications: ^17.2.4
   timezone: ^0.9.4
   # Biometric authentication
-  local_auth: ^2.3.0
+  local_auth: ^3.0.0
   # Connectivity
   connectivity_plus: ^6.1.2
   # Data export
