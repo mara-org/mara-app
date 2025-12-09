@@ -24,7 +24,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Download baseline metrics
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           name: performance-benchmarks
           path: baseline-metrics/
