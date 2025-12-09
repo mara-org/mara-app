@@ -18,9 +18,8 @@ class SignUpChoicesScreen extends StatelessWidget {
     final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark
-          ? AppColorsDark.backgroundLight
-          : AppColors.backgroundLight,
+      backgroundColor:
+          isDark ? AppColorsDark.backgroundLight : AppColors.backgroundLight,
       body: SafeArea(
         child: Stack(
           children: [
@@ -80,12 +79,10 @@ class SignUpChoicesScreen extends StatelessWidget {
               child: _SocialButton(
                 text: l10n.continueWithGoogle,
                 iconImagePath: 'assets/icons/Sign in/Social media logo.png',
-                backgroundColor: isDark
-                    ? AppColorsDark.cardBackground
-                    : Colors.white,
-                textColor: isDark
-                    ? AppColorsDark.textPrimary
-                    : AppColors.textPrimary,
+                backgroundColor:
+                    isDark ? AppColorsDark.cardBackground : Colors.white,
+                textColor:
+                    isDark ? AppColorsDark.textPrimary : AppColors.textPrimary,
                 width: screenWidth - 64,
                 height: 52,
                 isDark: isDark,
@@ -101,9 +98,8 @@ class SignUpChoicesScreen extends StatelessWidget {
               child: _SocialButton(
                 text: l10n.continueWithApple,
                 iconImagePath: 'assets/icons/Sign in/Wrapper.png',
-                backgroundColor: isDark
-                    ? Colors.black
-                    : AppColors.appleButtonColor,
+                backgroundColor:
+                    isDark ? Colors.black : AppColors.appleButtonColor,
                 textColor: Colors.white,
                 width: screenWidth - 64,
                 height: 52,
@@ -211,9 +207,7 @@ class _SocialButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           color: backgroundColor,
           border: Border.all(
-              color: isDark
-                  ? AppColorsDark.borderColor
-                  : AppColors.borderColor,
+              color: isDark ? AppColorsDark.borderColor : AppColors.borderColor,
               width: 1),
         ),
         child: Row(

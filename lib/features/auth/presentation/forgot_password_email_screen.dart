@@ -50,9 +50,8 @@ class _ForgotPasswordEmailScreenState extends State<ForgotPasswordEmailScreen> {
     final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark
-          ? AppColorsDark.backgroundLight
-          : AppColors.backgroundLight,
+      backgroundColor:
+          isDark ? AppColorsDark.backgroundLight : AppColors.backgroundLight,
       body: SafeArea(
         child: Form(
           key: _formKey,
@@ -70,8 +69,8 @@ class _ForgotPasswordEmailScreenState extends State<ForgotPasswordEmailScreen> {
                       width: 36,
                       height: 36,
                       decoration: BoxDecoration(
-                        color: AppColors.languageButtonColor.withValues(
-                            alpha: 0.1),
+                        color: AppColors.languageButtonColor
+                            .withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(

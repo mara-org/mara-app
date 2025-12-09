@@ -93,7 +93,8 @@ class OnboardingPersonalizedScreen extends StatelessWidget {
                         fontWeight: FontWeight.w400,
                         color: isDark
                             ? AppColorsDark.textSecondary
-                            : AppColors.textPrimary.withOpacity(0.65), // 60-70% opacity
+                            : AppColors.textPrimary
+                                .withOpacity(0.65), // 60-70% opacity
                       ),
                     ),
                   ),

@@ -39,9 +39,8 @@ class _GenderScreenState extends ConsumerState<GenderScreen> {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: isDark
-          ? AppColorsDark.backgroundLight
-          : AppColors.backgroundLight,
+      backgroundColor:
+          isDark ? AppColorsDark.backgroundLight : AppColors.backgroundLight,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -58,8 +57,8 @@ class _GenderScreenState extends ConsumerState<GenderScreen> {
                       width: 36,
                       height: 36,
                       decoration: BoxDecoration(
-                        color: AppColors.languageButtonColor.withValues(
-                            alpha: 0.1),
+                        color: AppColors.languageButtonColor
+                            .withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(
@@ -172,9 +171,7 @@ class _GenderButton extends StatelessWidget {
           border: Border.all(
             color: isSelected
                 ? (isFemale ? femaleSelectedBorder : selectedColor)
-                : (isDark
-                    ? AppColorsDark.borderColor
-                    : AppColors.borderColor),
+                : (isDark ? AppColorsDark.borderColor : AppColors.borderColor),
             width: 1,
           ),
         ),

@@ -99,9 +99,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark
-          ? AppColorsDark.backgroundLight
-          : AppColors.backgroundLight,
+      backgroundColor:
+          isDark ? AppColorsDark.backgroundLight : AppColors.backgroundLight,
       body: SafeArea(
         child: Form(
           key: _formKey,
@@ -119,8 +118,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                       width: 36,
                       height: 36,
                       decoration: BoxDecoration(
-                        color: AppColors.languageButtonColor.withValues(
-                            alpha: 0.1),
+                        color: AppColors.languageButtonColor
+                            .withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(
@@ -267,14 +266,10 @@ class _PasswordRequirementsWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isDark
-            ? AppColorsDark.cardBackground
-            : const Color(0xFFF8FAFC),
+        color: isDark ? AppColorsDark.cardBackground : const Color(0xFFF8FAFC),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-            color: isDark
-                ? AppColorsDark.borderColor
-                : const Color(0xFFE2E8F0),
+            color: isDark ? AppColorsDark.borderColor : const Color(0xFFE2E8F0),
             width: 1),
       ),
       child: Column(
@@ -285,9 +280,7 @@ class _PasswordRequirementsWidget extends StatelessWidget {
             style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
-              color: isDark
-                  ? AppColorsDark.textPrimary
-                  : AppColors.textPrimary,
+              color: isDark ? AppColorsDark.textPrimary : AppColors.textPrimary,
               fontFamily: 'Roboto',
             ),
           ),

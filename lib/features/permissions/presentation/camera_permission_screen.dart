@@ -111,35 +111,35 @@ class CameraPermissionScreen extends ConsumerWidget {
                                 .setCamera(false);
                             context.push('/microphone-permission');
                           },
-                            child: Text(
-                              l10n.notNow,
-                              style: TextStyle(
-                                color: isDark
-                                    ? AppColorsDark.textSecondary
-                                    : AppColors.textSecondary,
-                                fontSize: 16,
-                                fontWeight: FontWeight.normal,
-                              ),
+                          child: Text(
+                            l10n.notNow,
+                            style: TextStyle(
+                              color: isDark
+                                  ? AppColorsDark.textSecondary
+                                  : AppColors.textSecondary,
+                              fontSize: 16,
+                              fontWeight: FontWeight.normal,
                             ),
                           ),
-                          const SizedBox(height: 12),
-                          // Privacy note
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child: Text(
-                              l10n.cameraPermissionPrivacy,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: (isDark
-                                        ? AppColorsDark.textSecondary
-                                        : AppColors.textSecondary)
-                                    .withValues(alpha: 0.7),
-                                fontSize: 13,
-                                fontWeight: FontWeight.normal,
-                                height: 1.5,
-                              ),
+                        ),
+                        const SizedBox(height: 12),
+                        // Privacy note
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Text(
+                            l10n.cameraPermissionPrivacy,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: (isDark
+                                      ? AppColorsDark.textSecondary
+                                      : AppColors.textSecondary)
+                                  .withValues(alpha: 0.7),
+                              fontSize: 13,
+                              fontWeight: FontWeight.normal,
+                              height: 1.5,
                             ),
                           ),
+                        ),
                         const SizedBox(height: 20),
                       ],
                     ),

@@ -21,9 +21,8 @@ class PermissionsSummaryScreen extends ConsumerWidget {
     final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark
-          ? AppColorsDark.backgroundLight
-          : AppColors.backgroundLight,
+      backgroundColor:
+          isDark ? AppColorsDark.backgroundLight : AppColors.backgroundLight,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -135,9 +134,7 @@ class _PermissionItem extends StatelessWidget {
             ? (isDark
                 ? AppColors.languageButtonColor.withValues(alpha: 0.2)
                 : const Color(0xFFC4F4FF))
-            : (isDark
-                ? AppColorsDark.cardBackground
-                : const Color(0xFFA2BCC2)),
+            : (isDark ? AppColorsDark.cardBackground : const Color(0xFFA2BCC2)),
       ),
       child: Center(
         child: Text(

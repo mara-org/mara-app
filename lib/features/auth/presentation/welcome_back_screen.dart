@@ -70,9 +70,8 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
     final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark
-          ? AppColorsDark.backgroundLight
-          : AppColors.backgroundLight,
+      backgroundColor:
+          isDark ? AppColorsDark.backgroundLight : AppColors.backgroundLight,
       body: SafeArea(
         child: Form(
           key: _formKey,
@@ -167,9 +166,8 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
                   child: _SocialButton(
                     text: l10n.continueWithGoogle,
                     iconImagePath: 'assets/icons/Sign in/Social media logo.png',
-                    backgroundColor: isDark
-                        ? AppColorsDark.cardBackground
-                        : Colors.white,
+                    backgroundColor:
+                        isDark ? AppColorsDark.cardBackground : Colors.white,
                     textColor: isDark
                         ? AppColorsDark.textPrimary
                         : AppColors.textPrimary,
@@ -192,9 +190,8 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
                   child: _SocialButton(
                     text: l10n.continueWithApple,
                     iconImagePath: 'assets/icons/Sign in/Wrapper.png',
-                    backgroundColor: isDark
-                        ? Colors.black
-                        : AppColors.appleButtonColor,
+                    backgroundColor:
+                        isDark ? Colors.black : AppColors.appleButtonColor,
                     textColor: Colors.white,
                     width: buttonWidth,
                     height: 52,
@@ -300,9 +297,8 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
                       textAlign: TextAlign.center,
                       text: TextSpan(
                         style: TextStyle(
-                          color: isDark
-                              ? AppColorsDark.textPrimary
-                              : Colors.black,
+                          color:
+                              isDark ? AppColorsDark.textPrimary : Colors.black,
                           fontSize: 15,
                           fontWeight: FontWeight.normal,
                           fontFamily: 'Roboto',
@@ -364,9 +360,7 @@ class _SocialButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           color: backgroundColor,
           border: Border.all(
-              color: isDark
-                  ? AppColorsDark.borderColor
-                  : AppColors.borderColor,
+              color: isDark ? AppColorsDark.borderColor : AppColors.borderColor,
               width: 1),
         ),
         child: Row(

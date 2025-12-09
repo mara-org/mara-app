@@ -23,7 +23,8 @@ class MicrophonePermissionScreen extends ConsumerWidget {
         height: double.infinity,
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            begin: const Alignment(-0.00032816489692777395, -0.9999995231628418),
+            begin:
+                const Alignment(-0.00032816489692777395, -0.9999995231628418),
             end: const Alignment(0.9999995231628418, -0.0015423615695908666),
             colors: isDark
                 ? [

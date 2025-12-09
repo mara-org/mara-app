@@ -47,9 +47,8 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: isDark
-          ? AppColorsDark.backgroundLight
-          : AppColors.backgroundLight,
+      backgroundColor:
+          isDark ? AppColorsDark.backgroundLight : AppColors.backgroundLight,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -66,8 +65,8 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
                       width: 36,
                       height: 36,
                       decoration: BoxDecoration(
-                        color: AppColors.languageButtonColor.withValues(
-                            alpha: 0.1),
+                        color: AppColors.languageButtonColor
+                            .withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(
@@ -159,9 +158,7 @@ class _GoalButton extends StatelessWidget {
           border: Border.all(
             color: isSelected
                 ? AppColors.languageButtonColor
-                : (isDark
-                    ? AppColorsDark.borderColor
-                    : AppColors.borderColor),
+                : (isDark ? AppColorsDark.borderColor : AppColors.borderColor),
             width: 1,
           ),
         ),

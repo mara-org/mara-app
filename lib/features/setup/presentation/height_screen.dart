@@ -45,9 +45,8 @@ class _HeightScreenState extends ConsumerState<HeightScreen> {
     final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark
-          ? AppColorsDark.backgroundLight
-          : AppColors.backgroundLight,
+      backgroundColor:
+          isDark ? AppColorsDark.backgroundLight : AppColors.backgroundLight,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -64,8 +63,8 @@ class _HeightScreenState extends ConsumerState<HeightScreen> {
                       width: 36,
                       height: 36,
                       decoration: BoxDecoration(
-                        color: AppColors.languageButtonColor.withValues(
-                            alpha: 0.1),
+                        color: AppColors.languageButtonColor
+                            .withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(
@@ -162,8 +161,8 @@ class _HeightScreenState extends ConsumerState<HeightScreen> {
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
                             color: isSelected
-                                ? AppColors.languageButtonColor.withValues(
-                                    alpha: 0.2)
+                                ? AppColors.languageButtonColor
+                                    .withValues(alpha: 0.2)
                                 : Colors.transparent,
                             borderRadius: BorderRadius.circular(19),
                           ),

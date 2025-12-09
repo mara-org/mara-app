@@ -63,7 +63,9 @@ class MaraTextField extends StatelessWidget {
           color: isDark ? AppColorsDark.textSecondary : null,
         ),
         hintStyle: TextStyle(
-          color: isDark ? AppColorsDark.textSecondary.withValues(alpha: 0.6) : null,
+          color: isDark
+              ? AppColorsDark.textSecondary.withValues(alpha: 0.6)
+              : null,
         ),
         suffixIcon: suffixIcon,
         filled: true,
@@ -71,17 +73,13 @@ class MaraTextField extends StatelessWidget {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(isIOS ? 12 : 8),
           borderSide: BorderSide(
-              color: isDark
-                  ? AppColorsDark.borderColor
-                  : Colors.grey[300]!,
+              color: isDark ? AppColorsDark.borderColor : Colors.grey[300]!,
               width: 1),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(isIOS ? 12 : 8),
           borderSide: BorderSide(
-              color: isDark
-                  ? AppColorsDark.borderColor
-                  : Colors.grey[300]!,
+              color: isDark ? AppColorsDark.borderColor : Colors.grey[300]!,
               width: 1),
         ),
         focusedBorder: OutlineInputBorder(

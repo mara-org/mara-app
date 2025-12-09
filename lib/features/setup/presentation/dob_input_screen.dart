@@ -154,9 +154,8 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: isDark
-          ? AppColorsDark.backgroundLight
-          : AppColors.backgroundLight,
+      backgroundColor:
+          isDark ? AppColorsDark.backgroundLight : AppColors.backgroundLight,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -173,8 +172,8 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
                       width: 36,
                       height: 36,
                       decoration: BoxDecoration(
-                        color: AppColors.languageButtonColor.withValues(
-                            alpha: 0.1),
+                        color: AppColors.languageButtonColor
+                            .withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(
@@ -255,8 +254,9 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
                                         color: isSelected
                                             ? AppColors.languageButtonColor
                                             : (isDark
-                                                ? AppColorsDark.textSecondary
-                                                : AppColors.textSecondary)
+                                                    ? AppColorsDark
+                                                        .textSecondary
+                                                    : AppColors.textSecondary)
                                                 .withValues(alpha: 0.66),
                                         fontSize: 20,
                                         fontWeight: FontWeight.normal,

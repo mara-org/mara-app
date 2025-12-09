@@ -60,9 +60,8 @@ class _ForgotPasswordVerifyScreenState
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: isDark
-          ? AppColorsDark.backgroundLight
-          : AppColors.backgroundLight,
+      backgroundColor:
+          isDark ? AppColorsDark.backgroundLight : AppColors.backgroundLight,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -113,18 +112,18 @@ class _ForgotPasswordVerifyScreenState
                 // Subtitle
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Text(
-                      l10n.forgotPasswordVerifySubtitle,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: isDark
-                            ? AppColorsDark.textSecondary
-                            : AppColors.textSecondary,
-                        fontSize: 13,
-                        fontWeight: FontWeight.normal,
-                        height: 1.5,
-                      ),
+                  child: Text(
+                    l10n.forgotPasswordVerifySubtitle,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: isDark
+                          ? AppColorsDark.textSecondary
+                          : AppColors.textSecondary,
+                      fontSize: 13,
+                      fontWeight: FontWeight.normal,
+                      height: 1.5,
                     ),
+                  ),
                 ),
                 const SizedBox(height: 40),
                 // OTP input boxes
@@ -202,8 +201,8 @@ class _ForgotPasswordVerifyScreenState
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(
-                            alpha: isDark ? 0.4 : 0.25),
+                        color:
+                            Colors.black.withValues(alpha: isDark ? 0.4 : 0.25),
                         offset: const Offset(0, 4),
                         blurRadius: 50,
                       ),
