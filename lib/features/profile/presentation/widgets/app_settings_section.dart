@@ -210,7 +210,7 @@ class AppSettingsSection extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Health Goals',
+                        l10n.healthGoals,
                         style: TextStyle(
                           color: isDark
                               ? AppColorsDark.textPrimary
@@ -221,7 +221,7 @@ class AppSettingsSection extends ConsumerWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Set your daily health goals',
+                        l10n.setDailyGoals,
                         style: TextStyle(
                           color: isDark
                               ? AppColorsDark.textSecondary

@@ -3,6 +3,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_colors_dark.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class ContactUsSection extends StatelessWidget {
   const ContactUsSection({super.key});
@@ -16,6 +17,7 @@ class ContactUsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
@@ -25,7 +27,7 @@ class ContactUsSection extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(left: 4, bottom: 12),
           child: Text(
-            'Contact us',
+            l10n.contactUs,
             style: TextStyle(
               color: isDark
                   ? AppColorsDark.textSecondary

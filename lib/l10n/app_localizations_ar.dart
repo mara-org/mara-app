@@ -1009,19 +1009,19 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get quickActions => 'Quick Actions';
+  String get quickActions => 'إجراءات سريعة';
 
   @override
-  String get howAreMyStepsToday => 'How are my steps today?';
+  String get howAreMyStepsToday => 'كيف هي خطواتي اليوم؟';
 
   @override
-  String get howWasMySleepThisWeek => 'How was my sleep this week?';
+  String get howWasMySleepThisWeek => 'كيف كان نومي هذا الأسبوع؟';
 
   @override
-  String get howMuchWaterDidIDrinkToday => 'How much water did I drink today?';
+  String get howMuchWaterDidIDrinkToday => 'كم شربت من الماء اليوم؟';
 
   @override
-  String get showMeMyHealthDashboard => 'Show me my health dashboard';
+  String get showMeMyHealthDashboard => 'أظهر لي لوحة الصحة';
 
   @override
   String get appleHealth => 'صحة Apple';

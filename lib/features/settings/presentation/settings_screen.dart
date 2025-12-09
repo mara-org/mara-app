@@ -9,12 +9,14 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_colors_dark.dart';
 import '../../../core/utils/platform_utils.dart';
 import '../../../core/widgets/mara_logo.dart';
+import '../../../l10n/app_localizations.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final settings = ref.watch(settingsProvider);
     final language = ref.watch(languageProvider);
     final theme = Theme.of(context);
@@ -121,8 +123,8 @@ class SettingsScreen extends ConsumerWidget {
                 const SizedBox(height: 12),
                 // Health Goals
                 _SettingsRow(
-                  title: 'Health Goals',
-                  subtitle: 'Set your daily health goals',
+                  title: l10n.healthGoals,
+                  subtitle: l10n.setDailyGoals,
                   icon: Icons.flag,
                   onTap: () {
                     context.push('/settings/health-goals');

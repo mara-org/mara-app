@@ -410,5 +410,10 @@
   "notificationsActivated": "تم تفعيل الإشعارات",
   "notificationsActivatedMessage": "تم تمكين الإشعارات الفورية الآن. ستتلقى تذكيرات صحية وتحديثات.",
   "healthKitActivated": "تم تفعيل HealthKit",
-  "healthKitActivatedMessage": "تم الاتصال بـ HealthKit الآن. سوف تتم مزامنة بياناتك الصحية تلقائيًا من جهازك."
+  "healthKitActivatedMessage": "تم الاتصال بـ HealthKit الآن. سوف تتم مزامنة بياناتك الصحية تلقائيًا من جهازك.",
+  "quickActions": "إجراءات سريعة",
+  "howAreMyStepsToday": "كيف هي خطواتي اليوم؟",
+  "howWasMySleepThisWeek": "كيف كان نومي هذا الأسبوع؟",
+  "howMuchWaterDidIDrinkToday": "كم شربت من الماء اليوم؟",
+  "showMeMyHealthDashboard": "أظهر لي لوحة الصحة"
 }
