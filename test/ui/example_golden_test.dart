@@ -10,6 +10,7 @@ import 'package:golden_toolkit/golden_toolkit.dart';
 import 'package:mara_app/features/home/presentation/home_screen.dart';
 import 'package:mara_app/l10n/app_localizations.dart';
 
+@Tags(['golden'])
 void main() {
   group('Golden Tests', () {
     // TODO: Generate golden files first by running: flutter test --update-goldens

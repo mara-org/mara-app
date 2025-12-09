@@ -10,6 +10,7 @@ import 'package:mara_app/l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import '../../utils/test_utils.dart';
 
+@Tags(['golden'])
 void main() {
   group('Sign In Email Screen Golden Tests', () {
     testGoldens(

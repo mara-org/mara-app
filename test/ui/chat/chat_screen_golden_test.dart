@@ -9,6 +9,7 @@ import 'package:mara_app/features/chat/presentation/mara_chat_screen.dart';
 import 'package:mara_app/l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
+@Tags(['golden'])
 void main() {
   group('Chat Screen Golden Tests', () {
     testGoldens(

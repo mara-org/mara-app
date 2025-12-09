@@ -301,12 +301,7 @@ jobs:
           
           # First test run with parallel execution
           # Exclude golden tests (they have their own workflow) and leak tests (separate workflow)
-          # Run tests but skip golden and leak test files using find + grep
-          if find test -name "*_test.dart" -type f \
-            ! -path "*/golden*" \
-            ! -path "*/leak/*" \
-            ! -name "*_golden_test.dart" \
-            | xargs flutter test --coverage --concurrency=$CONCURRENCY; then
+          if flutter test --coverage --concurrency=$CONCURRENCY --exclude-tags=golden,leak; then
             TEST_PASSED=true
           else
             TEST_PASSED=false
@@ -314,12 +309,7 @@ jobs:
             
             # Retry once with parallel execution
             # Exclude golden tests (they have their own workflow) and leak tests (separate workflow)
-            # Run tests but skip golden and leak test files using find + grep
-            if find test -name "*_test.dart" -type f \
-              ! -path "*/golden*" \
-              ! -path "*/leak/*" \
-              ! -name "*_golden_test.dart" \
-              | xargs flutter test --coverage --concurrency=$CONCURRENCY; then
+            if flutter test --coverage --concurrency=$CONCURRENCY --exclude-tags=golden,leak; then
               TEST_PASSED=true
               echo "✅ Tests passed on retry. Marked as flaky – tests passed on retry."
             else
