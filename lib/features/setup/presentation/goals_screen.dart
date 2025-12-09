@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/widgets/mara_logo.dart';
 import '../../../core/widgets/primary_button.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_colors_dark.dart';
 import '../../../core/utils/platform_utils.dart';
 import '../../../core/providers/user_profile_provider.dart';
 import '../../../l10n/app_localizations.dart';
@@ -43,8 +44,12 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: isDark
+          ? AppColorsDark.backgroundLight
+          : AppColors.backgroundLight,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -61,7 +66,8 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
                       width: 36,
                       height: 36,
                       decoration: BoxDecoration(
-                        color: AppColors.languageButtonColor.withOpacity(0.1),
+                        color: AppColors.languageButtonColor.withValues(
+                            alpha: 0.1),
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(
@@ -97,6 +103,7 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
                     child: _GoalButton(
                       text: goalText,
                       isSelected: isSelected,
+                      isDark: isDark,
                       onTap: () {
                         setState(() {
                           _selectedGoal = goal['text'];
@@ -127,11 +134,13 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
 class _GoalButton extends StatelessWidget {
   final String text;
   final bool isSelected;
+  final bool isDark;
   final VoidCallback onTap;
 
   const _GoalButton({
     required this.text,
     required this.isSelected,
+    this.isDark = false,
     required this.onTap,
   });
 
@@ -144,9 +153,15 @@ class _GoalButton extends StatelessWidget {
         height: 52,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          color: isSelected ? const Color(0xFFC4F4FF) : Colors.white,
+          color: isSelected
+              ? AppColors.languageButtonColor.withValues(alpha: 0.2)
+              : (isDark ? AppColorsDark.cardBackground : Colors.white),
           border: Border.all(
-            color: isSelected ? const Color(0xFFC4F4FF) : AppColors.borderColor,
+            color: isSelected
+                ? AppColors.languageButtonColor
+                : (isDark
+                    ? AppColorsDark.borderColor
+                    : AppColors.borderColor),
             width: 1,
           ),
         ),
@@ -156,8 +171,10 @@ class _GoalButton extends StatelessWidget {
             textAlign: TextAlign.center,
             style: TextStyle(
               color: isSelected
-                  ? const Color(0xFF10A9CC)
-                  : AppColors.textSecondary,
+                  ? AppColors.languageButtonColor
+                  : (isDark
+                      ? AppColorsDark.textSecondary
+                      : AppColors.textSecondary),
               fontSize: 16,
               fontWeight: FontWeight.normal,
               height: 1,

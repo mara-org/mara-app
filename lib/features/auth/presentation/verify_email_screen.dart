@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_colors_dark.dart';
 import '../../../core/utils/platform_utils.dart';
 import '../../../core/widgets/mara_code_input.dart';
 import '../../../core/widgets/mara_logo.dart';
@@ -53,8 +54,12 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: isDark
+          ? AppColorsDark.backgroundLight
+          : AppColors.backgroundLight,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -73,8 +78,8 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                           width: 36,
                           height: 36,
                           decoration: BoxDecoration(
-                            color: AppColors.languageButtonColor.withOpacity(
-                              0.1,
+                            color: AppColors.languageButtonColor.withValues(
+                              alpha: 0.1,
                             ),
                             shape: BoxShape.circle,
                           ),
@@ -105,16 +110,18 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                 // Subtitle
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Text(
-                    l10n.verifyEmailSubtitleFull,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: AppColors.textSecondary,
-                      fontSize: 13,
-                      fontWeight: FontWeight.normal,
-                      height: 1.5,
+                    child: Text(
+                      l10n.verifyEmailSubtitleFull,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: isDark
+                            ? AppColorsDark.textSecondary
+                            : AppColors.textSecondary,
+                        fontSize: 13,
+                        fontWeight: FontWeight.normal,
+                        height: 1.5,
+                      ),
                     ),
-                  ),
                 ),
                 const SizedBox(height: 40),
                 // OTP input boxes
@@ -161,12 +168,12 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                     height: 52,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
-                      gradient: const LinearGradient(
-                        begin: Alignment(
+                      gradient: LinearGradient(
+                        begin: const Alignment(
                           0.0005944162257947028,
                           -0.15902137756347656,
                         ),
-                        end: Alignment(
+                        end: const Alignment(
                           6.022111415863037,
                           0.0005944162257947028,
                         ),
@@ -177,7 +184,8 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.25),
+                          color: Colors.black.withValues(
+                              alpha: isDark ? 0.4 : 0.25),
                           offset: const Offset(0, 4),
                           blurRadius: 50,
                         ),

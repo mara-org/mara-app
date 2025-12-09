@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/widgets/primary_button.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_colors_dark.dart';
 import '../../../core/utils/platform_utils.dart';
 import '../../../core/providers/permissions_provider.dart';
 import '../../../core/services/native_permission_service.dart';
@@ -14,8 +15,12 @@ class CameraPermissionScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: AppColors.cameraPermissionBackground,
+      backgroundColor: isDark
+          ? AppColorsDark.cameraPermissionBackground
+          : AppColors.cameraPermissionBackground,
       body: SafeArea(
         child: Stack(
           children: [
@@ -36,7 +41,9 @@ class CameraPermissionScreen extends ConsumerWidget {
                             l10n.allowCameraAccess,
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              color: AppColors.textPrimary,
+                              color: isDark
+                                  ? AppColorsDark.textPrimary
+                                  : AppColors.textPrimary,
                               fontSize: 26,
                               fontWeight: FontWeight.w600,
                               height: 1,
@@ -50,7 +57,9 @@ class CameraPermissionScreen extends ConsumerWidget {
                               l10n.cameraAccessDescription,
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                color: AppColors.textSecondary,
+                                color: isDark
+                                    ? AppColorsDark.textSecondary
+                                    : AppColors.textSecondary,
                                 fontSize: 15,
                                 fontWeight: FontWeight.normal,
                                 height: 1.5,
@@ -102,30 +111,35 @@ class CameraPermissionScreen extends ConsumerWidget {
                                 .setCamera(false);
                             context.push('/microphone-permission');
                           },
-                          child: Text(
-                            l10n.notNow,
-                            style: TextStyle(
-                              color: AppColors.textSecondary,
-                              fontSize: 16,
-                              fontWeight: FontWeight.normal,
+                            child: Text(
+                              l10n.notNow,
+                              style: TextStyle(
+                                color: isDark
+                                    ? AppColorsDark.textSecondary
+                                    : AppColors.textSecondary,
+                                fontSize: 16,
+                                fontWeight: FontWeight.normal,
+                              ),
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 12),
-                        // Privacy note
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: Text(
-                            l10n.cameraPermissionPrivacy,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: AppColors.textSecondary.withOpacity(0.7),
-                              fontSize: 13,
-                              fontWeight: FontWeight.normal,
-                              height: 1.5,
+                          const SizedBox(height: 12),
+                          // Privacy note
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: Text(
+                              l10n.cameraPermissionPrivacy,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: (isDark
+                                        ? AppColorsDark.textSecondary
+                                        : AppColors.textSecondary)
+                                    .withValues(alpha: 0.7),
+                                fontSize: 13,
+                                fontWeight: FontWeight.normal,
+                                height: 1.5,
+                              ),
                             ),
                           ),
-                        ),
                         const SizedBox(height: 20),
                       ],
                     ),

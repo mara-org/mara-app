@@ -4,6 +4,7 @@ import '../../../core/widgets/mara_logo.dart';
 import '../../../core/widgets/mara_text_field.dart';
 import '../../../core/widgets/primary_button.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_colors_dark.dart';
 import '../../../l10n/app_localizations.dart';
 
 class ForgotPasswordEmailScreen extends StatefulWidget {
@@ -45,9 +46,13 @@ class _ForgotPasswordEmailScreenState extends State<ForgotPasswordEmailScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final h = MediaQuery.of(context).size.height;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: isDark
+          ? AppColorsDark.backgroundLight
+          : AppColors.backgroundLight,
       body: SafeArea(
         child: Form(
           key: _formKey,
@@ -65,7 +70,8 @@ class _ForgotPasswordEmailScreenState extends State<ForgotPasswordEmailScreen> {
                       width: 36,
                       height: 36,
                       decoration: BoxDecoration(
-                        color: AppColors.languageButtonColor.withOpacity(0.1),
+                        color: AppColors.languageButtonColor.withValues(
+                            alpha: 0.1),
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(
@@ -96,7 +102,9 @@ class _ForgotPasswordEmailScreenState extends State<ForgotPasswordEmailScreen> {
                     textAlign: TextAlign.start,
                     style: TextStyle(
                       fontSize: 14,
-                      color: AppColors.textSecondary,
+                      color: isDark
+                          ? AppColorsDark.textSecondary
+                          : AppColors.textSecondary,
                       fontFamily: 'Roboto',
                       height: 1.5,
                     ),

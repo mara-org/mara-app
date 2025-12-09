@@ -3,16 +3,20 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../l10n/app_localizations.dart';
 import '../../../core/widgets/primary_button.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_colors_dark.dart';
 
 class OnboardingPersonalizedScreen extends StatelessWidget {
   const OnboardingPersonalizedScreen({super.key});
 
-  Widget _buildHeartIcon() {
+  Widget _buildHeartIcon(bool isDark) {
     return Container(
       width: 120,
       height: 120,
       decoration: BoxDecoration(
-        color: const Color(0xFF38BDF8).withOpacity(0.2), // #38BDF8 at 20%
+        color: isDark
+            ? AppColorsDark.languageButtonColor.withOpacity(0.2)
+            : const Color(0xFF38BDF8).withOpacity(0.2), // #38BDF8 at 20%
         shape: BoxShape.circle,
       ),
       child: Center(
@@ -25,20 +29,27 @@ class OnboardingPersonalizedScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final h = MediaQuery.of(context).size.height;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFFBAE6FD), // #BAE6FD (top)
-              Color(0xFF7DD3FC), // #7DD3FC (bottom)
-            ],
+            colors: isDark
+                ? [
+                    AppColorsDark.personalizedGradientStart,
+                    AppColorsDark.personalizedGradientEnd,
+                  ]
+                : [
+                    AppColors.personalizedGradientStart, // #BAE6FD (top)
+                    AppColors.personalizedGradientEnd, // #7DD3FC (bottom)
+                  ],
           ),
         ),
         child: Stack(
@@ -49,7 +60,7 @@ class OnboardingPersonalizedScreen extends StatelessWidget {
                 children: [
                   SizedBox(height: h * 0.18), // Top spacing
                   // 1) Large blue heart icon
-                  _buildHeartIcon(),
+                  _buildHeartIcon(isDark),
 
                   const SizedBox(height: 16), // 16px spacing
                   // 2) Title: "Personalized health insights, made just for you"
@@ -58,11 +69,13 @@ class OnboardingPersonalizedScreen extends StatelessWidget {
                     child: Text(
                       l10n.personalizedTitle,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontFamily: 'Roboto',
                         fontSize: 20,
                         fontWeight: FontWeight.w600,
-                        color: Color(0xFF0F172A), // #0F172A
+                        color: isDark
+                            ? AppColorsDark.textPrimary
+                            : AppColors.textPrimary, // #0F172A
                       ),
                     ),
                   ),
@@ -78,9 +91,9 @@ class OnboardingPersonalizedScreen extends StatelessWidget {
                         fontFamily: 'Roboto',
                         fontSize: 14,
                         fontWeight: FontWeight.w400,
-                        color: const Color(
-                          0xFF0F172A,
-                        ).withOpacity(0.65), // 60-70% opacity
+                        color: isDark
+                            ? AppColorsDark.textSecondary
+                            : AppColors.textPrimary.withOpacity(0.65), // 60-70% opacity
                       ),
                     ),
                   ),
@@ -118,7 +131,9 @@ class OnboardingPersonalizedScreen extends StatelessWidget {
                           fontFamily: 'Roboto',
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
-                          color: Colors.black.withOpacity(0.6),
+                          color: isDark
+                              ? AppColorsDark.textSecondary
+                              : Colors.black.withOpacity(0.6),
                         ),
                       ),
                     ),

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/providers/user_profile_provider.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_colors_dark.dart';
 import '../../../core/utils/platform_utils.dart';
 import '../../../core/widgets/mara_logo.dart';
 import '../../../core/widgets/primary_button.dart';
@@ -150,8 +151,12 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
     final l10n = AppLocalizations.of(context)!;
     final monthOptions = _monthOptions;
     final validDays = _validDays;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: isDark
+          ? AppColorsDark.backgroundLight
+          : AppColors.backgroundLight,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -168,7 +173,8 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
                       width: 36,
                       height: 36,
                       decoration: BoxDecoration(
-                        color: AppColors.languageButtonColor.withOpacity(0.1),
+                        color: AppColors.languageButtonColor.withValues(
+                            alpha: 0.1),
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(
@@ -205,7 +211,9 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
                           Text(
                             l10n.year,
                             style: TextStyle(
-                              color: AppColors.textSecondary,
+                              color: isDark
+                                  ? AppColorsDark.textSecondary
+                                  : AppColors.textSecondary,
                               fontSize: 14,
                             ),
                           ),
@@ -246,8 +254,10 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
                                       style: TextStyle(
                                         color: isSelected
                                             ? AppColors.languageButtonColor
-                                            : AppColors.textSecondary
-                                                .withOpacity(0.66),
+                                            : (isDark
+                                                ? AppColorsDark.textSecondary
+                                                : AppColors.textSecondary)
+                                                .withValues(alpha: 0.66),
                                         fontSize: 20,
                                         fontWeight: FontWeight.normal,
                                       ),
@@ -270,8 +280,13 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
                             l10n.month,
                             style: TextStyle(
                               color: _selectedYear != null
-                                  ? AppColors.textSecondary
-                                  : AppColors.textSecondary.withOpacity(0.5),
+                                  ? (isDark
+                                      ? AppColorsDark.textSecondary
+                                      : AppColors.textSecondary)
+                                  : (isDark
+                                          ? AppColorsDark.textSecondary
+                                          : AppColors.textSecondary)
+                                      .withValues(alpha: 0.5),
                               fontSize: 14,
                             ),
                           ),
@@ -320,8 +335,11 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
                                         style: TextStyle(
                                           color: isSelected
                                               ? AppColors.languageButtonColor
-                                              : AppColors.textSecondary
-                                                  .withOpacity(0.66),
+                                              : (isDark
+                                                      ? AppColorsDark
+                                                          .textSecondary
+                                                      : AppColors.textSecondary)
+                                                  .withValues(alpha: 0.66),
                                           fontSize: 20,
                                           fontWeight: FontWeight.normal,
                                         ),
@@ -346,8 +364,13 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
                             style: TextStyle(
                               color: _selectedYear != null &&
                                       _selectedMonth != null
-                                  ? AppColors.textSecondary
-                                  : AppColors.textSecondary.withOpacity(0.5),
+                                  ? (isDark
+                                      ? AppColorsDark.textSecondary
+                                      : AppColors.textSecondary)
+                                  : (isDark
+                                          ? AppColorsDark.textSecondary
+                                          : AppColors.textSecondary)
+                                      .withValues(alpha: 0.5),
                               fontSize: 14,
                             ),
                           ),
@@ -398,8 +421,11 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
                                         style: TextStyle(
                                           color: isSelected
                                               ? AppColors.languageButtonColor
-                                              : AppColors.textSecondary
-                                                  .withOpacity(0.66),
+                                              : (isDark
+                                                      ? AppColorsDark
+                                                          .textSecondary
+                                                      : AppColors.textSecondary)
+                                                  .withValues(alpha: 0.66),
                                           fontSize: 20,
                                           fontWeight: FontWeight.normal,
                                         ),

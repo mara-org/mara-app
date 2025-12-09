@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/providers/permissions_provider.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_colors_dark.dart';
 import '../../../core/utils/platform_utils.dart';
 import '../../../core/widgets/mara_logo.dart';
 import '../../../core/widgets/primary_button.dart';
@@ -16,9 +17,13 @@ class PermissionsSummaryScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final permissions = ref.watch(permissionsProvider);
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: isDark
+          ? AppColorsDark.backgroundLight
+          : AppColors.backgroundLight,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -34,7 +39,9 @@ class PermissionsSummaryScreen extends ConsumerWidget {
                   l10n.reviewPermissions,
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: AppColors.textPrimary,
+                    color: isDark
+                        ? AppColorsDark.textPrimary
+                        : AppColors.textPrimary,
                     fontSize: 26,
                     fontWeight: FontWeight.w600,
                     height: 1,
@@ -48,7 +55,9 @@ class PermissionsSummaryScreen extends ConsumerWidget {
                     l10n.permissionsSummarySubtitle,
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: AppColors.textSecondary,
+                      color: isDark
+                          ? AppColorsDark.textSecondary
+                          : AppColors.textSecondary,
                       fontSize: 16,
                       fontWeight: FontWeight.normal,
                       height: 1.5,
@@ -60,11 +69,13 @@ class PermissionsSummaryScreen extends ConsumerWidget {
                 _PermissionItem(
                   title: l10n.notifications,
                   isEnabled: permissions.notifications,
+                  isDark: isDark,
                 ),
                 const SizedBox(height: 16),
                 _PermissionItem(
                   title: l10n.healthData,
                   isEnabled: permissions.healthData,
+                  isDark: isDark,
                 ),
                 const SizedBox(height: 40),
                 // Start using Mara button
@@ -82,7 +93,10 @@ class PermissionsSummaryScreen extends ConsumerWidget {
                     l10n.yourPrivacyIsAlwaysOurTopPriority,
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: AppColors.textSecondary.withValues(alpha: 0.7),
+                      color: (isDark
+                              ? AppColorsDark.textSecondary
+                              : AppColors.textSecondary)
+                          .withValues(alpha: 0.7),
                       fontSize: 13,
                       fontWeight: FontWeight.normal,
                       height: 1.5,
@@ -102,8 +116,13 @@ class PermissionsSummaryScreen extends ConsumerWidget {
 class _PermissionItem extends StatelessWidget {
   final String title;
   final bool isEnabled;
+  final bool isDark;
 
-  const _PermissionItem({required this.title, required this.isEnabled});
+  const _PermissionItem({
+    required this.title,
+    required this.isEnabled,
+    this.isDark = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -112,15 +131,24 @@ class _PermissionItem extends StatelessWidget {
       height: 55,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        color: isEnabled ? const Color(0xFFC4F4FF) : const Color(0xFFA2BCC2),
+        color: isEnabled
+            ? (isDark
+                ? AppColors.languageButtonColor.withValues(alpha: 0.2)
+                : const Color(0xFFC4F4FF))
+            : (isDark
+                ? AppColorsDark.cardBackground
+                : const Color(0xFFA2BCC2)),
       ),
       child: Center(
         child: Text(
           title,
           textAlign: TextAlign.center,
           style: TextStyle(
-            color:
-                isEnabled ? const Color(0xFF10A9CC) : const Color(0xFFFCFEFF),
+            color: isEnabled
+                ? AppColors.languageButtonColor
+                : (isDark
+                    ? AppColorsDark.textSecondary
+                    : const Color(0xFFFCFEFF)),
             fontSize: 20,
             fontWeight: FontWeight.normal,
             height: 1,

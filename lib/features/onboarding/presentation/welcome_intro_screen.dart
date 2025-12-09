@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/widgets/primary_button.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../core/providers/language_provider.dart';
+import '../../../core/theme/app_colors_dark.dart';
 
 class WelcomeIntroScreen extends ConsumerWidget {
   const WelcomeIntroScreen({super.key});
@@ -14,6 +15,8 @@ class WelcomeIntroScreen extends ConsumerWidget {
     ref.watch(appLocaleProvider);
     final l10n = AppLocalizations.of(context)!;
     final h = MediaQuery.of(context).size.height;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -24,14 +27,19 @@ class WelcomeIntroScreen extends ConsumerWidget {
           Container(
             width: double.infinity,
             height: double.infinity,
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [
-                  Color(0xFFC6ECFF), // #C6ECFF (top)
-                  Color(0xFF339AD0), // #339AD0 (bottom)
-                ],
+                colors: isDark
+                    ? [
+                        AppColorsDark.gradientStart,
+                        AppColorsDark.gradientEnd,
+                      ]
+                    : [
+                        const Color(0xFFC6ECFF), // #C6ECFF (top)
+                        const Color(0xFF339AD0), // #339AD0 (bottom)
+                      ],
               ),
             ),
           ),
@@ -76,14 +84,14 @@ class WelcomeIntroScreen extends ConsumerWidget {
             child: Container(
               height: h * 0.22 + MediaQuery.of(context).padding.bottom,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: isDark ? AppColorsDark.cardBackground : Colors.white,
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(28),
                   topRight: Radius.circular(28),
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withOpacity(isDark ? 0.3 : 0.1),
                     offset: const Offset(0, -4),
                     blurRadius: 20,
                   ),

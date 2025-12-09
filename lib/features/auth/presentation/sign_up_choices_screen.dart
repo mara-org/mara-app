@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_colors_dark.dart';
 import '../../../core/utils/platform_utils.dart';
 import '../../../core/widgets/mara_logo.dart';
 import '../../../l10n/app_localizations.dart';
@@ -13,9 +14,13 @@ class SignUpChoicesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final screenWidth = MediaQuery.of(context).size.width;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: isDark
+          ? AppColorsDark.backgroundLight
+          : AppColors.backgroundLight,
       body: SafeArea(
         child: Stack(
           children: [
@@ -58,7 +63,9 @@ class SignUpChoicesScreen extends StatelessWidget {
                 child: Text(
                   l10n.joinMaraSubtitle,
                   style: TextStyle(
-                    color: AppColors.textSecondary,
+                    color: isDark
+                        ? AppColorsDark.textSecondary
+                        : AppColors.textSecondary,
                     fontSize: 13,
                     fontWeight: FontWeight.normal,
                     height: 1.5,
@@ -73,10 +80,15 @@ class SignUpChoicesScreen extends StatelessWidget {
               child: _SocialButton(
                 text: l10n.continueWithGoogle,
                 iconImagePath: 'assets/icons/Sign in/Social media logo.png',
-                backgroundColor: Colors.white,
-                textColor: AppColors.textPrimary,
+                backgroundColor: isDark
+                    ? AppColorsDark.cardBackground
+                    : Colors.white,
+                textColor: isDark
+                    ? AppColorsDark.textPrimary
+                    : AppColors.textPrimary,
                 width: screenWidth - 64,
                 height: 52,
+                isDark: isDark,
                 onPressed: () {
                   // TODO: Implement Google sign-in
                 },
@@ -89,10 +101,13 @@ class SignUpChoicesScreen extends StatelessWidget {
               child: _SocialButton(
                 text: l10n.continueWithApple,
                 iconImagePath: 'assets/icons/Sign in/Wrapper.png',
-                backgroundColor: AppColors.appleButtonColor,
+                backgroundColor: isDark
+                    ? Colors.black
+                    : AppColors.appleButtonColor,
                 textColor: Colors.white,
                 width: screenWidth - 64,
                 height: 52,
+                isDark: isDark,
                 onPressed: () {
                   // TODO: Implement Apple sign-in
                 },
@@ -133,7 +148,9 @@ class SignUpChoicesScreen extends StatelessWidget {
                           TextSpan(
                             text: l10n.alreadyAMember,
                             style: TextStyle(
-                              color: Colors.black,
+                              color: isDark
+                                  ? AppColorsDark.textPrimary
+                                  : Colors.black,
                               fontSize: 15,
                               fontWeight: FontWeight.normal,
                             ),
@@ -169,6 +186,7 @@ class _SocialButton extends StatelessWidget {
   final Color textColor;
   final double width;
   final double height;
+  final bool isDark;
   final VoidCallback onPressed;
 
   const _SocialButton({
@@ -178,6 +196,7 @@ class _SocialButton extends StatelessWidget {
     required this.textColor,
     required this.width,
     required this.height,
+    this.isDark = false,
     required this.onPressed,
   });
 
@@ -191,7 +210,11 @@ class _SocialButton extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           color: backgroundColor,
-          border: Border.all(color: AppColors.borderColor, width: 1),
+          border: Border.all(
+              color: isDark
+                  ? AppColorsDark.borderColor
+                  : AppColors.borderColor,
+              width: 1),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,

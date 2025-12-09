@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../theme/app_colors.dart';
+import '../theme/app_colors_dark.dart';
 import '../utils/platform_utils.dart';
 
 class MaraTextField extends StatelessWidget {
@@ -35,6 +36,8 @@ class MaraTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isIOS = PlatformUtils.isIOS;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return TextFormField(
       controller: controller,
@@ -51,21 +54,35 @@ class MaraTextField extends StatelessWidget {
       style: TextStyle(
         fontFamily: 'Roboto',
         fontSize: isIOS ? 17 : 16,
-        color: Colors.black87,
+        color: isDark ? AppColorsDark.textPrimary : Colors.black87,
       ),
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
+        labelStyle: TextStyle(
+          color: isDark ? AppColorsDark.textSecondary : null,
+        ),
+        hintStyle: TextStyle(
+          color: isDark ? AppColorsDark.textSecondary.withValues(alpha: 0.6) : null,
+        ),
         suffixIcon: suffixIcon,
         filled: true,
-        fillColor: Colors.white,
+        fillColor: isDark ? AppColorsDark.cardBackground : Colors.white,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(isIOS ? 12 : 8),
-          borderSide: BorderSide(color: Colors.grey[300]!, width: 1),
+          borderSide: BorderSide(
+              color: isDark
+                  ? AppColorsDark.borderColor
+                  : Colors.grey[300]!,
+              width: 1),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(isIOS ? 12 : 8),
-          borderSide: BorderSide(color: Colors.grey[300]!, width: 1),
+          borderSide: BorderSide(
+              color: isDark
+                  ? AppColorsDark.borderColor
+                  : Colors.grey[300]!,
+              width: 1),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(isIOS ? 12 : 8),

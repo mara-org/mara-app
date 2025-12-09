@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/widgets/mara_logo.dart';
 import '../../../core/widgets/primary_button.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_colors_dark.dart';
 import '../../../core/utils/platform_utils.dart';
 import '../../../core/providers/user_profile_provider.dart';
 import '../../../l10n/app_localizations.dart';
@@ -45,8 +46,12 @@ class _BloodTypeScreenState extends ConsumerState<BloodTypeScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: isDark
+          ? AppColorsDark.backgroundLight
+          : AppColors.backgroundLight,
       body: SafeArea(
         child: Padding(
           padding: PlatformUtils.getDefaultPadding(context),
@@ -62,7 +67,8 @@ class _BloodTypeScreenState extends ConsumerState<BloodTypeScreen> {
                     width: 36,
                     height: 36,
                     decoration: BoxDecoration(
-                      color: AppColors.languageButtonColor.withOpacity(0.1),
+                        color: AppColors.languageButtonColor.withValues(
+                            alpha: 0.1),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(
@@ -106,6 +112,7 @@ class _BloodTypeScreenState extends ConsumerState<BloodTypeScreen> {
                     return _BloodTypeButton(
                       text: bloodType,
                       isSelected: isSelected,
+                      isDark: isDark,
                       onTap: () {
                         setState(() {
                           _selectedBloodType = bloodType;
@@ -136,11 +143,13 @@ class _BloodTypeScreenState extends ConsumerState<BloodTypeScreen> {
 class _BloodTypeButton extends StatelessWidget {
   final String text;
   final bool isSelected;
+  final bool isDark;
   final VoidCallback onTap;
 
   const _BloodTypeButton({
     required this.text,
     required this.isSelected,
+    this.isDark = false,
     required this.onTap,
   });
 
@@ -151,8 +160,16 @@ class _BloodTypeButton extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          color: isSelected ? const Color(0xFFC4F4FF) : const Color(0xFFFFFFFF),
-          border: Border.all(color: const Color(0xFFE2E8F0), width: 1),
+          color: isSelected
+              ? AppColors.languageButtonColor.withValues(alpha: 0.2)
+              : (isDark ? AppColorsDark.cardBackground : Colors.white),
+          border: Border.all(
+              color: isSelected
+                  ? AppColors.languageButtonColor
+                  : (isDark
+                      ? AppColorsDark.borderColor
+                      : const Color(0xFFE2E8F0)),
+              width: 1),
         ),
         child: Center(
           child: Text(
@@ -160,8 +177,10 @@ class _BloodTypeButton extends StatelessWidget {
             textAlign: TextAlign.center,
             style: TextStyle(
               color: isSelected
-                  ? const Color(0xFF10A9CC)
-                  : const Color(0xFF94A3B8),
+                  ? AppColors.languageButtonColor
+                  : (isDark
+                      ? AppColorsDark.textSecondary
+                      : const Color(0xFF94A3B8)),
               fontSize: 16,
               fontWeight: FontWeight.normal,
               height: 1,

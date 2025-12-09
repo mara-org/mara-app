@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/providers/language_provider.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_colors_dark.dart';
 import '../../../core/widgets/mara_logo.dart';
 
 class LanguageSelectorScreen extends ConsumerWidget {
@@ -16,6 +17,8 @@ class LanguageSelectorScreen extends ConsumerWidget {
     final currentLanguageCode = Localizations.localeOf(context).languageCode;
     final disableArabic = isFromProfile && currentLanguageCode == 'ar';
     final disableEnglish = isFromProfile && currentLanguageCode == 'en';
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -23,14 +26,19 @@ class LanguageSelectorScreen extends ConsumerWidget {
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFF0EA5C6), // #0EA5C6
-              Color(0xFF10A9CC), // #10A9CC
-            ],
+            colors: isDark
+                ? [
+                    AppColorsDark.gradientStart,
+                    AppColorsDark.gradientEnd,
+                  ]
+                : [
+                    AppColors.gradientStart, // #0EA5C6
+                    AppColors.gradientEnd, // #10A9CC
+                  ],
           ),
         ),
         child: Column(
@@ -63,7 +71,9 @@ class LanguageSelectorScreen extends ConsumerWidget {
                     blurRadius: 55,
                   ),
                 ],
-                color: AppColors.languageCardBackground,
+                color: isDark
+                    ? AppColorsDark.languageCardBackground
+                    : AppColors.languageCardBackground,
               ),
               child: Padding(
                 padding: EdgeInsets.only(
@@ -80,6 +90,7 @@ class LanguageSelectorScreen extends ConsumerWidget {
                     _LanguageButton(
                       text: 'العربية',
                       isDisabled: disableArabic,
+                      isDark: isDark,
                       onPressed: disableArabic
                           ? null
                           : () async {
@@ -116,6 +127,7 @@ class LanguageSelectorScreen extends ConsumerWidget {
                     _LanguageButton(
                       text: 'English',
                       isDisabled: disableEnglish,
+                      isDark: isDark,
                       onPressed: disableEnglish
                           ? null
                           : () async {
@@ -162,18 +174,23 @@ class _LanguageButton extends StatelessWidget {
   final String text;
   final VoidCallback? onPressed;
   final bool isDisabled;
+  final bool isDark;
 
   const _LanguageButton({
     required this.text,
     required this.onPressed,
     this.isDisabled = false,
+    this.isDark = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    final backgroundColor =
-        isDisabled ? Colors.grey.shade300 : AppColors.languageButtonColor;
-    final textColor = isDisabled ? Colors.grey.shade600 : Colors.white;
+    final backgroundColor = isDisabled
+        ? (isDark ? AppColorsDark.borderColor : Colors.grey.shade300)
+        : AppColors.languageButtonColor;
+    final textColor = isDisabled
+        ? (isDark ? AppColorsDark.textSecondary : Colors.grey.shade600)
+        : Colors.white;
 
     return GestureDetector(
       onTap: isDisabled ? null : onPressed,

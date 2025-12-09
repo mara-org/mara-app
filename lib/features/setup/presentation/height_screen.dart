@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/widgets/mara_logo.dart';
 import '../../../core/widgets/primary_button.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_colors_dark.dart';
 import '../../../core/utils/platform_utils.dart';
 import '../../../core/providers/user_profile_provider.dart';
 import '../../../l10n/app_localizations.dart';
@@ -40,9 +41,13 @@ class _HeightScreenState extends ConsumerState<HeightScreen> {
     final heights = _selectedUnit == 'cm'
         ? List.generate(61, (i) => 150 + i) // 150-210 cm
         : List.generate(25, (i) => 59 + i); // 59-83 inches
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: isDark
+          ? AppColorsDark.backgroundLight
+          : AppColors.backgroundLight,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -59,7 +64,8 @@ class _HeightScreenState extends ConsumerState<HeightScreen> {
                       width: 36,
                       height: 36,
                       decoration: BoxDecoration(
-                        color: AppColors.languageButtonColor.withOpacity(0.1),
+                        color: AppColors.languageButtonColor.withValues(
+                            alpha: 0.1),
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(
@@ -95,6 +101,7 @@ class _HeightScreenState extends ConsumerState<HeightScreen> {
                         _UnitToggle(
                           text: l10n.cm,
                           isSelected: _selectedUnit == 'cm',
+                          isDark: isDark,
                           onTap: () {
                             setState(() {
                               _selectedUnit = 'cm';
@@ -107,6 +114,7 @@ class _HeightScreenState extends ConsumerState<HeightScreen> {
                         _UnitToggle(
                           text: l10n.inchUnit,
                           isSelected: _selectedUnit == 'in',
+                          isDark: isDark,
                           onTap: () {
                             setState(() {
                               _selectedUnit = 'in';
@@ -154,7 +162,8 @@ class _HeightScreenState extends ConsumerState<HeightScreen> {
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
                             color: isSelected
-                                ? const Color(0xFFC4F4FF)
+                                ? AppColors.languageButtonColor.withValues(
+                                    alpha: 0.2)
                                 : Colors.transparent,
                             borderRadius: BorderRadius.circular(19),
                           ),
@@ -162,8 +171,11 @@ class _HeightScreenState extends ConsumerState<HeightScreen> {
                             height.toString(),
                             style: TextStyle(
                               color: isSelected
-                                  ? const Color(0xFF10A9CC)
-                                  : const Color(0xFF94A3B8).withOpacity(0.6),
+                                  ? AppColors.languageButtonColor
+                                  : (isDark
+                                          ? AppColorsDark.textSecondary
+                                          : const Color(0xFF94A3B8))
+                                      .withValues(alpha: 0.6),
                               fontSize: 20,
                               fontWeight: isSelected
                                   ? FontWeight.w500
@@ -200,11 +212,13 @@ class _HeightScreenState extends ConsumerState<HeightScreen> {
 class _UnitToggle extends StatelessWidget {
   final String text;
   final bool isSelected;
+  final bool isDark;
   final VoidCallback onTap;
 
   const _UnitToggle({
     required this.text,
     required this.isSelected,
+    this.isDark = false,
     required this.onTap,
   });
 
@@ -217,7 +231,9 @@ class _UnitToggle extends StatelessWidget {
         style: TextStyle(
           color: isSelected
               ? AppColors.languageButtonColor
-              : AppColors.textSecondary,
+              : (isDark
+                  ? AppColorsDark.textSecondary
+                  : AppColors.textSecondary),
           fontSize: 26,
           fontWeight: FontWeight.normal,
           height: 1,

@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../l10n/app_localizations.dart';
 import '../../../core/widgets/primary_button.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_colors_dark.dart';
 
 class OnboardingInsightsScreen extends StatelessWidget {
   const OnboardingInsightsScreen({super.key});
@@ -24,20 +26,27 @@ class OnboardingInsightsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final h = MediaQuery.of(context).size.height;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFFE0F7FA), // #E0F7FA (top)
-              Color(0xFFF9FAFB), // #F9FAFB (bottom)
-            ],
+            colors: isDark
+                ? [
+                    AppColorsDark.onboardingGradientStart,
+                    AppColorsDark.onboardingGradientEnd,
+                  ]
+                : [
+                    AppColors.onboardingGradientStart, // #E0F7FA (top)
+                    AppColors.onboardingGradientEnd, // #F9FAFB (bottom)
+                  ],
           ),
         ),
         child: Stack(
@@ -50,11 +59,13 @@ class OnboardingInsightsScreen extends StatelessWidget {
               child: Text(
                 l10n.onboardingInsightsTitle,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: 'Roboto',
                   fontSize: 24,
                   fontWeight: FontWeight.w600,
-                  color: Color(0xFF0F172A), // #0F172A
+                  color: isDark
+                      ? AppColorsDark.textPrimary
+                      : AppColors.textPrimary, // #0F172A
                 ),
               ),
             ),
@@ -73,11 +84,13 @@ class OnboardingInsightsScreen extends StatelessWidget {
               child: Text(
                 l10n.onboardingInsightsSubtitle,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: 'Roboto',
                   fontSize: 16,
                   fontWeight: FontWeight.w400,
-                  color: Color(0xFF64748B), // #64748B
+                  color: isDark
+                      ? AppColorsDark.textSecondary
+                      : AppColors.textSecondary, // #64748B
                 ),
               ),
             ),

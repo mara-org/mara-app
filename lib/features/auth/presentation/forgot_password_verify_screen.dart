@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/widgets/mara_logo.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_colors_dark.dart';
 import '../../../core/utils/platform_utils.dart';
 import '../../../l10n/app_localizations.dart';
 
@@ -56,8 +57,12 @@ class _ForgotPasswordVerifyScreenState
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: isDark
+          ? AppColorsDark.backgroundLight
+          : AppColors.backgroundLight,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -76,8 +81,8 @@ class _ForgotPasswordVerifyScreenState
                           width: 36,
                           height: 36,
                           decoration: BoxDecoration(
-                            color: AppColors.languageButtonColor.withOpacity(
-                              0.1,
+                            color: AppColors.languageButtonColor.withValues(
+                              alpha: 0.1,
                             ),
                             shape: BoxShape.circle,
                           ),
@@ -108,16 +113,18 @@ class _ForgotPasswordVerifyScreenState
                 // Subtitle
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Text(
-                    l10n.forgotPasswordVerifySubtitle,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: AppColors.textSecondary,
-                      fontSize: 13,
-                      fontWeight: FontWeight.normal,
-                      height: 1.5,
+                    child: Text(
+                      l10n.forgotPasswordVerifySubtitle,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: isDark
+                            ? AppColorsDark.textSecondary
+                            : AppColors.textSecondary,
+                        fontSize: 13,
+                        fontWeight: FontWeight.normal,
+                        height: 1.5,
+                      ),
                     ),
-                  ),
                 ),
                 const SizedBox(height: 40),
                 // OTP input boxes
@@ -134,26 +141,34 @@ class _ForgotPasswordVerifyScreenState
                         textAlign: TextAlign.center,
                         keyboardType: TextInputType.number,
                         maxLength: 1,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 32,
                           fontWeight: FontWeight.normal,
-                          color: AppColors.textPrimary,
+                          color: isDark
+                              ? AppColorsDark.textPrimary
+                              : AppColors.textPrimary,
                         ),
                         decoration: InputDecoration(
                           counterText: '',
                           filled: true,
-                          fillColor: Colors.white,
+                          fillColor: isDark
+                              ? AppColorsDark.cardBackground
+                              : Colors.white,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                             borderSide: BorderSide(
-                              color: AppColors.borderColor,
+                              color: isDark
+                                  ? AppColorsDark.borderColor
+                                  : AppColors.borderColor,
                               width: 1,
                             ),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                             borderSide: BorderSide(
-                              color: AppColors.borderColor,
+                              color: isDark
+                                  ? AppColorsDark.borderColor
+                                  : AppColors.borderColor,
                               width: 1,
                             ),
                           ),
@@ -187,7 +202,8 @@ class _ForgotPasswordVerifyScreenState
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.25),
+                        color: Colors.black.withValues(
+                            alpha: isDark ? 0.4 : 0.25),
                         offset: const Offset(0, 4),
                         blurRadius: 50,
                       ),

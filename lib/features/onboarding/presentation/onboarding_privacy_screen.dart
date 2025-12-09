@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../l10n/app_localizations.dart';
 import '../../../core/widgets/primary_button.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_colors_dark.dart';
 
 class OnboardingPrivacyScreen extends StatelessWidget {
   const OnboardingPrivacyScreen({super.key});
@@ -11,15 +13,19 @@ class OnboardingPrivacyScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final h = MediaQuery.of(context).size.height;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: isDark ? AppColorsDark.backgroundLight : Colors.white,
       body: Stack(
         children: [
           Container(
             width: double.infinity,
             height: double.infinity,
-            color: Colors.white, // Pure white background
+            color: isDark
+                ? AppColorsDark.backgroundLight
+                : Colors.white, // Pure white background
             child: SafeArea(
               child: Column(
                 children: [
@@ -30,11 +36,13 @@ class OnboardingPrivacyScreen extends StatelessWidget {
                     child: Text(
                       l10n.privacyTitle,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontFamily: 'Roboto',
                         fontSize: 22,
                         fontWeight: FontWeight.w600,
-                        color: Color(0xFF0F172A), // #0F172A
+                        color: isDark
+                            ? AppColorsDark.textPrimary
+                            : AppColors.textPrimary, // #0F172A
                       ),
                     ),
                   ),
@@ -77,11 +85,13 @@ class OnboardingPrivacyScreen extends StatelessWidget {
                     child: Text(
                       l10n.privacySubtitle1,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontFamily: 'Roboto',
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        color: Color(0xFF0F172A), // #0F172A
+                        color: isDark
+                            ? AppColorsDark.textPrimary
+                            : AppColors.textPrimary, // #0F172A
                       ),
                     ),
                   ),
@@ -94,11 +104,13 @@ class OnboardingPrivacyScreen extends StatelessWidget {
                     child: Text(
                       l10n.privacySubtitle2,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontFamily: 'Roboto',
                         fontSize: 14,
                         fontWeight: FontWeight.w400,
-                        color: Color(0xFF64748B), // #64748B
+                        color: isDark
+                            ? AppColorsDark.textSecondary
+                            : AppColors.textSecondary, // #64748B
                       ),
                     ),
                   ),

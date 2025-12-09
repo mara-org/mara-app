@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/widgets/primary_button.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_colors_dark.dart';
 import '../../../core/utils/platform_utils.dart';
 import '../../../l10n/app_localizations.dart';
 
@@ -11,18 +12,25 @@ class ReadyScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     return Scaffold(
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment(-0.0026640670839697123, -0.9999666213989258),
-            end: Alignment(0.9999666213989258, -0.012521007098257542),
-            colors: [
-              AppColors.onboardingGradientStart,
-              AppColors.onboardingGradientEnd,
-            ],
+            begin: const Alignment(-0.0026640670839697123, -0.9999666213989258),
+            end: const Alignment(0.9999666213989258, -0.012521007098257542),
+            colors: isDark
+                ? [
+                    AppColorsDark.onboardingGradientStart,
+                    AppColorsDark.onboardingGradientEnd,
+                  ]
+                : [
+                    AppColors.onboardingGradientStart,
+                    AppColors.onboardingGradientEnd,
+                  ],
           ),
         ),
         child: SafeArea(
@@ -70,7 +78,9 @@ class ReadyScreen extends StatelessWidget {
                       l10n.readySubtitleText,
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        color: AppColors.textSecondary,
+                        color: isDark
+                            ? AppColorsDark.textSecondary
+                            : AppColors.textSecondary,
                         fontSize: 16,
                         fontWeight: FontWeight.normal,
                         height: 1.5,

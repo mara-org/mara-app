@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/widgets/mara_logo.dart';
 import '../../../core/widgets/primary_button.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_colors_dark.dart';
 import '../../../core/utils/platform_utils.dart';
 import '../../../core/providers/user_profile_provider.dart';
 import '../../../core/models/user_profile_setup.dart';
@@ -35,8 +36,12 @@ class _GenderScreenState extends ConsumerState<GenderScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: isDark
+          ? AppColorsDark.backgroundLight
+          : AppColors.backgroundLight,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -53,7 +58,8 @@ class _GenderScreenState extends ConsumerState<GenderScreen> {
                       width: 36,
                       height: 36,
                       decoration: BoxDecoration(
-                        color: AppColors.languageButtonColor.withOpacity(0.1),
+                        color: AppColors.languageButtonColor.withValues(
+                            alpha: 0.1),
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(
@@ -88,6 +94,7 @@ class _GenderScreenState extends ConsumerState<GenderScreen> {
                       text: l10n.male,
                       isSelected: _selectedGender == Gender.male,
                       isFemale: false,
+                      isDark: isDark,
                       onTap: () {
                         setState(() {
                           _selectedGender = Gender.male;
@@ -99,6 +106,7 @@ class _GenderScreenState extends ConsumerState<GenderScreen> {
                       text: l10n.female,
                       isSelected: _selectedGender == Gender.female,
                       isFemale: true,
+                      isDark: isDark,
                       onTap: () {
                         setState(() {
                           _selectedGender = Gender.female;
@@ -130,23 +138,25 @@ class _GenderButton extends StatelessWidget {
   final String text;
   final bool isSelected;
   final bool isFemale;
+  final bool isDark;
   final VoidCallback onTap;
 
   const _GenderButton({
     required this.text,
     required this.isSelected,
     required this.isFemale,
+    this.isDark = false,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    final selectedColor = isFemale
-        ? AppColors.languageButtonColor
-        : AppColors.languageButtonColor;
+    final selectedColor = AppColors.languageButtonColor;
 
     // Female button colors when selected
-    final femaleSelectedBackground = const Color(0xFFFFDADA); // #FFDADA
+    final femaleSelectedBackground = isDark
+        ? AppColorsDark.femaleButtonColor
+        : const Color(0xFFFFDADA); // #FFDADA
     final femaleSelectedBorder = const Color(0xFFD49AD0); // #D49AD0
 
     return GestureDetector(
@@ -158,11 +168,13 @@ class _GenderButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           color: isSelected
               ? (isFemale ? femaleSelectedBackground : selectedColor)
-              : Colors.white,
+              : (isDark ? AppColorsDark.cardBackground : Colors.white),
           border: Border.all(
             color: isSelected
                 ? (isFemale ? femaleSelectedBorder : selectedColor)
-                : AppColors.borderColor,
+                : (isDark
+                    ? AppColorsDark.borderColor
+                    : AppColors.borderColor),
             width: 1,
           ),
         ),
@@ -172,8 +184,14 @@ class _GenderButton extends StatelessWidget {
             textAlign: TextAlign.center,
             style: TextStyle(
               color: isSelected
-                  ? (isFemale ? AppColors.textPrimary : Colors.white)
-                  : AppColors.textSecondary,
+                  ? (isFemale
+                      ? (isDark
+                          ? AppColorsDark.textPrimary
+                          : AppColors.textPrimary)
+                      : Colors.white)
+                  : (isDark
+                      ? AppColorsDark.textSecondary
+                      : AppColors.textSecondary),
               fontSize: 16,
               fontWeight: FontWeight.normal,
               height: 1,

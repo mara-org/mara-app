@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_colors_dark.dart';
 import '../../../core/utils/platform_utils.dart';
 import '../../../core/widgets/mara_logo.dart';
 import '../../../core/widgets/mara_text_field.dart';
@@ -65,9 +66,13 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
     final screenWidth = MediaQuery.of(context).size.width;
     final buttonWidth =
         screenWidth - 56; // Same width as email and password fields
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: isDark
+          ? AppColorsDark.backgroundLight
+          : AppColors.backgroundLight,
       body: SafeArea(
         child: Form(
           key: _formKey,
@@ -162,10 +167,15 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
                   child: _SocialButton(
                     text: l10n.continueWithGoogle,
                     iconImagePath: 'assets/icons/Sign in/Social media logo.png',
-                    backgroundColor: Colors.white,
-                    textColor: AppColors.textPrimary,
+                    backgroundColor: isDark
+                        ? AppColorsDark.cardBackground
+                        : Colors.white,
+                    textColor: isDark
+                        ? AppColorsDark.textPrimary
+                        : AppColors.textPrimary,
                     width: buttonWidth,
                     height: 52,
+                    isDark: isDark,
                     onPressed: () {
                       // TODO: Implement Google sign-in
                     },
@@ -182,10 +192,13 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
                   child: _SocialButton(
                     text: l10n.continueWithApple,
                     iconImagePath: 'assets/icons/Sign in/Wrapper.png',
-                    backgroundColor: AppColors.appleButtonColor,
+                    backgroundColor: isDark
+                        ? Colors.black
+                        : AppColors.appleButtonColor,
                     textColor: Colors.white,
                     width: buttonWidth,
                     height: 52,
+                    isDark: isDark,
                     onPressed: () {
                       // TODO: Implement Apple sign-in
                     },
@@ -248,7 +261,9 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
                               TextAlign.start, // Left in LTR, right in RTL
                           text: TextSpan(
                             style: TextStyle(
-                              color: AppColors.textSecondary,
+                              color: isDark
+                                  ? AppColorsDark.textSecondary
+                                  : AppColors.textSecondary,
                               fontSize: 11,
                               fontWeight: FontWeight.normal,
                               fontFamily: 'Roboto',
@@ -285,7 +300,9 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
                       textAlign: TextAlign.center,
                       text: TextSpan(
                         style: TextStyle(
-                          color: Colors.black,
+                          color: isDark
+                              ? AppColorsDark.textPrimary
+                              : Colors.black,
                           fontSize: 15,
                           fontWeight: FontWeight.normal,
                           fontFamily: 'Roboto',
@@ -294,8 +311,8 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
                           TextSpan(text: '${l10n.dontHaveAccount} '),
                           TextSpan(
                             text: l10n.signUp,
-                            style: const TextStyle(
-                              color: Color(0xFF0EA5C6), // #0EA5C6
+                            style: TextStyle(
+                              color: AppColors.languageButtonColor, // #0EA5C6
                               fontWeight: FontWeight.normal,
                               fontFamily: 'Roboto',
                               decoration: TextDecoration.underline,
@@ -322,6 +339,7 @@ class _SocialButton extends StatelessWidget {
   final Color textColor;
   final double width;
   final double height;
+  final bool isDark;
   final VoidCallback onPressed;
 
   const _SocialButton({
@@ -331,6 +349,7 @@ class _SocialButton extends StatelessWidget {
     required this.textColor,
     required this.width,
     required this.height,
+    this.isDark = false,
     required this.onPressed,
   });
 
@@ -344,7 +363,11 @@ class _SocialButton extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           color: backgroundColor,
-          border: Border.all(color: AppColors.borderColor, width: 1),
+          border: Border.all(
+              color: isDark
+                  ? AppColorsDark.borderColor
+                  : AppColors.borderColor,
+              width: 1),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,

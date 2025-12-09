@@ -4,6 +4,7 @@ import '../../../core/widgets/mara_logo.dart';
 import '../../../core/widgets/mara_text_field.dart';
 import '../../../core/widgets/primary_button.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_colors_dark.dart';
 import '../../../l10n/app_localizations.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
@@ -94,9 +95,13 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final h = MediaQuery.of(context).size.height;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: isDark
+          ? AppColorsDark.backgroundLight
+          : AppColors.backgroundLight,
       body: SafeArea(
         child: Form(
           key: _formKey,
@@ -114,7 +119,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                       width: 36,
                       height: 36,
                       decoration: BoxDecoration(
-                        color: AppColors.languageButtonColor.withOpacity(0.1),
+                        color: AppColors.languageButtonColor.withValues(
+                            alpha: 0.1),
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(
@@ -145,7 +151,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     textAlign: TextAlign.start,
                     style: TextStyle(
                       fontSize: 14,
-                      color: AppColors.textSecondary,
+                      color: isDark
+                          ? AppColorsDark.textSecondary
+                          : AppColors.textSecondary,
                       fontFamily: 'Roboto',
                       height: 1.5,
                     ),
@@ -183,6 +191,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     hasSpecialChar: _hasSpecialChar,
                     hasMinLength: _hasMinLength,
                     hasMaxLength: _hasMaxLength,
+                    isDark: isDark,
                   ),
                   const SizedBox(height: 16),
                   // Confirm Password field
@@ -240,6 +249,7 @@ class _PasswordRequirementsWidget extends StatelessWidget {
   final bool hasSpecialChar;
   final bool hasMinLength;
   final bool hasMaxLength;
+  final bool isDark;
 
   const _PasswordRequirementsWidget({
     required this.l10n,
@@ -249,6 +259,7 @@ class _PasswordRequirementsWidget extends StatelessWidget {
     required this.hasSpecialChar,
     required this.hasMinLength,
     required this.hasMaxLength,
+    this.isDark = false,
   });
 
   @override
@@ -256,37 +267,54 @@ class _PasswordRequirementsWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: const Color(0xFFF8FAFC),
+        color: isDark
+            ? AppColorsDark.cardBackground
+            : const Color(0xFFF8FAFC),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE2E8F0), width: 1),
+        border: Border.all(
+            color: isDark
+                ? AppColorsDark.borderColor
+                : const Color(0xFFE2E8F0),
+            width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             l10n.passwordRequirements,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
-              color: Color(0xFF0F172A),
+              color: isDark
+                  ? AppColorsDark.textPrimary
+                  : AppColors.textPrimary,
               fontFamily: 'Roboto',
             ),
           ),
           const SizedBox(height: 8),
-          _RequirementItem(text: l10n.atLeastOneUppercase, isMet: hasUppercase),
+          _RequirementItem(
+              text: l10n.atLeastOneUppercase,
+              isMet: hasUppercase,
+              isDark: isDark),
           const SizedBox(height: 6),
-          _RequirementItem(text: l10n.atLeastOneLowercase, isMet: hasLowercase),
+          _RequirementItem(
+              text: l10n.atLeastOneLowercase,
+              isMet: hasLowercase,
+              isDark: isDark),
           const SizedBox(height: 6),
-          _RequirementItem(text: l10n.atLeastOneNumber, isMet: hasNumeric),
+          _RequirementItem(
+              text: l10n.atLeastOneNumber, isMet: hasNumeric, isDark: isDark),
           const SizedBox(height: 6),
           _RequirementItem(
             text: l10n.atLeastOneSpecialChar,
             isMet: hasSpecialChar,
+            isDark: isDark,
           ),
           const SizedBox(height: 6),
           _RequirementItem(
             text: l10n.between8And4096Chars,
             isMet: hasMinLength && hasMaxLength,
+            isDark: isDark,
           ),
         ],
       ),
@@ -297,8 +325,13 @@ class _PasswordRequirementsWidget extends StatelessWidget {
 class _RequirementItem extends StatelessWidget {
   final String text;
   final bool isMet;
+  final bool isDark;
 
-  const _RequirementItem({required this.text, required this.isMet});
+  const _RequirementItem({
+    required this.text,
+    required this.isMet,
+    this.isDark = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -309,7 +342,11 @@ class _RequirementItem extends StatelessWidget {
           height: 18,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: isMet ? const Color(0xFF0EA5C6) : const Color(0xFFE2E8F0),
+            color: isMet
+                ? AppColors.languageButtonColor
+                : (isDark
+                    ? AppColorsDark.borderColor
+                    : const Color(0xFFE2E8F0)),
           ),
           child: isMet
               ? const Icon(Icons.check, size: 12, color: Colors.white)
@@ -321,7 +358,11 @@ class _RequirementItem extends StatelessWidget {
             text,
             style: TextStyle(
               fontSize: 12,
-              color: isMet ? const Color(0xFF0EA5C6) : const Color(0xFF64748B),
+              color: isMet
+                  ? AppColors.languageButtonColor
+                  : (isDark
+                      ? AppColorsDark.textSecondary
+                      : const Color(0xFF64748B)),
               fontFamily: 'Roboto',
               fontWeight: isMet ? FontWeight.w500 : FontWeight.normal,
             ),

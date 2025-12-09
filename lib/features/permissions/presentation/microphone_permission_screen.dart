@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/widgets/primary_button.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_colors_dark.dart';
 import '../../../core/utils/platform_utils.dart';
 import '../../../core/providers/permissions_provider.dart';
 import '../../../core/services/native_permission_service.dart';
@@ -14,18 +15,25 @@ class MicrophonePermissionScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     return Scaffold(
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment(-0.00032816489692777395, -0.9999995231628418),
-            end: Alignment(0.9999995231628418, -0.0015423615695908666),
-            colors: [
-              AppColors.onboardingGradientStart,
-              AppColors.onboardingGradientEnd,
-            ],
+            begin: const Alignment(-0.00032816489692777395, -0.9999995231628418),
+            end: const Alignment(0.9999995231628418, -0.0015423615695908666),
+            colors: isDark
+                ? [
+                    AppColorsDark.onboardingGradientStart,
+                    AppColorsDark.onboardingGradientEnd,
+                  ]
+                : [
+                    AppColors.onboardingGradientStart,
+                    AppColors.onboardingGradientEnd,
+                  ],
           ),
         ),
         child: SafeArea(
@@ -48,7 +56,9 @@ class MicrophonePermissionScreen extends ConsumerWidget {
                               l10n.allowMicrophoneAccess,
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                color: AppColors.textPrimary,
+                                color: isDark
+                                    ? AppColorsDark.textPrimary
+                                    : AppColors.textPrimary,
                                 fontSize: 26,
                                 fontWeight: FontWeight.w600,
                                 height: 1,
@@ -64,7 +74,9 @@ class MicrophonePermissionScreen extends ConsumerWidget {
                                 l10n.microphoneAccessDescription,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                  color: AppColors.textSecondary,
+                                  color: isDark
+                                      ? AppColorsDark.textSecondary
+                                      : AppColors.textSecondary,
                                   fontSize: 15,
                                   fontWeight: FontWeight.normal,
                                   height: 1.5,
@@ -120,7 +132,9 @@ class MicrophonePermissionScreen extends ConsumerWidget {
                             child: Text(
                               l10n.notNow,
                               style: TextStyle(
-                                color: AppColors.textSecondary,
+                                color: isDark
+                                    ? AppColorsDark.textSecondary
+                                    : AppColors.textSecondary,
                                 fontSize: 16,
                                 fontWeight: FontWeight.normal,
                               ),
@@ -134,7 +148,10 @@ class MicrophonePermissionScreen extends ConsumerWidget {
                               l10n.microphonePermissionPrivacy,
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                color: AppColors.textSecondary.withOpacity(0.7),
+                                color: (isDark
+                                        ? AppColorsDark.textSecondary
+                                        : AppColors.textSecondary)
+                                    .withValues(alpha: 0.7),
                                 fontSize: 13,
                                 fontWeight: FontWeight.normal,
                                 height: 1.5,
