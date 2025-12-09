@@ -44,7 +44,7 @@ dependencies:
   # Biometric authentication
   local_auth: ^2.3.0
   # Connectivity
-  connectivity_plus: ^6.1.2
+  connectivity_plus: ^7.0.0
   # Data export
   csv: ^6.0.0
   # Screenshots for chart export
