@@ -300,14 +300,28 @@ jobs:
           echo "Running tests with concurrency: $CONCURRENCY"
           
           # First test run with parallel execution
-          if flutter test --coverage --concurrency=$CONCURRENCY; then
+          # Exclude golden tests (they have their own workflow) and leak tests (separate workflow)
+          # Use --exclude to skip specific test files
+          if flutter test --coverage --concurrency=$CONCURRENCY \
+            --exclude test/ui/example_golden_test.dart \
+            --exclude test/ui/welcome_golden_test.dart \
+            --exclude test/ui/chat/chat_screen_golden_test.dart \
+            --exclude test/ui/auth/sign_in_email_golden_test.dart \
+            --exclude test/leak/memory_leak_test.dart; then
             TEST_PASSED=true
           else
             TEST_PASSED=false
             echo "⚠️ First test run failed. Retrying once to detect flaky tests..."
             
             # Retry once with parallel execution
-            if flutter test --coverage --concurrency=$CONCURRENCY; then
+            # Exclude golden tests (they have their own workflow) and leak tests (separate workflow)
+            # Use --exclude to skip specific test files
+            if flutter test --coverage --concurrency=$CONCURRENCY \
+              --exclude test/ui/example_golden_test.dart \
+              --exclude test/ui/welcome_golden_test.dart \
+              --exclude test/ui/chat/chat_screen_golden_test.dart \
+              --exclude test/ui/auth/sign_in_email_golden_test.dart \
+              --exclude test/leak/memory_leak_test.dart; then
               TEST_PASSED=true
               echo "✅ Tests passed on retry. Marked as flaky – tests passed on retry."
             else
