@@ -30,7 +30,7 @@ jobs:
       - name: Run memory leak detection tests
         run: |
           echo "🔍 Running leak-tracking widget test..."
-          flutter test test/leak/memory_leak_test.dart --tags=leak --profile
+          flutter test test/leak/memory_leak_test.dart
 
       - name: Notify Discord
         if: always()
