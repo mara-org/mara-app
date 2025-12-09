@@ -39,7 +39,7 @@ class WelcomeIntroScreen extends ConsumerWidget {
                     : [
                         const Color(0xFFC6ECFF), // #C6ECFF (top)
                         const Color(0xFF339AD0), // #339AD0 (bottom)
-                ],
+                      ],
               ),
             ),
           ),
