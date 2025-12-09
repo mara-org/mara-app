@@ -62,6 +62,7 @@ dev_dependencies:
   dart_code_metrics: ^4.7.0
   integration_test:
     sdk: flutter
+  leak_tracker_flutter_testing: ^3.0.6
 
 dependency_overrides:
   file: 7.0.0

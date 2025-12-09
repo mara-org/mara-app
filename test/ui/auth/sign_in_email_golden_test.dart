@@ -39,7 +39,6 @@ void main() {
 
         await screenMatchesGolden(tester, 'sign_in_email_screen_light');
       },
-      skip: true, // Skip until golden files are generated
     );
 
     testGoldens(
@@ -67,7 +66,6 @@ void main() {
 
         await screenMatchesGolden(tester, 'sign_in_email_screen_dark');
       },
-      skip: true, // Skip until golden files are generated
     );
   });
 }

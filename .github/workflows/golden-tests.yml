@@ -37,7 +37,11 @@ jobs:
         run: |
           echo "🖼️ Running golden tests..."
           # Run all golden test files
-          flutter test test/ui/example_golden_test.dart test/ui/welcome_golden_test.dart || {
+          flutter test \
+            test/ui/example_golden_test.dart \
+            test/ui/welcome_golden_test.dart \
+            test/ui/chat/chat_screen_golden_test.dart \
+            test/ui/auth/sign_in_email_golden_test.dart || {
             echo "❌ Golden tests failed"
             echo "tests_passed=false" >> $GITHUB_OUTPUT
             echo "⚠️ Golden test failure detected. Check artifacts for diffs."
@@ -56,8 +60,8 @@ jobs:
         with:
           name: golden-diffs
           path: |
-            test/ui/goldens/**/*.png
-            test/ui/goldens/**/*.diff.png
+            test/ui/**/goldens/**/*.png
+            test/ui/**/goldens/**/*.diff.png
           retention-days: 7
           if-no-files-found: ignore
 

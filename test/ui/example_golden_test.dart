@@ -19,15 +19,15 @@ void main() {
       (WidgetTester tester) async {
         // Build the widget with localization delegates
         await tester.pumpWidgetBuilder(
-          const ProviderScope(
+          ProviderScope(
             child: MaterialApp(
-              localizationsDelegates: [
+              localizationsDelegates: const [
                 AppLocalizations.delegate,
                 GlobalMaterialLocalizations.delegate,
                 GlobalWidgetsLocalizations.delegate,
                 GlobalCupertinoLocalizations.delegate,
               ],
-              supportedLocales: [
+              supportedLocales: const [
                 Locale('en'),
                 Locale('ar'),
               ],
@@ -44,7 +44,8 @@ void main() {
         // Note: First run will fail - use 'flutter test --update-goldens' to generate golden files
         await screenMatchesGolden(tester, 'home_screen');
       },
-      skip: true, // Skip until golden files are generated
+      // Skipped until a baseline golden is added for the home screen
+      skip: true,
     );
 
     // TODO: Add more golden tests:

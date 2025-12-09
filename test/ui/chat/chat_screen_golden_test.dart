@@ -38,7 +38,6 @@ void main() {
 
         await screenMatchesGolden(tester, 'chat_screen_light');
       },
-      skip: true, // Skip until golden files are generated
     );
 
     testGoldens(
@@ -66,7 +65,6 @@ void main() {
 
         await screenMatchesGolden(tester, 'chat_screen_dark');
       },
-      skip: true, // Skip until golden files are generated
     );
   });
 }

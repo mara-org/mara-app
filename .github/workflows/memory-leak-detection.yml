@@ -1,0 +1,52 @@
+# Memory Leak Detection
+# Runs leak-tracking widget test to ensure app startup is leak-free
+
+name: Memory Leak Detection
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  leak-detection:
+    name: Leak Detection (Flutter)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.27.0"
+
+      - name: Flutter pub get
+        run: flutter pub get
+
+      - name: Run memory leak detection tests
+        run: |
+          echo "🔍 Running leak-tracking widget test..."
+          flutter test test/leak/memory_leak_test.dart --tags=leak --profile
+
+      - name: Notify Discord
+        if: always()
+        continue-on-error: true
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_EVENTS }}
+        run: |
+          STATUS="${{ job.status }}"
+          TITLE="Memory Leak Detection"
+          ICON="✅"
+          if [ "$STATUS" != "success" ]; then
+            ICON="❌"
+          fi
+          MESSAGE="${ICON} ${TITLE}: ${STATUS}"
+          if [ -n "$DISCORD_WEBHOOK" ]; then
+            PAYLOAD=$(python3 -c "import json; print(json.dumps({'content': '''$MESSAGE'''}))")
+            curl -s -H "Content-Type: application/json" -d "$PAYLOAD" -X POST "$DISCORD_WEBHOOK" || true
+          fi
+

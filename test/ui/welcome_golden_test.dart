@@ -17,68 +17,70 @@ void main() {
       'Welcome screen - light mode',
       (WidgetTester tester) async {
         await tester.pumpWidgetBuilder(
-          MaterialApp.router(
-            routerConfig: GoRouter(
-              initialLocation: '/welcome',
-              routes: [
-                GoRoute(
-                  path: '/welcome',
-                  builder: (context, state) => const WelcomeIntroScreen(),
-                ),
+          ProviderScope(
+            child: MaterialApp.router(
+              routerConfig: GoRouter(
+                initialLocation: '/welcome',
+                routes: [
+                  GoRoute(
+                    path: '/welcome',
+                    builder: (context, state) => const WelcomeIntroScreen(),
+                  ),
+                ],
+              ),
+              localizationsDelegates: const [
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
               ],
+              supportedLocales: const [
+                Locale('en'),
+                Locale('ar'),
+              ],
+              theme: ThemeData.light(),
             ),
-            localizationsDelegates: const [
-              AppLocalizations.delegate,
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
-            supportedLocales: const [
-              Locale('en'),
-              Locale('ar'),
-            ],
-            theme: ThemeData.light(),
           ),
           surfaceSize: const Size(375, 812), // iPhone 11 Pro size
         );
 
         await screenMatchesGolden(tester, 'welcome_screen_light');
       },
-      skip: true, // Skip until golden files are generated
     );
 
     testGoldens(
       'Welcome screen - dark mode',
       (WidgetTester tester) async {
         await tester.pumpWidgetBuilder(
-          MaterialApp.router(
-            routerConfig: GoRouter(
-              initialLocation: '/welcome',
-              routes: [
-                GoRoute(
-                  path: '/welcome',
-                  builder: (context, state) => const WelcomeIntroScreen(),
-                ),
+          ProviderScope(
+            child: MaterialApp.router(
+              routerConfig: GoRouter(
+                initialLocation: '/welcome',
+                routes: [
+                  GoRoute(
+                    path: '/welcome',
+                    builder: (context, state) => const WelcomeIntroScreen(),
+                  ),
+                ],
+              ),
+              localizationsDelegates: const [
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
               ],
+              supportedLocales: const [
+                Locale('en'),
+                Locale('ar'),
+              ],
+              theme: ThemeData.dark(),
             ),
-            localizationsDelegates: const [
-              AppLocalizations.delegate,
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
-            supportedLocales: const [
-              Locale('en'),
-              Locale('ar'),
-            ],
-            theme: ThemeData.dark(),
           ),
           surfaceSize: const Size(375, 812), // iPhone 11 Pro size
         );
 
         await screenMatchesGolden(tester, 'welcome_screen_dark');
       },
-      skip: true, // Skip until golden files are generated
     );
   });
 }
