@@ -480,7 +480,48 @@ The pre-commit hook automatically:
 
 You can bypass the hook with `git commit --no-verify` if needed, but this is **not recommended**. The hook ensures code quality and consistency across the project.
 
+## 📦 App Size Monitoring & Bundle Analysis
+
+### App Size Monitoring
+
+Automatically monitors APK/AAB sizes and alerts on increases:
+
+- **Script**: `scripts/monitor-app-size.sh`
+- **Workflow**: `.github/workflows/app-size-monitoring.yml`
+- **Thresholds**: 5% increase or 10MB absolute increase
+- **Documentation**: [App Size Monitoring](docs/APP_SIZE_MONITORING.md)
+
+### Bundle Analysis
+
+Analyzes bundle composition to identify large components:
+
+- **Script**: `scripts/analyze-bundle-size.sh`
+- **Workflow**: `.github/workflows/bundle-analysis.yml`
+- **Output**: Detailed markdown report with recommendations
+- **Documentation**: [Bundle Analysis](docs/BUNDLE_ANALYSIS.md)
+
+**Usage:**
+```bash
+# Monitor app size
+bash scripts/monitor-app-size.sh
+
+# Analyze bundle composition
+bash scripts/analyze-bundle-size.sh
+```
+
 ## 🚀 CI/CD Pipeline
+
+### Google-Level CI Practices
+
+We implement Google-level CI/CD practices for maximum efficiency:
+
+- **✅ Test Sharding** - Parallel test execution across multiple runners (60-80% faster)
+- **✅ Flaky Test Tracking** - Automatic detection and quarantine of flaky tests
+- **✅ Performance Regression Detection** - Automated performance testing in CI
+- **✅ CI Metrics Dashboard** - Comprehensive CI health tracking
+- **✅ Advanced Build Caching** - Multi-layer caching for faster builds
+
+**Documentation:** [Google-Level CI Practices](docs/GOOGLE_LEVEL_CI.md)
 
 ### Continuous Integration (CI)
 

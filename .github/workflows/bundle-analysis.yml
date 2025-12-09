@@ -1,0 +1,110 @@
+# Mara Bundle Analysis
+# Analyzes Flutter app bundle composition and identifies large components
+# Frontend-only: analyzes APK/AAB structure, assets, and code
+
+name: Bundle Analysis
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+
+jobs:
+  analyze-bundle:
+    name: Analyze Bundle Size
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.27.0"
+
+      - name: Flutter pub get
+        run: flutter pub get
+
+      - name: Build APK
+        id: build_apk
+        run: |
+          flutter build apk --release
+          if [ -f "build/app/outputs/flutter-apk/app-release.apk" ]; then
+            echo "apk_built=true" >> $GITHUB_OUTPUT
+          else
+            echo "apk_built=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build AAB
+        id: build_aab
+        continue-on-error: true
+        run: |
+          flutter build appbundle --release
+          if [ -f "build/app/outputs/bundle/release/app-release.aab" ]; then
+            echo "aab_built=true" >> $GITHUB_OUTPUT
+          else
+            echo "aab_built=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Analyze bundle size
+        id: bundle_analysis
+        run: |
+          chmod +x scripts/analyze-bundle-size.sh
+          bash scripts/analyze-bundle-size.sh \
+            "${{ steps.build_apk.outputs.apk_path || 'build/app/outputs/flutter-apk/app-release.apk' }}" \
+            "${{ steps.build_aab.outputs.aab_path || 'build/app/outputs/bundle/release/app-release.aab' }}" \
+            "bundle-analysis-report.md" || {
+            echo "bundle_analysis_complete=false" >> $GITHUB_OUTPUT
+            exit 1
+          }
+          echo "bundle_analysis_complete=true" >> $GITHUB_OUTPUT
+
+      - name: Upload bundle analysis report
+        if: steps.bundle_analysis.outputs.bundle_analysis_complete == 'true'
+        uses: actions/upload-artifact@v5
+        with:
+          name: bundle-analysis-report
+          path: bundle-analysis-report.md
+          retention-days: 30
+
+      - name: Comment on PR with bundle analysis
+        if: github.event_name == 'pull_request' && steps.bundle_analysis.outputs.bundle_analysis_complete == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            let report = '## 📦 Bundle Analysis Report\n\n';
+            
+            try {
+              const reportContent = fs.readFileSync('bundle-analysis-report.md', 'utf8');
+              // Extract key sections from report
+              const summaryMatch = reportContent.match(/## Summary([\s\S]*?)## Recommendations/);
+              const recommendationsMatch = reportContent.match(/## Recommendations([\s\S]*?)(## Detailed|$)/);
+              
+              if (summaryMatch) {
+                report += summaryMatch[1].trim() + '\n\n';
+              }
+              
+              if (recommendationsMatch) {
+                report += '### Recommendations\n\n' + recommendationsMatch[1].trim() + '\n\n';
+              }
+              
+              report += '---\n*Full report available as workflow artifact.*';
+            } catch (error) {
+              report += '⚠️ Could not read bundle analysis report. Check workflow logs for details.';
+            }
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: report
+            });
+

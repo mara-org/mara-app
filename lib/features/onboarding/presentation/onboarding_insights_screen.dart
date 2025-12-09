@@ -46,7 +46,7 @@ class OnboardingInsightsScreen extends StatelessWidget {
                 : [
                     AppColors.onboardingGradientStart, // #E0F7FA (top)
                     AppColors.onboardingGradientEnd, // #F9FAFB (bottom)
-                  ],
+            ],
           ),
         ),
         child: Stack(

@@ -1,0 +1,203 @@
+# Google-Level CI Metrics Dashboard
+# Tracks build times, test durations, and CI health metrics
+# Generates actionable insights for CI optimization
+
+name: CI Metrics Dashboard
+
+on:
+  workflow_run:
+    workflows: ["Mara CI – Multi Platform", "Test Sharding (Google-Level)"]
+    types:
+      - completed
+  workflow_dispatch:
+
+jobs:
+  collect-metrics:
+    name: Collect CI Metrics
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion != 'cancelled' }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download workflow artifacts
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const artifacts = await github.rest.actions.listWorkflowRunArtifacts({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: context.payload.workflow_run.id,
+            });
+            
+            console.log(`Found ${artifacts.data.artifacts.length} artifacts`);
+            
+            for (const artifact of artifacts.data.artifacts) {
+              console.log(`- ${artifact.name}`);
+            }
+
+      - name: Extract CI metrics from workflow run
+        id: extract_metrics
+        run: |
+          WORKFLOW_RUN_ID="${{ github.event.workflow_run.id }}"
+          WORKFLOW_NAME="${{ github.event.workflow_run.name }}"
+          WORKFLOW_CONCLUSION="${{ github.event.workflow_run.conclusion }}"
+          WORKFLOW_CREATED="${{ github.event.workflow_run.created_at }}"
+          WORKFLOW_UPDATED="${{ github.event.workflow_run.updated_at }}"
+          
+          # Calculate duration
+          CREATED_EPOCH=$(date -d "$WORKFLOW_CREATED" +%s 2>/dev/null || date -j -f "%Y-%m-%dT%H:%M:%SZ" "$WORKFLOW_CREATED" +%s 2>/dev/null || echo "0")
+          UPDATED_EPOCH=$(date -d "$WORKFLOW_UPDATED" +%s 2>/dev/null || date -j -f "%Y-%m-%dT%H:%M:%SZ" "$WORKFLOW_UPDATED" +%s 2>/dev/null || echo "0")
+          
+          if [ "$CREATED_EPOCH" != "0" ] && [ "$UPDATED_EPOCH" != "0" ]; then
+            DURATION=$((UPDATED_EPOCH - CREATED_EPOCH))
+          else
+            DURATION=0
+          fi
+          
+          echo "workflow_name=$WORKFLOW_NAME" >> $GITHUB_OUTPUT
+          echo "workflow_conclusion=$WORKFLOW_CONCLUSION" >> $GITHUB_OUTPUT
+          echo "workflow_duration=$DURATION" >> $GITHUB_OUTPUT
+          echo "workflow_run_id=$WORKFLOW_RUN_ID" >> $GITHUB_OUTPUT
+          
+          echo "📊 CI Metrics:"
+          echo "  Workflow: $WORKFLOW_NAME"
+          echo "  Status: $WORKFLOW_CONCLUSION"
+          echo "  Duration: ${DURATION}s"
+
+      - name: Store metrics in file
+        run: |
+          mkdir -p .github/ci-metrics
+          
+          METRICS_FILE=".github/ci-metrics/metrics-$(date +%Y%m%d).json"
+          
+          # Initialize or read existing metrics
+          if [ -f "$METRICS_FILE" ] && command -v jq &> /dev/null; then
+            METRICS=$(cat "$METRICS_FILE")
+          else
+            METRICS='{"runs": []}'
+          fi
+          
+          # Add new run
+          if command -v jq &> /dev/null; then
+            METRICS=$(echo "$METRICS" | jq --arg name "${{ steps.extract_metrics.outputs.workflow_name }}" \
+              --arg conclusion "${{ steps.extract_metrics.outputs.workflow_conclusion }}" \
+              --arg duration "${{ steps.extract_metrics.outputs.workflow_duration }}" \
+              --arg run_id "${{ steps.extract_metrics.outputs.workflow_run_id }}" \
+              --arg date "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+              '.runs += [{
+                workflow: $name,
+                conclusion: $conclusion,
+                duration: ($duration | tonumber),
+                run_id: $run_id,
+                date: $date
+              }]')
+            
+            echo "$METRICS" > "$METRICS_FILE"
+            echo "✅ Metrics stored in $METRICS_FILE"
+          else
+            echo "⚠️  jq not available. Metrics not stored."
+          fi
+
+      - name: Generate metrics summary
+        id: generate_summary
+        run: |
+          METRICS_FILE=".github/ci-metrics/metrics-$(date +%Y%m%d).json"
+          
+          if [ -f "$METRICS_FILE" ] && command -v jq &> /dev/null; then
+            # Calculate statistics
+            TOTAL_RUNS=$(cat "$METRICS_FILE" | jq '.runs | length')
+            SUCCESS_RUNS=$(cat "$METRICS_FILE" | jq '[.runs[] | select(.conclusion == "success")] | length')
+            FAILED_RUNS=$(cat "$METRICS_FILE" | jq '[.runs[] | select(.conclusion == "failure")] | length')
+            AVG_DURATION=$(cat "$METRICS_FILE" | jq '[.runs[].duration] | add / length')
+            MAX_DURATION=$(cat "$METRICS_FILE" | jq '[.runs[].duration] | max')
+            MIN_DURATION=$(cat "$METRICS_FILE" | jq '[.runs[].duration] | min')
+            
+            echo "total_runs=$TOTAL_RUNS" >> $GITHUB_OUTPUT
+            echo "success_runs=$SUCCESS_RUNS" >> $GITHUB_OUTPUT
+            echo "failed_runs=$FAILED_RUNS" >> $GITHUB_OUTPUT
+            echo "avg_duration=$AVG_DURATION" >> $GITHUB_OUTPUT
+            echo "max_duration=$MAX_DURATION" >> $GITHUB_OUTPUT
+            echo "min_duration=$MIN_DURATION" >> $GITHUB_OUTPUT
+            
+            echo ""
+            echo "📊 CI Metrics Summary (Today):"
+            echo "  Total Runs: $TOTAL_RUNS"
+            echo "  Successful: $SUCCESS_RUNS"
+            echo "  Failed: $FAILED_RUNS"
+            echo "  Avg Duration: ${AVG_DURATION}s"
+            echo "  Max Duration: ${MAX_DURATION}s"
+            echo "  Min Duration: ${MIN_DURATION}s"
+          else
+            echo "⚠️  No metrics file found or jq not available"
+          fi
+
+      - name: Check for slow builds
+        run: |
+          AVG_DURATION="${{ steps.generate_summary.outputs.avg_duration }}"
+          MAX_DURATION="${{ steps.generate_summary.outputs.max_duration }}"
+          
+          # Alert if average duration > 10 minutes
+          if [ -n "$AVG_DURATION" ] && (( $(echo "$AVG_DURATION > 600" | bc -l) )); then
+            echo "⚠️  Average build time is ${AVG_DURATION}s (>10 minutes)"
+            echo "Consider optimizing CI pipeline"
+          fi
+          
+          # Alert if max duration > 20 minutes
+          if [ -n "$MAX_DURATION" ] && (( $(echo "$MAX_DURATION > 1200" | bc -l) )); then
+            echo "⚠️  Maximum build time is ${MAX_DURATION}s (>20 minutes)"
+            echo "Investigate slow builds"
+          fi
+
+      - name: Upload metrics
+        uses: actions/upload-artifact@v5
+        with:
+          name: ci-metrics-$(date +%Y%m%d)
+          path: .github/ci-metrics/
+          retention-days: 90
+
+      - name: Generate metrics dashboard
+        run: |
+          METRICS_FILE=".github/ci-metrics/metrics-$(date +%Y%m%d).json"
+          DASHBOARD_FILE=".github/ci-metrics/dashboard.md"
+          
+          if [ -f "$METRICS_FILE" ] && command -v jq &> /dev/null; then
+            cat > "$DASHBOARD_FILE" << 'EOF'
+# CI Metrics Dashboard
+
+## Today's Metrics
+
+EOF
+            
+            TOTAL_RUNS="${{ steps.generate_summary.outputs.total_runs }}"
+            SUCCESS_RUNS="${{ steps.generate_summary.outputs.success_runs }}"
+            FAILED_RUNS="${{ steps.generate_summary.outputs.failed_runs }}"
+            AVG_DURATION="${{ steps.generate_summary.outputs.avg_duration }}"
+            MAX_DURATION="${{ steps.generate_summary.outputs.max_duration }}"
+            MIN_DURATION="${{ steps.generate_summary.outputs.min_duration }}"
+            
+            cat >> "$DASHBOARD_FILE" << EOF
+- **Total Runs:** $TOTAL_RUNS
+- **Success Rate:** $(echo "scale=1; $SUCCESS_RUNS * 100 / $TOTAL_RUNS" | bc)%
+- **Average Duration:** ${AVG_DURATION}s
+- **Max Duration:** ${MAX_DURATION}s
+- **Min Duration:** ${MIN_DURATION}s
+
+## Recommendations
+
+EOF
+            
+            if [ -n "$AVG_DURATION" ] && (( $(echo "$AVG_DURATION > 600" | bc -l) )); then
+              echo "- ⚠️ Consider enabling test sharding to reduce build times" >> "$DASHBOARD_FILE"
+              echo "- ⚠️ Review and optimize slow test suites" >> "$DASHBOARD_FILE"
+            fi
+            
+            if [ -n "$FAILED_RUNS" ] && [ "$FAILED_RUNS" -gt 0 ]; then
+              FAILURE_RATE=$(echo "scale=1; $FAILED_RUNS * 100 / $TOTAL_RUNS" | bc)
+              echo "- ⚠️ Failure rate is ${FAILURE_RATE}%. Investigate common failure causes." >> "$DASHBOARD_FILE"
+            fi
+            
+            echo "✅ Dashboard generated: $DASHBOARD_FILE"
+          fi
+

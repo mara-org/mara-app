@@ -1,0 +1,138 @@
+# Mara App Size Monitoring
+# Monitors APK/AAB size and alerts on increases
+# Frontend-only: analyzes Flutter build artifacts
+
+name: App Size Monitoring
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  monitor-app-size:
+    name: Monitor App Size
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.27.0"
+
+      - name: Flutter pub get
+        run: flutter pub get
+
+      - name: Build APK
+        id: build_apk
+        run: |
+          flutter build apk --release
+          if [ -f "build/app/outputs/flutter-apk/app-release.apk" ]; then
+            echo "apk_built=true" >> $GITHUB_OUTPUT
+          else
+            echo "apk_built=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build AAB
+        id: build_aab
+        continue-on-error: true
+        run: |
+          flutter build appbundle --release
+          if [ -f "build/app/outputs/bundle/release/app-release.aab" ]; then
+            echo "aab_built=true" >> $GITHUB_OUTPUT
+          else
+            echo "aab_built=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Download baseline sizes (if available)
+        id: baseline
+        continue-on-error: true
+        run: |
+          # Try to get baseline from previous successful build
+          # For now, we'll use a default baseline or fetch from artifacts
+          BASELINE_APK_SIZE="${BASELINE_APK_SIZE:-0}"
+          BASELINE_AAB_SIZE="${BASELINE_AAB_SIZE:-0}"
+          
+          echo "baseline_apk_size=$BASELINE_APK_SIZE" >> $GITHUB_OUTPUT
+          echo "baseline_aab_size=$BASELINE_AAB_SIZE" >> $GITHUB_OUTPUT
+          
+          # TODO: Fetch baseline from previous build artifacts or cache
+          echo "ℹ️  Baseline sizes: APK=${BASELINE_APK_SIZE}MB, AAB=${BASELINE_AAB_SIZE}MB"
+          echo "   (For first run, baseline is 0 - will be set after this build)"
+
+      - name: Monitor app size
+        id: size_check
+        env:
+          BASELINE_APK_SIZE: ${{ steps.baseline.outputs.baseline_apk_size }}
+          BASELINE_AAB_SIZE: ${{ steps.baseline.outputs.baseline_aab_size }}
+        run: |
+          chmod +x scripts/monitor-app-size.sh
+          bash scripts/monitor-app-size.sh || {
+            echo "size_check_failed=true" >> $GITHUB_OUTPUT
+            exit 1
+          }
+          echo "size_check_failed=false" >> $GITHUB_OUTPUT
+
+      - name: Store current sizes as baseline
+        if: steps.size_check.outputs.size_check_failed == 'false'
+        run: |
+          APK_SIZE="${{ steps.size_check.outputs.apk_size_mb }}"
+          AAB_SIZE="${{ steps.size_check.outputs.aab_size_mb }}"
+          
+          echo "📊 Current App Sizes:"
+          echo "  APK: ${APK_SIZE} MB"
+          echo "  AAB: ${AAB_SIZE} MB"
+          
+          # Store as baseline for next run (could use cache or artifacts)
+          echo "APK_SIZE_MB=${APK_SIZE}" >> $GITHUB_ENV
+          echo "AAB_SIZE_MB=${AAB_SIZE}" >> $GITHUB_ENV
+
+      - name: Comment on PR with size info
+        if: github.event_name == 'pull_request' && steps.size_check.outputs.size_check_failed == 'false'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const apkSize = '${{ steps.size_check.outputs.apk_size_mb }}';
+            const aabSize = '${{ steps.size_check.outputs.aab_size_mb }}';
+            
+            const comment = `## 📦 App Size Report
+            
+            **APK Size:** ${apkSize} MB
+            **AAB Size:** ${aabSize} MB
+            
+            ${apkSize && aabSize ? '✅ App size within acceptable limits' : '⚠️ Size monitoring in progress'}
+            
+            ---
+            *This report is generated automatically by the App Size Monitoring workflow.*`;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+      - name: Alert on size increase
+        if: steps.size_check.outputs.size_check_failed == 'true'
+        run: |
+          echo "🚨 App size increase detected!"
+          echo "Please review the size monitoring output above."
+          echo ""
+          echo "Common causes:"
+          echo "  - New large dependencies"
+          echo "  - Large assets or images added"
+          echo "  - Code changes increasing bundle size"
+          echo ""
+          echo "Recommendations:"
+          echo "  - Review recent dependency additions"
+          echo "  - Optimize images and assets"
+          echo "  - Consider code splitting"
+          echo "  - Run bundle analysis to identify large components"
+

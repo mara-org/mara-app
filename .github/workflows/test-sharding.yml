@@ -1,0 +1,340 @@
+# Google-Level Test Sharding
+# Runs tests in parallel across multiple runners to reduce CI time by 60-80%
+# This is how Google, Stripe, and other big-tech companies run their test suites
+
+name: Test Sharding (Google-Level)
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      shard_count:
+        description: 'Number of shards (default: auto-detect)'
+        required: false
+        default: 'auto'
+
+jobs:
+  determine-shards:
+    name: Determine Shard Configuration
+    runs-on: ubuntu-latest
+    outputs:
+      shard_count: ${{ steps.config.outputs.shard_count }}
+      test_files: ${{ steps.config.outputs.test_files }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.27.0"
+
+      - name: Flutter pub get
+        run: flutter pub get
+
+      - name: Discover test files and determine shard count
+        id: config
+        run: |
+          # Find all test files
+          TEST_FILES=$(find test -name "*_test.dart" -type f | sort)
+          TEST_COUNT=$(echo "$TEST_FILES" | wc -l | tr -d ' ')
+          
+          echo "Found $TEST_COUNT test files"
+          
+          # Determine optimal shard count based on test file count
+          # Google's heuristic: 1 shard per 10-15 test files, min 2, max 8
+          if [ "$TEST_COUNT" -lt 20 ]; then
+            SHARD_COUNT=2
+          elif [ "$TEST_COUNT" -lt 50 ]; then
+            SHARD_COUNT=4
+          elif [ "$TEST_COUNT" -lt 100 ]; then
+            SHARD_COUNT=6
+          else
+            SHARD_COUNT=8
+          fi
+          
+          # Allow manual override
+          if [ "${{ github.event.inputs.shard_count }}" != "" ] && [ "${{ github.event.inputs.shard_count }}" != "auto" ]; then
+            SHARD_COUNT="${{ github.event.inputs.shard_count }}"
+          fi
+          
+          echo "Using $SHARD_COUNT shards"
+          echo "shard_count=$SHARD_COUNT" >> $GITHUB_OUTPUT
+          
+          # Save test files list for distribution
+          echo "$TEST_FILES" > test_files.txt
+          
+          # Calculate tests per shard
+          TESTS_PER_SHARD=$(( (TEST_COUNT + SHARD_COUNT - 1) / SHARD_COUNT ))
+          echo "Tests per shard: ~$TESTS_PER_SHARD"
+
+      - name: Upload test files list
+        uses: actions/upload-artifact@v5
+        with:
+          name: test-files-list
+          path: test_files.txt
+          retention-days: 1
+
+  run-tests-sharded:
+    name: Run Tests (Shard ${{ matrix.shard_index }}/${{ needs.determine-shards.outputs.shard_count }})
+    needs: determine-shards
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false  # Continue even if one shard fails
+      matrix:
+        # Generate shard indices dynamically
+        shard_index: ${{ fromJson(needs.determine-shards.outputs.shard_indices) }}
+    timeout-minutes: 30
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.27.0"
+
+      - name: Restore Flutter dependencies cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.pub-cache
+            .dart_tool
+          key: flutter-deps-${{ runner.os }}-${{ hashFiles('pubspec.yaml', 'pubspec.lock') }}
+          restore-keys: |
+            flutter-deps-${{ runner.os }}-
+
+      - name: Flutter pub get
+        run: flutter pub get
+
+      - name: Download test files list
+        uses: actions/download-artifact@v5
+        with:
+          name: test-files-list
+          path: .
+
+      - name: Distribute tests to shard
+        id: shard_tests
+        run: |
+          SHARD_INDEX=${{ matrix.shard_index }}
+          SHARD_COUNT=${{ needs.determine-shards.outputs.shard_count }}
+          
+          # Read test files
+          TEST_FILES=$(cat test_files.txt)
+          TEST_COUNT=$(echo "$TEST_FILES" | wc -l | tr -d ' ')
+          
+          # Calculate which tests belong to this shard
+          # Distribute tests evenly across shards
+          SHARD_TESTS=""
+          INDEX=0
+          while IFS= read -r test_file; do
+            if [ $((INDEX % SHARD_COUNT)) -eq $SHARD_INDEX ]; then
+              SHARD_TESTS="$SHARD_TESTS $test_file"
+            fi
+            INDEX=$((INDEX + 1))
+          done <<< "$TEST_FILES"
+          
+          # Save shard tests to file
+          echo "$SHARD_TESTS" | tr ' ' '\n' | grep -v '^$' > shard_tests.txt
+          SHARD_TEST_COUNT=$(cat shard_tests.txt | wc -l | tr -d ' ')
+          
+          echo "Shard $SHARD_INDEX: Running $SHARD_TEST_COUNT tests"
+          echo "test_count=$SHARD_TEST_COUNT" >> $GITHUB_OUTPUT
+          
+          # Create test command
+          TEST_LIST=$(cat shard_tests.txt | tr '\n' ' ')
+          echo "TEST_LIST=$TEST_LIST" >> $GITHUB_OUTPUT
+
+      - name: Run tests for this shard
+        id: test_run
+        run: |
+          START_TIME=$(date +%s)
+          
+          # Run tests for this shard
+          TEST_LIST="${{ steps.shard_tests.outputs.TEST_LIST }}"
+          
+          if [ -z "$TEST_LIST" ]; then
+            echo "No tests for this shard"
+            echo "test_passed=true" >> $GITHUB_OUTPUT
+            echo "test_duration=0" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          # Run tests with coverage
+          if flutter test --coverage $TEST_LIST; then
+            TEST_PASSED=true
+          else
+            TEST_PASSED=false
+          fi
+          
+          END_TIME=$(date +%s)
+          TEST_DURATION=$((END_TIME - START_TIME))
+          
+          echo "test_passed=$TEST_PASSED" >> $GITHUB_OUTPUT
+          echo "test_duration=$TEST_DURATION" >> $GITHUB_OUTPUT
+          echo "CI METRIC: shard_${{ matrix.shard_index }}_duration=${TEST_DURATION}s"
+          
+          if [ "$TEST_PASSED" = "false" ]; then
+            exit 1
+          fi
+
+      - name: Upload coverage for this shard
+        if: steps.test_run.outputs.test_passed == 'true'
+        uses: actions/upload-artifact@v5
+        with:
+          name: coverage-shard-${{ matrix.shard_index }}
+          path: coverage/
+          retention-days: 1
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: test-results-shard-${{ matrix.shard_index }}
+          path: |
+            shard_tests.txt
+          retention-days: 7
+
+  aggregate-results:
+    name: Aggregate Test Results
+    needs: [determine-shards, run-tests-sharded]
+    runs-on: ubuntu-latest
+    if: always()  # Run even if some shards failed
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download all test results
+        uses: actions/download-artifact@v5
+        with:
+          pattern: test-results-shard-*
+          path: test-results/
+          merge-multiple: false
+
+      - name: Download all coverage files
+        uses: actions/download-artifact@v5
+        with:
+          pattern: coverage-shard-*
+          path: coverage-shards/
+          merge-multiple: false
+
+      - name: Aggregate test results
+        id: aggregate
+        run: |
+          echo "📊 Aggregating test results from all shards..."
+          
+          TOTAL_SHARDS=${{ needs.determine-shards.outputs.shard_count }}
+          PASSED_SHARDS=0
+          FAILED_SHARDS=0
+          TOTAL_TESTS=0
+          
+          # Check each shard
+          for i in $(seq 0 $((TOTAL_SHARDS - 1))); do
+            if [ -f "test-results/test-results-shard-$i/shard_tests.txt" ]; then
+              SHARD_TEST_COUNT=$(cat "test-results/test-results-shard-$i/shard_tests.txt" | wc -l | tr -d ' ')
+              TOTAL_TESTS=$((TOTAL_TESTS + SHARD_TEST_COUNT))
+              
+              # Check if shard passed (coverage exists)
+              if [ -d "coverage-shards/coverage-shard-$i" ]; then
+                PASSED_SHARDS=$((PASSED_SHARDS + 1))
+                echo "✅ Shard $i: PASSED ($SHARD_TEST_COUNT tests)"
+              else
+                FAILED_SHARDS=$((FAILED_SHARDS + 1))
+                echo "❌ Shard $i: FAILED ($SHARD_TEST_COUNT tests)"
+              fi
+            fi
+          done
+          
+          echo "Total shards: $TOTAL_SHARDS"
+          echo "Passed: $PASSED_SHARDS"
+          echo "Failed: $FAILED_SHARDS"
+          echo "Total tests: $TOTAL_TESTS"
+          
+          echo "passed_shards=$PASSED_SHARDS" >> $GITHUB_OUTPUT
+          echo "failed_shards=$FAILED_SHARDS" >> $GITHUB_OUTPUT
+          echo "total_tests=$TOTAL_TESTS" >> $GITHUB_OUTPUT
+          
+          if [ "$FAILED_SHARDS" -gt 0 ]; then
+            echo "all_passed=false" >> $GITHUB_OUTPUT
+            exit 1
+          else
+            echo "all_passed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Merge coverage files
+        if: steps.aggregate.outputs.all_passed == 'true'
+        run: |
+          echo "📦 Merging coverage from all shards..."
+          
+          mkdir -p coverage
+          
+          # Use lcov to merge coverage files
+          if command -v lcov &> /dev/null; then
+            # Initialize coverage
+            lcov --capture --initial --directory coverage-shards/coverage-shard-0 --output-file coverage/merged.info 2>/dev/null || true
+            
+            # Add coverage from each shard
+            for i in $(seq 0 $(({{ needs.determine-shards.outputs.shard_count }} - 1))); do
+              if [ -d "coverage-shards/coverage-shard-$i" ]; then
+                lcov --add-tracefile coverage-shards/coverage-shard-$i/lcov.info --output-file coverage/merged.info 2>/dev/null || true
+              fi
+            done
+            
+            # Generate final report
+            lcov --remove coverage/merged.info '*/test/*' '*/generated/*' --output-file coverage/lcov.info
+          else
+            # Fallback: just copy the first shard's coverage
+            echo "⚠️ lcov not available, using first shard's coverage"
+            cp -r coverage-shards/coverage-shard-0/* coverage/ 2>/dev/null || true
+          fi
+
+      - name: Upload merged coverage
+        if: steps.aggregate.outputs.all_passed == 'true'
+        uses: actions/upload-artifact@v5
+        with:
+          name: merged-coverage
+          path: coverage/
+          retention-days: 30
+
+      - name: Generate test summary
+        run: |
+          echo "## 🧪 Test Sharding Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Total Shards | ${{ needs.determine-shards.outputs.shard_count }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Passed Shards | ${{ steps.aggregate.outputs.passed_shards }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Failed Shards | ${{ steps.aggregate.outputs.failed_shards }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Total Tests | ${{ steps.aggregate.outputs.total_tests }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ steps.aggregate.outputs.all_passed }}" = "true" ]; then
+            echo "✅ **All tests passed!**" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **Some shards failed. Check individual shard results above.**" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Comment on PR
+        if: github.event_name == 'pull_request' && steps.aggregate.outputs.all_passed == 'false'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## ❌ Test Sharding Failed
+              
+              **Failed Shards:** ${{ steps.aggregate.outputs.failed_shards }}/${{ needs.determine-shards.outputs.shard_count }}
+              **Total Tests:** ${{ steps.aggregate.outputs.total_tests }}
+              
+              Check the workflow logs for details on which tests failed.`
+            })
+

@@ -38,7 +38,7 @@ class LanguageSelectorScreen extends ConsumerWidget {
                 : [
                     AppColors.gradientStart, // #0EA5C6
                     AppColors.gradientEnd, // #10A9CC
-                  ],
+            ],
           ),
         ),
         child: Column(

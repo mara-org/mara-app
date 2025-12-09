@@ -78,6 +78,20 @@ jobs:
             echo "aab_built=false" >> $GITHUB_OUTPUT
           fi
 
+      - name: Monitor app size
+        id: size_monitor
+        if: steps.build_apk.outputs.apk_path != '' || steps.build_aab.outputs.aab_built == 'true'
+        run: |
+          chmod +x scripts/monitor-app-size.sh
+          bash scripts/monitor-app-size.sh \
+            "${{ steps.build_apk.outputs.apk_path }}" \
+            "${{ steps.build_aab.outputs.aab_path }}" || {
+            echo "⚠️ App size monitoring detected increase, but continuing deployment"
+            echo "size_check_passed=false" >> $GITHUB_OUTPUT
+            exit 0  # Don't fail deployment, just warn
+          }
+          echo "size_check_passed=true" >> $GITHUB_OUTPUT
+
       - name: Prepare artifact names
         id: artifact_names
         run: |
