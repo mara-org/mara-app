@@ -1,3 +1,34 @@
+## [1.2.2+6] - 2025-12-09
+
+### Added
+- feat: Implement Google-level CI/CD practices (6050ad1)
+- Add dark mode support for auth, setup, and permissions screens (566075f)
+- Add Arabic localization for quick actions, Health Goals, and Contact us (4f2dff3)
+
+### Fixed
+- Fix failing home screen tests (a1c97bf)
+- Fix health data sync: Add water sync from HealthKit and sync all historical data (531a246)
+
+### Removed
+- Remove camera and microphone permission screens from onboarding flow (26a61b3)
+- fix(android): Set minSdkVersion to 26 for health plugin compatibility (bcd1eab)
+- fix(android): Resolve NDK version mismatch and enable core library desugaring (02b3c4d)
+- fix: Resolve critical analyze errors and test failures (7fd9a4b)
+
+### Other
+- test: Enable golden tests and add memory leak detection (84de13b)
+- style: Fix code formatting (bbaf231)
+- Format code with dart format (0d5b9a8)
+- Format test files with dart format (693a234)
+- Format code with dart format (5e2020d)
+- style: Format test/ui/profile_screen_test.dart (8e012f9)
+- test: Fix widget tests - add provider overrides and fix pumpAndSettle timeout (ef1e8c0)
+- docs: Update CONTRIBUTING.md (dff1004)
+- style: Format test/ui/profile_screen_test.dart (150f42d)
+- test: Fix widget tests by adding SharedPreferences initialization (067857e)
+- test: Add SharedPreferences mocking to health tracking tests (b750388)
+- style: Format all code with dart format (50c1887)
+
 ## [1.2.1+5] - 2025-12-06
 
 ### Added
