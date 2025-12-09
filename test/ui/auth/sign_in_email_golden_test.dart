@@ -8,9 +8,7 @@ import 'package:golden_toolkit/golden_toolkit.dart';
 import 'package:mara_app/features/auth/presentation/sign_in_email_screen.dart';
 import 'package:mara_app/l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import '../../utils/test_utils.dart';
 
-@Tags(['golden'])
 void main() {
   group('Sign In Email Screen Golden Tests', () {
     testGoldens(
@@ -68,5 +66,5 @@ void main() {
         await screenMatchesGolden(tester, 'sign_in_email_screen_dark');
       },
     );
-  });
+  }, tags: ['golden']);
 }

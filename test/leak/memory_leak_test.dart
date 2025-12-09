@@ -7,17 +7,6 @@ void main() {
   setUpAll(() {
     // Enable leak tracking for all tests in this file
     LeakTesting.enable();
-    // Configure leak tracking to be more lenient for app startup
-    // Some framework-level objects may not be disposed immediately
-    LeakTesting.settings = LeakTesting.settings.withIgnored(
-      notGCed: {
-        // Ignore common Flutter framework objects that may not be GC'd immediately
-        'Widget': null,
-        'State': null,
-        'Element': null,
-      },
-      allNotDisposed: false,
-    );
   });
 
   testWidgets(
@@ -25,6 +14,9 @@ void main() {
     (WidgetTester tester) async {
       await tester.pumpWidget(const ProviderScope(child: MaraApp()));
       await tester.pumpAndSettle();
+
+      // Give time for any async operations to complete
+      await tester.pump(const Duration(seconds: 1));
     },
     tags: ['leak'],
   );

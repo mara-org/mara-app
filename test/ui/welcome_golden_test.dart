@@ -10,7 +10,6 @@ import 'package:mara_app/features/onboarding/presentation/welcome_intro_screen.d
 import 'package:mara_app/l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
-@Tags(['golden'])
 void main() {
   group('Welcome Screen Golden Tests', () {
     // TODO: Generate golden files first by running: flutter test --update-goldens test/ui/welcome_golden_test.dart
@@ -84,5 +83,5 @@ void main() {
         await screenMatchesGolden(tester, 'welcome_screen_dark');
       },
     );
-  });
+  }, tags: ['golden']);
 }
