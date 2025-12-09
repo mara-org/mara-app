@@ -1,5 +1,7 @@
 // Golden tests for Welcome Intro Screen
 // Visual regression tests that capture widget snapshots
+@Tags(['golden'])
+library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -83,5 +85,5 @@ void main() {
         await screenMatchesGolden(tester, 'welcome_screen_dark');
       },
     );
-  }, tags: ['golden']);
+  });
 }

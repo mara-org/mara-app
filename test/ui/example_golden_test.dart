@@ -1,6 +1,8 @@
 // Golden tests for Mara app
 // Golden tests capture widget snapshots and detect visual regressions
 // Uses golden_toolkit for enhanced golden testing capabilities
+@Tags(['golden'])
+library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -54,7 +56,7 @@ void main() {
     // - Test dark mode (when implemented)
     // - Test different locales (English, Arabic)
     // - Test different states (loading, error, empty)
-  }, tags: ['golden']);
+  });
 }
 
 // TODO: Setup instructions for golden testing:

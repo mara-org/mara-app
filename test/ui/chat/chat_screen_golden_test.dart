@@ -1,5 +1,7 @@
 // Golden tests for Chat Screen
 // Visual regression tests for chat interface in light and dark mode
+@Tags(['golden'])
+library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -66,5 +68,5 @@ void main() {
         await screenMatchesGolden(tester, 'chat_screen_dark');
       },
     );
-  }, tags: ['golden']);
+  });
 }

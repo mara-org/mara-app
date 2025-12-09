@@ -1,5 +1,7 @@
 // Golden tests for Sign In Email Screen
 // Visual regression tests for auth screen in light and dark mode
+@Tags(['golden'])
+library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -66,5 +68,5 @@ void main() {
         await screenMatchesGolden(tester, 'sign_in_email_screen_dark');
       },
     );
-  }, tags: ['golden']);
+  });
 }
