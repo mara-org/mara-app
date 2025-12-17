@@ -17,12 +17,20 @@ import '../services/biometric_auth_service.dart';
 import '../services/data_export_service.dart';
 import '../../features/auth/data/datasources/auth_local_data_source.dart';
 import '../../features/auth/data/datasources/auth_remote_data_source.dart';
+import '../../features/auth/data/datasources/auth_remote_data_source_impl.dart';
 import '../../features/auth/data/repositories/auth_repository_impl.dart';
+import '../network/api_client.dart';
 import '../../features/auth/domain/models/auth_result.dart';
 import '../../features/auth/domain/models/user.dart';
 import '../../features/auth/domain/repositories/auth_repository.dart';
 import '../../features/auth/domain/usecases/sign_in_usecase.dart';
 import '../../features/auth/domain/usecases/sign_up_usecase.dart';
+import '../../features/chat/data/datasources/chat_remote_datasource.dart';
+import '../../features/chat/data/repositories/chat_repository_impl.dart';
+import '../../features/chat/domain/repositories/chat_repository.dart';
+import '../../features/chat/domain/usecases/send_message_usecase.dart';
+import '../../features/chat/presentation/state/chat_controller.dart';
+import '../../features/chat/presentation/state/chat_state.dart';
 
 /// Dependency Injection container using Riverpod.
 ///
@@ -151,6 +159,13 @@ final dataExportServiceProvider = Provider<DataExportService>((final ref) {
   return DataExportService();
 });
 
+/// Provider for [ApiClient].
+///
+/// This provides the HTTP client for API requests with Bearer token authentication.
+final apiClientProvider = Provider<ApiClient>((ref) {
+  return ApiClient();
+});
+
 // ============================================================================
 // Auth Feature Providers
 // ============================================================================
@@ -162,36 +177,30 @@ final authLocalDataSourceProvider = Provider<AuthLocalDataSource>((ref) {
 });
 
 /// Provider for [AuthRemoteDataSource].
-///
-/// TODO: Replace with actual implementation when backend is available.
 final authRemoteDataSourceProvider = Provider<AuthRemoteDataSource>((ref) {
-  // Placeholder implementation - will be replaced when backend is ready
-  throw UnimplementedError(
-    'AuthRemoteDataSource implementation needed when backend is available',
-  );
+  final apiClient = ref.read(apiClientProvider);
+  return AuthRemoteDataSourceImpl(apiClient);
 });
 
 /// Provider for [AuthRepository].
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
   final localDataSource = ref.read(authLocalDataSourceProvider);
-  // For now, use only local data source until backend is available
-  // When backend is ready, uncomment:
-  // final remoteDataSource = ref.read(authRemoteDataSourceProvider);
-  // return AuthRepositoryImpl(remoteDataSource, localDataSource);
+  final remoteDataSource = ref.read(authRemoteDataSourceProvider);
+  final sessionService = ref.read(sessionServiceProvider);
+  return AuthRepositoryImpl(remoteDataSource, localDataSource, sessionService, ref);
+});
 
-  // Temporary: Create repository with null remote data source
-  // This will be replaced when backend is available
-  return AuthRepositoryImpl(
-    // remoteDataSource, // TODO: Uncomment when backend is ready
-    _PlaceholderRemoteDataSource(),
-    localDataSource,
-  );
+/// Provider for [AuthSessionManager].
+final authSessionManagerProvider = Provider<AuthSessionManager>((ref) {
+  final sessionService = ref.read(sessionServiceProvider);
+  return AuthSessionManager(sessionService, ref);
 });
 
 /// Provider for [SignInUseCase].
 final signInUseCaseProvider = Provider<SignInUseCase>((ref) {
   final authRepository = ref.read(authRepositoryProvider);
-  return SignInUseCase(authRepository);
+  final sessionManager = ref.read(authSessionManagerProvider);
+  return SignInUseCase(authRepository, sessionManager);
 });
 
 /// Provider for [SignUpUseCase].
@@ -201,53 +210,41 @@ final signUpUseCaseProvider = Provider<SignUpUseCase>((ref) {
 });
 
 // ============================================================================
-// Placeholder Implementation
+// Session & Capabilities Providers
 // ============================================================================
 
-/// Placeholder remote data source until backend is available.
-///
-/// This prevents the app from crashing while backend is being developed.
-class _PlaceholderRemoteDataSource implements AuthRemoteDataSource {
-  @override
-  Future<AuthResult> signIn({
-    required String email,
-    required String password,
-  }) async {
-    // Placeholder - will be replaced with actual API call
-    throw UnimplementedError('Backend API not yet available');
-  }
+/// Provider for [SessionService].
+final sessionServiceProvider = Provider<SessionService>((ref) {
+  final apiClient = ref.read(apiClientProvider);
+  return SessionService(apiClient);
+});
 
-  @override
-  Future<AuthResult> signUp({
-    required String email,
-    required String password,
-    String? displayName,
-  }) async {
-    throw UnimplementedError('Backend API not yet available');
-  }
+// ============================================================================
+// Chat Feature Providers
+// ============================================================================
 
-  @override
-  Future<void> signOut() async {
-    throw UnimplementedError('Backend API not yet available');
-  }
+/// Provider for [ChatRemoteDataSource].
+final chatRemoteDataSourceProvider = Provider<ChatRemoteDataSource>((ref) {
+  // Use SimpleApiClient for chat
+  return ChatRemoteDataSourceImpl(SimpleApiClient());
+});
 
-  @override
-  Future<User?> getCurrentUser() async {
-    throw UnimplementedError('Backend API not yet available');
-  }
+/// Provider for [ChatRepository].
+final chatRepositoryProvider = Provider<ChatRepository>((ref) {
+  final remoteDataSource = ref.read(chatRemoteDataSourceProvider);
+  return ChatRepositoryImpl(remoteDataSource);
+});
 
-  @override
-  Future<bool> sendPasswordResetEmail(String email) async {
-    throw UnimplementedError('Backend API not yet available');
-  }
+/// Provider for [SendMessageUseCase].
+final sendMessageUseCaseProvider = Provider<SendMessageUseCase>((ref) {
+  final chatRepository = ref.read(chatRepositoryProvider);
+  return SendMessageUseCase(chatRepository);
+});
 
-  @override
-  Future<bool> verifyEmailCode(String code) async {
-    throw UnimplementedError('Backend API not yet available');
-  }
+/// Provider for [ChatController].
+final chatControllerProvider =
+    StateNotifierProvider<ChatController, ChatState>((ref) {
+  final sendMessageUseCase = ref.read(sendMessageUseCaseProvider);
+  return ChatController(sendMessageUseCase);
+});
 
-  @override
-  Future<bool> resendVerificationCode() async {
-    throw UnimplementedError('Backend API not yet available');
-  }
-}

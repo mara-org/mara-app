@@ -9,6 +9,8 @@ import '../../../core/widgets/mara_logo.dart';
 import '../../../core/widgets/mara_text_field.dart';
 import '../../../core/widgets/primary_button.dart';
 import '../../../core/providers/email_provider.dart';
+import '../../../core/session/session_service.dart';
+import '../../../core/utils/firebase_auth_helper.dart';
 import '../../../l10n/app_localizations.dart';
 
 class WelcomeBackScreen extends ConsumerStatefulWidget {
@@ -23,6 +25,8 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
+  bool _isLoading = false;
+  String? _errorMessage;
 
   @override
   void dispose() {
@@ -50,13 +54,76 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
     return null;
   }
 
-  void _handleVerify() {
-    if (_formKey.currentState!.validate()) {
-      // Save the email before navigating
+  Future<void> _handleVerify() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
       final email = _emailController.text.trim();
+      final password = _passwordController.text.trim();
+
+      // Step 1: Sign in with Firebase
+      await FirebaseAuthHelper.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      // Step 2: Create backend session (send Firebase ID token for verification)
+      final sessionService = SessionService();
+      try {
+        await sessionService.createBackendSession();
+        
+        // Step 3: Fetch user info and entitlements from GET /v1/auth/me
+        try {
+          await sessionService.fetchUserInfo();
+        } catch (e) {
+          // If /v1/auth/me fails, log but don't block login
+          // Session was created successfully, user info can be fetched later
+        }
+      } catch (e) {
+        // Backend session failed - check if it's a backend down error
+        if (e.toString().contains('network') || 
+            e.toString().contains('connection') ||
+            e.toString().contains('timeout') ||
+            e.toString().contains('unavailable')) {
+          // Backend is down - show service unavailable state
+          if (!mounted) return;
+          setState(() {
+            _isLoading = false;
+            _errorMessage = 'Service unavailable. Please try again later.';
+          });
+          return;
+        }
+        // Other errors - allow Firebase sign-in to proceed
+        // User can still use app with Firebase auth
+      }
+
+      if (!mounted) return;
+
+      // Step 3: Save email and navigate
       ref.read(emailProvider.notifier).setEmail(email);
-      // Navigate to Home screen
       context.go('/home');
+    } catch (e) {
+      if (!mounted) return;
+      
+      setState(() {
+        _isLoading = false;
+        // Show user-friendly error message
+        if (e.toString().contains('network') || 
+            e.toString().contains('connection') ||
+            e.toString().contains('unavailable')) {
+          _errorMessage = 'Service unavailable. Please try again later.';
+        } else if (e.toString().contains('invalid') || 
+                   e.toString().contains('credential')) {
+          _errorMessage = 'Invalid email or password.';
+        } else {
+          _errorMessage = 'Sign in failed. Please try again.';
+        }
+      });
     }
   }
 
@@ -147,15 +214,41 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
                 top: 511,
                 child: SizedBox(
                   width: buttonWidth,
-                  child: PrimaryButton(
-                    text: l10n.verify,
-                    width: buttonWidth,
-                    height: 52,
-                    borderRadius: 20,
-                    onPressed: _handleVerify,
-                  ),
+                  child: _isLoading
+                      ? const Center(child: CircularProgressIndicator())
+                      : PrimaryButton(
+                          text: l10n.verify,
+                          width: buttonWidth,
+                          height: 52,
+                          borderRadius: 20,
+                          onPressed: _handleVerify,
+                        ),
                 ),
               ),
+              
+              // Error message
+              if (_errorMessage != null)
+                PositionedDirectional(
+                  start: 28,
+                  top: 580,
+                  child: Container(
+                    width: buttonWidth,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.red.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.red, width: 1),
+                    ),
+                    child: Text(
+                      _errorMessage!,
+                      style: const TextStyle(
+                        color: Colors.red,
+                        fontSize: 14,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
 
               // Positioned "Continue with Google" button at x28, y576 (same width as email/password fields)
               PositionedDirectional(

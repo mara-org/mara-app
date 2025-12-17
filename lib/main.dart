@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'l10n/app_localizations.dart';
 import 'core/routing/app_router.dart';
 import 'core/theme/app_theme.dart';
@@ -13,6 +14,24 @@ import 'core/services/app_initialization_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Firebase
+  try {
+    await Firebase.initializeApp();
+    Logger.info(
+      'Firebase initialized',
+      feature: 'firebase',
+      screen: 'main',
+    );
+  } catch (e) {
+    Logger.error(
+      'Firebase initialization failed',
+      feature: 'firebase',
+      screen: 'main',
+      error: e,
+    );
+    // Continue without Firebase if initialization fails (for development)
+  }
 
   // Initialize structured logging
   await Logger.init();

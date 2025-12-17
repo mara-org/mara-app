@@ -416,6 +416,17 @@
   "notificationsActivated": "Notifications Activated",
   "notificationsActivatedMessage": "Push notifications are now enabled. You'll receive health reminders and updates.",
   "healthKitActivated": "HealthKit Activated",
-  "healthKitActivatedMessage": "HealthKit is now connected. Your health data will sync automatically from your device."
+  "healthKitActivatedMessage": "HealthKit is now connected. Your health data will sync automatically from your device.",
+  "remainingToday": "Remaining today",
+  "messages": "messages",
+  "tokenBudget": "Token budget",
+  "upgrade": "Upgrade",
+  "highQualityMode": "High Quality Mode",
+  "tryAgainLater": "Try again later",
+  "serviceUnavailable": "Service temporarily unavailable",
+  "pleaseSignInToContinue": "Please sign in to continue",
+  "anUnexpectedErrorOccurred": "An unexpected error occurred. Please try again.",
+  "backendUnavailable": "Backend unavailable. Please try again later.",
+  "backendUnavailableCheckConnection": "Backend unavailable. Please check your connection."
 }
 

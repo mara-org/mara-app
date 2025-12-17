@@ -118,7 +118,7 @@ class HealthPermissionsSection extends ConsumerWidget {
                     height: 40,
                     decoration: BoxDecoration(
                       color:
-                          AppColors.languageButtonColor.withValues(alpha: 0.1),
+                          AppColors.languageButtonColor.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Icon(

@@ -353,6 +353,7 @@
   "dailySleepGoal": "هدف النوم اليومي (ساعات)",
   "dailyWaterGoal": "هدف الماء اليومي (لتر)",
   "goalsSaved": "تم حفظ الأهداف بنجاح",
+  "goalsSavedSuccessfully": "تم حفظ الأهداف بنجاح",
   "errorSavingGoals": "خطأ في حفظ الأهداف. يرجى المحاولة مرة أخرى.",
   "progress": "التقدم",
   "ofGoal": "من {goal}",
@@ -415,5 +416,16 @@
   "howAreMyStepsToday": "كيف هي خطواتي اليوم؟",
   "howWasMySleepThisWeek": "كيف كان نومي هذا الأسبوع؟",
   "howMuchWaterDidIDrinkToday": "كم شربت من الماء اليوم؟",
-  "showMeMyHealthDashboard": "أظهر لي لوحة الصحة"
+  "showMeMyHealthDashboard": "أظهر لي لوحة الصحة",
+  "remainingToday": "المتبقي اليوم",
+  "messages": "رسائل",
+  "tokenBudget": "ميزانية الرموز",
+  "upgrade": "ترقية",
+  "highQualityMode": "وضع الجودة العالية",
+  "tryAgainLater": "حاول مرة أخرى لاحقاً",
+  "serviceUnavailable": "الخدمة غير متاحة مؤقتاً",
+  "pleaseSignInToContinue": "يرجى تسجيل الدخول للمتابعة",
+  "anUnexpectedErrorOccurred": "حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى.",
+  "backendUnavailable": "الخادم غير متاح. يرجى المحاولة مرة أخرى لاحقاً.",
+  "backendUnavailableCheckConnection": "الخادم غير متاح. يرجى التحقق من اتصالك."
 }

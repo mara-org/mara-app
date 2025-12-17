@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/config/app_config.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/providers/language_provider.dart';
@@ -10,6 +11,7 @@ import '../../../core/theme/app_colors_dark.dart';
 import '../../../core/utils/platform_utils.dart';
 import '../../../core/widgets/mara_logo.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../shared/system/system_providers.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -285,16 +287,60 @@ class SettingsScreen extends ConsumerWidget {
                     }
                   },
                 ),
-                const SizedBox(height: 40),
-                // Version info
-                Center(
-                  child: Text(
-                    'Mara v1.0.0',
+                
+                // Debug: Network Test (only in debug/staging)
+                if (AppConfig.isDebug || AppConfig.isStaging) ...[
+                  const SizedBox(height: 32),
+                  Text(
+                    'Debug',
                     style: TextStyle(
-                      color: AppColors.textSecondary.withOpacity(0.7),
-                      fontSize: 12,
+                      color: AppColors.textPrimary,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
+                  const SizedBox(height: 16),
+                  _SettingsRow(
+                    title: 'Network Test',
+                    subtitle: 'Test backend connectivity',
+                    icon: Icons.network_check,
+                    onTap: () {
+                      context.push('/network-test');
+                    },
+                  ),
+                ],
+                
+                const SizedBox(height: 40),
+                // Version info
+                Consumer(
+                  builder: (context, ref, child) {
+                    final versionAsync = ref.watch(appVersionProvider);
+                    return Center(
+                      child: versionAsync.when(
+                        data: (version) => Text(
+                          'Mara $version',
+                          style: TextStyle(
+                            color: AppColors.textSecondary.withOpacity(0.7),
+                            fontSize: 12,
+                          ),
+                        ),
+                        loading: () => Text(
+                          'Mara',
+                          style: TextStyle(
+                            color: AppColors.textSecondary.withOpacity(0.7),
+                            fontSize: 12,
+                          ),
+                        ),
+                        error: (_, __) => Text(
+                          'Mara',
+                          style: TextStyle(
+                            color: AppColors.textSecondary.withOpacity(0.7),
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
                 ),
                 const SizedBox(height: 20),
               ],

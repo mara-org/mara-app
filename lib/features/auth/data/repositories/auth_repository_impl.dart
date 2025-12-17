@@ -3,7 +3,12 @@ import '../../domain/models/user.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../datasources/auth_remote_data_source.dart';
 import '../datasources/auth_local_data_source.dart';
+import '../datasources/auth_remote_data_source_impl.dart';
 import '../../../../core/utils/logger.dart';
+import '../../../../core/services/session_service.dart';
+import '../../../../core/providers/app_capabilities_provider.dart';
+import '../../../../core/network/api_exceptions.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Implementation of [AuthRepository].
 ///
@@ -24,26 +29,21 @@ class AuthRepositoryImpl implements AuthRepository {
     required String password,
   }) async {
     try {
-      // TODO: When backend is available, call _remoteDataSource.signIn()
-      // For now, this is a placeholder that simulates success
-      Logger.info(
-        'AuthRepository: signIn called (placeholder)',
-        feature: 'auth',
-        screen: 'auth_repository',
-      );
-
-      // Simulate a successful sign-in for now
-      // In production, this would call the backend API
-      final user = User(
-        id: 'placeholder-user-id',
+      if (_remoteDataSource == null) {
+        throw Exception('Remote data source not available');
+      }
+      
+      final result = await _remoteDataSource!.signIn(
         email: email,
-        isEmailVerified: false,
+        password: password,
       );
 
-      // Save user to local storage
-      await _localDataSource.saveUser(user);
+      if (result.isSuccess && result.user != null) {
+        // Save user to local storage
+        await _localDataSource.saveUser(result.user!);
+      }
 
-      return AuthResult.successResult(user);
+      return result;
     } catch (e, stackTrace) {
       Logger.error(
         'AuthRepository: signIn error',
@@ -69,26 +69,22 @@ class AuthRepositoryImpl implements AuthRepository {
     String? displayName,
   }) async {
     try {
-      // TODO: When backend is available, call _remoteDataSource.signUp()
-      Logger.info(
-        'AuthRepository: signUp called (placeholder)',
-        feature: 'auth',
-        screen: 'auth_repository',
-      );
-
-      // Simulate a successful sign-up for now
-      final user = User(
-        id: 'placeholder-user-id',
+      if (_remoteDataSource == null) {
+        throw Exception('Remote data source not available');
+      }
+      
+      final result = await _remoteDataSource!.signUp(
         email: email,
+        password: password,
         displayName: displayName,
-        isEmailVerified: false,
-        createdAt: DateTime.now(),
       );
 
-      // Save user to local storage
-      await _localDataSource.saveUser(user);
+      if (result.isSuccess && result.user != null) {
+        // Save user to local storage
+        await _localDataSource.saveUser(result.user!);
+      }
 
-      return AuthResult.successResult(user);
+      return result;
     } catch (e, stackTrace) {
       Logger.error(
         'AuthRepository: signUp error',
@@ -109,8 +105,19 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<void> signOut() async {
     try {
-      // TODO: Call backend to invalidate session
+      if (_remoteDataSource != null) {
+        await _remoteDataSource!.signOut();
+      }
       await _localDataSource.clearUser();
+      
+      // Clear backend session capabilities
+      if (_sessionService != null) {
+        _sessionService!.clearCapabilities();
+      }
+      if (_ref != null) {
+        _ref!.read(appCapabilitiesProvider.notifier).clear();
+      }
+      
       Logger.info(
         'AuthRepository: signOut successful',
         feature: 'auth',
@@ -131,15 +138,18 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<User?> getCurrentUser() async {
     try {
-      // Try to get user from local storage first
-      final localUser = await _localDataSource.getUser();
-      if (localUser != null) {
-        return localUser;
+      // Try remote first if available
+      if (_remoteDataSource != null) {
+        final remoteUser = await _remoteDataSource!.getCurrentUser();
+        if (remoteUser != null) {
+          await _localDataSource.saveUser(remoteUser);
+          return remoteUser;
+        }
       }
 
-      // TODO: If no local user, try to get from backend
-      // For now, return null
-      return null;
+      // Fallback to local storage
+      final localUser = await _localDataSource.getUser();
+      return localUser;
     } catch (e, stackTrace) {
       Logger.error(
         'AuthRepository: getCurrentUser error',
@@ -148,7 +158,8 @@ class AuthRepositoryImpl implements AuthRepository {
         error: e,
         stackTrace: stackTrace,
       );
-      return null;
+      // Fallback to local storage on error
+      return await _localDataSource.getUser();
     }
   }
 
@@ -177,13 +188,20 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<bool> verifyEmailCode(String code) async {
     try {
-      // TODO: Call backend API
-      Logger.info(
-        'AuthRepository: verifyEmailCode called (placeholder)',
-        feature: 'auth',
-        screen: 'auth_repository',
-      );
-      return true; // Placeholder
+      if (_remoteDataSource == null) {
+        throw Exception('Remote data source not available');
+      }
+      
+      // Get email from local storage
+      final user = await _localDataSource.getUser();
+      if (user == null) {
+        return false;
+      }
+      
+      return await _remoteDataSource!.verifyEmailCode(code, user.email);
+    } on VerificationRateLimitException {
+      // Re-throw rate limit exceptions so UI can handle them
+      rethrow;
     } catch (e, stackTrace) {
       Logger.error(
         'AuthRepository: verifyEmailCode error',
@@ -199,13 +217,20 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<bool> resendVerificationCode() async {
     try {
-      // TODO: Call backend API
-      Logger.info(
-        'AuthRepository: resendVerificationCode called (placeholder)',
-        feature: 'auth',
-        screen: 'auth_repository',
-      );
-      return true; // Placeholder
+      if (_remoteDataSource == null) {
+        throw Exception('Remote data source not available');
+      }
+      
+      // Get email from local storage
+      final user = await _localDataSource.getUser();
+      if (user == null) {
+        return false;
+      }
+      
+      return await _remoteDataSource!.resendVerificationCode(user.email);
+    } on VerificationCooldownException {
+      // Re-throw cooldown exceptions so UI can handle them
+      rethrow;
     } catch (e, stackTrace) {
       Logger.error(
         'AuthRepository: resendVerificationCode error',

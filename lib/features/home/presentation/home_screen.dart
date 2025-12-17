@@ -10,6 +10,8 @@ import '../../../core/providers/health_tracking_providers.dart';
 import '../../../core/providers/steps_provider.dart';
 import '../../../core/providers/user_profile_provider.dart';
 import '../../../core/di/dependency_injection.dart';
+import '../../../core/session/session_service.dart';
+import '../../../core/utils/firebase_auth_helper.dart';
 import 'widgets/water_input_dialog.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_colors_dark.dart';
@@ -40,7 +42,27 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       _autoSyncHealthData();
       // Set up periodic auto-sync every 5 minutes
       _startPeriodicSync();
+      // Fetch user info and entitlements from backend if logged in
+      _fetchUserInfoIfLoggedIn();
     });
+  }
+
+  /// Fetch user info and entitlements from backend on app start.
+  /// 
+  /// Calls GET /v1/auth/me to get user data, plan, entitlements, and limits.
+  /// Only calls if Firebase user is signed in.
+  Future<void> _fetchUserInfoIfLoggedIn() async {
+    try {
+      final user = FirebaseAuthHelper.getCurrentUser();
+      if (user != null) {
+        final sessionService = SessionService();
+        await sessionService.fetchUserInfo();
+      }
+    } catch (e) {
+      // Silently fail - don't block app if backend is unavailable
+      // User can still use app with cached session data
+      debugPrint('Failed to fetch user info on app start: $e');
+    }
   }
 
   @override

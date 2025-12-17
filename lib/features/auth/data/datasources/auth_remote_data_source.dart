@@ -29,8 +29,8 @@ abstract class AuthRemoteDataSource {
   Future<bool> sendPasswordResetEmail(String email);
 
   /// Verifies an email verification code via remote API.
-  Future<bool> verifyEmailCode(String code);
+  Future<bool> verifyEmailCode(String code, String email);
 
   /// Resends email verification code via remote API.
-  Future<bool> resendVerificationCode();
+  Future<bool> resendVerificationCode(String email);
 }

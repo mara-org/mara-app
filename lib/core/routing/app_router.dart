@@ -10,7 +10,7 @@ import '../../features/auth/presentation/sign_up_choices_screen.dart';
 import '../../features/auth/presentation/verify_email_screen.dart';
 import '../../features/auth/presentation/welcome_back_screen.dart';
 import '../../features/chat/presentation/mara_chat_history_screen.dart';
-import '../../features/chat/presentation/mara_chat_screen.dart';
+import '../../features/chat/presentation/pages/chat_page.dart';
 import '../../features/home/presentation/home_screen.dart';
 import '../../features/onboarding/onboarding_screen.dart';
 import '../../features/onboarding/presentation/language_selector_screen.dart';
@@ -46,6 +46,7 @@ import '../../features/setup/presentation/welcome_personal_screen.dart';
 import '../../features/setup/setup_screen.dart';
 import '../../features/splash/presentation/splash_screen.dart';
 import '../../features/subscription/presentation/subscription_screen.dart';
+import '../../features/debug/presentation/network_test_screen.dart';
 
 class AppRouter {
   AppRouter._();
@@ -114,6 +115,10 @@ class AppRouter {
       ),
       GoRoute(path: '/auth', builder: (context, state) => const AuthScreen()),
       GoRoute(path: '/ready', builder: (context, state) => const ReadyScreen()),
+      GoRoute(
+        path: '/network-test',
+        builder: (context, state) => const NetworkTestScreen(),
+      ),
       GoRoute(
         path: '/name-input',
         builder: (context, state) {
@@ -208,7 +213,7 @@ class AppRouter {
         path: '/chat',
         builder: (context, state) {
           final conversationId = state.uri.queryParameters['id'];
-          return MaraChatScreen(conversationId: conversationId);
+          return ChatPage(conversationId: conversationId);
         },
       ),
       GoRoute(

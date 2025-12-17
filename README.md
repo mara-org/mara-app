@@ -233,6 +233,34 @@ lib/
 - [Architecture](docs/ARCHITECTURE.md) - Detailed architecture documentation
 - [Enterprise Audit Report](docs/ENTERPRISE_AUDIT_REPORT.md) - Comprehensive engineering maturity assessment
 
+## 🔒 Security
+
+### Public Repository Security
+
+**This repository is PUBLIC and contains ZERO secrets.**
+
+- ✅ All configuration via `--dart-define` flags (no hardcoded values)
+- ✅ No API keys, tokens, or credentials in code
+- ✅ Email addresses hashed before logging (no PII in logs)
+- ✅ Passwords and tokens never logged
+- ✅ Firebase config files excluded from git (`.gitignore`)
+- ✅ `.env` files excluded from git (`.gitignore`)
+
+**See [Frontend Security Guide](docs/SECURITY_FRONTEND.md) for details.**
+
+### Building with Environment Variables
+
+For production builds, provide configuration via `--dart-define`:
+
+```bash
+flutter build apk --release \
+  --dart-define=API_BASE_URL=https://api.production.com \
+  --dart-define=ENABLE_CRASH_REPORTING=true \
+  --dart-define=SENTRY_DSN=https://...@sentry.io/...
+```
+
+For local development, the app uses localhost defaults (debug mode only).
+
 ## 🔒 Security & SBOM
 
 ### Software Bill of Materials (SBOM)
@@ -773,7 +801,8 @@ Review and merge dependency updates regularly to keep dependencies secure and up
 
 ## 📝 Version
 
-- **Current Version**: 1.0.0+1
+- **Current Version**: 1.2.2+6
+- **Version Display**: Automatically read from `pubspec.yaml` and shown in Settings screen
 
 ## 📄 License
 
@@ -782,6 +811,21 @@ This project is part of the Mara organization.
 ## 🤝 Contributing
 
 Contributions are welcome! Please follow the existing code style and create pull requests for any improvements.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
+
+## 📚 Documentation
+
+### Setup & Requirements
+- [Requirements & Setup Guide](REQUIREMENTS.md) - Complete setup instructions and requirements
+- [Production Environment Requirements](PRODUCTION_ENV_REQUIREMENTS.md) - iOS production setup
+
+### Changes & Integration
+- [Changes Guide](CHANGES_GUIDE.md) - Complete guide to all backend integration changes
+
+### Architecture
+- [Architecture Documentation](docs/ARCHITECTURE.md) - System architecture
+- [Design System](docs/DESIGN_SYSTEM.md) - UI/UX design guidelines
 
 ## 📞 Support
 
