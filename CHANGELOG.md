@@ -1,3 +1,20 @@
+## [1.2.3+7] - 2025-12-17
+
+### Added
+
+### Fixed
+- fix: Fix golden test tags and make memory leak test non-blocking (5f38b6e)
+- fix: Fix golden test tags and simplify memory leak test (28977c4)
+- fix: Add golden tags to all golden tests (0bf51da)
+- fix: Use find to exclude golden and leak tests from main CI (3545afa)
+- fix: Exclude golden and leak tests from main CI (c31569c)
+- fix: Use correct leak_tracker API (1874791)
+- fix: Fix memory leak test and welcome golden test (3f94866)
+- fix: Remove invalid --profile flag from memory leak test (69fcbde)
+
+### Other
+- docs: Add REQUIREMENTS.md, CHANGES_GUIDE.md and update .gitignore (30a260d)
+
 ## [1.2.2+6] - 2025-12-09
 
 ### Added
