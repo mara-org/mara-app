@@ -1,3 +1,8 @@
+## [1.3.0+8] - 2025-12-26
+
+### Added
+- feat: Enhanced error logging and cleanup (9662c9d)
+
 ## [1.2.3+7] - 2025-12-17
 
 ### Added
