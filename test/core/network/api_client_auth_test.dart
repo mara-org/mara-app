@@ -8,7 +8,8 @@ import 'package:mara_app/core/network/api_client.dart';
 import 'package:mara_app/core/config/api_config.dart';
 import 'package:mara_app/core/utils/firebase_auth_helper.dart';
 
-@GenerateMocks([Dio, InterceptorsWrapper, RequestOptions, ErrorInterceptorHandler])
+@GenerateMocks(
+    [Dio, InterceptorsWrapper, RequestOptions, ErrorInterceptorHandler])
 void main() {
   group('ApiClient Authorization Header', () {
     test('should attach Authorization header with Firebase token', () async {
@@ -33,4 +34,3 @@ void main() {
     });
   });
 }
-
