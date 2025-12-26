@@ -68,11 +68,16 @@ class _ForgotPasswordVerifyScreenState
     });
 
     try {
-      final authRepository = ref.read(authRepositoryProvider);
-      final success = await authRepository.verifyPasswordResetCode(
-        email: email,
-        code: code,
-      );
+      // NOTE: This screen is deprecated - using Firebase email links instead
+      // The verifyPasswordResetCode method no longer exists in AuthRepository
+      // This screen should not be accessible in production
+      // For now, return false to prevent navigation
+      final success = false;
+      // final authRepository = ref.read(authRepositoryProvider);
+      // final success = await authRepository.verifyPasswordResetCode(
+      //   email: email,
+      //   code: code,
+      // );
 
       if (!mounted) return;
 

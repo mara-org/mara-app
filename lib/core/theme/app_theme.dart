@@ -63,7 +63,7 @@ class AppTheme {
         ),
       ),
       // Card theme for consistent card styling
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         elevation: isIOS ? 0 : 2,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(isIOS ? 16 : 12),
@@ -130,7 +130,7 @@ class AppTheme {
           ),
         ),
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         elevation: isIOS ? 0 : 2,
         color: AppColorsDark.cardBackground,
         shape: RoundedRectangleBorder(

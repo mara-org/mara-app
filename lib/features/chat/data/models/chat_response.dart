@@ -109,4 +109,29 @@ class ChatMetadata {
 
   /// Check if user has remaining token budget.
   bool get hasRemainingTokenBudget => remainingTokenBudgetToday > 0;
+
+  /// Create a copy with updated fields.
+  ChatMetadata copyWith({
+    String? modelUsed,
+    int? tokensIn,
+    int? tokensOut,
+    int? remainingMessagesToday,
+    int? remainingTokenBudgetToday,
+    String? plan,
+    String? upgradeHint,
+    String? requestId,
+  }) {
+    return ChatMetadata(
+      modelUsed: modelUsed ?? this.modelUsed,
+      tokensIn: tokensIn ?? this.tokensIn,
+      tokensOut: tokensOut ?? this.tokensOut,
+      remainingMessagesToday:
+          remainingMessagesToday ?? this.remainingMessagesToday,
+      remainingTokenBudgetToday:
+          remainingTokenBudgetToday ?? this.remainingTokenBudgetToday,
+      plan: plan ?? this.plan,
+      upgradeHint: upgradeHint ?? this.upgradeHint,
+      requestId: requestId ?? this.requestId,
+    );
+  }
 }
