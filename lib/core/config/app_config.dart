@@ -122,4 +122,17 @@ class AppConfig {
     // Default App Store ID - update when iOS app is published
     return '1234567890';
   }
+
+  /// Android Play Store URL.
+  static String get androidStoreUrl {
+    return 'https://play.google.com/store/apps/details?id=$androidPackageName';
+  }
+
+  /// iOS App Store URL.
+  static String get iosStoreUrl {
+    return 'https://apps.apple.com/app/id$iosAppId';
+  }
+
+  /// Public landing page URL.
+  static const String publicLandingPageUrl = 'https://iammara.com';
 }
