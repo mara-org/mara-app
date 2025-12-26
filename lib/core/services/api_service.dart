@@ -262,8 +262,10 @@ class ApiService {
     required int weight,
     required String weightUnit, // "kg" or "lb"
     String? bloodType, // "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"
-    required String mainGoal, // "Stay Active", "Reduce Stress", "Sleep Better", "Track My Health"
-    required Map<String, bool> permissions, // {"notifications": true, "healthData": true}
+    required String
+        mainGoal, // "Stay Active", "Reduce Stress", "Sleep Better", "Track My Health"
+    required Map<String, bool>
+        permissions, // {"notifications": true, "healthData": true}
   }) async {
     final token = await _getFirebaseToken();
     if (token == null) {
@@ -323,4 +325,3 @@ class ApiService {
     );
   }
 }
-

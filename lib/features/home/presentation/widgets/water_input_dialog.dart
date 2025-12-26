@@ -175,7 +175,7 @@ class _WaterInputDialogState extends ConsumerState<WaterInputDialog> {
               children: [
                 Expanded(
                   child: Divider(
-                    color: AppColors.textSecondary.withOpacity( 0.3),
+                    color: AppColors.textSecondary.withOpacity(0.3),
                   ),
                 ),
                 Padding(
@@ -191,7 +191,7 @@ class _WaterInputDialogState extends ConsumerState<WaterInputDialog> {
                 ),
                 Expanded(
                   child: Divider(
-                    color: AppColors.textSecondary.withOpacity( 0.3),
+                    color: AppColors.textSecondary.withOpacity(0.3),
                   ),
                 ),
               ],

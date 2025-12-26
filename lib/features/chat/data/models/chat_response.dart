@@ -110,4 +110,3 @@ class ChatMetadata {
   /// Check if user has remaining token budget.
   bool get hasRemainingTokenBudget => remainingTokenBudgetToday > 0;
 }
-

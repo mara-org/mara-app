@@ -59,7 +59,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   /// Fetch user info and entitlements from backend on app start.
-  /// 
+  ///
   /// Calls GET /v1/auth/me to get user data, plan, entitlements, and limits.
   /// Only calls if Firebase user is signed in.
   Future<void> _fetchUserInfoIfLoggedIn() async {
@@ -223,7 +223,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               Text(
                                 dateText,
                                 style: TextStyle(
-                                  color: Colors.white.withOpacity( 0.9),
+                                  color: Colors.white.withOpacity(0.9),
                                   fontSize: 12,
                                   fontWeight: FontWeight.normal,
                                 ),
@@ -240,7 +240,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             width: 40,
                             height: 40,
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity( 0.2),
+                              color: Colors.white.withOpacity(0.2),
                               shape: BoxShape.circle,
                             ),
                             child: const Icon(
@@ -298,7 +298,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     : Colors.white,
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.grey.withOpacity( 0.1),
+                                    color: Colors.grey.withOpacity(0.1),
                                     offset: const Offset(0, 1),
                                     blurRadius: 13,
                                   ),
@@ -381,7 +381,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 : AppColors.homeVitalSignsBackground,
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity( 0.25),
+                                color: Colors.black.withOpacity(0.25),
                                 offset: const Offset(0, 4),
                                 blurRadius: 4,
                               ),
@@ -452,7 +452,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     : AppColors.homeCardBackground),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity( 0.25),
+                                color: Colors.black.withOpacity(0.25),
                                 offset: const Offset(0, 4),
                                 blurRadius: 4,
                               ),
@@ -574,7 +574,7 @@ class _StepsCard extends ConsumerWidget {
             : AppColors.permissionCardBackground,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity( 0.25),
+            color: Colors.black.withOpacity(0.25),
             offset: const Offset(0, 4),
             blurRadius: 4,
           ),
@@ -619,7 +619,7 @@ class _StepsCard extends ConsumerWidget {
                 style: TextStyle(
                   color: steps > 0
                       ? AppColors.languageButtonColor
-                      : AppColors.languageButtonColor.withOpacity( 0.6),
+                      : AppColors.languageButtonColor.withOpacity(0.6),
                   fontSize: steps > 0 ? 13 : 11,
                   fontWeight: FontWeight.normal,
                 ),
@@ -629,7 +629,7 @@ class _StepsCard extends ConsumerWidget {
                 Text(
                   subtitle,
                   style: TextStyle(
-                    color: AppColors.languageButtonColor.withOpacity( 0.7),
+                    color: AppColors.languageButtonColor.withOpacity(0.7),
                     fontSize: 10,
                     fontWeight: FontWeight.normal,
                   ),
@@ -671,14 +671,14 @@ class _StepsCard extends ConsumerWidget {
             const SizedBox(height: 8),
             Icon(
               Icons.directions_walk,
-              color: AppColors.languageButtonColor.withOpacity( 0.5),
+              color: AppColors.languageButtonColor.withOpacity(0.5),
               size: 32,
             ),
             const SizedBox(height: 4),
             Text(
               '0',
               style: TextStyle(
-                color: AppColors.languageButtonColor.withOpacity( 0.6),
+                color: AppColors.languageButtonColor.withOpacity(0.6),
                 fontSize: 11,
                 fontWeight: FontWeight.normal,
               ),
@@ -710,7 +710,7 @@ class _SleepCard extends ConsumerWidget {
             : AppColors.permissionCardBackground,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity( 0.25),
+            color: Colors.black.withOpacity(0.25),
             offset: const Offset(0, 4),
             blurRadius: 4,
           ),
@@ -745,7 +745,7 @@ class _SleepCard extends ConsumerWidget {
                 style: TextStyle(
                   color: hours > 0
                       ? AppColors.languageButtonColor
-                      : AppColors.languageButtonColor.withOpacity( 0.6),
+                      : AppColors.languageButtonColor.withOpacity(0.6),
                   fontSize: hours > 0 ? 13 : 11,
                   fontWeight: FontWeight.normal,
                 ),
@@ -788,14 +788,14 @@ class _SleepCard extends ConsumerWidget {
             const SizedBox(height: 8),
             Icon(
               Icons.bedtime,
-              color: AppColors.languageButtonColor.withOpacity( 0.5),
+              color: AppColors.languageButtonColor.withOpacity(0.5),
               size: 32,
             ),
             const SizedBox(height: 4),
             Text(
               '--',
               style: TextStyle(
-                color: AppColors.languageButtonColor.withOpacity( 0.6),
+                color: AppColors.languageButtonColor.withOpacity(0.6),
                 fontSize: 11,
                 fontWeight: FontWeight.normal,
               ),
@@ -837,7 +837,7 @@ class _WaterCard extends ConsumerWidget {
               : AppColors.permissionCardBackground,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity( 0.25),
+              color: Colors.black.withOpacity(0.25),
               offset: const Offset(0, 4),
               blurRadius: 4,
             ),
@@ -872,7 +872,7 @@ class _WaterCard extends ConsumerWidget {
                   style: TextStyle(
                     color: liters > 0
                         ? AppColors.languageButtonColor
-                        : AppColors.languageButtonColor.withOpacity( 0.6),
+                        : AppColors.languageButtonColor.withOpacity(0.6),
                     fontSize: liters > 0 ? 13 : 11,
                     fontWeight: FontWeight.normal,
                   ),
@@ -916,14 +916,14 @@ class _WaterCard extends ConsumerWidget {
               const SizedBox(height: 8),
               Icon(
                 Icons.water_drop,
-                color: AppColors.languageButtonColor.withOpacity( 0.5),
+                color: AppColors.languageButtonColor.withOpacity(0.5),
                 size: 32,
               ),
               const SizedBox(height: 4),
               Text(
                 '--',
                 style: TextStyle(
-                  color: AppColors.languageButtonColor.withOpacity( 0.6),
+                  color: AppColors.languageButtonColor.withOpacity(0.6),
                   fontSize: 11,
                   fontWeight: FontWeight.normal,
                 ),

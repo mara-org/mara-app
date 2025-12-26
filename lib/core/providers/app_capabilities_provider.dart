@@ -61,4 +61,3 @@ class AppCapabilitiesNotifier extends StateNotifier<AppCapabilities?> {
     state = capabilities;
   }
 }
-

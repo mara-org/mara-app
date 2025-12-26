@@ -87,8 +87,7 @@ class _MaraChatHistoryScreenState extends ConsumerState<MaraChatHistoryScreen> {
                 style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
                   hintText: l10n.searchConversations,
-                  hintStyle:
-                      TextStyle(color: Colors.white.withOpacity( 0.7)),
+                  hintStyle: TextStyle(color: Colors.white.withOpacity(0.7)),
                   border: InputBorder.none,
                 ),
                 onChanged: (value) {
@@ -157,7 +156,7 @@ class _MaraChatHistoryScreenState extends ConsumerState<MaraChatHistoryScreen> {
                     color: (isDark
                             ? AppColorsDark.textSecondary
                             : AppColors.textSecondary)
-                        .withOpacity( 0.5),
+                        .withOpacity(0.5),
                   ),
                   const SizedBox(height: 16),
                   Text(
@@ -327,7 +326,7 @@ class _ConversationCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity( 0.05),
+              color: Colors.black.withOpacity(0.05),
               offset: const Offset(0, 2),
               blurRadius: 8,
               spreadRadius: 0,
@@ -387,7 +386,7 @@ class _ConversationCard extends StatelessWidget {
                             color: (isDark
                                     ? AppColorsDark.textSecondary
                                     : AppColors.textSecondary)
-                                .withOpacity( 0.7),
+                                .withOpacity(0.7),
                             fontSize: 12,
                             fontWeight: FontWeight.normal,
                           ),
@@ -403,7 +402,7 @@ class _ConversationCard extends StatelessWidget {
                       color: (isDark
                               ? AppColorsDark.textSecondary
                               : AppColors.textSecondary)
-                          .withOpacity( 0.5),
+                          .withOpacity(0.5),
                       size: 20,
                     ),
                     onSelected: (value) {
@@ -431,7 +430,7 @@ class _ConversationCard extends StatelessWidget {
                     color: (isDark
                             ? AppColorsDark.textSecondary
                             : AppColors.textSecondary)
-                        .withOpacity( 0.5),
+                        .withOpacity(0.5),
                     size: 24,
                   ),
                 ],
@@ -501,7 +500,7 @@ class _TopicIcon extends StatelessWidget {
       width: 40,
       height: 40,
       decoration: BoxDecoration(
-        color: iconColor.withOpacity( 0.1),
+        color: iconColor.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Icon(iconData, color: iconColor, size: 24),

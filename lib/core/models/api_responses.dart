@@ -53,7 +53,8 @@ class SessionResponse {
       limits: json['limits'] != null
           ? Map<String, int>.from(
               (json['limits'] as Map).map(
-                (k, v) => MapEntry(k, (v is int ? v : int.tryParse(v.toString()) ?? 0)),
+                (k, v) => MapEntry(
+                    k, (v is int ? v : int.tryParse(v.toString()) ?? 0)),
               ),
             )
           : <String, int>{},
@@ -195,4 +196,3 @@ class ProfileResponse {
     };
   }
 }
-

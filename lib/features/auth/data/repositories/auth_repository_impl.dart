@@ -37,7 +37,7 @@ class AuthRepositoryImpl implements AuthRepository {
       if (_remoteDataSource == null) {
         throw Exception('Remote data source not available');
       }
-      
+
       final result = await _remoteDataSource!.signIn(
         email: email,
         password: password,
@@ -77,7 +77,7 @@ class AuthRepositoryImpl implements AuthRepository {
       if (_remoteDataSource == null) {
         throw Exception('Remote data source not available');
       }
-      
+
       final result = await _remoteDataSource!.signUp(
         email: email,
         password: password,
@@ -114,7 +114,7 @@ class AuthRepositoryImpl implements AuthRepository {
         await _remoteDataSource!.signOut();
       }
       await _localDataSource.clearUser();
-      
+
       // Clear backend session capabilities
       if (_sessionService != null) {
         _sessionService!.clearCapabilities();
@@ -122,7 +122,7 @@ class AuthRepositoryImpl implements AuthRepository {
       if (_ref != null) {
         _ref!.read(appCapabilitiesProvider.notifier).clear();
       }
-      
+
       Logger.info(
         'AuthRepository: signOut successful',
         feature: 'auth',
@@ -191,18 +191,21 @@ class AuthRepositoryImpl implements AuthRepository {
         error: e,
         stackTrace: stackTrace,
       );
-      throw ServerException('An unexpected error occurred when sending reset email.');
+      throw ServerException(
+          'An unexpected error occurred when sending reset email.');
     }
   }
 
   @override
   Future<bool> verifyEmailCode(String code, {String? email}) async {
-    throw UnimplementedError('Email verification is handled by Firebase via email links');
+    throw UnimplementedError(
+        'Email verification is handled by Firebase via email links');
   }
 
   @override
   Future<bool> resendVerificationCode({String? email}) async {
-    throw UnimplementedError('Email verification is handled by Firebase via email links');
+    throw UnimplementedError(
+        'Email verification is handled by Firebase via email links');
   }
 
   @override
@@ -210,7 +213,8 @@ class AuthRepositoryImpl implements AuthRepository {
     required String email,
     required String code,
   }) async {
-    throw UnimplementedError('Password reset is handled by Firebase via email links');
+    throw UnimplementedError(
+        'Password reset is handled by Firebase via email links');
   }
 
   @override
@@ -219,7 +223,8 @@ class AuthRepositoryImpl implements AuthRepository {
     required String resetToken,
     required String newPassword,
   }) async {
-    throw UnimplementedError('Password reset is handled by Firebase via email links');
+    throw UnimplementedError(
+        'Password reset is handled by Firebase via email links');
   }
 
   @override
@@ -245,7 +250,8 @@ class AuthRepositoryImpl implements AuthRepository {
         error: e,
         stackTrace: stackTrace,
       );
-      throw ServerException('An unexpected error occurred when sending delete account code.');
+      throw ServerException(
+          'An unexpected error occurred when sending delete account code.');
     }
   }
 
@@ -262,7 +268,7 @@ class AuthRepositoryImpl implements AuthRepository {
         email: email,
         code: code,
       );
-      
+
       if (success) {
         // Clear local user data after successful deletion
         await _localDataSource.clearUser();
@@ -273,7 +279,7 @@ class AuthRepositoryImpl implements AuthRepository {
           _ref!.read(appCapabilitiesProvider.notifier).clear();
         }
       }
-      
+
       return success;
     } on ApiException catch (e) {
       Logger.error(
@@ -291,7 +297,8 @@ class AuthRepositoryImpl implements AuthRepository {
         error: e,
         stackTrace: stackTrace,
       );
-      throw ServerException('An unexpected error occurred when deleting account.');
+      throw ServerException(
+          'An unexpected error occurred when deleting account.');
     }
   }
 

@@ -159,4 +159,3 @@ class ChatController extends StateNotifier<ChatState> {
     state = state.copyWith(messages: List.from(messages));
   }
 }
-

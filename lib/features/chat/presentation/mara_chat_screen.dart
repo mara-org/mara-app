@@ -121,34 +121,34 @@ class _MaraChatScreenState extends ConsumerState<MaraChatScreen> {
       Future.delayed(const Duration(milliseconds: 500), () {
         try {
           ref.read(chatMessagesProvider.notifier).addMessage(
-              ChatMessage(text: l10n.thanksForSharing, type: MessageType.bot),
-            );
+                ChatMessage(text: l10n.thanksForSharing, type: MessageType.bot),
+              );
 
-        // Update or create conversation in history
-        final updatedMessages = ref.read(chatMessagesProvider);
-        if (_currentConversationId != null) {
-          // Update existing conversation
-          ref
-              .read(chatHistoryProvider.notifier)
-              .updateConversation(_currentConversationId!, updatedMessages);
-        } else if (updatedMessages.length >= 2) {
-          // Create new conversation (at least user message + bot reply)
-          final conversation = ref
-              .read(chatHistoryProvider.notifier)
-              .createConversation(updatedMessages);
-          _currentConversationId = conversation.id;
-        }
-
-        // Scroll to bottom again
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (_scrollController.hasClients) {
-            _scrollController.animateTo(
-              _scrollController.position.maxScrollExtent,
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeOut,
-            );
+          // Update or create conversation in history
+          final updatedMessages = ref.read(chatMessagesProvider);
+          if (_currentConversationId != null) {
+            // Update existing conversation
+            ref
+                .read(chatHistoryProvider.notifier)
+                .updateConversation(_currentConversationId!, updatedMessages);
+          } else if (updatedMessages.length >= 2) {
+            // Create new conversation (at least user message + bot reply)
+            final conversation = ref
+                .read(chatHistoryProvider.notifier)
+                .createConversation(updatedMessages);
+            _currentConversationId = conversation.id;
           }
-        });
+
+          // Scroll to bottom again
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (_scrollController.hasClients) {
+              _scrollController.animateTo(
+                _scrollController.position.maxScrollExtent,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeOut,
+              );
+            }
+          });
         } catch (e, stackTrace) {
           // Silently handle errors in delayed callback
           debugPrint('Error in delayed chat message callback: $e');
@@ -244,7 +244,7 @@ class _MaraChatScreenState extends ConsumerState<MaraChatScreen> {
                 color: isDark ? AppColorsDark.cardBackground : Colors.white,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.grey.withOpacity( 0.1),
+                    color: Colors.grey.withOpacity(0.1),
                     offset: const Offset(0, -2),
                     blurRadius: 4,
                   ),

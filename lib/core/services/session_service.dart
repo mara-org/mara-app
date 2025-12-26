@@ -97,7 +97,8 @@ class SessionService {
       if (apiException is UnauthorizedException) {
         rethrow;
       } else if (apiException is NetworkException) {
-        throw NetworkException('Backend unavailable. Please check your connection.');
+        throw NetworkException(
+            'Backend unavailable. Please check your connection.');
       } else if (apiException is ServerException) {
         throw ServerException('Backend unavailable. Please try again later.');
       } else {
@@ -133,4 +134,3 @@ class SessionService {
     _cachedCapabilities = null;
   }
 }
-

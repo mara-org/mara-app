@@ -128,7 +128,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           if (e.message?.toLowerCase().contains('allowlisted') == true ||
               e.message?.toLowerCase().contains('domain') == true) {
             errorType = AuthErrorType.unknown;
-            errorMessage = 'This email domain is not allowed. Please contact support or use a different email address.';
+            errorMessage =
+                'This email domain is not allowed. Please contact support or use a different email address.';
           } else {
             errorType = AuthErrorType.unknown;
             errorMessage = e.message ?? 'This operation is not allowed';
@@ -139,7 +140,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           if (e.message?.toLowerCase().contains('allowlisted') == true ||
               e.message?.toLowerCase().contains('domain not') == true) {
             errorType = AuthErrorType.unknown;
-            errorMessage = 'This email domain is not allowed. Please contact support or use a different email address.';
+            errorMessage =
+                'This email domain is not allowed. Please contact support or use a different email address.';
           } else {
             errorType = AuthErrorType.unknown;
             errorMessage = e.message ?? 'An error occurred';
@@ -177,7 +179,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String password,
     String? displayName,
   }) async {
-    UserCredential? userCredential; // Declare at top level to access in catch blocks
+    UserCredential?
+        userCredential; // Declare at top level to access in catch blocks
     try {
       Logger.info(
         'Signing up user: $email',
@@ -188,8 +191,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       // Step 1: Create user in Firebase
       UserCredential? userCredential;
       try {
-        userCredential =
-            await FirebaseAuthHelper.signUpWithEmailAndPassword(
+        userCredential = await FirebaseAuthHelper.signUpWithEmailAndPassword(
           email: email,
           password: password,
         );
@@ -202,21 +204,22 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
             feature: 'auth',
             screen: 'auth_remote_data_source',
           );
-          
+
           try {
             // Try to sign in with existing Firebase user to check verification status
-            final existingCredential = await FirebaseAuthHelper.signInWithEmailAndPassword(
+            final existingCredential =
+                await FirebaseAuthHelper.signInWithEmailAndPassword(
               email: email,
               password: password,
             );
-            
+
             // Reload to get latest verification status
             await existingCredential.user?.reload();
             final isVerified = existingCredential.user?.emailVerified ?? false;
-            
+
             // Sign out immediately - user must verify email first
             await FirebaseAuth.instance.signOut();
-            
+
             if (isVerified) {
               // Email is verified - user should sign in, not sign up
               return AuthResult.failureResult(
@@ -233,15 +236,17 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
               );
               try {
                 // Sign in again to delete
-                final tempCredential = await FirebaseAuthHelper.signInWithEmailAndPassword(
+                final tempCredential =
+                    await FirebaseAuthHelper.signInWithEmailAndPassword(
                   email: email,
                   password: password,
                 );
                 await tempCredential.user?.delete();
                 await FirebaseAuth.instance.signOut();
-                
+
                 // Retry sign-up after cleanup
-                userCredential = await FirebaseAuthHelper.signUpWithEmailAndPassword(
+                userCredential =
+                    await FirebaseAuthHelper.signUpWithEmailAndPassword(
                   email: email,
                   password: password,
                 );
@@ -296,7 +301,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       // Use longer timeout for sign-up (Render free tier services sleep and take 30-60s to wake up)
       final response = await _apiClient.dio.post(
-        ApiConfig.registerEndpoint,  // POST /api/v1/auth/register
+        ApiConfig.registerEndpoint, // POST /api/v1/auth/register
         data: {
           'id_token': idToken,
         },
@@ -430,7 +435,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           screen: 'auth_remote_data_source',
           extra: {'status_code': response.statusCode, 'error': errorMsg},
         );
-        
+
         // Delete Firebase user to allow clean retry
         try {
           await userCredential?.user?.delete();
@@ -461,7 +466,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         screen: 'auth_remote_data_source',
         error: e,
       );
-      
+
       // If Firebase user was created, delete it to allow retry
       if (userCredential != null) {
         Logger.warning(
@@ -484,7 +489,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           );
         }
       }
-      
+
       // Map DioException to appropriate error
       if (e.type == DioExceptionType.connectionTimeout ||
           e.type == DioExceptionType.sendTimeout ||
@@ -495,7 +500,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           AuthErrorType.networkError,
         );
       }
-      
+
       if (e.response != null) {
         final statusCode = e.response!.statusCode;
         if (statusCode == 500) {
@@ -505,7 +510,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           );
         }
       }
-      
+
       return AuthResult.failureResult(
         'Failed to connect to server. Please try again.',
         AuthErrorType.networkError,
@@ -543,7 +548,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           if (e.message?.toLowerCase().contains('allowlisted') == true ||
               e.message?.toLowerCase().contains('domain') == true) {
             errorType = AuthErrorType.unknown;
-            errorMessage = 'This email domain is not allowed. Please contact support or use a different email address.';
+            errorMessage =
+                'This email domain is not allowed. Please contact support or use a different email address.';
           } else {
             errorType = AuthErrorType.unknown;
             errorMessage = e.message ?? 'This operation is not allowed';
@@ -554,7 +560,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           if (e.message?.toLowerCase().contains('allowlisted') == true ||
               e.message?.toLowerCase().contains('domain not') == true) {
             errorType = AuthErrorType.unknown;
-            errorMessage = 'This email domain is not allowed. Please contact support or use a different email address.';
+            errorMessage =
+                'This email domain is not allowed. Please contact support or use a different email address.';
           } else {
             errorType = AuthErrorType.unknown;
             errorMessage = e.message ?? 'An error occurred';
@@ -745,21 +752,23 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   // No backend endpoints needed for email verification
 
   // Removed: verifyEmailCode - Firebase handles email verification
-  // Removed: resendVerificationCode - Firebase handles email verification  
+  // Removed: resendVerificationCode - Firebase handles email verification
   // Removed: verifyPasswordResetCode - Firebase handles password reset via links
   // Removed: resetPassword (backend version) - Firebase handles password reset
 
   // Note: sendPasswordResetEmail now uses Firebase (not backend)
-  
+
   // These methods are no longer implemented - Firebase handles everything
   @override
   Future<bool> verifyEmailCode(String code, String email) async {
-    throw UnimplementedError('Email verification is handled by Firebase via email links');
+    throw UnimplementedError(
+        'Email verification is handled by Firebase via email links');
   }
 
   @override
   Future<bool> resendVerificationCode(String email) async {
-    throw UnimplementedError('Email verification is handled by Firebase via email links');
+    throw UnimplementedError(
+        'Email verification is handled by Firebase via email links');
   }
 
   @override
@@ -767,7 +776,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String email,
     required String code,
   }) async {
-    throw UnimplementedError('Password reset is handled by Firebase via email links');
+    throw UnimplementedError(
+        'Password reset is handled by Firebase via email links');
   }
 
   @override
@@ -776,7 +786,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String resetToken,
     required String newPassword,
   }) async {
-    throw UnimplementedError('Password reset is handled by Firebase via email links');
+    throw UnimplementedError(
+        'Password reset is handled by Firebase via email links');
   }
 
   /// Handles Dio errors and maps them to AuthErrorType.
@@ -896,7 +907,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         );
         return true;
       }
-      
+
       Logger.warning(
         'Delete account returned status: ${response.statusCode}',
         feature: 'auth',

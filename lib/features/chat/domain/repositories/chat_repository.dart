@@ -18,4 +18,3 @@ abstract class ChatRepository {
   /// Returns null if quota information is not available.
   Future<QuotaEntity?> getQuotaState();
 }
-

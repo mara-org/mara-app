@@ -25,14 +25,15 @@ class ApiClient {
     final baseUrl = ApiConfig.baseUrl;
     debugPrint('🔧 ApiClient: Initializing with baseUrl: $baseUrl');
     debugPrint('🔧 ApiClient: Environment: ${AppConfig.environmentName}');
-    
+
     // Confirm backend URL is set correctly
     if (baseUrl == 'https://mara-api-uoum.onrender.com') {
       debugPrint('✅ ApiClient: Backend URL configured: Render backend');
     } else {
-      debugPrint('⚠️ ApiClient: Backend URL: $baseUrl (expected: https://mara-api-uoum.onrender.com)');
+      debugPrint(
+          '⚠️ ApiClient: Backend URL: $baseUrl (expected: https://mara-api-uoum.onrender.com)');
     }
-    
+
     _dio = Dio(
       BaseOptions(
         baseUrl: baseUrl,
@@ -52,7 +53,7 @@ class ApiClient {
         onRequest: (options, handler) {
           final fullUrl = '${options.baseUrl}${options.path}';
           final timestamp = DateTime.now();
-          
+
           // Log full request details
           debugPrint('═══════════════════════════════════════════════════════');
           debugPrint('🌐 API REQUEST');
@@ -63,7 +64,7 @@ class ApiClient {
           debugPrint('📍 Path: ${options.path}');
           debugPrint('📍 Full URI: ${options.uri}');
           debugPrint('📍 Timestamp: $timestamp');
-          
+
           // Log headers (without secrets)
           final safeHeaders = Map<String, dynamic>.from(options.headers);
           if (safeHeaders.containsKey('Authorization')) {
@@ -74,7 +75,7 @@ class ApiClient {
           }
           debugPrint('📤 Headers: $safeHeaders');
           debugPrint('📤 Content-Type: ${options.headers['Content-Type']}');
-          
+
           // Log body keys (not secrets)
           if (options.data != null) {
             if (options.data is Map) {
@@ -94,8 +95,8 @@ class ApiClient {
               debugPrint('📤 Body values (safe): $safeKeys');
             } else {
               final bodyStr = options.data.toString();
-              final bodyPreview = bodyStr.length > 500 
-                  ? '${bodyStr.substring(0, 500)}...' 
+              final bodyPreview = bodyStr.length > 500
+                  ? '${bodyStr.substring(0, 500)}...'
                   : bodyStr;
               debugPrint('📤 Body: $bodyPreview');
             }
@@ -104,16 +105,17 @@ class ApiClient {
             debugPrint('📤 Body: null');
           }
           debugPrint('═══════════════════════════════════════════════════════');
-          
+
           return handler.next(options);
         },
         onResponse: (response, handler) {
-          final fullUrl = '${response.requestOptions.baseUrl}${response.requestOptions.path}';
+          final fullUrl =
+              '${response.requestOptions.baseUrl}${response.requestOptions.path}';
           final bodyStr = response.data?.toString() ?? 'null';
-          final bodyPreview = bodyStr.length > 500 
-              ? '${bodyStr.substring(0, 500)}...' 
+          final bodyPreview = bodyStr.length > 500
+              ? '${bodyStr.substring(0, 500)}...'
               : bodyStr;
-          
+
           debugPrint('═══════════════════════════════════════════════════════');
           debugPrint('✅ API RESPONSE');
           debugPrint('═══════════════════════════════════════════════════════');
@@ -123,33 +125,40 @@ class ApiClient {
           debugPrint('📥 Headers: ${response.headers}');
           debugPrint('📥 Body: $bodyPreview');
           debugPrint('═══════════════════════════════════════════════════════');
-          
+
           return handler.next(response);
         },
         onError: (error, handler) {
           final timestamp = DateTime.now();
           debugPrint('❌ ApiClient: ERROR at $timestamp');
-          debugPrint('❌ ApiClient: ${error.requestOptions.method} ${error.requestOptions.path}');
+          debugPrint(
+              '❌ ApiClient: ${error.requestOptions.method} ${error.requestOptions.path}');
           debugPrint('❌ ApiClient: Error type: ${error.type}');
           debugPrint('❌ ApiClient: Error message: ${error.message}');
           debugPrint('❌ ApiClient: Request URI: ${error.requestOptions.uri}');
-          debugPrint('❌ ApiClient: Request baseUrl: ${error.requestOptions.baseUrl}');
+          debugPrint(
+              '❌ ApiClient: Request baseUrl: ${error.requestOptions.baseUrl}');
           debugPrint('❌ ApiClient: Status: ${error.response?.statusCode}');
-          debugPrint('❌ ApiClient: Response headers: ${error.response?.headers}');
+          debugPrint(
+              '❌ ApiClient: Response headers: ${error.response?.headers}');
           debugPrint('❌ ApiClient: Response: ${error.response?.data}');
-          
+
           // Critical check: Did request reach server?
           if (error.response != null) {
-            debugPrint('✅ ApiClient: Request REACHED server (got HTTP response)');
+            debugPrint(
+                '✅ ApiClient: Request REACHED server (got HTTP response)');
           } else {
-            debugPrint('❌ ApiClient: Request DID NOT reach server (no HTTP response)');
+            debugPrint(
+                '❌ ApiClient: Request DID NOT reach server (no HTTP response)');
             if (error.type == DioExceptionType.connectionTimeout) {
-              debugPrint('❌ ApiClient: Connection timeout - server may be down or unreachable');
+              debugPrint(
+                  '❌ ApiClient: Connection timeout - server may be down or unreachable');
             } else if (error.type == DioExceptionType.connectionError) {
-              debugPrint('❌ ApiClient: Connection error - cannot establish connection');
+              debugPrint(
+                  '❌ ApiClient: Connection error - cannot establish connection');
             }
           }
-          
+
           return handler.next(error);
         },
       ),
@@ -169,7 +178,8 @@ class ApiClient {
                 '${ApiConfig.bearerPrefix}$token';
             debugPrint('🔑 ApiClient: Added Firebase token to request');
           } else {
-            debugPrint('⚠️ ApiClient: No Firebase token available (unauthenticated request)');
+            debugPrint(
+                '⚠️ ApiClient: No Firebase token available (unauthenticated request)');
           }
           return handler.next(options);
         },
@@ -250,4 +260,3 @@ class ApiClient {
     return await _dio.get(ApiConfig.healthEndpoint);
   }
 }
-

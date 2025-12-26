@@ -7,7 +7,7 @@ import '../../../core/theme/app_colors_dark.dart';
 import 'package:dio/dio.dart';
 
 /// Network test screen for debugging.
-/// 
+///
 /// Tests backend connectivity and displays health/version status.
 class NetworkTestScreen extends StatefulWidget {
   const NetworkTestScreen({super.key});
@@ -18,7 +18,7 @@ class NetworkTestScreen extends StatefulWidget {
 
 class _NetworkTestScreenState extends State<NetworkTestScreen> {
   final SimpleApiClient _apiClient = SimpleApiClient();
-  
+
   bool _isLoading = false;
   String? _healthStatus;
   String? _versionStatus;
@@ -58,7 +58,7 @@ class _NetworkTestScreenState extends State<NetworkTestScreen> {
         final healthResponse = await _apiClient.get(AppConfig.healthEndpoint);
         final healthEnd = DateTime.now();
         final healthMs = healthEnd.difference(healthStart).inMilliseconds;
-        
+
         setState(() {
           _healthStatus = healthResponse['status'] ?? 'OK';
           _healthLatency = healthMs;
@@ -75,11 +75,11 @@ class _NetworkTestScreenState extends State<NetworkTestScreen> {
         final versionResponse = await _apiClient.get(AppConfig.versionEndpoint);
         final versionEnd = DateTime.now();
         final versionMs = versionEnd.difference(versionStart).inMilliseconds;
-        
+
         setState(() {
-          _versionStatus = versionResponse['version'] ?? 
-                          versionResponse['data']?.toString() ?? 
-                          'Unknown';
+          _versionStatus = versionResponse['version'] ??
+              versionResponse['data']?.toString() ??
+              'Unknown';
           _versionLatency = versionMs;
         });
       } catch (e) {
@@ -101,7 +101,8 @@ class _NetworkTestScreenState extends State<NetworkTestScreen> {
   Future<void> _testVerificationCode() async {
     // Verification code endpoint removed - Firebase handles email verification via links
     setState(() {
-      _verificationStatus = 'ℹ️ Email verification is handled by Firebase via email links. No backend endpoint needed.';
+      _verificationStatus =
+          'ℹ️ Email verification is handled by Firebase via email links. No backend endpoint needed.';
       _verificationLatency = null;
     });
   }
@@ -112,7 +113,8 @@ class _NetworkTestScreenState extends State<NetworkTestScreen> {
     final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColorsDark.backgroundLight : AppColors.backgroundLight,
+      backgroundColor:
+          isDark ? AppColorsDark.backgroundLight : AppColors.backgroundLight,
       appBar: AppBar(
         title: const Text('Network Test'),
         backgroundColor: AppColors.homeHeaderBackground,
@@ -126,7 +128,9 @@ class _NetworkTestScreenState extends State<NetworkTestScreen> {
             children: [
               // Environment info
               Card(
-                color: isDark ? AppColorsDark.cardBackground : AppColors.cardBackground,
+                color: isDark
+                    ? AppColorsDark.cardBackground
+                    : AppColors.cardBackground,
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
@@ -136,7 +140,9 @@ class _NetworkTestScreenState extends State<NetworkTestScreen> {
                         'Environment',
                         style: TextStyle(
                           fontSize: 14,
-                          color: isDark ? AppColorsDark.textSecondary : AppColors.textSecondary,
+                          color: isDark
+                              ? AppColorsDark.textSecondary
+                              : AppColors.textSecondary,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -145,7 +151,9 @@ class _NetworkTestScreenState extends State<NetworkTestScreen> {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: isDark ? AppColorsDark.textPrimary : AppColors.textPrimary,
+                          color: isDark
+                              ? AppColorsDark.textPrimary
+                              : AppColors.textPrimary,
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -153,7 +161,9 @@ class _NetworkTestScreenState extends State<NetworkTestScreen> {
                         'Base URL',
                         style: TextStyle(
                           fontSize: 14,
-                          color: isDark ? AppColorsDark.textSecondary : AppColors.textSecondary,
+                          color: isDark
+                              ? AppColorsDark.textSecondary
+                              : AppColors.textSecondary,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -161,19 +171,23 @@ class _NetworkTestScreenState extends State<NetworkTestScreen> {
                         AppConfig.baseUrl,
                         style: TextStyle(
                           fontSize: 12,
-                          color: isDark ? AppColorsDark.textPrimary : AppColors.textPrimary,
+                          color: isDark
+                              ? AppColorsDark.textPrimary
+                              : AppColors.textPrimary,
                         ),
                       ),
                     ],
                   ),
                 ),
               ),
-              
+
               const SizedBox(height: 16),
 
               // Health check
               Card(
-                color: isDark ? AppColorsDark.cardBackground : AppColors.cardBackground,
+                color: isDark
+                    ? AppColorsDark.cardBackground
+                    : AppColors.cardBackground,
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
@@ -187,7 +201,9 @@ class _NetworkTestScreenState extends State<NetworkTestScreen> {
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: isDark ? AppColorsDark.textPrimary : AppColors.textPrimary,
+                              color: isDark
+                                  ? AppColorsDark.textPrimary
+                                  : AppColors.textPrimary,
                             ),
                           ),
                           if (_healthLatency != null)
@@ -195,7 +211,9 @@ class _NetworkTestScreenState extends State<NetworkTestScreen> {
                               '${_healthLatency}ms',
                               style: TextStyle(
                                 fontSize: 14,
-                                color: isDark ? AppColorsDark.textSecondary : AppColors.textSecondary,
+                                color: isDark
+                                    ? AppColorsDark.textSecondary
+                                    : AppColors.textSecondary,
                               ),
                             ),
                         ],
@@ -210,7 +228,9 @@ class _NetworkTestScreenState extends State<NetworkTestScreen> {
                             fontSize: 14,
                             color: _healthStatus!.contains('Error')
                                 ? Colors.red
-                                : (isDark ? AppColorsDark.textPrimary : AppColors.textPrimary),
+                                : (isDark
+                                    ? AppColorsDark.textPrimary
+                                    : AppColors.textPrimary),
                           ),
                         ),
                     ],
@@ -222,7 +242,9 @@ class _NetworkTestScreenState extends State<NetworkTestScreen> {
 
               // Version check
               Card(
-                color: isDark ? AppColorsDark.cardBackground : AppColors.cardBackground,
+                color: isDark
+                    ? AppColorsDark.cardBackground
+                    : AppColors.cardBackground,
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
@@ -236,7 +258,9 @@ class _NetworkTestScreenState extends State<NetworkTestScreen> {
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: isDark ? AppColorsDark.textPrimary : AppColors.textPrimary,
+                              color: isDark
+                                  ? AppColorsDark.textPrimary
+                                  : AppColors.textPrimary,
                             ),
                           ),
                           if (_versionLatency != null)
@@ -244,7 +268,9 @@ class _NetworkTestScreenState extends State<NetworkTestScreen> {
                               '${_versionLatency}ms',
                               style: TextStyle(
                                 fontSize: 14,
-                                color: isDark ? AppColorsDark.textSecondary : AppColors.textSecondary,
+                                color: isDark
+                                    ? AppColorsDark.textSecondary
+                                    : AppColors.textSecondary,
                               ),
                             ),
                         ],
@@ -259,7 +285,9 @@ class _NetworkTestScreenState extends State<NetworkTestScreen> {
                             fontSize: 14,
                             color: _versionStatus!.contains('Error')
                                 ? Colors.red
-                                : (isDark ? AppColorsDark.textPrimary : AppColors.textPrimary),
+                                : (isDark
+                                    ? AppColorsDark.textPrimary
+                                    : AppColors.textPrimary),
                           ),
                         ),
                     ],
@@ -271,7 +299,9 @@ class _NetworkTestScreenState extends State<NetworkTestScreen> {
 
               // Verification code test
               Card(
-                color: isDark ? AppColorsDark.cardBackground : AppColors.cardBackground,
+                color: isDark
+                    ? AppColorsDark.cardBackground
+                    : AppColors.cardBackground,
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
@@ -285,7 +315,9 @@ class _NetworkTestScreenState extends State<NetworkTestScreen> {
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: isDark ? AppColorsDark.textPrimary : AppColors.textPrimary,
+                              color: isDark
+                                  ? AppColorsDark.textPrimary
+                                  : AppColors.textPrimary,
                             ),
                           ),
                           if (_verificationLatency != null)
@@ -293,7 +325,9 @@ class _NetworkTestScreenState extends State<NetworkTestScreen> {
                               '${_verificationLatency}ms',
                               style: TextStyle(
                                 fontSize: 14,
-                                color: isDark ? AppColorsDark.textSecondary : AppColors.textSecondary,
+                                color: isDark
+                                    ? AppColorsDark.textSecondary
+                                    : AppColors.textSecondary,
                               ),
                             ),
                         ],
@@ -308,8 +342,8 @@ class _NetworkTestScreenState extends State<NetworkTestScreen> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           filled: true,
-                          fillColor: isDark 
-                              ? AppColorsDark.cardBackground 
+                          fillColor: isDark
+                              ? AppColorsDark.cardBackground
                               : Colors.grey[100],
                         ),
                         keyboardType: TextInputType.emailAddress,
@@ -337,7 +371,9 @@ class _NetworkTestScreenState extends State<NetworkTestScreen> {
                                 ? Colors.green
                                 : _verificationStatus!.contains('❌')
                                     ? Colors.red
-                                    : (isDark ? AppColorsDark.textPrimary : AppColors.textPrimary),
+                                    : (isDark
+                                        ? AppColorsDark.textPrimary
+                                        : AppColors.textPrimary),
                           ),
                         ),
                     ],
@@ -377,7 +413,8 @@ class _NetworkTestScreenState extends State<NetworkTestScreen> {
                           width: 20,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.white),
                           ),
                         )
                       : const Text('Refresh Tests'),
@@ -390,4 +427,3 @@ class _NetworkTestScreenState extends State<NetworkTestScreen> {
     );
   }
 }
-

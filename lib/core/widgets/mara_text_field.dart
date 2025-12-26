@@ -63,9 +63,7 @@ class MaraTextField extends StatelessWidget {
           color: isDark ? AppColorsDark.textSecondary : null,
         ),
         hintStyle: TextStyle(
-          color: isDark
-              ? AppColorsDark.textSecondary.withOpacity( 0.6)
-              : null,
+          color: isDark ? AppColorsDark.textSecondary.withOpacity(0.6) : null,
         ),
         suffixIcon: suffixIcon,
         filled: true,

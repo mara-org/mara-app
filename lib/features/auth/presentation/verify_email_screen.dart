@@ -30,7 +30,7 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
   static const int _codeLength = 6;
   static const int _maxAttempts = 5;
   static const int _cooldownSeconds = 60;
-  
+
   final GlobalKey<MaraCodeInputState> _codeInputKey =
       GlobalKey<MaraCodeInputState>();
   String _code = '';
@@ -62,7 +62,7 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
       if (_lastResendTime != null) {
         final elapsed = DateTime.now().difference(_lastResendTime!);
         final remaining = _cooldownSeconds - elapsed.inSeconds;
-        
+
         if (remaining > 0) {
           setState(() {
             _cooldownRemaining = remaining;
@@ -96,7 +96,8 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
 
   bool get _isCodeComplete => _code.length == _codeLength;
   bool get _isCooldownActive => _cooldownRemaining > 0;
-  bool get _isLockedOut => _lockoutUntil != null && DateTime.now().isBefore(_lockoutUntil!);
+  bool get _isLockedOut =>
+      _lockoutUntil != null && DateTime.now().isBefore(_lockoutUntil!);
   bool get _canResend => !_isResending && !_isCooldownActive;
   bool get _canVerify => _isCodeComplete && !_isVerifying && !_isLockedOut;
 
@@ -107,9 +108,9 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
 
   Future<void> _handleVerify() async {
     if (!_canVerify) return;
-    
+
     final authRepository = ref.read(authRepositoryProvider);
-    
+
     setState(() {
       _isVerifying = true;
     });
@@ -117,7 +118,7 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
     try {
       final email = ref.read(emailProvider);
       final tempAuth = ref.read(tempAuthProvider);
-      
+
       if (email == null) {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
@@ -128,7 +129,7 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
         );
         return;
       }
-      
+
       if (tempAuth.password == null) {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
@@ -143,12 +144,12 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
 
       // Step 1: Verify email code
       final success = await authRepository.verifyEmailCode(_code, email: email);
-      
+
       if (!mounted) return;
-      
+
       if (success) {
         debugPrint('✅ VerifyEmailScreen: Email verification successful');
-        
+
         // Step 2: Sign in with Firebase using stored password
         try {
           await FirebaseAuthHelper.signInWithEmailAndPassword(
@@ -156,46 +157,52 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
             password: tempAuth.password!,
           );
           debugPrint('✅ VerifyEmailScreen: Firebase sign-in successful');
-          
+
           // Clear stored password for security
           ref.read(tempAuthProvider.notifier).clearPassword();
-          
+
           // Step 3: Create backend session
           final sessionService = SessionService();
           await sessionService.createBackendSession();
-          debugPrint('✅ VerifyEmailScreen: Backend session created successfully');
-          
+          debugPrint(
+              '✅ VerifyEmailScreen: Backend session created successfully');
+
           // Step 4: Fetch user info
           await sessionService.fetchUserInfo();
           debugPrint('✅ VerifyEmailScreen: User info fetched successfully');
-          
+
           // Step 5: Check profile completeness
           final apiService = ApiService();
           try {
             final profileResponse = await apiService.getUserProfile();
             final profile = profileResponse.profile;
-            
+
             // Check if required fields are present
-            final hasName = profile['name'] != null && 
-                           (profile['name'] as String).trim().isNotEmpty;
+            final hasName = profile['name'] != null &&
+                (profile['name'] as String).trim().isNotEmpty;
             final hasDateOfBirth = profile['dateOfBirth'] != null;
             final hasGender = profile['gender'] != null;
-            final hasHeight = profile['height'] != null && 
-                             (profile['height'] as int) > 0;
-            final hasWeight = profile['weight'] != null && 
-                             (profile['weight'] as int) > 0;
-            
-            final isProfileComplete = hasName && hasDateOfBirth && 
-                                     hasGender && hasHeight && hasWeight;
-            
+            final hasHeight =
+                profile['height'] != null && (profile['height'] as int) > 0;
+            final hasWeight =
+                profile['weight'] != null && (profile['weight'] as int) > 0;
+
+            final isProfileComplete = hasName &&
+                hasDateOfBirth &&
+                hasGender &&
+                hasHeight &&
+                hasWeight;
+
             if (!isProfileComplete) {
-              debugPrint('⚠️ VerifyEmailScreen: Profile incomplete, redirecting to onboarding');
+              debugPrint(
+                  '⚠️ VerifyEmailScreen: Profile incomplete, redirecting to onboarding');
               if (!mounted) return;
               context.go('/onboarding');
               return;
             }
-            
-            debugPrint('✅ VerifyEmailScreen: Profile complete, navigating to home');
+
+            debugPrint(
+                '✅ VerifyEmailScreen: Profile complete, navigating to home');
             // Profile is complete - navigate to home
             if (!mounted) return;
             context.go('/home');
@@ -226,12 +233,12 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
         setState(() {
           _verificationAttempts++;
         });
-        
+
         // Check if locked out (5 attempts)
         if (_verificationAttempts >= _maxAttempts) {
           final lockoutUntil = DateTime.now().add(const Duration(minutes: 10));
           _startLockoutTimer(lockoutUntil);
-          
+
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
@@ -252,7 +259,7 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
               backgroundColor: Colors.orange,
             ),
           );
-          
+
           // Clear code input
           _codeInputKey.currentState?.clear();
           setState(() {
@@ -263,15 +270,15 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
     } on VerificationRateLimitException catch (e) {
       // Handle rate limit from backend
       if (!mounted) return;
-      
+
       if (e.lockoutUntil != null) {
         _startLockoutTimer(e.lockoutUntil!);
       }
-      
+
       final message = e.remainingAttempts != null
           ? 'Too many attempts. ${e.remainingAttempts} ${e.remainingAttempts == 1 ? 'attempt' : 'attempts'} remaining.'
           : e.message;
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(message),
@@ -298,10 +305,10 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
 
   Future<void> _resendCode() async {
     if (!_canResend) return;
-    
+
     final authRepository = ref.read(authRepositoryProvider);
     final email = ref.read(emailProvider);
-    
+
     if (email == null) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -313,16 +320,16 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
       context.go('/welcome-back');
       return;
     }
-    
+
     setState(() {
       _isResending = true;
     });
 
     try {
       final success = await authRepository.resendVerificationCode(email: email);
-      
+
       if (!mounted) return;
-      
+
       if (success) {
         // Success - start cooldown
         setState(() {
@@ -330,7 +337,7 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
           _cooldownRemaining = _cooldownSeconds;
         });
         _startCooldownTimer();
-        
+
         // Unified success message (doesn't reveal if email exists)
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -353,7 +360,7 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
     } on VerificationCooldownException catch (e) {
       // Handle cooldown from backend
       if (!mounted) return;
-      
+
       final cooldownSeconds = e.cooldownSeconds;
       if (e.cooldownUntil != null) {
         final remaining = e.cooldownUntil!.difference(DateTime.now());
@@ -370,7 +377,7 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
         });
       }
       _startCooldownTimer();
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -404,7 +411,7 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    
+
     return Scaffold(
       backgroundColor:
           isDark ? AppColorsDark.backgroundLight : AppColors.backgroundLight,
@@ -426,7 +433,8 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
                           width: 36,
                           height: 36,
                           decoration: BoxDecoration(
-                            color: AppColors.languageButtonColor.withOpacity(0.1),
+                            color:
+                                AppColors.languageButtonColor.withOpacity(0.1),
                             shape: BoxShape.circle,
                           ),
                           child: const Icon(
@@ -501,29 +509,37 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
                     opacity: _isLockedOut ? 0.5 : 1.0,
                     child: IgnorePointer(
                       ignoring: _isLockedOut,
-                      child:                       MaraCodeInput(
+                      child: MaraCodeInput(
                         key: _codeInputKey,
                         length: _codeLength,
                         onChanged: (final value) {
-                          debugPrint('🔢 VerifyEmailScreen: Code changed: "$value" (length: ${value.length})');
+                          debugPrint(
+                              '🔢 VerifyEmailScreen: Code changed: "$value" (length: ${value.length})');
                           setState(() {
                             _code = value;
                           });
-                          debugPrint('🔢 VerifyEmailScreen: _code updated to "$_code"');
-                          debugPrint('🔢 VerifyEmailScreen: _isCodeComplete: $_isCodeComplete');
-                          debugPrint('🔢 VerifyEmailScreen: _canVerify: $_canVerify');
+                          debugPrint(
+                              '🔢 VerifyEmailScreen: _code updated to "$_code"');
+                          debugPrint(
+                              '🔢 VerifyEmailScreen: _isCodeComplete: $_isCodeComplete');
+                          debugPrint(
+                              '🔢 VerifyEmailScreen: _canVerify: $_canVerify');
                         },
                         onCompleted: (final value) {
-                          debugPrint('✅ VerifyEmailScreen: Code completed: "$value"');
+                          debugPrint(
+                              '✅ VerifyEmailScreen: Code completed: "$value"');
                           setState(() {
                             _code = value;
                           });
-                          debugPrint('✅ VerifyEmailScreen: _canVerify: $_canVerify');
+                          debugPrint(
+                              '✅ VerifyEmailScreen: _canVerify: $_canVerify');
                           if (_canVerify) {
-                            debugPrint('✅ VerifyEmailScreen: Auto-verifying...');
+                            debugPrint(
+                                '✅ VerifyEmailScreen: Auto-verifying...');
                             _handleVerify();
                           } else {
-                            debugPrint('⚠️ VerifyEmailScreen: Cannot verify yet. _isCodeComplete: $_isCodeComplete, _isVerifying: $_isVerifying, _isLockedOut: $_isLockedOut');
+                            debugPrint(
+                                '⚠️ VerifyEmailScreen: Cannot verify yet. _isCodeComplete: $_isCodeComplete, _isVerifying: $_isVerifying, _isLockedOut: $_isLockedOut');
                           }
                         },
                       ),
@@ -589,7 +605,8 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
                         color: _canVerify ? null : Colors.grey,
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(isDark ? 0.4 : 0.25),
+                            color:
+                                Colors.black.withOpacity(isDark ? 0.4 : 0.25),
                             offset: const Offset(0, 4),
                             blurRadius: 50,
                           ),
@@ -600,21 +617,33 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
                         child: InkWell(
                           onTap: _canVerify
                               ? () {
-                                  debugPrint('🔘 VerifyEmailScreen: Button tapped');
-                                  debugPrint('🔘 VerifyEmailScreen: _code: "$_code"');
-                                  debugPrint('🔘 VerifyEmailScreen: _isCodeComplete: $_isCodeComplete');
-                                  debugPrint('🔘 VerifyEmailScreen: _isVerifying: $_isVerifying');
-                                  debugPrint('🔘 VerifyEmailScreen: _isLockedOut: $_isLockedOut');
-                                  debugPrint('🔘 VerifyEmailScreen: _canVerify: $_canVerify');
+                                  debugPrint(
+                                      '🔘 VerifyEmailScreen: Button tapped');
+                                  debugPrint(
+                                      '🔘 VerifyEmailScreen: _code: "$_code"');
+                                  debugPrint(
+                                      '🔘 VerifyEmailScreen: _isCodeComplete: $_isCodeComplete');
+                                  debugPrint(
+                                      '🔘 VerifyEmailScreen: _isVerifying: $_isVerifying');
+                                  debugPrint(
+                                      '🔘 VerifyEmailScreen: _isLockedOut: $_isLockedOut');
+                                  debugPrint(
+                                      '🔘 VerifyEmailScreen: _canVerify: $_canVerify');
                                   _handleVerify();
                                 }
                               : () {
-                                  debugPrint('🚫 VerifyEmailScreen: Button disabled');
-                                  debugPrint('🚫 VerifyEmailScreen: _code: "$_code"');
-                                  debugPrint('🚫 VerifyEmailScreen: _isCodeComplete: $_isCodeComplete');
-                                  debugPrint('🚫 VerifyEmailScreen: _isVerifying: $_isVerifying');
-                                  debugPrint('🚫 VerifyEmailScreen: _isLockedOut: $_isLockedOut');
-                                  debugPrint('🚫 VerifyEmailScreen: _canVerify: $_canVerify');
+                                  debugPrint(
+                                      '🚫 VerifyEmailScreen: Button disabled');
+                                  debugPrint(
+                                      '🚫 VerifyEmailScreen: _code: "$_code"');
+                                  debugPrint(
+                                      '🚫 VerifyEmailScreen: _isCodeComplete: $_isCodeComplete');
+                                  debugPrint(
+                                      '🚫 VerifyEmailScreen: _isVerifying: $_isVerifying');
+                                  debugPrint(
+                                      '🚫 VerifyEmailScreen: _isLockedOut: $_isLockedOut');
+                                  debugPrint(
+                                      '🚫 VerifyEmailScreen: _canVerify: $_canVerify');
                                 },
                           borderRadius: BorderRadius.circular(12),
                           child: Center(

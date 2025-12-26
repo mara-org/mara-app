@@ -28,7 +28,7 @@ void main() {
       debugPrint('❌ Error: $error');
       debugPrint('❌ Error type: ${error.runtimeType}');
       debugPrint('❌ Stack trace: $stackTrace');
-      
+
       // Try to report to crash reporter if it's initialized
       try {
         CrashReporter.recordError(
@@ -40,7 +40,7 @@ void main() {
         // If crash reporter fails, at least log to console
         debugPrint('❌ Failed to report error to crash reporter: $e');
       }
-      
+
       // In production, we might want to show an error screen
       // For now, we'll let the app try to continue
     },
@@ -61,22 +61,23 @@ Future<void> _initializeApp() async {
   debugPrint('═══════════════════════════════════════════════════════');
   debugPrint('🔥 FIREBASE INITIALIZATION');
   debugPrint('═══════════════════════════════════════════════════════');
-  
+
   bool firebaseInitialized = false;
   try {
     // Check if Firebase is already initialized (might be initialized in AppDelegate.swift)
     if (Firebase.apps.isEmpty) {
       debugPrint('🔧 Initializing Firebase from Dart...');
       debugPrint('🔧 Platform: iOS');
-      debugPrint('🔧 Expected GoogleService-Info.plist location: ios/Runner/GoogleService-Info.plist');
-      
+      debugPrint(
+          '🔧 Expected GoogleService-Info.plist location: ios/Runner/GoogleService-Info.plist');
+
       // Initialize Firebase with explicit options from firebase_options.dart
       // This ensures Firebase is properly configured before any Firebase/Auth usage
       // Note: Firebase may already be initialized in AppDelegate.swift for iOS
       await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
       );
-      
+
       // Verify initialization succeeded
       if (Firebase.apps.isNotEmpty) {
         firebaseInitialized = true;
@@ -84,11 +85,13 @@ Future<void> _initializeApp() async {
         debugPrint('✅ Firebase initialized successfully');
         debugPrint('   App name: ${app.name}');
         debugPrint('   Project ID: ${app.options.projectId ?? "MISSING"}');
-        debugPrint('   API Key: ${app.options.apiKey?.substring(0, 10) ?? "MISSING"}...');
+        debugPrint(
+            '   API Key: ${app.options.apiKey?.substring(0, 10) ?? "MISSING"}...');
         debugPrint('   Total apps: ${Firebase.apps.length}');
         debugPrint('═══════════════════════════════════════════════════════');
       } else {
-        throw Exception('Firebase.initializeApp() returned but no apps found. Check GoogleService-Info.plist is in ios/Runner/ and added to Xcode target.');
+        throw Exception(
+            'Firebase.initializeApp() returned but no apps found. Check GoogleService-Info.plist is in ios/Runner/ and added to Xcode target.');
       }
     } else {
       // Firebase was already initialized in AppDelegate.swift (expected behavior)
@@ -97,7 +100,8 @@ Future<void> _initializeApp() async {
       debugPrint('✅ Firebase already initialized (from AppDelegate.swift)');
       debugPrint('   App name: ${app.name}');
       debugPrint('   Project ID: ${app.options.projectId ?? "MISSING"}');
-      debugPrint('   API Key: ${app.options.apiKey?.substring(0, 10) ?? "MISSING"}...');
+      debugPrint(
+          '   API Key: ${app.options.apiKey?.substring(0, 10) ?? "MISSING"}...');
       debugPrint('   Total apps: ${Firebase.apps.length}');
       debugPrint('═══════════════════════════════════════════════════════');
     }
@@ -109,49 +113,58 @@ Future<void> _initializeApp() async {
     debugPrint('❌ Stack trace: $stackTrace');
     debugPrint('');
     debugPrint('🔍 Troubleshooting steps:');
-    debugPrint('1. Verify GoogleService-Info.plist exists at: ios/Runner/GoogleService-Info.plist');
-    debugPrint('2. Check GoogleService-Info.plist is added to Runner target in Xcode:');
+    debugPrint(
+        '1. Verify GoogleService-Info.plist exists at: ios/Runner/GoogleService-Info.plist');
+    debugPrint(
+        '2. Check GoogleService-Info.plist is added to Runner target in Xcode:');
     debugPrint('   - Open ios/Runner.xcworkspace in Xcode');
-    debugPrint('   - Select Runner target > Build Phases > Copy Bundle Resources');
+    debugPrint(
+        '   - Select Runner target > Build Phases > Copy Bundle Resources');
     debugPrint('   - Ensure GoogleService-Info.plist is listed');
     debugPrint('3. Verify Bundle ID matches: com.iammara.maraApp');
-    debugPrint('4. Clean build: flutter clean && cd ios && pod install && cd ..');
-    debugPrint('5. If using flavors, generate firebase_options.dart: flutterfire configure');
+    debugPrint(
+        '4. Clean build: flutter clean && cd ios && pod install && cd ..');
+    debugPrint(
+        '5. If using flavors, generate firebase_options.dart: flutterfire configure');
     debugPrint('═══════════════════════════════════════════════════════');
-    
+
     // Don't continue - Firebase is required for authentication
     // Re-throw to prevent app from starting with broken Firebase
     rethrow;
   }
-  
+
   // Double-check Firebase is ready before proceeding
   if (!firebaseInitialized || Firebase.apps.isEmpty) {
-    final error = 'Firebase initialization verification failed - no apps found after initialization';
+    final error =
+        'Firebase initialization verification failed - no apps found after initialization';
     debugPrint('❌ $error');
     throw Exception(error);
   }
-  
+
   // Verify Firebase app is actually usable
   try {
     final app = Firebase.app();
     if (app.options.projectId == null || app.options.projectId!.isEmpty) {
-      throw Exception('Firebase app initialized but projectId is missing. Check GoogleService-Info.plist configuration.');
+      throw Exception(
+          'Firebase app initialized but projectId is missing. Check GoogleService-Info.plist configuration.');
     }
-    debugPrint('✅ Firebase verification complete - projectId: ${app.options.projectId}');
-    
+    debugPrint(
+        '✅ Firebase verification complete - projectId: ${app.options.projectId}');
+
     // Test Firebase Auth is accessible (critical for sign-in to work)
     try {
       // Access Firebase Auth to verify it's initialized
       FirebaseAuth.instance; // This will throw if Firebase Auth isn't ready
       debugPrint('✅ Firebase Auth instance accessible');
     } catch (e) {
-      throw Exception('Firebase Auth not accessible: $e. This will prevent sign-in from working.');
+      throw Exception(
+          'Firebase Auth not accessible: $e. This will prevent sign-in from working.');
     }
   } catch (e) {
     debugPrint('❌ Firebase verification failed: $e');
     rethrow;
   }
-  
+
   // Initialize Logger AFTER Firebase (Logger might use Firebase)
   await Logger.init();
 
@@ -162,7 +175,8 @@ Future<void> _initializeApp() async {
     environment: const bool.fromEnvironment('dart.vm.product')
         ? 'production'
         : 'development',
-    useFirebase: true, // Enable Firebase Crashlytics now that Firebase is initialized
+    useFirebase:
+        true, // Enable Firebase Crashlytics now that Firebase is initialized
   );
 
   // Log BASE_URL configuration at startup
@@ -173,9 +187,10 @@ Future<void> _initializeApp() async {
   debugPrint('📍 BASE_URL: $baseUrl');
   debugPrint('📍 Environment: ${AppConfig.environmentName}');
   debugPrint('📍 Is Debug Mode: ${AppConfig.isDebug}');
-  debugPrint('📍 API_BASE_URL override: ${const String.fromEnvironment('API_BASE_URL', defaultValue: 'NOT SET')}');
+  debugPrint(
+      '📍 API_BASE_URL override: ${const String.fromEnvironment('API_BASE_URL', defaultValue: 'NOT SET')}');
   debugPrint('═══════════════════════════════════════════════════════');
-  
+
   Logger.info(
     'App starting',
     screen: 'main',

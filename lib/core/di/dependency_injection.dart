@@ -240,4 +240,3 @@ final chatControllerProvider =
   final sendMessageUseCase = ref.read(sendMessageUseCaseProvider);
   return ChatController(sendMessageUseCase);
 });
-

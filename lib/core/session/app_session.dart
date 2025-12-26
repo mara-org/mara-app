@@ -1,10 +1,10 @@
 /// Simple in-memory session storage.
-/// 
+///
 /// Stores backend session data after Firebase sign-in.
 /// Flutter only renders what backend sends - no client-side pricing/limits logic.
 class AppSession {
   AppSession._();
-  
+
   static final AppSession _instance = AppSession._();
   static AppSession get instance => _instance;
 
@@ -37,23 +37,24 @@ class AppSession {
   bool get hasHighQualityMode {
     if (_entitlements == null) return false;
     return _entitlements!['high_quality_mode'] == true ||
-           _entitlements!['highQualityMode'] == true;
+        _entitlements!['highQualityMode'] == true;
   }
 
   /// Check if user can send messages (from backend limits).
   bool get canSendMessages {
     if (_limits == null) return false;
     // Backend uses 'messages_remaining' field
-    final remaining = _limits!['messages_remaining'] ?? 
-                      _limits!['remaining_messages_today'] ?? 
-                      _limits!['remainingMessagesToday'] ?? 0;
+    final remaining = _limits!['messages_remaining'] ??
+        _limits!['remaining_messages_today'] ??
+        _limits!['remainingMessagesToday'] ??
+        0;
     return (remaining as num).toInt() > 0;
   }
 
   /// Set session data from backend response.
-  /// 
+  ///
   /// Stores exactly what backend sends - no client-side logic.
-  /// 
+  ///
   /// Backend response structure:
   /// {
   ///   "plan": "free" | "paid",
@@ -69,7 +70,8 @@ class AppSession {
     _limits = data['limits'] as Map<String, dynamic>?;
     _entitlements = data['entitlements'] as Map<String, dynamic>?;
     _user = data['user'] as Map<String, dynamic>?;
-    _backendToken = data['token'] as String? ?? data['session_token'] as String?;
+    _backendToken =
+        data['token'] as String? ?? data['session_token'] as String?;
   }
 
   /// Clear session (on logout).
@@ -84,4 +86,3 @@ class AppSession {
   /// Check if session exists.
   bool get hasSession => _user != null;
 }
-

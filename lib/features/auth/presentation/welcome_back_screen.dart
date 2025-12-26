@@ -32,7 +32,8 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _scrollController = ScrollController(); // Controller for scrolling to error
+  final _scrollController =
+      ScrollController(); // Controller for scrolling to error
   bool _obscurePassword = true;
   bool _isLoading = false;
   String? _errorMessage;
@@ -66,7 +67,6 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
   }
 
   Future<void> _handleAppleSignIn() async {
-
     setState(() {
       _isLoading = true;
       _errorMessage = null;
@@ -88,7 +88,7 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
         feature: 'auth',
         screen: 'welcome_back_screen',
       );
-      
+
       final sessionService = SessionService();
       try {
         await sessionService.createBackendSession();
@@ -97,7 +97,7 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
           feature: 'auth',
           screen: 'welcome_back_screen',
         );
-        
+
         // Step 3: Fetch user info and entitlements
         try {
           Logger.info(
@@ -126,9 +126,9 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
           error: e,
           stackTrace: stackTrace,
         );
-        
+
         // Backend session failed - check if it's a backend down error
-        if (e.toString().contains('network') || 
+        if (e.toString().contains('network') ||
             e.toString().contains('connection') ||
             e.toString().contains('timeout') ||
             e.toString().contains('unavailable')) {
@@ -137,7 +137,7 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
             _isLoading = false;
             _errorMessage = 'Service unavailable. Please try again later.';
           });
-          
+
           // Scroll to show error message
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (mounted && _scrollController.hasClients) {
@@ -166,7 +166,7 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
       if (email != null && email.isNotEmpty) {
         ref.read(emailProvider.notifier).setEmail(email);
       }
-      
+
       Logger.info(
         'Apple sign-in successful, navigating to home',
         feature: 'auth',
@@ -175,41 +175,43 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
       context.go('/home');
     } catch (e) {
       if (!mounted) return;
-      
+
       Logger.error(
         'Apple sign-in error: $e',
         feature: 'auth',
         screen: 'welcome_back_screen',
         error: e,
       );
-      
+
       String errorMsg = 'Sign in with Apple failed. Please try again.';
-      
+
       // Handle device limit error
       if (e is DeviceLimitException) {
         setState(() {
           _isLoading = false;
           if (e.plan == 'free') {
-            _errorMessage = '${e.message}\n\nUpgrade to Premium to use up to 3 devices.';
+            _errorMessage =
+                '${e.message}\n\nUpgrade to Premium to use up to 3 devices.';
           } else {
-            _errorMessage = '${e.message}\n\nYou can remove a device from Settings to add this one.';
+            _errorMessage =
+                '${e.message}\n\nYou can remove a device from Settings to add this one.';
           }
         });
         return;
       }
-      
+
       if (e.toString().contains('canceled')) {
         // User canceled - don't show error, just reset loading state
         setState(() {
           _isLoading = false;
         });
         return;
-      } else if (e.toString().contains('network') || 
-                 e.toString().contains('connection') ||
-                 e.toString().contains('unavailable')) {
+      } else if (e.toString().contains('network') ||
+          e.toString().contains('connection') ||
+          e.toString().contains('unavailable')) {
         errorMsg = 'Service unavailable. Please try again later.';
       }
-      
+
       setState(() {
         _isLoading = false;
         _errorMessage = errorMsg;
@@ -219,7 +221,6 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
 
   Future<void> _handleVerify() async {
     if (!_formKey.currentState!.validate()) return;
-
 
     setState(() {
       _isLoading = true;
@@ -242,7 +243,7 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
         email: email,
         password: password,
       );
-      
+
       // CRITICAL: Check email verification BEFORE allowing any backend access
       // Backend is the source of truth - user MUST verify email via link before accessing app
       final firebaseUser = FirebaseAuth.instance.currentUser;
@@ -254,11 +255,11 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
         });
         return;
       }
-      
+
       // Reload user to get latest verification status
       await firebaseUser.reload();
       final refreshedUser = FirebaseAuth.instance.currentUser;
-      
+
       if (refreshedUser == null || !refreshedUser.emailVerified) {
         // Email not verified - sign out and redirect to verification
         Logger.warning(
@@ -266,18 +267,19 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
           feature: 'auth',
           screen: 'welcome_back_screen',
         );
-        
+
         await FirebaseAuth.instance.signOut();
-        
+
         if (!mounted) return;
         setState(() {
           _isLoading = false;
-          _errorMessage = 'Please verify your email address before signing in. Check your inbox for the verification link.';
+          _errorMessage =
+              'Please verify your email address before signing in. Check your inbox for the verification link.';
         });
-        
+
         // Save email and navigate to verification screen
         ref.read(emailProvider.notifier).setEmail(email);
-        
+
         // Wait a moment to show error message, then navigate
         await Future.delayed(const Duration(seconds: 2));
         if (mounted) {
@@ -285,13 +287,13 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
         }
         return;
       }
-      
+
       Logger.info(
         'Firebase sign-in successful, email verified - creating backend session',
         feature: 'auth',
         screen: 'welcome_back_screen',
       );
-      
+
       // Step 2: Create backend session (only after email verification confirmed)
       // Backend expects: Authorization header with Firebase token, device_id in body
       // Endpoint: POST /api/v1/auth/session
@@ -303,7 +305,7 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
           feature: 'auth',
           screen: 'welcome_back_screen',
         );
-        
+
         // Step 3: Fetch user info and entitlements
         // Endpoint: GET /api/v1/auth/me
         // Returns: user data, plan, entitlements, limits
@@ -335,14 +337,14 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
           error: e,
           stackTrace: stackTrace,
         );
-        
+
         if (!mounted) return;
-        
+
         // Check error type and provide specific messages
         final errorString = e.toString().toLowerCase();
-        
+
         // Network/connection errors (request didn't reach backend)
-        if (errorString.contains('network') || 
+        if (errorString.contains('network') ||
             errorString.contains('connection') ||
             errorString.contains('timeout') ||
             errorString.contains('unavailable') ||
@@ -352,9 +354,10 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
             errorString.contains('receive timeout')) {
           setState(() {
             _isLoading = false;
-            _errorMessage = 'Network error. Please check your internet connection and try again.';
+            _errorMessage =
+                'Network error. Please check your internet connection and try again.';
           });
-          
+
           // Scroll to show error message
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (mounted && _scrollController.hasClients) {
@@ -367,7 +370,7 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
           });
           return;
         }
-        
+
         // Backend server errors (500 - request reached backend but server error)
         if (errorString.contains('backend server error') ||
             errorString.contains('500') ||
@@ -378,9 +381,9 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
           if (errorMsg.contains('Exception: ')) {
             errorMsg = errorMsg.split('Exception: ').last;
           }
-          
+
           // If backend provided a specific error message, use it
-          if (errorMsg.isNotEmpty && 
+          if (errorMsg.isNotEmpty &&
               !errorMsg.toLowerCase().contains('backend server error') &&
               errorMsg.length < 200) {
             // Use backend's error message if it's specific
@@ -392,10 +395,11 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
             // Generic error message
             setState(() {
               _isLoading = false;
-              _errorMessage = 'Server error. The backend is experiencing issues. Please try again in a moment.\n\nIf this persists, please contact support with error code: 500';
+              _errorMessage =
+                  'Server error. The backend is experiencing issues. Please try again in a moment.\n\nIf this persists, please contact support with error code: 500';
             });
           }
-          
+
           Logger.error(
             'Backend 500 error during session creation',
             feature: 'auth',
@@ -406,10 +410,11 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
               'error_type': 'backend_500',
               'error_message': errorMsg,
               'full_error': e.toString(),
-              'message': 'Backend server error - request format was correct, backend failed internally',
+              'message':
+                  'Backend server error - request format was correct, backend failed internally',
             },
           );
-          
+
           // Scroll to show error message
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (mounted && _scrollController.hasClients) {
@@ -422,17 +427,18 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
           });
           return;
         }
-        
+
         // Device limit error
-        if (errorString.contains('device_limit') || 
+        if (errorString.contains('device_limit') ||
             errorString.contains('device limit')) {
           setState(() {
             _isLoading = false;
-            _errorMessage = 'Device limit exceeded. Please remove a device from Settings.';
+            _errorMessage =
+                'Device limit exceeded. Please remove a device from Settings.';
           });
           return;
         }
-        
+
         // Authentication errors
         if (errorString.contains('401') ||
             errorString.contains('authentication failed') ||
@@ -443,7 +449,7 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
           });
           return;
         }
-        
+
         // Generic error - show the actual error message if available
         String errorMsg = 'Failed to connect to server. Please try again.';
         if (e is Exception) {
@@ -453,12 +459,12 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
             errorMsg = exceptionMsg;
           }
         }
-        
+
         setState(() {
           _isLoading = false;
           _errorMessage = errorMsg;
         });
-        
+
         // Scroll to show error message
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (mounted && _scrollController.hasClients) {
@@ -471,85 +477,88 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
         });
         return;
       }
-      
+
       // Step 4: Save email and navigate
       ref.read(emailProvider.notifier).setEmail(email);
-      
+
       if (!mounted) return;
-      
+
       Logger.info(
         'Sign-in successful, navigating to home',
         feature: 'auth',
         screen: 'welcome_back_screen',
       );
-      
+
       // Navigate to home (user is signed in and session is created)
       context.go('/home');
     } on FirebaseAuthException catch (e) {
-        // Handle Firebase auth errors
-        if (!mounted) return;
-        
-        Logger.error(
-          'Firebase sign-in error: ${e.code}',
-          feature: 'auth',
-          screen: 'welcome_back_screen',
-          error: e,
-        );
-        
-        ref.read(tempAuthProvider.notifier).clearPassword();
-        
-        String errorMsg = 'Sign in failed. Please try again.';
-        
-        switch (e.code) {
-          case 'user-not-found':
-          case 'wrong-password':
-          case 'invalid-credential':
-            errorMsg = 'Invalid email or password. Please try again.';
-            break;
-          case 'too-many-requests':
-            errorMsg = 'Too many attempts. Please try again later.';
-            break;
-          case 'user-disabled':
-            errorMsg = 'This account has been disabled.';
-            break;
-          case 'operation-not-allowed':
-            // This error occurs when email domain is not allowlisted in Firebase Console
-            if (e.message?.toLowerCase().contains('allowlisted') == true ||
-                e.message?.toLowerCase().contains('domain') == true) {
-              errorMsg = 'This email domain is not allowed. Please contact support or use a different email address.';
-            } else {
-              errorMsg = e.message ?? 'This operation is not allowed. Please contact support.';
-            }
-            break;
-          default:
-            // Check if error message contains domain restriction keywords
-            if (e.message?.toLowerCase().contains('allowlisted') == true ||
-                e.message?.toLowerCase().contains('domain not') == true) {
-              errorMsg = 'This email domain is not allowed. Please contact support or use a different email address.';
-            } else {
-              errorMsg = e.message ?? errorMsg;
-            }
-        }
-        
-        setState(() {
-          _isLoading = false;
-          _errorMessage = errorMsg;
-        });
-        
-        // Scroll to show error message
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (mounted && _scrollController.hasClients) {
-            _scrollController.animateTo(
-              600,
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
-            );
+      // Handle Firebase auth errors
+      if (!mounted) return;
+
+      Logger.error(
+        'Firebase sign-in error: ${e.code}',
+        feature: 'auth',
+        screen: 'welcome_back_screen',
+        error: e,
+      );
+
+      ref.read(tempAuthProvider.notifier).clearPassword();
+
+      String errorMsg = 'Sign in failed. Please try again.';
+
+      switch (e.code) {
+        case 'user-not-found':
+        case 'wrong-password':
+        case 'invalid-credential':
+          errorMsg = 'Invalid email or password. Please try again.';
+          break;
+        case 'too-many-requests':
+          errorMsg = 'Too many attempts. Please try again later.';
+          break;
+        case 'user-disabled':
+          errorMsg = 'This account has been disabled.';
+          break;
+        case 'operation-not-allowed':
+          // This error occurs when email domain is not allowlisted in Firebase Console
+          if (e.message?.toLowerCase().contains('allowlisted') == true ||
+              e.message?.toLowerCase().contains('domain') == true) {
+            errorMsg =
+                'This email domain is not allowed. Please contact support or use a different email address.';
+          } else {
+            errorMsg = e.message ??
+                'This operation is not allowed. Please contact support.';
           }
-        });
+          break;
+        default:
+          // Check if error message contains domain restriction keywords
+          if (e.message?.toLowerCase().contains('allowlisted') == true ||
+              e.message?.toLowerCase().contains('domain not') == true) {
+            errorMsg =
+                'This email domain is not allowed. Please contact support or use a different email address.';
+          } else {
+            errorMsg = e.message ?? errorMsg;
+          }
+      }
+
+      setState(() {
+        _isLoading = false;
+        _errorMessage = errorMsg;
+      });
+
+      // Scroll to show error message
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && _scrollController.hasClients) {
+          _scrollController.animateTo(
+            600,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
+        }
+      });
     } catch (e, stackTrace) {
       // Handle other errors
       if (!mounted) return;
-      
+
       Logger.error(
         'Sign-in error: $e',
         feature: 'auth',
@@ -557,41 +566,44 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
         error: e,
         stackTrace: stackTrace,
       );
-      
+
       // Clear stored password on error
       ref.read(tempAuthProvider.notifier).clearPassword();
-      
+
       // Extract error message from exception
       String errorMsg = e.toString();
-      
+
       // Try to extract a more user-friendly message
       if (errorMsg.contains('Exception: ')) {
         errorMsg = errorMsg.split('Exception: ').last;
       }
-      
+
       // Provide default message if extraction failed
       if (errorMsg.isEmpty || errorMsg == e.toString()) {
         errorMsg = 'Failed to send verification code. Please try again.';
       }
-      
+
       // Enhance error messages for specific cases
-      if (errorMsg.toLowerCase().contains('network') || 
+      if (errorMsg.toLowerCase().contains('network') ||
           errorMsg.toLowerCase().contains('connection') ||
           errorMsg.toLowerCase().contains('unavailable')) {
-        errorMsg = 'Service unavailable. Free-tier server may be waking up (takes 30-90 seconds). Please wait and try again.';
+        errorMsg =
+            'Service unavailable. Free-tier server may be waking up (takes 30-90 seconds). Please wait and try again.';
       } else if (errorMsg.toLowerCase().contains('timeout')) {
-        errorMsg = 'Request timed out. Free-tier servers take 30-90 seconds to wake up. Please wait a moment and try again.';
-      } else if (errorMsg.toLowerCase().contains('500') || 
-                 errorMsg.toLowerCase().contains('internal server error') ||
-                 errorMsg.toLowerCase().contains('backend server error')) {
-        errorMsg = 'Backend server error. Please try again later or contact support.';
+        errorMsg =
+            'Request timed out. Free-tier servers take 30-90 seconds to wake up. Please wait a moment and try again.';
+      } else if (errorMsg.toLowerCase().contains('500') ||
+          errorMsg.toLowerCase().contains('internal server error') ||
+          errorMsg.toLowerCase().contains('backend server error')) {
+        errorMsg =
+            'Backend server error. Please try again later or contact support.';
       }
-      
+
       setState(() {
         _isLoading = false;
         _errorMessage = errorMsg;
       });
-      
+
       // Scroll to show error message
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted && _scrollController.hasClients) {
@@ -613,11 +625,11 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
         screenWidth - 56; // Same width as email and password fields
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    
+
     // Pre-fill email from provider if available (only once)
     final savedEmail = ref.watch(emailProvider);
-    if (savedEmail != null && 
-        savedEmail.isNotEmpty && 
+    if (savedEmail != null &&
+        savedEmail.isNotEmpty &&
         !_emailPrefilled &&
         _emailController.text.isEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -638,7 +650,8 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
             children: [
               // Scrollable content for buttons
               SingleChildScrollView(
-                controller: _scrollController, // Use controller for programmatic scrolling
+                controller:
+                    _scrollController, // Use controller for programmatic scrolling
                 child: Padding(
                   padding: PlatformUtils.getDefaultPadding(context),
                   child: Column(
@@ -647,7 +660,9 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
                       // Mara logo
                       const Center(child: MaraLogo(width: 180, height: 130)),
                       SizedBox(
-                        height: _errorMessage != null ? 900 : 800, // Extra space if error shown
+                        height: _errorMessage != null
+                            ? 900
+                            : 800, // Extra space if error shown
                       ), // Space for positioned elements
                     ],
                   ),
@@ -708,7 +723,8 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
                 child: SizedBox(
                   width: buttonWidth,
                   child: _isLoading
-                      ? const Center(child: SpinningMaraLogo(width: 40, height: 40))
+                      ? const Center(
+                          child: SpinningMaraLogo(width: 40, height: 40))
                       : PrimaryButton(
                           text: l10n.verify,
                           width: buttonWidth,
@@ -718,12 +734,13 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
                         ),
                 ),
               ),
-              
+
               // Error message - positioned ABOVE social buttons and BELOW verify button
               if (_errorMessage != null)
                 PositionedDirectional(
                   start: 28,
-                  top: 570, // Positioned between verify button (511) and social buttons (576)
+                  top:
+                      570, // Positioned between verify button (511) and social buttons (576)
                   child: Container(
                     width: buttonWidth,
                     padding: const EdgeInsets.all(12),
@@ -760,7 +777,9 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
               // Adjusted top position to account for error message
               PositionedDirectional(
                 start: 28,
-                top: _errorMessage != null ? 640 : 576, // Move down if error is shown
+                top: _errorMessage != null
+                    ? 640
+                    : 576, // Move down if error is shown
                 child: SizedBox(
                   width: buttonWidth,
                   child: _SocialButton(
@@ -785,7 +804,9 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
               // Adjusted top position to account for error message
               PositionedDirectional(
                 start: 28,
-                top: _errorMessage != null ? 704 : 640, // Move down if error is shown (640 + 64 for error)
+                top: _errorMessage != null
+                    ? 704
+                    : 640, // Move down if error is shown (640 + 64 for error)
                 child: SizedBox(
                   width: buttonWidth,
                   child: _SocialButton(
@@ -797,9 +818,11 @@ class _WelcomeBackScreenState extends ConsumerState<WelcomeBackScreen> {
                     width: buttonWidth,
                     height: 52,
                     isDark: isDark,
-                    onPressed: _isLoading ? null : () {
-                      _handleAppleSignIn();
-                    },
+                    onPressed: _isLoading
+                        ? null
+                        : () {
+                            _handleAppleSignIn();
+                          },
                   ),
                 ),
               ),

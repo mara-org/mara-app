@@ -74,7 +74,8 @@ class _PermissionsSummaryScreenState
       final response = await apiService.completeOnboarding(
         name: profile.name!,
         dateOfBirth: profile.dateOfBirth!,
-        gender: profile.gender!.name, // Convert enum to string: "male" or "female"
+        gender:
+            profile.gender!.name, // Convert enum to string: "male" or "female"
         height: profile.height!,
         heightUnit: profile.heightUnit!,
         weight: profile.weight!,
@@ -295,7 +296,7 @@ class _PermissionsSummaryScreenState
                       color: (isDark
                               ? AppColorsDark.textSecondary
                               : AppColors.textSecondary)
-                          .withOpacity( 0.7),
+                          .withOpacity(0.7),
                       fontSize: 13,
                       fontWeight: FontWeight.normal,
                       height: 1.5,
@@ -332,7 +333,7 @@ class _PermissionItem extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         color: isEnabled
             ? (isDark
-                ? AppColors.languageButtonColor.withOpacity( 0.2)
+                ? AppColors.languageButtonColor.withOpacity(0.2)
                 : const Color(0xFFC4F4FF))
             : (isDark ? AppColorsDark.cardBackground : const Color(0xFFA2BCC2)),
       ),

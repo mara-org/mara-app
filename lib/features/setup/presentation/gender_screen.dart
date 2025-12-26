@@ -57,8 +57,7 @@ class _GenderScreenState extends ConsumerState<GenderScreen> {
                       width: 36,
                       height: 36,
                       decoration: BoxDecoration(
-                        color: AppColors.languageButtonColor
-                            .withOpacity( 0.1),
+                        color: AppColors.languageButtonColor.withOpacity(0.1),
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(

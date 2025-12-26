@@ -59,9 +59,7 @@ class _ChatPageState extends ConsumerState<ChatPage> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     // Load conversation if conversationId is provided and not already loaded
-    if (_currentConversationId != null &&
-        !_hasLoadedConversation &&
-        mounted) {
+    if (_currentConversationId != null && !_hasLoadedConversation && mounted) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _loadConversation(_currentConversationId!);
       });
@@ -215,7 +213,8 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.error_outline, color: Colors.red, size: 20),
+                    const Icon(Icons.error_outline,
+                        color: Colors.red, size: 20),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
@@ -265,8 +264,7 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                           itemBuilder: (context, index) {
                             final message = chatState.messages[index];
                             final showTimestamp = index == 0 ||
-                                chatState.messages[index - 1]
-                                        .timestamp
+                                chatState.messages[index - 1].timestamp
                                         .difference(message.timestamp)
                                         .inMinutes >
                                     5;
@@ -421,7 +419,8 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                               ? Colors.white
                               : Colors.grey,
                         ),
-                        onPressed: chatState.canSendMessage ? _sendMessage : null,
+                        onPressed:
+                            chatState.canSendMessage ? _sendMessage : null,
                       ),
                     ),
                   ],
@@ -580,4 +579,3 @@ class _MessageBubble extends StatelessWidget {
     return '$displayHour:$minute $period';
   }
 }
-

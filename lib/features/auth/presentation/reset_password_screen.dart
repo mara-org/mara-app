@@ -15,11 +15,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 class ResetPasswordScreen extends ConsumerStatefulWidget {
   final String? oobCode;
-  
+
   const ResetPasswordScreen({super.key, this.oobCode});
 
   @override
-  ConsumerState<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
+  ConsumerState<ResetPasswordScreen> createState() =>
+      _ResetPasswordScreenState();
 }
 
 class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
@@ -51,7 +52,8 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
           setState(() {
-            _errorMessage = 'Invalid or missing reset link. Please request a new password reset.';
+            _errorMessage =
+                'Invalid or missing reset link. Please request a new password reset.';
           });
         }
       });
@@ -113,7 +115,8 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
     // Validate oobCode is present
     if (_oobCode == null || _oobCode!.isEmpty) {
       setState(() {
-        _errorMessage = 'Invalid or missing reset link. Please request a new password reset.';
+        _errorMessage =
+            'Invalid or missing reset link. Please request a new password reset.';
       });
       return;
     }
@@ -135,13 +138,13 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
       if (success) {
         // Clear email from provider
         ref.read(emailProvider.notifier).clearEmail();
-        
+
         Logger.info(
           'Password reset successful',
           feature: 'auth',
           screen: 'reset_password_screen',
         );
-        
+
         // Show success message
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -150,7 +153,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
             duration: Duration(seconds: 3),
           ),
         );
-        
+
         // Navigate to sign-in screen
         context.go('/welcome-back');
       } else {
@@ -160,27 +163,30 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
       }
     } on FirebaseAuthException catch (e) {
       if (!mounted) return;
-      
+
       String errorMessage = 'Failed to reset password. Please try again.';
-      
+
       switch (e.code) {
         case 'expired-action-code':
-          errorMessage = 'This password reset link has expired. Please request a new one.';
+          errorMessage =
+              'This password reset link has expired. Please request a new one.';
           break;
         case 'invalid-action-code':
-          errorMessage = 'Invalid reset link. Please request a new password reset.';
+          errorMessage =
+              'Invalid reset link. Please request a new password reset.';
           break;
         case 'weak-password':
-          errorMessage = 'Password is too weak. Please choose a stronger password.';
+          errorMessage =
+              'Password is too weak. Please choose a stronger password.';
           break;
         default:
           errorMessage = e.message ?? errorMessage;
       }
-      
+
       setState(() {
         _errorMessage = errorMessage;
       });
-      
+
       Logger.error(
         'Password reset error: ${e.code}',
         feature: 'auth',
@@ -192,7 +198,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
       setState(() {
         _errorMessage = 'An error occurred. Please try again.';
       });
-      
+
       Logger.error(
         'Unexpected password reset error',
         feature: 'auth',
@@ -235,8 +241,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                       width: 36,
                       height: 36,
                       decoration: BoxDecoration(
-                        color: AppColors.languageButtonColor
-                            .withOpacity( 0.1),
+                        color: AppColors.languageButtonColor.withOpacity(0.1),
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(
@@ -359,13 +364,16 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                         width: 320,
                         height: 52,
                         borderRadius: 20,
-                        onPressed: (_isPasswordValid && !_isResetting) ? _onResetPressed : null,
+                        onPressed: (_isPasswordValid && !_isResetting)
+                            ? _onResetPressed
+                            : null,
                       ),
                     ),
                   ),
                   if (_isResetting) ...[
                     const SizedBox(height: 16),
-                    const Center(child: SpinningMaraLogo(width: 40, height: 40)),
+                    const Center(
+                        child: SpinningMaraLogo(width: 40, height: 40)),
                   ],
                   const SizedBox(height: 24),
                 ],

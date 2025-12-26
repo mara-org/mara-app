@@ -64,8 +64,7 @@ class QuotaState {
   }) {
     return QuotaState(
       remainingMessages: remainingMessages ?? this.remainingMessages,
-      remainingTokenBudget:
-          remainingTokenBudget ?? this.remainingTokenBudget,
+      remainingTokenBudget: remainingTokenBudget ?? this.remainingTokenBudget,
       plan: plan ?? this.plan,
       upgradeHint: upgradeHint ?? this.upgradeHint,
       isMessageQuotaExhausted:
@@ -76,10 +75,8 @@ class QuotaState {
   }
 
   /// Check if user can send messages.
-  bool get canSendMessage =>
-      !isMessageQuotaExhausted && !isTokenQuotaExhausted;
+  bool get canSendMessage => !isMessageQuotaExhausted && !isTokenQuotaExhausted;
 
   /// Check if user is on paid plan.
   bool get isPaid => plan == 'paid';
 }
-

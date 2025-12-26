@@ -24,7 +24,8 @@ class FirebaseRemoteConfigService implements RemoteConfigService {
     // Check if Firebase is initialized before accessing Remote Config
     if (Firebase.apps.isEmpty) {
       if (kDebugMode) {
-        debugPrint('⚠️ Firebase not initialized, skipping Remote Config initialization');
+        debugPrint(
+            '⚠️ Firebase not initialized, skipping Remote Config initialization');
       }
       _initialized = false;
       return;

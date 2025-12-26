@@ -26,7 +26,7 @@ class EnvConfig {
       'API_BASE_URL',
       defaultValue: '',
     );
-    
+
     // If not provided, use platform-specific defaults for local development
     if (value.isEmpty) {
       if (kDebugMode) {
@@ -44,7 +44,7 @@ class EnvConfig {
         );
       }
     }
-    
+
     return value;
   }
 
@@ -115,4 +115,3 @@ class EnvConfig {
     }
   }
 }
-

@@ -66,8 +66,7 @@ class _BloodTypeScreenState extends ConsumerState<BloodTypeScreen> {
                     width: 36,
                     height: 36,
                     decoration: BoxDecoration(
-                      color:
-                          AppColors.languageButtonColor.withOpacity( 0.1),
+                      color: AppColors.languageButtonColor.withOpacity(0.1),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(
@@ -160,7 +159,7 @@ class _BloodTypeButton extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           color: isSelected
-              ? AppColors.languageButtonColor.withOpacity( 0.2)
+              ? AppColors.languageButtonColor.withOpacity(0.2)
               : (isDark ? AppColorsDark.cardBackground : Colors.white),
           border: Border.all(
               color: isSelected

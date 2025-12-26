@@ -26,7 +26,8 @@ class VerificationResult {
     this.cooldownRemaining,
   }) : isSuccess = false;
 
-  factory VerificationResult.successResult() => const VerificationResult.success();
+  factory VerificationResult.successResult() =>
+      const VerificationResult.success();
 
   factory VerificationResult.failureResult(
     String message,
@@ -79,4 +80,3 @@ enum VerificationErrorType {
   /// Unknown error.
   unknown,
 }
-

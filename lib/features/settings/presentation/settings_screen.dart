@@ -287,7 +287,7 @@ class SettingsScreen extends ConsumerWidget {
                     }
                   },
                 ),
-                
+
                 // Debug: Network Test (only in debug/staging)
                 if (AppConfig.isDebug || AppConfig.isStaging) ...[
                   const SizedBox(height: 32),
@@ -309,7 +309,7 @@ class SettingsScreen extends ConsumerWidget {
                     },
                   ),
                 ],
-                
+
                 const SizedBox(height: 40),
                 // Version info
                 Consumer(

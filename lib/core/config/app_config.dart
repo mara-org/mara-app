@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 /// App environment configuration.
-/// 
+///
 /// Supports: dev, staging (TestFlight), prod
 enum AppEnvironment {
   dev,
@@ -10,18 +10,18 @@ enum AppEnvironment {
 }
 
 /// Centralized app configuration.
-/// 
+///
 /// Base URL and other settings based on environment.
 class AppConfig {
   AppConfig._();
 
   /// Current environment.
-  /// 
+  ///
   /// Set via --dart-define=ENV=dev|staging|prod
   /// Defaults to staging (Render backend) for all builds
   static AppEnvironment get environment {
     const envString = String.fromEnvironment('ENV', defaultValue: '');
-    
+
     if (envString.isEmpty) {
       // Always default to staging (Render backend) - no localhost fallback
       return AppEnvironment.staging;
@@ -44,14 +44,15 @@ class AppConfig {
   }
 
   /// Base URL for backend API.
-  /// 
+  ///
   /// BASE_URL constant: https://mara-api-uoum.onrender.com
   /// Can be overridden via --dart-define=API_BASE_URL=<url>
   static const String BASE_URL = 'https://mara-api-uoum.onrender.com';
-  
+
   static String get baseUrl {
     // Check for explicit override first
-    const overrideUrl = String.fromEnvironment('API_BASE_URL', defaultValue: '');
+    const overrideUrl =
+        String.fromEnvironment('API_BASE_URL', defaultValue: '');
     if (overrideUrl.isNotEmpty) {
       return overrideUrl;
     }
@@ -98,10 +99,11 @@ class AppConfig {
   static bool get isStaging => environment == AppEnvironment.staging;
 
   /// Android package name.
-  /// 
+  ///
   /// Can be overridden via --dart-define=ANDROID_PACKAGE_NAME=<name>
   static String get androidPackageName {
-    const override = String.fromEnvironment('ANDROID_PACKAGE_NAME', defaultValue: '');
+    const override =
+        String.fromEnvironment('ANDROID_PACKAGE_NAME', defaultValue: '');
     if (override.isNotEmpty) {
       return override;
     }
@@ -110,7 +112,7 @@ class AppConfig {
   }
 
   /// iOS App Store ID.
-  /// 
+  ///
   /// Can be overridden via --dart-define=IOS_APP_ID=<id>
   static String get iosAppId {
     const override = String.fromEnvironment('IOS_APP_ID', defaultValue: '');

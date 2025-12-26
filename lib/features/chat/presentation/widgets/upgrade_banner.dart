@@ -26,16 +26,15 @@ class UpgradeBanner extends StatelessWidget {
     final isDark = theme.brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
 
-    final upgradeMessage = quotaState!.upgradeHint ??
-        'Unlock higher limits with Pro';
+    final upgradeMessage =
+        quotaState!.upgradeHint ?? 'Unlock higher limits with Pro';
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isDark
-            ? AppColorsDark.cardBackground
-            : AppColors.backgroundLight,
+        color:
+            isDark ? AppColorsDark.cardBackground : AppColors.backgroundLight,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: AppColors.languageButtonColor.withOpacity(0.3),
@@ -55,9 +54,8 @@ class UpgradeBanner extends StatelessWidget {
               upgradeMessage,
               style: TextStyle(
                 fontSize: 13,
-                color: isDark
-                    ? AppColorsDark.textPrimary
-                    : AppColors.textPrimary,
+                color:
+                    isDark ? AppColorsDark.textPrimary : AppColors.textPrimary,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -84,4 +82,3 @@ class UpgradeBanner extends StatelessWidget {
     );
   }
 }
-

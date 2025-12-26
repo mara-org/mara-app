@@ -24,12 +24,13 @@ class FirebaseAuthHelper {
           screen: 'firebase_auth_helper',
         );
         await Firebase.initializeApp();
-        
+
         // Verify initialization succeeded
         if (Firebase.apps.isEmpty) {
-          throw Exception('Firebase.initializeApp() completed but no apps found');
+          throw Exception(
+              'Firebase.initializeApp() completed but no apps found');
         }
-        
+
         Logger.info(
           '✅ Firebase initialized successfully in helper (${Firebase.apps.length} app(s))',
           feature: 'firebase_auth',
@@ -51,7 +52,8 @@ class FirebaseAuthHelper {
         stackTrace: stackTrace,
       );
       // Re-throw with a user-friendly message
-      throw Exception('Firebase initialization failed. Please restart the app. Error: $e');
+      throw Exception(
+          'Firebase initialization failed. Please restart the app. Error: $e');
     }
   }
 
@@ -62,7 +64,7 @@ class FirebaseAuthHelper {
   static Future<String?> getFreshFirebaseToken() async {
     // Ensure Firebase is initialized
     await _ensureInitialized();
-    
+
     try {
       final user = _auth.currentUser;
       if (user == null) {
@@ -109,7 +111,7 @@ class FirebaseAuthHelper {
   }) async {
     // Ensure Firebase is initialized
     await _ensureInitialized();
-    
+
     try {
       // Hash email for logging (never log raw email addresses)
       final emailHash = _hashEmail(email);
@@ -152,7 +154,7 @@ class FirebaseAuthHelper {
   }) async {
     // Ensure Firebase is initialized
     await _ensureInitialized();
-    
+
     try {
       // Hash email for logging (never log raw email addresses)
       final emailHash = _hashEmail(email);
@@ -193,12 +195,12 @@ class FirebaseAuthHelper {
   static Future<UserCredential> signInWithApple() async {
     // Ensure Firebase is initialized
     await _ensureInitialized();
-    
+
     // Check if running on iOS
     if (!Platform.isIOS) {
       throw Exception('Sign in with Apple is only available on iOS');
     }
-    
+
     try {
       Logger.info(
         'Starting Sign in with Apple',
@@ -231,11 +233,11 @@ class FirebaseAuthHelper {
 
       // Step 4: If this is a new user and we got name info, update the display name
       if (userCredential.additionalUserInfo?.isNewUser == true) {
-        final displayName = appleCredential.givenName != null && 
-                           appleCredential.familyName != null
+        final displayName = appleCredential.givenName != null &&
+                appleCredential.familyName != null
             ? '${appleCredential.givenName} ${appleCredential.familyName}'
             : appleCredential.givenName ?? appleCredential.familyName;
-        
+
         if (displayName != null && userCredential.user != null) {
           await userCredential.user!.updateDisplayName(displayName);
           await userCredential.user!.reload();
@@ -259,7 +261,7 @@ class FirebaseAuthHelper {
         screen: 'firebase_auth_helper',
         error: e,
       );
-      
+
       // Handle specific Apple sign-in errors
       switch (e.code) {
         case AuthorizationErrorCode.canceled:
@@ -271,7 +273,8 @@ class FirebaseAuthHelper {
         case AuthorizationErrorCode.notHandled:
           throw Exception('Sign in with Apple not handled. Please try again.');
         case AuthorizationErrorCode.unknown:
-          throw Exception('Unknown error during Apple sign-in. Please try again.');
+          throw Exception(
+              'Unknown error during Apple sign-in. Please try again.');
         default:
           throw Exception('Sign in with Apple failed: ${e.message ?? e.code}');
       }
@@ -299,7 +302,7 @@ class FirebaseAuthHelper {
   static Future<void> signOut() async {
     // Ensure Firebase is initialized
     await _ensureInitialized();
-    
+
     try {
       await _auth.signOut();
       Logger.info(
@@ -349,7 +352,7 @@ class FirebaseAuthHelper {
   /// Throws RateLimitException if rate limit exceeded (5 requests per hour).
   static Future<bool> sendEmailVerification() async {
     await _ensureInitialized();
-    
+
     try {
       final user = _auth.currentUser;
       if (user == null) {
@@ -362,10 +365,11 @@ class FirebaseAuthHelper {
       }
 
       final email = user.email ?? 'unknown';
-      
+
       // Check rate limit (5 requests per hour)
       if (!EmailRateLimiter.canMakeRequest(email)) {
-        final minutesUntilNext = EmailRateLimiter.getMinutesUntilNextRequest(email);
+        final minutesUntilNext =
+            EmailRateLimiter.getMinutesUntilNextRequest(email);
         throw RateLimitException(
           'Too many verification email requests. Please wait $minutesUntilNext minute${minutesUntilNext != 1 ? 's' : ''} before requesting again.',
           minutesUntilNext: minutesUntilNext,
@@ -428,7 +432,7 @@ class FirebaseAuthHelper {
   /// Reloads user data before checking to ensure status is up-to-date.
   static Future<bool> isEmailVerified() async {
     await _ensureInitialized();
-    
+
     try {
       final user = _auth.currentUser;
       if (user == null) {
@@ -438,7 +442,7 @@ class FirebaseAuthHelper {
       // Reload user to get latest verification status
       await user.reload();
       final refreshedUser = _auth.currentUser;
-      
+
       return refreshedUser?.emailVerified ?? false;
     } catch (e, stackTrace) {
       Logger.error(
@@ -458,11 +462,12 @@ class FirebaseAuthHelper {
   /// Throws RateLimitException if rate limit exceeded (5 requests per hour).
   static Future<bool> sendPasswordResetEmail(String email) async {
     await _ensureInitialized();
-    
+
     try {
       // Check rate limit (5 requests per hour)
       if (!EmailRateLimiter.canMakeRequest(email)) {
-        final minutesUntilNext = EmailRateLimiter.getMinutesUntilNextRequest(email);
+        final minutesUntilNext =
+            EmailRateLimiter.getMinutesUntilNextRequest(email);
         throw RateLimitException(
           'Too many password reset requests. Please wait $minutesUntilNext minute${minutesUntilNext != 1 ? 's' : ''} before requesting again.',
           minutesUntilNext: minutesUntilNext,
@@ -532,7 +537,7 @@ class FirebaseAuthHelper {
     required String newPassword,
   }) async {
     await _ensureInitialized();
-    
+
     try {
       Logger.info(
         'Confirming password reset',
@@ -589,4 +594,3 @@ class FirebaseAuthHelper {
     return digest.toString().substring(0, 16); // First 16 chars for readability
   }
 }
-

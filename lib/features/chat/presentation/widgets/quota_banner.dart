@@ -34,9 +34,8 @@ class QuotaBanner extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: isDark
-            ? AppColorsDark.cardBackground
-            : AppColors.backgroundLight,
+        color:
+            isDark ? AppColorsDark.cardBackground : AppColors.backgroundLight,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: isDark
@@ -76,4 +75,3 @@ class QuotaBanner extends StatelessWidget {
     );
   }
 }
-

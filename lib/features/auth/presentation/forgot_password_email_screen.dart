@@ -22,7 +22,8 @@ class ForgotPasswordEmailScreen extends ConsumerStatefulWidget {
       _ForgotPasswordEmailScreenState();
 }
 
-class _ForgotPasswordEmailScreenState extends ConsumerState<ForgotPasswordEmailScreen> {
+class _ForgotPasswordEmailScreenState
+    extends ConsumerState<ForgotPasswordEmailScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
 
@@ -49,7 +50,7 @@ class _ForgotPasswordEmailScreenState extends ConsumerState<ForgotPasswordEmailS
     if (!_formKey.currentState!.validate()) return;
 
     final email = _emailController.text.trim();
-    
+
     setState(() {
       _isLoading = true;
       _errorMessage = null;
@@ -58,12 +59,12 @@ class _ForgotPasswordEmailScreenState extends ConsumerState<ForgotPasswordEmailS
     try {
       // Save email for use in next screens
       ref.read(emailProvider.notifier).setEmail(email);
-      
+
       // Use Firebase password reset email
       final success = await FirebaseAuthHelper.sendPasswordResetEmail(email);
-      
+
       if (!mounted) return;
-      
+
       if (success) {
         // Navigate to password reset link screen
         context.push('/password-reset-link');
@@ -79,21 +80,23 @@ class _ForgotPasswordEmailScreenState extends ConsumerState<ForgotPasswordEmailS
       });
     } on FirebaseAuthException catch (e) {
       if (!mounted) return;
-      
+
       String errorMessage = 'Failed to send reset email. Please try again.';
-      
+
       switch (e.code) {
         case 'too-many-requests':
-          errorMessage = 'Too many requests. Please wait a few minutes before trying again.';
+          errorMessage =
+              'Too many requests. Please wait a few minutes before trying again.';
           break;
         case 'user-not-found':
           // Don't reveal if user exists - show generic message
-          errorMessage = 'If an account exists with this email, a password reset link has been sent.';
+          errorMessage =
+              'If an account exists with this email, a password reset link has been sent.';
           break;
         default:
           errorMessage = e.message ?? errorMessage;
       }
-      
+
       setState(() {
         _errorMessage = errorMessage;
       });
@@ -138,8 +141,7 @@ class _ForgotPasswordEmailScreenState extends ConsumerState<ForgotPasswordEmailS
                       width: 36,
                       height: 36,
                       decoration: BoxDecoration(
-                        color: AppColors.languageButtonColor
-                            .withOpacity( 0.1),
+                        color: AppColors.languageButtonColor.withOpacity(0.1),
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(
@@ -220,7 +222,8 @@ class _ForgotPasswordEmailScreenState extends ConsumerState<ForgotPasswordEmailS
                   ),
                   if (_isLoading) ...[
                     const SizedBox(height: 16),
-                    const Center(child: SpinningMaraLogo(width: 40, height: 40)),
+                    const Center(
+                        child: SpinningMaraLogo(width: 40, height: 40)),
                   ],
                   const SizedBox(height: 24),
                 ],

@@ -28,4 +28,3 @@ class AuthService {
   /// Get current Firebase user.
   User? get currentUser => _auth.currentUser;
 }
-

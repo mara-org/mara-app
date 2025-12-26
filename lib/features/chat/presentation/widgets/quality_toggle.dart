@@ -33,9 +33,8 @@ class QualityToggle extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: isDark
-            ? AppColorsDark.cardBackground
-            : AppColors.backgroundLight,
+        color:
+            isDark ? AppColorsDark.cardBackground : AppColors.backgroundLight,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: isDark
@@ -57,9 +56,8 @@ class QualityToggle extends StatelessWidget {
               'High Quality Mode',
               style: TextStyle(
                 fontSize: 13,
-                color: isDark
-                    ? AppColorsDark.textPrimary
-                    : AppColors.textPrimary,
+                color:
+                    isDark ? AppColorsDark.textPrimary : AppColors.textPrimary,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -74,4 +72,3 @@ class QualityToggle extends StatelessWidget {
     );
   }
 }
-

@@ -74,4 +74,3 @@ class ChatState {
   /// Check if user is on paid plan.
   bool get isPaid => quotaState?.isPaid ?? false;
 }
-

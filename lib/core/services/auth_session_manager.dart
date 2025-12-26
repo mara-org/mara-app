@@ -50,7 +50,9 @@ class AuthSessionManager {
       final capabilities = await _sessionService.createSession();
 
       // Store in provider
-      _ref.read(appCapabilitiesProvider.notifier).updateCapabilities(capabilities);
+      _ref
+          .read(appCapabilitiesProvider.notifier)
+          .updateCapabilities(capabilities);
 
       Logger.info(
         'Backend session created and stored',
@@ -87,4 +89,3 @@ class AuthSessionManager {
     }
   }
 }
-

@@ -9,14 +9,15 @@ class SecureStore {
   final FlutterSecureStorage _storage;
 
   SecureStore({FlutterSecureStorage? storage})
-      : _storage = storage ?? const FlutterSecureStorage(
-            aOptions: AndroidOptions(
-              encryptedSharedPreferences: true,
-            ),
-            iOptions: IOSOptions(
-              accessibility: KeychainAccessibility.first_unlock_this_device,
-            ),
-          );
+      : _storage = storage ??
+            const FlutterSecureStorage(
+              aOptions: AndroidOptions(
+                encryptedSharedPreferences: true,
+              ),
+              iOptions: IOSOptions(
+                accessibility: KeychainAccessibility.first_unlock_this_device,
+              ),
+            );
 
   /// Store a value securely.
   Future<void> write({required String key, required String value}) async {
@@ -38,4 +39,3 @@ class SecureStore {
     await _storage.deleteAll();
   }
 }
-

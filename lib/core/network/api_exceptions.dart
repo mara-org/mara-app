@@ -114,4 +114,3 @@ ApiException mapDioException(DioException error) {
       );
   }
 }
-

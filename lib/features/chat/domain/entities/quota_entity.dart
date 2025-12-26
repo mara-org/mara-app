@@ -15,7 +15,5 @@ class QuotaEntity {
   });
 
   /// Check if user can send messages.
-  bool get canSendMessage =>
-      remainingMessages > 0 && remainingTokenBudget > 0;
+  bool get canSendMessage => remainingMessages > 0 && remainingTokenBudget > 0;
 }
-

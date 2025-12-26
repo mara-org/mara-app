@@ -80,7 +80,7 @@ class _ForgotPasswordVerifyScreenState
         // Store reset token (backend should return it, but for now we'll use code as token)
         // TODO: Update when backend returns actual reset token
         _resetToken = code;
-        
+
         // Navigate to reset password screen with token
         context.push('/reset-password', extra: {'resetToken': _resetToken});
       } else {
@@ -147,7 +147,8 @@ class _ForgotPasswordVerifyScreenState
                           width: 36,
                           height: 36,
                           decoration: BoxDecoration(
-                            color: AppColors.languageButtonColor.withOpacity(0.1),
+                            color:
+                                AppColors.languageButtonColor.withOpacity(0.1),
                             shape: BoxShape.circle,
                           ),
                           child: const Icon(
@@ -284,8 +285,7 @@ class _ForgotPasswordVerifyScreenState
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color:
-                            Colors.black.withOpacity( isDark ? 0.4 : 0.25),
+                        color: Colors.black.withOpacity(isDark ? 0.4 : 0.25),
                         offset: const Offset(0, 4),
                         blurRadius: 50,
                       ),

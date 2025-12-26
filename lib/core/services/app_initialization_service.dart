@@ -187,150 +187,151 @@ class AppInitializationService {
         receiveTimeout: const Duration(seconds: 30),
       ),
     );
-    
+
     final candidateUrl = baseUrl; // Single base URL to test
-    
+
     try {
       debugPrint('🔍 Testing BASE_URL: $candidateUrl');
-      
+
       // Test /health endpoint
       try {
-          final healthUrl = '$candidateUrl/health';
-          debugPrint('🔍 GET $healthUrl');
-          final startTime = DateTime.now();
-          
-          final healthResponse = await testDio.getUri(
-            Uri.parse(healthUrl),
+        final healthUrl = '$candidateUrl/health';
+        debugPrint('🔍 GET $healthUrl');
+        final startTime = DateTime.now();
+
+        final healthResponse = await testDio.getUri(
+          Uri.parse(healthUrl),
+          options: Options(
+            validateStatus: (status) => true,
+          ),
+        );
+
+        final healthDuration = DateTime.now().difference(startTime);
+        final healthBodyStr = healthResponse.data?.toString() ?? 'null';
+        final healthBodyPreview = healthBodyStr.length > 500
+            ? '${healthBodyStr.substring(0, 500)}...'
+            : healthBodyStr;
+
+        debugPrint(
+            '✅ Health check response (${healthDuration.inMilliseconds}ms):');
+        debugPrint('   Full URL: $healthUrl');
+        debugPrint('   Status: ${healthResponse.statusCode}');
+        debugPrint('   Headers: ${healthResponse.headers}');
+        debugPrint('   Body: $healthBodyPreview');
+
+        Logger.info(
+          'Backend connectivity test - Health check',
+          feature: 'app_init',
+          screen: 'app_initialization',
+          extra: {
+            'candidate_url': candidateUrl,
+            'full_url': healthUrl,
+            'status_code': healthResponse.statusCode,
+            'response_body': healthBodyPreview,
+            'latency_ms': healthDuration.inMilliseconds,
+          },
+        );
+
+        // Test /ready endpoint
+        try {
+          final readyUrl = '$candidateUrl/ready';
+          debugPrint('🔍 GET $readyUrl');
+          final readyStartTime = DateTime.now();
+
+          final readyResponse = await testDio.getUri(
+            Uri.parse(readyUrl),
             options: Options(
               validateStatus: (status) => true,
             ),
           );
-          
-          final healthDuration = DateTime.now().difference(startTime);
-          final healthBodyStr = healthResponse.data?.toString() ?? 'null';
-          final healthBodyPreview = healthBodyStr.length > 500 
-              ? '${healthBodyStr.substring(0, 500)}...' 
-              : healthBodyStr;
-          
-          debugPrint('✅ Health check response (${healthDuration.inMilliseconds}ms):');
-          debugPrint('   Full URL: $healthUrl');
-          debugPrint('   Status: ${healthResponse.statusCode}');
-          debugPrint('   Headers: ${healthResponse.headers}');
-          debugPrint('   Body: $healthBodyPreview');
-          
+
+          final readyDuration = DateTime.now().difference(readyStartTime);
+          final readyBodyStr = readyResponse.data?.toString() ?? 'null';
+          final readyBodyPreview = readyBodyStr.length > 500
+              ? '${readyBodyStr.substring(0, 500)}...'
+              : readyBodyStr;
+
+          debugPrint(
+              '✅ Ready check response (${readyDuration.inMilliseconds}ms):');
+          debugPrint('   Full URL: $readyUrl');
+          debugPrint('   Status: ${readyResponse.statusCode}');
+          debugPrint('   Headers: ${readyResponse.headers}');
+          debugPrint('   Body: $readyBodyPreview');
+
           Logger.info(
-            'Backend connectivity test - Health check',
+            'Backend connectivity test - Ready check',
             feature: 'app_init',
             screen: 'app_initialization',
             extra: {
               'candidate_url': candidateUrl,
-              'full_url': healthUrl,
-              'status_code': healthResponse.statusCode,
-              'response_body': healthBodyPreview,
-              'latency_ms': healthDuration.inMilliseconds,
+              'full_url': readyUrl,
+              'status_code': readyResponse.statusCode,
+              'response_body': readyBodyPreview,
+              'latency_ms': readyDuration.inMilliseconds,
             },
           );
-          
-          // Test /ready endpoint
-          try {
-            final readyUrl = '$candidateUrl/ready';
-            debugPrint('🔍 GET $readyUrl');
-            final readyStartTime = DateTime.now();
-            
-            final readyResponse = await testDio.getUri(
-              Uri.parse(readyUrl),
-              options: Options(
-                validateStatus: (status) => true,
-              ),
-            );
-            
-            final readyDuration = DateTime.now().difference(readyStartTime);
-            final readyBodyStr = readyResponse.data?.toString() ?? 'null';
-            final readyBodyPreview = readyBodyStr.length > 500 
-                ? '${readyBodyStr.substring(0, 500)}...' 
-                : readyBodyStr;
-            
-            debugPrint('✅ Ready check response (${readyDuration.inMilliseconds}ms):');
-            debugPrint('   Full URL: $readyUrl');
-            debugPrint('   Status: ${readyResponse.statusCode}');
-            debugPrint('   Headers: ${readyResponse.headers}');
-            debugPrint('   Body: $readyBodyPreview');
-            
-            Logger.info(
-              'Backend connectivity test - Ready check',
-              feature: 'app_init',
-              screen: 'app_initialization',
-              extra: {
-                'candidate_url': candidateUrl,
-                'full_url': readyUrl,
-                'status_code': readyResponse.statusCode,
-                'response_body': readyBodyPreview,
-                'latency_ms': readyDuration.inMilliseconds,
-              },
-            );
-          } catch (e) {
-            debugPrint('❌ Ready check failed: $e');
-            Logger.warning(
-              'Backend connectivity test - Ready check failed',
-              feature: 'app_init',
-              screen: 'app_initialization',
-              extra: {
-                'candidate_url': candidateUrl,
-                'error': e.toString(),
-              },
-            );
-          }
-          
-          if (healthResponse.statusCode == 200) {
-            debugPrint('✅ SUCCESS: $candidateUrl is reachable');
-            return; // Found working URL
-          }
         } catch (e) {
-          debugPrint('❌ Health check failed: $e');
+          debugPrint('❌ Ready check failed: $e');
+          Logger.warning(
+            'Backend connectivity test - Ready check failed',
+            feature: 'app_init',
+            screen: 'app_initialization',
+            extra: {
+              'candidate_url': candidateUrl,
+              'error': e.toString(),
+            },
+          );
         }
 
-        // Try /openapi.json as fallback
-        try {
-          final openApiUrl = '$candidateUrl/openapi.json';
-          debugPrint('🔍 GET $openApiUrl');
-          final startTime = DateTime.now();
-          
-          final response = await testDio.getUri(
-            Uri.parse(openApiUrl),
-            options: Options(
-              validateStatus: (status) => true,
-            ),
-          );
-          
-          final duration = DateTime.now().difference(startTime);
-          debugPrint('✅ OpenAPI check response (${duration.inMilliseconds}ms):');
-          debugPrint('   Status: ${response.statusCode}');
-          final bodyStr = response.data?.toString() ?? 'null';
-          final bodyPreview = bodyStr.length > 500 
-              ? '${bodyStr.substring(0, 500)}...' 
-              : bodyStr;
-          debugPrint('   Body preview: $bodyPreview');
-          
-          Logger.info(
-            'Backend connectivity test - OpenAPI check',
-            feature: 'app_init',
-            screen: 'app_initialization',
-            extra: {
-              'candidate_url': candidateUrl,
-              'full_url': openApiUrl,
-              'status_code': response.statusCode,
-              'response_body': bodyPreview,
-              'latency_ms': duration.inMilliseconds,
-            },
-          );
-          
-          if (response.statusCode == 200) {
-            debugPrint('✅ SUCCESS: $candidateUrl is reachable');
-            return; // Found working URL
-          }
-        } catch (e) {
-          debugPrint('❌ OpenAPI check failed: $e');
+        if (healthResponse.statusCode == 200) {
+          debugPrint('✅ SUCCESS: $candidateUrl is reachable');
+          return; // Found working URL
         }
+      } catch (e) {
+        debugPrint('❌ Health check failed: $e');
+      }
+
+      // Try /openapi.json as fallback
+      try {
+        final openApiUrl = '$candidateUrl/openapi.json';
+        debugPrint('🔍 GET $openApiUrl');
+        final startTime = DateTime.now();
+
+        final response = await testDio.getUri(
+          Uri.parse(openApiUrl),
+          options: Options(
+            validateStatus: (status) => true,
+          ),
+        );
+
+        final duration = DateTime.now().difference(startTime);
+        debugPrint('✅ OpenAPI check response (${duration.inMilliseconds}ms):');
+        debugPrint('   Status: ${response.statusCode}');
+        final bodyStr = response.data?.toString() ?? 'null';
+        final bodyPreview =
+            bodyStr.length > 500 ? '${bodyStr.substring(0, 500)}...' : bodyStr;
+        debugPrint('   Body preview: $bodyPreview');
+
+        Logger.info(
+          'Backend connectivity test - OpenAPI check',
+          feature: 'app_init',
+          screen: 'app_initialization',
+          extra: {
+            'candidate_url': candidateUrl,
+            'full_url': openApiUrl,
+            'status_code': response.statusCode,
+            'response_body': bodyPreview,
+            'latency_ms': duration.inMilliseconds,
+          },
+        );
+
+        if (response.statusCode == 200) {
+          debugPrint('✅ SUCCESS: $candidateUrl is reachable');
+          return; // Found working URL
+        }
+      } catch (e) {
+        debugPrint('❌ OpenAPI check failed: $e');
+      }
     } catch (e, stackTrace) {
       debugPrint('❌ Connectivity test failed: $e');
       Logger.warning(

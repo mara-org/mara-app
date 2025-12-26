@@ -18,7 +18,8 @@ class SignUpChoicesScreen extends ConsumerStatefulWidget {
   const SignUpChoicesScreen({super.key});
 
   @override
-  ConsumerState<SignUpChoicesScreen> createState() => _SignUpChoicesScreenState();
+  ConsumerState<SignUpChoicesScreen> createState() =>
+      _SignUpChoicesScreenState();
 }
 
 class _SignUpChoicesScreenState extends ConsumerState<SignUpChoicesScreen> {
@@ -52,7 +53,7 @@ class _SignUpChoicesScreenState extends ConsumerState<SignUpChoicesScreen> {
         feature: 'auth',
         screen: 'sign_up_choices_screen',
       );
-      
+
       final sessionService = SessionService();
       try {
         await sessionService.createBackendSession();
@@ -61,7 +62,7 @@ class _SignUpChoicesScreenState extends ConsumerState<SignUpChoicesScreen> {
           feature: 'auth',
           screen: 'sign_up_choices_screen',
         );
-        
+
         // Step 3: Fetch user info and entitlements
         try {
           Logger.info(
@@ -90,9 +91,9 @@ class _SignUpChoicesScreenState extends ConsumerState<SignUpChoicesScreen> {
           error: e,
           stackTrace: stackTrace,
         );
-        
+
         // Backend session failed - check if it's a backend down error
-        if (e.toString().contains('network') || 
+        if (e.toString().contains('network') ||
             e.toString().contains('connection') ||
             e.toString().contains('timeout') ||
             e.toString().contains('unavailable')) {
@@ -119,7 +120,7 @@ class _SignUpChoicesScreenState extends ConsumerState<SignUpChoicesScreen> {
       if (email != null && email.isNotEmpty) {
         ref.read(emailProvider.notifier).setEmail(email);
       }
-      
+
       Logger.info(
         'Apple sign-in successful, navigating to home',
         feature: 'auth',
@@ -128,41 +129,43 @@ class _SignUpChoicesScreenState extends ConsumerState<SignUpChoicesScreen> {
       context.go('/home');
     } catch (e) {
       if (!mounted) return;
-      
+
       Logger.error(
         'Apple sign-in error: $e',
         feature: 'auth',
         screen: 'sign_up_choices_screen',
         error: e,
       );
-      
+
       String errorMsg = 'Sign in with Apple failed. Please try again.';
-      
+
       // Handle device limit error
       if (e is DeviceLimitException) {
         setState(() {
           _isLoading = false;
           if (e.plan == 'free') {
-            _errorMessage = '${e.message}\n\nUpgrade to Premium to use up to 3 devices.';
+            _errorMessage =
+                '${e.message}\n\nUpgrade to Premium to use up to 3 devices.';
           } else {
-            _errorMessage = '${e.message}\n\nYou can remove a device from Settings to add this one.';
+            _errorMessage =
+                '${e.message}\n\nYou can remove a device from Settings to add this one.';
           }
         });
         return;
       }
-      
+
       if (e.toString().contains('canceled')) {
         // User canceled - don't show error, just reset loading state
         setState(() {
           _isLoading = false;
         });
         return;
-      } else if (e.toString().contains('network') || 
-                 e.toString().contains('connection') ||
-                 e.toString().contains('unavailable')) {
+      } else if (e.toString().contains('network') ||
+          e.toString().contains('connection') ||
+          e.toString().contains('unavailable')) {
         errorMsg = 'Service unavailable. Please try again later.';
       }
-      
+
       setState(() {
         _isLoading = false;
         _errorMessage = errorMsg;
@@ -264,9 +267,11 @@ class _SignUpChoicesScreenState extends ConsumerState<SignUpChoicesScreen> {
                 width: screenWidth - 64,
                 height: 52,
                 isDark: isDark,
-                onPressed: _isLoading ? null : () {
-                  _handleAppleSignIn();
-                },
+                onPressed: _isLoading
+                    ? null
+                    : () {
+                        _handleAppleSignIn();
+                      },
               ),
             ),
             // Positioned "Sign up with Email" button at x32, y509

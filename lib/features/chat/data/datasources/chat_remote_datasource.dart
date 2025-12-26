@@ -72,8 +72,10 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
             screen: 'chat_remote_datasource',
             extra: {
               'request_id': requestId,
-              'remaining_messages': chatResponse.metadata.remainingMessagesToday,
-              'remaining_tokens': chatResponse.metadata.remainingTokenBudgetToday,
+              'remaining_messages':
+                  chatResponse.metadata.remainingMessagesToday,
+              'remaining_tokens':
+                  chatResponse.metadata.remainingTokenBudgetToday,
               'plan': chatResponse.metadata.plan,
             },
           );
@@ -136,4 +138,3 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
     }
   }
 }
-

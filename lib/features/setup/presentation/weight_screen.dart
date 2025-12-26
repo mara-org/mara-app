@@ -63,8 +63,7 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
                       width: 36,
                       height: 36,
                       decoration: BoxDecoration(
-                        color: AppColors.languageButtonColor
-                            .withOpacity( 0.1),
+                        color: AppColors.languageButtonColor.withOpacity(0.1),
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(
@@ -161,8 +160,7 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
                             color: isSelected
-                                ? AppColors.languageButtonColor
-                                    .withOpacity( 0.2)
+                                ? AppColors.languageButtonColor.withOpacity(0.2)
                                 : Colors.transparent,
                             borderRadius: BorderRadius.circular(19),
                           ),
@@ -174,7 +172,7 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
                                   : (isDark
                                           ? AppColorsDark.textSecondary
                                           : const Color(0xFF94A3B8))
-                                      .withOpacity( 0.6),
+                                      .withOpacity(0.6),
                               fontSize: 20,
                               fontWeight: isSelected
                                   ? FontWeight.w500

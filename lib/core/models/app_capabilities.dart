@@ -98,9 +98,12 @@ class UserProfile {
     return UserProfile(
       id: json['id']?.toString() ?? '',
       email: json['email'] as String? ?? '',
-      displayName: json['displayName'] as String? ?? json['display_name'] as String?,
+      displayName:
+          json['displayName'] as String? ?? json['display_name'] as String?,
       fullName: json['full_name'] as String? ?? json['fullName'] as String?,
-      isEmailVerified: json['isEmailVerified'] as bool? ?? json['is_email_verified'] as bool? ?? false,
+      isEmailVerified: json['isEmailVerified'] as bool? ??
+          json['is_email_verified'] as bool? ??
+          false,
       createdAt: json['createdAt'] != null
           ? DateTime.parse(json['createdAt'] as String)
           : (json['created_at'] != null
@@ -156,9 +159,15 @@ class Entitlements {
 
   factory Entitlements.fromJson(Map<String, dynamic> json) {
     return Entitlements(
-      highQualityMode: json['high_quality_mode'] as bool? ?? json['highQualityMode'] as bool? ?? false,
-      advancedAnalytics: json['advanced_analytics'] as bool? ?? json['advancedAnalytics'] as bool? ?? false,
-      prioritySupport: json['priority_support'] as bool? ?? json['prioritySupport'] as bool? ?? false,
+      highQualityMode: json['high_quality_mode'] as bool? ??
+          json['highQualityMode'] as bool? ??
+          false,
+      advancedAnalytics: json['advanced_analytics'] as bool? ??
+          json['advancedAnalytics'] as bool? ??
+          false,
+      prioritySupport: json['priority_support'] as bool? ??
+          json['prioritySupport'] as bool? ??
+          false,
       features: Map<String, bool>.from(
         json['features'] as Map<String, dynamic>? ?? {},
       ),
@@ -198,10 +207,13 @@ class UsageLimits {
 
   factory UsageLimits.fromJson(Map<String, dynamic> json) {
     return UsageLimits(
-      remainingMessagesToday: (json['remaining_messages_today'] as num?)?.toInt() ?? 0,
-      remainingTokenBudgetToday: (json['remaining_token_budget_today'] as num?)?.toInt() ?? 0,
+      remainingMessagesToday:
+          (json['remaining_messages_today'] as num?)?.toInt() ?? 0,
+      remainingTokenBudgetToday:
+          (json['remaining_token_budget_today'] as num?)?.toInt() ?? 0,
       dailyMessageLimit: (json['daily_message_limit'] as num?)?.toInt() ?? 0,
-      dailyTokenBudgetLimit: (json['daily_token_budget_limit'] as num?)?.toInt() ?? 0,
+      dailyTokenBudgetLimit:
+          (json['daily_token_budget_limit'] as num?)?.toInt() ?? 0,
     );
   }
 
@@ -220,4 +232,3 @@ class UsageLimits {
   /// Check if user has exhausted their token budget.
   bool get isTokenQuotaExhausted => remainingTokenBudgetToday <= 0;
 }
-

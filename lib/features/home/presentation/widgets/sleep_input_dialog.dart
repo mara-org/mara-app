@@ -275,10 +275,10 @@ class _SleepInputDialogState extends ConsumerState<SleepInputDialog> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: AppColors.languageButtonColor.withOpacity( 0.1),
+                color: AppColors.languageButtonColor.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: AppColors.languageButtonColor.withOpacity( 0.3),
+                  color: AppColors.languageButtonColor.withOpacity(0.3),
                   width: 1,
                 ),
               ),
@@ -359,7 +359,7 @@ class _SleepInputDialogState extends ConsumerState<SleepInputDialog> {
                     : 'Sync All Historical Data'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor:
-                      AppColors.languageButtonColor.withOpacity( 0.8),
+                      AppColors.languageButtonColor.withOpacity(0.8),
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(

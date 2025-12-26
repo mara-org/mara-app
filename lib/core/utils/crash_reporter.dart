@@ -97,11 +97,12 @@ class CrashReporter {
         // Check if Firebase is initialized before accessing Crashlytics
         if (Firebase.apps.isEmpty) {
           if (kDebugMode) {
-            debugPrint('⚠️ Firebase not initialized, skipping Crashlytics setup');
+            debugPrint(
+                '⚠️ Firebase not initialized, skipping Crashlytics setup');
           }
           return;
         }
-        
+
         if (_environment != null) {
           FirebaseCrashlytics.instance
               .setCustomKey('environment', _environment!);
@@ -130,7 +131,8 @@ class CrashReporter {
       if (_sentryDsn != null && _sentryDsn!.isNotEmpty) {
         debugPrint('✅ Sentry enabled (DSN configured)');
       } else {
-        debugPrint('ℹ️  Sentry disabled (DSN not set - optional for staging/dev)');
+        debugPrint(
+            'ℹ️  Sentry disabled (DSN not set - optional for staging/dev)');
       }
       if (_useFirebase) {
         debugPrint('✅ Firebase Crashlytics enabled');

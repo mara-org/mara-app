@@ -21,17 +21,17 @@ class ApiConfig {
   }
 
   /// API endpoints - All use versioned /api/v1/ prefix
-  
+
   /// Authentication endpoints (as per backend API spec)
   /// POST /api/v1/auth/register - Sign up with Firebase ID token
   static const String registerEndpoint = '/api/v1/auth/register';
-  
+
   /// POST /api/v1/auth/session - Create session (sign in) with device tracking
   static const String sessionEndpoint = '/api/v1/auth/session';
-  
+
   /// GET /api/v1/auth/me - Get current user profile
   static const String getCurrentUserEndpoint = '/api/v1/auth/me';
-  
+
   /// Account deletion endpoint
   /// DELETE /api/v1/user/profile - Soft delete account (no code required)
   static const String deleteAccountEndpoint = '/api/v1/user/profile';
@@ -50,4 +50,3 @@ class ApiConfig {
   static const String bearerPrefix = 'Bearer ';
   static const String requestIdHeader = 'x-request-id';
 }
-
