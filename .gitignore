@@ -88,9 +88,9 @@ coverage/
 
 # Firebase configuration files (sensitive - do not commit)
 **/google-services.json
-# Allow stub GoogleService-Info.plist in ios/Runner (placeholder values only)
-!ios/Runner/GoogleService-Info.plist
+# GoogleService-Info.plist (ignore all except the stub in ios/Runner)
 **/GoogleService-Info.plist
+!ios/Runner/GoogleService-Info.plist
 **/firebase_options.dart
 lib/firebase_options.dart
 
