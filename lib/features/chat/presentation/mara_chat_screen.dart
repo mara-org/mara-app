@@ -318,7 +318,7 @@ class _MaraChatScreenState extends ConsumerState<MaraChatScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: const MainBottomNavigation(currentIndex: 2),
+      bottomNavigationBar: const MainBottomNavigation(currentIndex: 1),
     );
   }
 }

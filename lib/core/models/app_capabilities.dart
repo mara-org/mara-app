@@ -25,14 +25,20 @@ class AppCapabilities {
   factory AppCapabilities.fromJson(Map<String, dynamic> json) {
     return AppCapabilities(
       profile: UserProfile.fromJson(
-        json['user'] as Map<String, dynamic>? ?? {},
+        json['user'] != null
+            ? Map<String, dynamic>.from(json['user'] as Map)
+            : <String, dynamic>{},
       ),
       plan: json['plan'] as String? ?? 'free',
       entitlements: Entitlements.fromJson(
-        json['entitlements'] as Map<String, dynamic>? ?? {},
+        json['entitlements'] != null
+            ? Map<String, dynamic>.from(json['entitlements'] as Map)
+            : <String, dynamic>{},
       ),
       limits: UsageLimits.fromJson(
-        json['limits'] as Map<String, dynamic>? ?? {},
+        json['limits'] != null
+            ? Map<String, dynamic>.from(json['limits'] as Map)
+            : <String, dynamic>{},
       ),
     );
   }
