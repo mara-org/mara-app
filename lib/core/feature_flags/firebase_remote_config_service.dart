@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'feature_flag_service.dart';
 
 /// Firebase Remote Config implementation for feature flags
@@ -19,6 +20,15 @@ class FirebaseRemoteConfigService implements RemoteConfigService {
   /// Initialize Firebase Remote Config
   Future<void> _ensureInitialized() async {
     if (_initialized) return;
+
+    // Check if Firebase is initialized before accessing Remote Config
+    if (Firebase.apps.isEmpty) {
+      if (kDebugMode) {
+        debugPrint('⚠️ Firebase not initialized, skipping Remote Config initialization');
+      }
+      _initialized = false;
+      return;
+    }
 
     try {
       _remoteConfig = FirebaseRemoteConfig.instance;

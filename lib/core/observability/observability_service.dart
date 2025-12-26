@@ -1,5 +1,3 @@
-import '../analytics/analytics_service.dart';
-
 /// Unified observability service for Mara app.
 ///
 /// This service wraps logger, analytics, and crash reporter to provide
@@ -38,12 +36,7 @@ class ObservabilityService {
       extra: parameters,
     );
 
-    // Track in analytics (static method)
-    AnalyticsService.logEvent(
-      eventName,
-      parameters:
-          parameters != null ? Map<String, Object>.from(parameters) : null,
-    );
+    // Analytics removed - will be rebuilt with different tool
   }
 
   /// Tracks an error.
@@ -107,17 +100,7 @@ class ObservabilityService {
       },
     );
 
-    // Track in analytics as a custom event (static method)
-    AnalyticsService.logEvent(
-      'performance_metric',
-      parameters: {
-        'metric_name': metricName,
-        'value': value,
-        'unit': unit,
-        if (screen != null) 'screen': screen,
-        if (feature != null) 'feature': feature,
-      },
-    );
+    // Analytics removed - will be rebuilt with different tool
   }
 
   /// Tracks a screen view.
@@ -136,8 +119,7 @@ class ObservabilityService {
       extra: parameters,
     );
 
-    // Track in analytics (static method, no parameters support)
-    AnalyticsService.logScreenView(screenName);
+    // Analytics removed - will be rebuilt with different tool
   }
 
   /// Tracks a user action.

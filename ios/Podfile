@@ -39,5 +39,46 @@ end
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
+    
+    # Fix PrivacyInfo.xcprivacy and Sentry header file issues
+    target.build_configurations.each do |config|
+      config.build_settings['ENABLE_USER_SCRIPT_SANDBOXING'] = 'NO'
+      
+      # Fix PrivacyInfo.xcprivacy file processing errors
+      # Exclude PrivacyInfo.xcprivacy from compilation
+      config.build_settings['EXCLUDED_SOURCE_FILE_NAMES'] ||= []
+      config.build_settings['EXCLUDED_SOURCE_FILE_NAMES'] << 'PrivacyInfo.xcprivacy'
+      
+      # Fix Sentry header search paths
+      config.build_settings['HEADER_SEARCH_PATHS'] ||= ['$(inherited)']
+      config.build_settings['HEADER_SEARCH_PATHS'] << '$(PODS_ROOT)/Sentry/Sources/Sentry/include'
+      config.build_settings['HEADER_SEARCH_PATHS'] << '$(PODS_ROOT)/Sentry/Sources/Sentry/include/HybridPublic'
+      config.build_settings['HEADER_SEARCH_PATHS'] << '$(PODS_ROOT)/Sentry/Sources/Sentry/Public'
+      
+      # Fix Sentry Swift module imports
+      if target.name == 'sentry_flutter'
+        config.build_settings['SWIFT_INCLUDE_PATHS'] ||= ['$(inherited)']
+        config.build_settings['SWIFT_INCLUDE_PATHS'] << '$(PODS_ROOT)/Sentry/Sources'
+      end
+      
+      # Fix Flutter.h not found for share_plus and other plugins
+      config.build_settings['HEADER_SEARCH_PATHS'] << '$(PODS_ROOT)/../Flutter/Flutter.framework/Headers'
+      config.build_settings['HEADER_SEARCH_PATHS'] << '$(PODS_ROOT)/../Flutter'
+      
+      # Ensure proper module linking for Firebase dependencies
+      config.build_settings['CLANG_ENABLE_MODULES'] = 'YES'
+      config.build_settings['SWIFT_VERSION'] = '5.0'
+      
+      # Fix for share_plus module issues
+      config.build_settings['DEFINES_MODULE'] = 'YES'
+      
+      # Build speed optimizations
+      config.build_settings['SWIFT_COMPILATION_MODE'] = 'incremental' if config.name == 'Debug'
+      config.build_settings['SWIFT_OPTIMIZATION_LEVEL'] = '-Onone' if config.name == 'Debug'
+      config.build_settings['GCC_OPTIMIZATION_LEVEL'] = '0' if config.name == 'Debug'
+      config.build_settings['SWIFT_ACTIVE_COMPILATION_CONDITIONS'] = '$(inherited) DEBUG' if config.name == 'Debug'
+      # Enable parallel compilation
+      config.build_settings['COMPILER_INDEX_STORE_ENABLE'] = 'YES'
+    end
   end
 end

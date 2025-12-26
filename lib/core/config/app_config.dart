@@ -18,13 +18,13 @@ class AppConfig {
   /// Current environment.
   /// 
   /// Set via --dart-define=ENV=dev|staging|prod
-  /// Defaults to dev in debug mode, prod in release
+  /// Defaults to staging (Render backend) for all builds
   static AppEnvironment get environment {
     const envString = String.fromEnvironment('ENV', defaultValue: '');
     
     if (envString.isEmpty) {
-      // Auto-detect: dev in debug, prod in release
-      return kDebugMode ? AppEnvironment.dev : AppEnvironment.prod;
+      // Always default to staging (Render backend) - no localhost fallback
+      return AppEnvironment.staging;
     }
 
     switch (envString.toLowerCase()) {
@@ -38,31 +38,27 @@ class AppConfig {
       case 'production':
         return AppEnvironment.prod;
       default:
-        return kDebugMode ? AppEnvironment.dev : AppEnvironment.prod;
+        // Default to staging (Render backend) if unknown
+        return AppEnvironment.staging;
     }
   }
 
   /// Base URL for backend API.
   /// 
+  /// BASE_URL constant: https://mara-api-uoum.onrender.com
   /// Can be overridden via --dart-define=API_BASE_URL=<url>
-  /// Otherwise uses environment-specific defaults
+  static const String BASE_URL = 'https://mara-api-uoum.onrender.com';
+  
   static String get baseUrl {
-    // Check for explicit override
+    // Check for explicit override first
     const overrideUrl = String.fromEnvironment('API_BASE_URL', defaultValue: '');
     if (overrideUrl.isNotEmpty) {
       return overrideUrl;
     }
 
-    // Use environment-specific defaults
-    switch (environment) {
-      case AppEnvironment.dev:
-        return 'http://localhost:8000';
-      case AppEnvironment.staging:
-        // TestFlight staging URL (temporary - for internal testing only)
-        return 'https://mara-api-uoum.onrender.com';
-      case AppEnvironment.prod:
-        return 'https://api.mara.app';
-    }
+    // Always use Render backend - no localhost fallback
+    // This ensures the app always connects to the backend, not localhost
+    return BASE_URL;
   }
 
   /// Health check endpoint.
@@ -72,13 +68,16 @@ class AppConfig {
   static const String versionEndpoint = '/version';
 
   /// Session endpoint.
-  static const String sessionEndpoint = '/v1/auth/session';
+  /// Note: Backend might use /api/v1/auth/session - check backend docs
+  static const String sessionEndpoint = '/api/v1/auth/session';
 
   /// Get current user endpoint.
-  static const String getCurrentUserEndpoint = '/v1/auth/me';
+  /// Note: Backend might use /api/v1/auth/me - check backend docs
+  static const String getCurrentUserEndpoint = '/api/v1/auth/me';
 
   /// Chat endpoint.
-  static const String chatEndpoint = '/v1/chat';
+  /// Note: Use ApiConfig.chatEndpoint instead - this is deprecated
+  static const String chatEndpoint = '/api/v1/chat';
 
   /// Get environment name for display.
   static String get environmentName {

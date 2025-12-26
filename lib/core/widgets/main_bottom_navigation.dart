@@ -15,9 +15,6 @@ class MainBottomNavigation extends StatelessWidget {
         context.go('/home');
         break;
       case 1:
-        context.go('/analytics');
-        break;
-      case 2:
         context.go('/chat');
         break;
     }
@@ -33,10 +30,6 @@ class MainBottomNavigation extends StatelessWidget {
       unselectedItemColor: AppColors.textSecondary,
       items: [
         BottomNavigationBarItem(icon: const Icon(Icons.home), label: l10n.home),
-        BottomNavigationBarItem(
-          icon: const Icon(Icons.bar_chart),
-          label: l10n.analyst,
-        ),
         BottomNavigationBarItem(
           icon: _MaraLogoIcon(isSelected: false),
           activeIcon: _MaraLogoIcon(isSelected: true),

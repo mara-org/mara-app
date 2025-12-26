@@ -25,12 +25,16 @@ abstract class AuthRemoteDataSource {
   /// Gets the current authenticated user from remote API.
   Future<User?> getCurrentUser();
 
-  /// Sends a password reset email via remote API.
+  /// Sends a password reset email via Firebase (not backend).
+  /// Note: Firebase handles password reset via email links.
   Future<bool> sendPasswordResetEmail(String email);
 
-  /// Verifies an email verification code via remote API.
-  Future<bool> verifyEmailCode(String code, String email);
+  /// Sends delete account verification code via remote API.
+  Future<bool> sendDeleteAccountCode(String email);
 
-  /// Resends email verification code via remote API.
-  Future<bool> resendVerificationCode(String email);
+  /// Deletes account permanently via remote API.
+  Future<bool> deleteAccount({
+    required String email,
+    required String code,
+  });
 }

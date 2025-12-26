@@ -17,11 +17,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource? _remoteDataSource;
   final AuthLocalDataSource _localDataSource;
+  final SessionService? _sessionService;
+  final WidgetRef? _ref;
 
   AuthRepositoryImpl(
     this._remoteDataSource,
-    this._localDataSource,
-  );
+    this._localDataSource, {
+    SessionService? sessionService,
+    WidgetRef? ref,
+  })  : _sessionService = sessionService,
+        _ref = ref;
 
   @override
   Future<AuthResult> signIn({
@@ -166,85 +171,132 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<bool> sendPasswordResetEmail(String email) async {
     try {
-      // TODO: Call backend API
-      Logger.info(
-        'AuthRepository: sendPasswordResetEmail called (placeholder)',
-        feature: 'auth',
-        screen: 'auth_repository',
-      );
-      return true; // Placeholder
-    } catch (e, stackTrace) {
+      if (_remoteDataSource == null) {
+        throw Exception('Remote data source not available');
+      }
+      return await _remoteDataSource!.sendPasswordResetEmail(email);
+    } on ApiException catch (e) {
       Logger.error(
         'AuthRepository: sendPasswordResetEmail error',
         feature: 'auth',
         screen: 'auth_repository',
         error: e,
-        stackTrace: stackTrace,
       );
-      return false;
-    }
-  }
-
-  @override
-  Future<bool> verifyEmailCode(String code) async {
-    try {
-      if (_remoteDataSource == null) {
-        throw Exception('Remote data source not available');
-      }
-      
-      // Get email from local storage
-      final user = await _localDataSource.getUser();
-      if (user == null) {
-        return false;
-      }
-      
-      return await _remoteDataSource!.verifyEmailCode(code, user.email);
-    } on VerificationRateLimitException {
-      // Re-throw rate limit exceptions so UI can handle them
       rethrow;
     } catch (e, stackTrace) {
       Logger.error(
-        'AuthRepository: verifyEmailCode error',
+        'AuthRepository: sendPasswordResetEmail unexpected error',
         feature: 'auth',
         screen: 'auth_repository',
         error: e,
         stackTrace: stackTrace,
       );
-      return false;
+      throw ServerException('An unexpected error occurred when sending reset email.');
     }
   }
 
   @override
-  Future<bool> resendVerificationCode() async {
+  Future<bool> verifyEmailCode(String code, {String? email}) async {
+    throw UnimplementedError('Email verification is handled by Firebase via email links');
+  }
+
+  @override
+  Future<bool> resendVerificationCode({String? email}) async {
+    throw UnimplementedError('Email verification is handled by Firebase via email links');
+  }
+
+  @override
+  Future<bool> verifyPasswordResetCode({
+    required String email,
+    required String code,
+  }) async {
+    throw UnimplementedError('Password reset is handled by Firebase via email links');
+  }
+
+  @override
+  Future<bool> resetPassword({
+    required String email,
+    required String resetToken,
+    required String newPassword,
+  }) async {
+    throw UnimplementedError('Password reset is handled by Firebase via email links');
+  }
+
+  @override
+  Future<bool> sendDeleteAccountCode(String email) async {
     try {
       if (_remoteDataSource == null) {
         throw Exception('Remote data source not available');
       }
-      
-      // Get email from local storage
-      final user = await _localDataSource.getUser();
-      if (user == null) {
-        return false;
-      }
-      
-      return await _remoteDataSource!.resendVerificationCode(user.email);
-    } on VerificationCooldownException {
-      // Re-throw cooldown exceptions so UI can handle them
+      return await _remoteDataSource!.sendDeleteAccountCode(email);
+    } on ApiException catch (e) {
+      Logger.error(
+        'AuthRepository: sendDeleteAccountCode error',
+        feature: 'auth',
+        screen: 'auth_repository',
+        error: e,
+      );
       rethrow;
     } catch (e, stackTrace) {
       Logger.error(
-        'AuthRepository: resendVerificationCode error',
+        'AuthRepository: sendDeleteAccountCode unexpected error',
         feature: 'auth',
         screen: 'auth_repository',
         error: e,
         stackTrace: stackTrace,
       );
-      return false;
+      throw ServerException('An unexpected error occurred when sending delete account code.');
+    }
+  }
+
+  @override
+  Future<bool> deleteAccount({
+    required String email,
+    required String code,
+  }) async {
+    try {
+      if (_remoteDataSource == null) {
+        throw Exception('Remote data source not available');
+      }
+      final success = await _remoteDataSource!.deleteAccount(
+        email: email,
+        code: code,
+      );
+      
+      if (success) {
+        // Clear local user data after successful deletion
+        await _localDataSource.clearUser();
+        if (_sessionService != null) {
+          _sessionService!.clearCapabilities();
+        }
+        if (_ref != null) {
+          _ref!.read(appCapabilitiesProvider.notifier).clear();
+        }
+      }
+      
+      return success;
+    } on ApiException catch (e) {
+      Logger.error(
+        'AuthRepository: deleteAccount error',
+        feature: 'auth',
+        screen: 'auth_repository',
+        error: e,
+      );
+      rethrow;
+    } catch (e, stackTrace) {
+      Logger.error(
+        'AuthRepository: deleteAccount unexpected error',
+        feature: 'auth',
+        screen: 'auth_repository',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      throw ServerException('An unexpected error occurred when deleting account.');
     }
   }
 
   /// Maps exceptions to [AuthErrorType].
-  AuthErrorType _mapExceptionToErrorType(Object error) {
+  AuthErrorType _mapExceptionToErrorType(final Object error) {
     final errorString = error.toString().toLowerCase();
     if (errorString.contains('network') || errorString.contains('connection')) {
       return AuthErrorType.networkError;

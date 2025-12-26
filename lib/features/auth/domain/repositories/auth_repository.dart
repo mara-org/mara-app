@@ -25,12 +25,16 @@ abstract class AuthRepository {
   /// Gets the current authenticated user.
   Future<User?> getCurrentUser();
 
-  /// Sends a password reset email.
+  /// Sends a password reset email via Firebase (not backend).
+  /// Note: Firebase handles password reset via email links.
   Future<bool> sendPasswordResetEmail(String email);
 
-  /// Verifies an email verification code.
-  Future<bool> verifyEmailCode(String code);
+  /// Sends delete account verification code.
+  Future<bool> sendDeleteAccountCode(String email);
 
-  /// Resends email verification code.
-  Future<bool> resendVerificationCode();
+  /// Deletes account permanently.
+  Future<bool> deleteAccount({
+    required String email,
+    required String code,
+  });
 }

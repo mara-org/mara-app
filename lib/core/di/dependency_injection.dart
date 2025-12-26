@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../storage/local_cache.dart';
-import '../analytics/analytics_service.dart';
 import '../feature_flags/feature_flag_service.dart';
 import '../feature_flags/firebase_remote_config_service.dart';
 import '../services/app_review_service.dart';
@@ -20,14 +19,14 @@ import '../../features/auth/data/datasources/auth_remote_data_source.dart';
 import '../../features/auth/data/datasources/auth_remote_data_source_impl.dart';
 import '../../features/auth/data/repositories/auth_repository_impl.dart';
 import '../network/api_client.dart';
-import '../../features/auth/domain/models/auth_result.dart';
-import '../../features/auth/domain/models/user.dart';
 import '../../features/auth/domain/repositories/auth_repository.dart';
 import '../../features/auth/domain/usecases/sign_in_usecase.dart';
 import '../../features/auth/domain/usecases/sign_up_usecase.dart';
 import '../../features/chat/data/datasources/chat_remote_datasource.dart';
 import '../../features/chat/data/repositories/chat_repository_impl.dart';
 import '../../features/chat/domain/repositories/chat_repository.dart';
+import '../services/auth_session_manager.dart';
+import '../services/session_service.dart';
 import '../../features/chat/domain/usecases/send_message_usecase.dart';
 import '../../features/chat/presentation/state/chat_controller.dart';
 import '../../features/chat/presentation/state/chat_state.dart';
@@ -53,11 +52,6 @@ class DependencyInjection {
 /// Provider for [LocalCache].
 final localCacheProvider = Provider<LocalCache>((ref) {
   return LocalCache();
-});
-
-/// Provider for [AnalyticsService].
-final analyticsServiceProvider = Provider<AnalyticsService>((ref) {
-  return AnalyticsService();
 });
 
 /// Provider for [RemoteConfigService].
@@ -186,8 +180,7 @@ final authRemoteDataSourceProvider = Provider<AuthRemoteDataSource>((ref) {
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
   final localDataSource = ref.read(authLocalDataSourceProvider);
   final remoteDataSource = ref.read(authRemoteDataSourceProvider);
-  final sessionService = ref.read(sessionServiceProvider);
-  return AuthRepositoryImpl(remoteDataSource, localDataSource, sessionService, ref);
+  return AuthRepositoryImpl(remoteDataSource, localDataSource);
 });
 
 /// Provider for [AuthSessionManager].
@@ -213,7 +206,7 @@ final signUpUseCaseProvider = Provider<SignUpUseCase>((ref) {
 // Session & Capabilities Providers
 // ============================================================================
 
-/// Provider for [SessionService].
+/// Provider for [SessionService] (Aziz's version using ApiClient).
 final sessionServiceProvider = Provider<SessionService>((ref) {
   final apiClient = ref.read(apiClientProvider);
   return SessionService(apiClient);
@@ -225,8 +218,8 @@ final sessionServiceProvider = Provider<SessionService>((ref) {
 
 /// Provider for [ChatRemoteDataSource].
 final chatRemoteDataSourceProvider = Provider<ChatRemoteDataSource>((ref) {
-  // Use SimpleApiClient for chat
-  return ChatRemoteDataSourceImpl(SimpleApiClient());
+  final apiClient = ref.read(apiClientProvider);
+  return ChatRemoteDataSourceImpl(apiClient);
 });
 
 /// Provider for [ChatRepository].

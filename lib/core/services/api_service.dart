@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart';
+import '../config/app_config.dart';
 import '../models/api_responses.dart';
 import '../network/api_exceptions.dart';
 
@@ -10,10 +11,15 @@ import '../network/api_exceptions.dart';
 /// Handles all HTTP requests to the backend API.
 /// Uses Firebase ID tokens for authentication.
 class ApiService {
-  /// Base URL for TestFlight (Render deployment).
+  /// Base URL for backend API.
   ///
-  /// For production, update to: https://api.iammara.com
-  static const String baseUrl = 'https://mara-api-uoum.onrender.com';
+  /// Uses AppConfig for environment-aware URL selection.
+  /// For TestFlight: https://mara-api-uoum.onrender.com
+  /// For production: https://api.mara.app
+  static String get baseUrl {
+    // Use AppConfig for consistent URL management
+    return AppConfig.baseUrl;
+  }
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -141,12 +147,16 @@ class ApiService {
       throw UnauthorizedException('User not authenticated');
     }
 
+    // Backend expects: Firebase token in Authorization header
+    // Body should contain device_id (and optional device_name)
+    // Note: This method doesn't send device_id - SessionService handles that
     final response = await http.post(
       Uri.parse('$baseUrl/api/v1/auth/session'),
       headers: {
         'Authorization': 'Bearer $token',
         'Content-Type': 'application/json',
       },
+      // Body should be added by caller (SessionService)
     );
 
     return _handleResponse<SessionResponse>(
@@ -157,7 +167,7 @@ class ApiService {
 
   /// Get current user profile.
   ///
-  /// GET /api/v1/auth/me
+  /// GET /v1/auth/me
   Future<MeResponse> getCurrentUser() async {
     final token = await _getFirebaseToken();
     if (token == null) {
@@ -184,7 +194,7 @@ class ApiService {
 
   /// Send chat message to AI.
   ///
-  /// POST /api/v1/chat
+  /// POST /v1/chat
   ///
   /// [message] - User's message text (required)
   /// [conversationId] - Optional conversation ID for continuing a thread

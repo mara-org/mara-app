@@ -57,6 +57,11 @@ app.*.map.json
 **/ios/ios_export/
 **/ios/ServiceDefinitions.json
 **/ios/Runner/GeneratedPluginRegistrant.*
+# iOS build artifacts
+**/ios/iphonesimulator/
+**/ios/XCBuildData/
+**/ios/*.xcworkspace/xcuserdata/
+**/ios/*.xcodeproj/xcuserdata/
 
 # Android related
 **/android/**/gradle-wrapper.jar
@@ -85,9 +90,55 @@ coverage/
 **/google-services.json
 **/GoogleService-Info.plist
 **/firebase_options.dart
+lib/firebase_options.dart
+
+# Environment variables and secrets
 .env
 .env.local
 .env.*.local
+*.env
+*.secret
+*.key
+*.pem
+*.p12
+*.keystore
+*.jks
+
+# API keys and tokens (if any exist)
+**/api_keys.dart
+**/secrets.dart
+**/config/secrets.dart
+
+# Build artifacts and generated files
+*.log
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# IDE and editor files
+.vscode/
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.backup
+
+# Duplicate/temporary Flutter files
+.flutter-plugins*
+!.flutter-plugins
+.flutter-plugins-dependencies*
+!.flutter-plugins-dependencies
+ios/Flutter/Flutter *.podspec
+ios/Flutter/Generated *.xcconfig
+ios/Flutter/flutter_export_environment *.sh
+ios/Podfile *.lock
 
 # Exceptions to above rules
 !**/ios/**/default.mode1v3

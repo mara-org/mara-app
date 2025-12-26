@@ -1,5 +1,5 @@
-import '../../../core/network/api_exceptions.dart';
-import '../../../core/utils/logger.dart';
+import '../../../../core/network/api_exceptions.dart';
+import '../../../../core/utils/logger.dart';
 import '../repositories/chat_repository.dart';
 import '../../data/models/chat_request.dart';
 import '../../data/models/chat_response.dart';

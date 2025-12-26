@@ -54,7 +54,7 @@ class QualityToggle extends StatelessWidget {
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              l10n.highQualityMode ?? 'High Quality Mode',
+              'High Quality Mode',
               style: TextStyle(
                 fontSize: 13,
                 color: isDark

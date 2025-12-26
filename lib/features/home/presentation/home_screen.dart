@@ -18,6 +18,7 @@ import '../../../core/theme/app_colors_dark.dart';
 import '../../../core/utils/platform_utils.dart';
 import '../../../core/widgets/main_bottom_navigation.dart';
 import '../../../core/widgets/mara_logo.dart';
+import '../../../core/widgets/spinning_mara_logo.dart';
 import '../../../core/widgets/primary_button.dart';
 import '../../../l10n/app_localizations.dart';
 
@@ -39,12 +40,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     super.initState();
     // Automatically sync health data when screen loads
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _autoSyncHealthData();
+      // Wrap async operations in error handling
+      _autoSyncHealthData().catchError((e, stackTrace) {
+        debugPrint('Error in _autoSyncHealthData: $e');
+      });
       // Set up periodic auto-sync every 5 minutes
       _startPeriodicSync();
       // Fetch user info and entitlements from backend if logged in
-      _fetchUserInfoIfLoggedIn();
+      _fetchUserInfoIfLoggedIn().catchError((e, stackTrace) {
+        debugPrint('Error in _fetchUserInfoIfLoggedIn: $e');
+      });
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
   }
 
   /// Fetch user info and entitlements from backend on app start.
@@ -80,7 +91,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     // Refresh every 5 minutes
     _periodicSyncTimer = Timer(const Duration(minutes: 5), () {
       if (mounted) {
-        _autoSyncHealthData();
+        _autoSyncHealthData().catchError((e, stackTrace) {
+          debugPrint('Error in periodic _autoSyncHealthData: $e');
+        });
         _startPeriodicSync(); // Schedule next sync
       }
     });
@@ -210,7 +223,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               Text(
                                 dateText,
                                 style: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.9),
+                                  color: Colors.white.withOpacity( 0.9),
                                   fontSize: 12,
                                   fontWeight: FontWeight.normal,
                                 ),
@@ -227,7 +240,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             width: 40,
                             height: 40,
                             decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.2),
+                              color: Colors.white.withOpacity( 0.2),
                               shape: BoxShape.circle,
                             ),
                             child: const Icon(
@@ -285,7 +298,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     : Colors.white,
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.grey.withValues(alpha: 0.1),
+                                    color: Colors.grey.withOpacity( 0.1),
                                     offset: const Offset(0, 1),
                                     blurRadius: 13,
                                   ),
@@ -368,7 +381,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 : AppColors.homeVitalSignsBackground,
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.25),
+                                color: Colors.black.withOpacity( 0.25),
                                 offset: const Offset(0, 4),
                                 blurRadius: 4,
                               ),
@@ -439,7 +452,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     : AppColors.homeCardBackground),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.25),
+                                color: Colors.black.withOpacity( 0.25),
                                 offset: const Offset(0, 4),
                                 blurRadius: 4,
                               ),
@@ -561,7 +574,7 @@ class _StepsCard extends ConsumerWidget {
             : AppColors.permissionCardBackground,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.25),
+            color: Colors.black.withOpacity( 0.25),
             offset: const Offset(0, 4),
             blurRadius: 4,
           ),
@@ -606,7 +619,7 @@ class _StepsCard extends ConsumerWidget {
                 style: TextStyle(
                   color: steps > 0
                       ? AppColors.languageButtonColor
-                      : AppColors.languageButtonColor.withValues(alpha: 0.6),
+                      : AppColors.languageButtonColor.withOpacity( 0.6),
                   fontSize: steps > 0 ? 13 : 11,
                   fontWeight: FontWeight.normal,
                 ),
@@ -616,7 +629,7 @@ class _StepsCard extends ConsumerWidget {
                 Text(
                   subtitle,
                   style: TextStyle(
-                    color: AppColors.languageButtonColor.withValues(alpha: 0.7),
+                    color: AppColors.languageButtonColor.withOpacity( 0.7),
                     fontSize: 10,
                     fontWeight: FontWeight.normal,
                   ),
@@ -638,10 +651,9 @@ class _StepsCard extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 8),
-            const SizedBox(
-              width: 24,
-              height: 24,
-              child: CircularProgressIndicator(strokeWidth: 2),
+            const SpinningMaraLogo(
+              width: 40,
+              height: 40,
             ),
           ],
         ),
@@ -659,14 +671,14 @@ class _StepsCard extends ConsumerWidget {
             const SizedBox(height: 8),
             Icon(
               Icons.directions_walk,
-              color: AppColors.languageButtonColor.withValues(alpha: 0.5),
+              color: AppColors.languageButtonColor.withOpacity( 0.5),
               size: 32,
             ),
             const SizedBox(height: 4),
             Text(
               '0',
               style: TextStyle(
-                color: AppColors.languageButtonColor.withValues(alpha: 0.6),
+                color: AppColors.languageButtonColor.withOpacity( 0.6),
                 fontSize: 11,
                 fontWeight: FontWeight.normal,
               ),
@@ -698,7 +710,7 @@ class _SleepCard extends ConsumerWidget {
             : AppColors.permissionCardBackground,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.25),
+            color: Colors.black.withOpacity( 0.25),
             offset: const Offset(0, 4),
             blurRadius: 4,
           ),
@@ -733,7 +745,7 @@ class _SleepCard extends ConsumerWidget {
                 style: TextStyle(
                   color: hours > 0
                       ? AppColors.languageButtonColor
-                      : AppColors.languageButtonColor.withValues(alpha: 0.6),
+                      : AppColors.languageButtonColor.withOpacity( 0.6),
                   fontSize: hours > 0 ? 13 : 11,
                   fontWeight: FontWeight.normal,
                 ),
@@ -756,10 +768,9 @@ class _SleepCard extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 8),
-            const SizedBox(
-              width: 24,
-              height: 24,
-              child: CircularProgressIndicator(strokeWidth: 2),
+            const SpinningMaraLogo(
+              width: 40,
+              height: 40,
             ),
           ],
         ),
@@ -777,14 +788,14 @@ class _SleepCard extends ConsumerWidget {
             const SizedBox(height: 8),
             Icon(
               Icons.bedtime,
-              color: AppColors.languageButtonColor.withValues(alpha: 0.5),
+              color: AppColors.languageButtonColor.withOpacity( 0.5),
               size: 32,
             ),
             const SizedBox(height: 4),
             Text(
               '--',
               style: TextStyle(
-                color: AppColors.languageButtonColor.withValues(alpha: 0.6),
+                color: AppColors.languageButtonColor.withOpacity( 0.6),
                 fontSize: 11,
                 fontWeight: FontWeight.normal,
               ),
@@ -826,7 +837,7 @@ class _WaterCard extends ConsumerWidget {
               : AppColors.permissionCardBackground,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.25),
+              color: Colors.black.withOpacity( 0.25),
               offset: const Offset(0, 4),
               blurRadius: 4,
             ),
@@ -861,7 +872,7 @@ class _WaterCard extends ConsumerWidget {
                   style: TextStyle(
                     color: liters > 0
                         ? AppColors.languageButtonColor
-                        : AppColors.languageButtonColor.withValues(alpha: 0.6),
+                        : AppColors.languageButtonColor.withOpacity( 0.6),
                     fontSize: liters > 0 ? 13 : 11,
                     fontWeight: FontWeight.normal,
                   ),
@@ -905,14 +916,14 @@ class _WaterCard extends ConsumerWidget {
               const SizedBox(height: 8),
               Icon(
                 Icons.water_drop,
-                color: AppColors.languageButtonColor.withValues(alpha: 0.5),
+                color: AppColors.languageButtonColor.withOpacity( 0.5),
                 size: 32,
               ),
               const SizedBox(height: 4),
               Text(
                 '--',
                 style: TextStyle(
-                  color: AppColors.languageButtonColor.withValues(alpha: 0.6),
+                  color: AppColors.languageButtonColor.withOpacity( 0.6),
                   fontSize: 11,
                   fontWeight: FontWeight.normal,
                 ),

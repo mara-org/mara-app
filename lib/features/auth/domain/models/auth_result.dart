@@ -42,6 +42,9 @@ enum AuthErrorType {
   /// Email not verified.
   emailNotVerified,
 
+  /// Email already registered (for sign-up).
+  emailAlreadyRegistered,
+
   /// Account disabled or locked.
   accountDisabled,
 

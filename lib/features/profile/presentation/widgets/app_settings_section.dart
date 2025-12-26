@@ -56,7 +56,7 @@ class AppSettingsSection extends ConsumerWidget {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: AppColors.languageButtonColor.withValues(alpha: 0.1),
+                    color: AppColors.languageButtonColor.withOpacity( 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
@@ -124,7 +124,7 @@ class AppSettingsSection extends ConsumerWidget {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: AppColors.languageButtonColor.withValues(alpha: 0.1),
+                  color: AppColors.languageButtonColor.withOpacity( 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
@@ -169,7 +169,7 @@ class AppSettingsSection extends ConsumerWidget {
                       );
                 },
                 activeTrackColor:
-                    AppColors.languageButtonColor.withValues(alpha: 0.5),
+                    AppColors.languageButtonColor.withOpacity( 0.5),
               ),
             ],
           ),
@@ -195,7 +195,7 @@ class AppSettingsSection extends ConsumerWidget {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: AppColors.languageButtonColor.withValues(alpha: 0.1),
+                    color: AppColors.languageButtonColor.withOpacity( 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
@@ -261,7 +261,7 @@ class AppSettingsSection extends ConsumerWidget {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: AppColors.languageButtonColor.withValues(alpha: 0.1),
+                  color: AppColors.languageButtonColor.withOpacity( 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
@@ -304,7 +304,7 @@ class AppSettingsSection extends ConsumerWidget {
                   ref.read(settingsProvider.notifier).setHealthReminders(value);
                 },
                 activeTrackColor:
-                    AppColors.languageButtonColor.withValues(alpha: 0.5),
+                    AppColors.languageButtonColor.withOpacity( 0.5),
               ),
             ],
           ),
@@ -327,7 +327,7 @@ class AppSettingsSection extends ConsumerWidget {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: AppColors.languageButtonColor.withValues(alpha: 0.1),
+                  color: AppColors.languageButtonColor.withOpacity( 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
@@ -372,7 +372,7 @@ class AppSettingsSection extends ConsumerWidget {
                       .setEmailNotifications(value);
                 },
                 activeTrackColor:
-                    AppColors.languageButtonColor.withValues(alpha: 0.5),
+                    AppColors.languageButtonColor.withOpacity( 0.5),
               ),
             ],
           ),

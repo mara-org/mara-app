@@ -17,7 +17,7 @@ class PasswordValidationResult {
       PasswordValidationResult._(true, const [], strength);
 
   /// Invalid password with error messages.
-  factory PasswordValidationResult.invalid(List<String> errors) =>
+  factory PasswordValidationResult.invalid(final List<String> errors) =>
       PasswordValidationResult._(
         false,
         errors,

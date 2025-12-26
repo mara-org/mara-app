@@ -1,4 +1,4 @@
-import '../../../core/models/chat_message.dart';
+import '../../../../core/models/chat_message.dart';
 import '../../data/models/quota_state.dart';
 
 /// State for chat screen.

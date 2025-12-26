@@ -29,7 +29,7 @@ class UserInfo {
   }
 }
 
-/// Session response from POST /api/v1/auth/session
+/// Session response from POST /v1/auth/session
 class SessionResponse {
   final UserInfo user;
   final String plan; // "free" or "premium"

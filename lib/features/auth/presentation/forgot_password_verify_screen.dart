@@ -1,26 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/widgets/mara_logo.dart';
+import '../../../core/widgets/spinning_mara_logo.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_colors_dark.dart';
 import '../../../core/utils/platform_utils.dart';
+import '../../../core/di/dependency_injection.dart';
+import '../../../core/providers/email_provider.dart';
 import '../../../l10n/app_localizations.dart';
+import '../data/datasources/auth_remote_data_source_impl.dart'
+    show VerificationRateLimitException;
 
-class ForgotPasswordVerifyScreen extends StatefulWidget {
+class ForgotPasswordVerifyScreen extends ConsumerStatefulWidget {
   const ForgotPasswordVerifyScreen({super.key});
 
   @override
-  State<ForgotPasswordVerifyScreen> createState() =>
+  ConsumerState<ForgotPasswordVerifyScreen> createState() =>
       _ForgotPasswordVerifyScreenState();
 }
 
 class _ForgotPasswordVerifyScreenState
-    extends State<ForgotPasswordVerifyScreen> {
+    extends ConsumerState<ForgotPasswordVerifyScreen> {
   final List<TextEditingController> _controllers = List.generate(
     6,
     (index) => TextEditingController(),
   );
   final List<FocusNode> _focusNodes = List.generate(6, (index) => FocusNode());
+  bool _isVerifying = false;
+  String? _errorMessage;
+  String? _resetToken; // Store reset token from backend
 
   @override
   void dispose() {
@@ -33,15 +42,73 @@ class _ForgotPasswordVerifyScreenState
     super.dispose();
   }
 
-  void _handleVerify(AppLocalizations l10n) {
+  Future<void> _handleVerify(AppLocalizations l10n) async {
     final code = _controllers.map((c) => c.text).join();
-    if (code.length == 6) {
-      // Navigate to reset password screen
-      context.push('/reset-password');
-    } else {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(l10n.verifyEmailError)));
+    if (code.length != 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.verifyEmailError)),
+      );
+      return;
+    }
+
+    final email = ref.read(emailProvider);
+    if (email == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Email not found. Please start over.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      _isVerifying = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final authRepository = ref.read(authRepositoryProvider);
+      final success = await authRepository.verifyPasswordResetCode(
+        email: email,
+        code: code,
+      );
+
+      if (!mounted) return;
+
+      if (success) {
+        // Store reset token (backend should return it, but for now we'll use code as token)
+        // TODO: Update when backend returns actual reset token
+        _resetToken = code;
+        
+        // Navigate to reset password screen with token
+        context.push('/reset-password', extra: {'resetToken': _resetToken});
+      } else {
+        setState(() {
+          _errorMessage = 'Invalid code. Please try again.';
+        });
+        // Clear code inputs
+        for (var controller in _controllers) {
+          controller.clear();
+        }
+        _focusNodes[0].requestFocus();
+      }
+    } on VerificationRateLimitException catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _errorMessage = e.message;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _errorMessage = 'An error occurred. Please try again.';
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isVerifying = false;
+        });
+      }
     }
   }
 
@@ -80,9 +147,7 @@ class _ForgotPasswordVerifyScreenState
                           width: 36,
                           height: 36,
                           decoration: BoxDecoration(
-                            color: AppColors.languageButtonColor.withValues(
-                              alpha: 0.1,
-                            ),
+                            color: AppColors.languageButtonColor.withOpacity(0.1),
                             shape: BoxShape.circle,
                           ),
                           child: const Icon(
@@ -93,7 +158,7 @@ class _ForgotPasswordVerifyScreenState
                         ),
                       ),
                     ),
-                    const Center(child: MaraLogo(width: 258, height: 202)),
+                    const Center(child: MaraLogo(width: 140, height: 99)),
                   ],
                 ),
                 const SizedBox(height: 40),
@@ -185,6 +250,24 @@ class _ForgotPasswordVerifyScreenState
                   }),
                 ),
                 const SizedBox(height: 40),
+                // Error message
+                if (_errorMessage != null) ...[
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    margin: const EdgeInsets.symmetric(horizontal: 20),
+                    decoration: BoxDecoration(
+                      color: Colors.red.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.red, width: 1),
+                    ),
+                    child: Text(
+                      _errorMessage!,
+                      style: const TextStyle(color: Colors.red, fontSize: 14),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                ],
                 // Verify button with gradient
                 Container(
                   width: double.infinity,
@@ -202,7 +285,7 @@ class _ForgotPasswordVerifyScreenState
                     boxShadow: [
                       BoxShadow(
                         color:
-                            Colors.black.withValues(alpha: isDark ? 0.4 : 0.25),
+                            Colors.black.withOpacity( isDark ? 0.4 : 0.25),
                         offset: const Offset(0, 4),
                         blurRadius: 50,
                       ),
@@ -211,19 +294,24 @@ class _ForgotPasswordVerifyScreenState
                   child: Material(
                     color: Colors.transparent,
                     child: InkWell(
-                      onTap: () => _handleVerify(l10n),
+                      onTap: _isVerifying ? null : () => _handleVerify(l10n),
                       borderRadius: BorderRadius.circular(12),
                       child: Center(
-                        child: Text(
-                          l10n.verify,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.normal,
-                            height: 1,
-                          ),
-                        ),
+                        child: _isVerifying
+                            ? const SpinningMaraLogo(
+                                width: 32,
+                                height: 32,
+                              )
+                            : Text(
+                                l10n.verify,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.normal,
+                                  height: 1,
+                                ),
+                              ),
                       ),
                     ),
                   ),

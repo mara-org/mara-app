@@ -38,6 +38,11 @@
 	<string>Mara needs access to your health data to provide personalized health insights.</string>
 	<key>NSHealthUpdateUsageDescription</key>
 	<string>Mara needs to save your health data to track your progress.</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Mara needs local network access to connect to backend services and sync your health data.</string>
+	<key>NSBonjourServices</key>
+	<array>
+	</array>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>
@@ -60,6 +65,19 @@
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<false/>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.iammara.maraApp</string>
+			</array>
+		</dict>
 	</array>
 </dict>
 </plist>

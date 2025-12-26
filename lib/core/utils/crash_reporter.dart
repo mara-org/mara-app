@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 // Configure via environment variables or runtime config
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 /// Crash reporter for Mara app
@@ -31,6 +32,15 @@ class CrashReporter {
   static String? _buildNumber;
   static String? _currentScreen;
   static String? _currentFeature;
+
+  /// Check if Firebase is initialized before accessing Crashlytics
+  static bool get _isFirebaseReady {
+    try {
+      return Firebase.apps.isNotEmpty;
+    } catch (e) {
+      return false;
+    }
+  }
 
   /// Initialize crash reporting
   ///
@@ -81,8 +91,17 @@ class CrashReporter {
     }
 
     // Set default tags in Firebase Crashlytics
+    // Only access Firebase Crashlytics if Firebase is initialized
     if (_useFirebase) {
       try {
+        // Check if Firebase is initialized before accessing Crashlytics
+        if (Firebase.apps.isEmpty) {
+          if (kDebugMode) {
+            debugPrint('⚠️ Firebase not initialized, skipping Crashlytics setup');
+          }
+          return;
+        }
+        
         if (_environment != null) {
           FirebaseCrashlytics.instance
               .setCustomKey('environment', _environment!);
@@ -109,10 +128,12 @@ class CrashReporter {
         debugPrint('App Version: $_appVersion (Build: $_buildNumber)');
       }
       if (_sentryDsn != null && _sentryDsn!.isNotEmpty) {
-        debugPrint('Sentry enabled (DSN configured)');
+        debugPrint('✅ Sentry enabled (DSN configured)');
+      } else {
+        debugPrint('ℹ️  Sentry disabled (DSN not set - optional for staging/dev)');
       }
       if (_useFirebase) {
-        debugPrint('Firebase Crashlytics enabled');
+        debugPrint('✅ Firebase Crashlytics enabled');
       }
     }
   }
@@ -133,7 +154,7 @@ class CrashReporter {
       }
     }
 
-    if (_useFirebase) {
+    if (_useFirebase && _isFirebaseReady) {
       try {
         FirebaseCrashlytics.instance.setCustomKey('screen', screen);
       } catch (e) {
@@ -158,7 +179,7 @@ class CrashReporter {
       }
     }
 
-    if (_useFirebase) {
+    if (_useFirebase && _isFirebaseReady) {
       try {
         FirebaseCrashlytics.instance.setCustomKey('feature', feature);
       } catch (e) {
@@ -199,9 +220,13 @@ class CrashReporter {
   /// Run app with crash handling zone
   ///
   /// Use this instead of runApp() to ensure all errors are caught
+  /// Note: WidgetsFlutterBinding.ensureInitialized() must be called BEFORE this
+  /// to avoid zone mismatch warnings
   static void runAppWithCrashHandling(Widget app) {
-    runZonedGuarded<Future<void>>(
-      () async {
+    // Run in the same zone to avoid zone mismatch warnings
+    // ensureInitialized() was already called in main(), so we're in the same zone
+    runZonedGuarded<void>(
+      () {
         runApp(app);
       },
       (error, stack) {
@@ -305,8 +330,8 @@ class CrashReporter {
         }
       }
 
-      // Send to Firebase Crashlytics if enabled
-      if (_useFirebase) {
+      // Send to Firebase Crashlytics if enabled and Firebase is initialized
+      if (_useFirebase && _isFirebaseReady) {
         try {
           // Set custom keys before recording
           FirebaseCrashlytics.instance.setCustomKey('error_type', errorType);

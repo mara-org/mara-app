@@ -51,16 +51,15 @@ class ShareAppService implements IShareAppService {
 
   /// Returns the platform-specific store URL.
   ///
-  /// Falls back to [AppConfig.publicLandingPageUrl] if store URLs
-  /// are not yet configured.
+  /// Falls back to public landing page if store URLs are not yet configured.
   String _getStoreUrl() {
     if (Platform.isAndroid) {
-      return AppConfig.androidStoreUrl;
+      return 'https://play.google.com/store/apps/details?id=${AppConfig.androidPackageName}';
     } else if (Platform.isIOS) {
-      return AppConfig.iosStoreUrl;
+      return 'https://apps.apple.com/app/id${AppConfig.iosAppId}';
     } else {
       // Web or other platforms - use landing page as fallback
-      return AppConfig.publicLandingPageUrl;
+      return 'https://iammara.com';
     }
   }
 

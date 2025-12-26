@@ -64,7 +64,7 @@ class _HeightScreenState extends ConsumerState<HeightScreen> {
                       height: 36,
                       decoration: BoxDecoration(
                         color: AppColors.languageButtonColor
-                            .withValues(alpha: 0.1),
+                            .withOpacity( 0.1),
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(
@@ -77,7 +77,7 @@ class _HeightScreenState extends ConsumerState<HeightScreen> {
                 ),
                 const SizedBox(height: 20),
                 // Mara logo
-                const Center(child: MaraLogo(width: 258, height: 202)),
+                const Center(child: MaraLogo(width: 140, height: 99)),
                 const SizedBox(height: 40),
                 // Title
                 Text(
@@ -162,7 +162,7 @@ class _HeightScreenState extends ConsumerState<HeightScreen> {
                           decoration: BoxDecoration(
                             color: isSelected
                                 ? AppColors.languageButtonColor
-                                    .withValues(alpha: 0.2)
+                                    .withOpacity( 0.2)
                                 : Colors.transparent,
                             borderRadius: BorderRadius.circular(19),
                           ),
@@ -174,7 +174,7 @@ class _HeightScreenState extends ConsumerState<HeightScreen> {
                                   : (isDark
                                           ? AppColorsDark.textSecondary
                                           : const Color(0xFF94A3B8))
-                                      .withValues(alpha: 0.6),
+                                      .withOpacity( 0.6),
                               fontSize: 20,
                               fontWeight: isSelected
                                   ? FontWeight.w500

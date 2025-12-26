@@ -353,7 +353,7 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                         decoration: InputDecoration(
                           hintText: chatState.canSendMessage
                               ? l10n.whatsInYourHead
-                              : (l10n.upgrade ?? 'Upgrade'),
+                              : 'Upgrade',
                           hintStyle: TextStyle(
                             color: isDark
                                 ? AppColorsDark.textSecondary

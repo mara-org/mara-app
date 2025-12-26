@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../core/models/chat_message.dart';
+import '../../../../core/models/chat_message.dart';
 import '../../../core/providers/chat_history_provider.dart';
-import '../../../core/providers/chat_messages_provider.dart';
+import '../../../../core/providers/chat_messages_provider.dart';
 import '../../../core/providers/chat_topic_provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_colors_dark.dart';
@@ -119,7 +119,8 @@ class _MaraChatScreenState extends ConsumerState<MaraChatScreen> {
     final l10n = AppLocalizations.of(context);
     if (l10n != null) {
       Future.delayed(const Duration(milliseconds: 500), () {
-        ref.read(chatMessagesProvider.notifier).addMessage(
+        try {
+          ref.read(chatMessagesProvider.notifier).addMessage(
               ChatMessage(text: l10n.thanksForSharing, type: MessageType.bot),
             );
 
@@ -148,6 +149,10 @@ class _MaraChatScreenState extends ConsumerState<MaraChatScreen> {
             );
           }
         });
+        } catch (e, stackTrace) {
+          // Silently handle errors in delayed callback
+          debugPrint('Error in delayed chat message callback: $e');
+        }
       });
     }
   }
@@ -239,7 +244,7 @@ class _MaraChatScreenState extends ConsumerState<MaraChatScreen> {
                 color: isDark ? AppColorsDark.cardBackground : Colors.white,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.grey.withValues(alpha: 0.1),
+                    color: Colors.grey.withOpacity( 0.1),
                     offset: const Offset(0, -2),
                     blurRadius: 4,
                   ),

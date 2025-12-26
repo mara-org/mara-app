@@ -58,7 +58,7 @@ class _GenderScreenState extends ConsumerState<GenderScreen> {
                       height: 36,
                       decoration: BoxDecoration(
                         color: AppColors.languageButtonColor
-                            .withValues(alpha: 0.1),
+                            .withOpacity( 0.1),
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(
@@ -71,7 +71,7 @@ class _GenderScreenState extends ConsumerState<GenderScreen> {
                 ),
                 const SizedBox(height: 20),
                 // Mara logo
-                const Center(child: MaraLogo(width: 258, height: 202)),
+                const Center(child: MaraLogo(width: 140, height: 99)),
                 const SizedBox(height: 40),
                 // Title
                 Text(

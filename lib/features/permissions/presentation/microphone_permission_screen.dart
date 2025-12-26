@@ -152,7 +152,7 @@ class MicrophonePermissionScreen extends ConsumerWidget {
                                 color: (isDark
                                         ? AppColorsDark.textSecondary
                                         : AppColors.textSecondary)
-                                    .withValues(alpha: 0.7),
+                                    .withOpacity( 0.7),
                                 fontSize: 13,
                                 fontWeight: FontWeight.normal,
                                 height: 1.5,

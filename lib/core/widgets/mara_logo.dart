@@ -9,8 +9,8 @@ class MaraLogo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final logoWidth = width ?? (PlatformUtils.isIOS ? 120 : 100);
-    final logoHeight = height ?? (PlatformUtils.isIOS ? 120 : 100);
+    final logoWidth = width ?? (PlatformUtils.isIOS ? 160 : 140);
+    final logoHeight = height ?? (PlatformUtils.isIOS ? 160 : 140);
 
     return Image.asset(
       'assets/images/mara_logo_new.png',

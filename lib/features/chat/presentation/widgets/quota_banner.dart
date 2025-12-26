@@ -50,7 +50,7 @@ class QuotaBanner extends StatelessWidget {
         children: [
           Expanded(
             child: Text(
-              '${l10n.remainingToday}: ${quotaState!.remainingMessages} ${l10n.messages}',
+              '${'Remaining today'}: ${quotaState!.remainingMessages} ${'messages'}',
               style: TextStyle(
                 fontSize: 12,
                 color: isDark
@@ -62,7 +62,7 @@ class QuotaBanner extends StatelessWidget {
           ),
           const SizedBox(width: 12),
           Text(
-            '${l10n.tokenBudget}: ${quotaState!.remainingTokenBudget}',
+            '${'Token budget'}: ${quotaState!.remainingTokenBudget}',
             style: TextStyle(
               fontSize: 12,
               color: isDark

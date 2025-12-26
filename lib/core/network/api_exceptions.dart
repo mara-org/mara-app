@@ -20,9 +20,25 @@ class UnauthorizedException extends ApiException {
 /// 403 Forbidden - Quota/plan restriction.
 class ForbiddenException extends ApiException {
   final String? reason;
+  final Map<String, dynamic>? responseData;
 
-  ForbiddenException([String? message, this.reason])
+  ForbiddenException([String? message, this.reason, this.responseData])
       : super(message ?? 'Access forbidden', 403);
+}
+
+/// Device limit exceeded - User has reached max devices for their plan.
+class DeviceLimitException extends ForbiddenException {
+  final int currentDevices;
+  final int maxDevices;
+  final String plan;
+
+  DeviceLimitException({
+    required String message,
+    required this.currentDevices,
+    required this.maxDevices,
+    required this.plan,
+    Map<String, dynamic>? responseData,
+  }) : super(message, 'DEVICE_LIMIT_EXCEEDED', responseData);
 }
 
 /// 429 Too Many Requests - Rate limit exceeded.

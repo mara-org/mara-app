@@ -1,5 +1,3 @@
-import 'dart:io';
-import 'package:flutter/foundation.dart' show kIsWeb, kDebugMode;
 import 'app_config.dart';
 
 /// API configuration for backend integration.
@@ -22,27 +20,28 @@ class ApiConfig {
     return AppConfig.baseUrl;
   }
 
-  /// API endpoints - Firebase Authentication
+  /// API endpoints - All use versioned /api/v1/ prefix
+  
+  /// Authentication endpoints (as per backend API spec)
+  /// POST /api/v1/auth/register - Sign up with Firebase ID token
   static const String registerEndpoint = '/api/v1/auth/register';
-  static const String loginEndpoint = '/api/v1/auth/login';
-  static const String sessionEndpoint = '/v1/auth/session';
+  
+  /// POST /api/v1/auth/session - Create session (sign in) with device tracking
+  static const String sessionEndpoint = '/api/v1/auth/session';
+  
+  /// GET /api/v1/auth/me - Get current user profile
   static const String getCurrentUserEndpoint = '/api/v1/auth/me';
   
-  /// Legacy endpoints (kept for backward compatibility if needed)
-  static const String signupEndpoint = '/api/v1/auth/signup';
-  static const String signinEndpoint = '/api/v1/auth/signin';
-  static const String verifyEmailEndpoint = '/api/v1/auth/verify-email';
-  static const String resendVerificationEndpoint = '/api/v1/auth/resend-verification-code';
-  static const String forgotPasswordEndpoint = '/api/v1/auth/forgot-password';
-  static const String verifyPasswordResetCodeEndpoint = '/api/v1/auth/verify-password-reset-code';
-  static const String resetPasswordEndpoint = '/api/v1/auth/reset-password';
-  static const String signoutEndpoint = '/api/v1/auth/signout';
+  /// Account deletion endpoint
+  /// DELETE /api/v1/user/profile - Soft delete account (no code required)
+  static const String deleteAccountEndpoint = '/api/v1/user/profile';
 
   /// Chat endpoints
-  static const String chatEndpoint = '/v1/chat';
+  static const String chatEndpoint = '/api/v1/chat';
 
-  /// Health & Status
+  /// Health & Status endpoints
   static const String healthEndpoint = '/health';
+  static const String readyEndpoint = '/ready';
   static const String docsEndpoint = '/docs';
 
   /// Headers

@@ -464,14 +464,14 @@ class _GoalPickerSection extends StatelessWidget {
         border: Border.all(
           color: isDark
               ? AppColorsDark.borderColor
-              : AppColors.borderColor.withValues(alpha: 0.3),
+              : AppColors.borderColor.withOpacity( 0.3),
           width: 1,
         ),
         boxShadow: isDark
             ? null
             : [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
+                  color: Colors.black.withOpacity( 0.05),
                   blurRadius: 10,
                   offset: const Offset(0, 2),
                 ),
@@ -486,7 +486,7 @@ class _GoalPickerSection extends StatelessWidget {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: AppColors.languageButtonColor.withValues(alpha: 0.1),
+                  color: AppColors.languageButtonColor.withOpacity( 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(

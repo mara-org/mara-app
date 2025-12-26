@@ -71,7 +71,7 @@ class UpgradeBanner extends StatelessWidget {
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
             child: Text(
-              l10n.upgrade ?? 'Upgrade',
+              'Upgrade' ?? 'Upgrade',
               style: TextStyle(
                 fontSize: 13,
                 color: AppColors.languageButtonColor,

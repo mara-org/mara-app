@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../../core/config/app_config.dart';
+import '../../../core/config/api_config.dart';
 import '../../../core/network/simple_api_client.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_colors_dark.dart';
+import 'package:dio/dio.dart';
 
 /// Network test screen for debugging.
 /// 
@@ -20,14 +22,23 @@ class _NetworkTestScreenState extends State<NetworkTestScreen> {
   bool _isLoading = false;
   String? _healthStatus;
   String? _versionStatus;
+  String? _verificationStatus;
   int? _healthLatency;
   int? _versionLatency;
+  int? _verificationLatency;
   String? _error;
+  final TextEditingController _emailController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     _runTests();
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    super.dispose();
   }
 
   Future<void> _runTests() async {
@@ -85,6 +96,14 @@ class _NetworkTestScreenState extends State<NetworkTestScreen> {
         _isLoading = false;
       });
     }
+  }
+
+  Future<void> _testVerificationCode() async {
+    // Verification code endpoint removed - Firebase handles email verification via links
+    setState(() {
+      _verificationStatus = 'ℹ️ Email verification is handled by Firebase via email links. No backend endpoint needed.';
+      _verificationLatency = null;
+    });
   }
 
   @override
@@ -241,6 +260,84 @@ class _NetworkTestScreenState extends State<NetworkTestScreen> {
                             color: _versionStatus!.contains('Error')
                                 ? Colors.red
                                 : (isDark ? AppColorsDark.textPrimary : AppColors.textPrimary),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
+              // Verification code test
+              Card(
+                color: isDark ? AppColorsDark.cardBackground : AppColors.cardBackground,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Verification Code Test',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: isDark ? AppColorsDark.textPrimary : AppColors.textPrimary,
+                            ),
+                          ),
+                          if (_verificationLatency != null)
+                            Text(
+                              '${_verificationLatency}ms',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: isDark ? AppColorsDark.textSecondary : AppColors.textSecondary,
+                              ),
+                            ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      TextField(
+                        controller: _emailController,
+                        decoration: InputDecoration(
+                          labelText: 'Email',
+                          hintText: 'test@example.com',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          filled: true,
+                          fillColor: isDark 
+                              ? AppColorsDark.cardBackground 
+                              : Colors.grey[100],
+                        ),
+                        keyboardType: TextInputType.emailAddress,
+                      ),
+                      const SizedBox(height: 12),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: _isLoading ? null : _testVerificationCode,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.languageButtonColor,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                          ),
+                          child: const Text('Test Verification Code'),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      if (_verificationStatus != null)
+                        Text(
+                          _verificationStatus!,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: _verificationStatus!.contains('✅')
+                                ? Colors.green
+                                : _verificationStatus!.contains('❌')
+                                    ? Colors.red
+                                    : (isDark ? AppColorsDark.textPrimary : AppColors.textPrimary),
                           ),
                         ),
                     ],

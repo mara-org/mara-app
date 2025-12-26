@@ -1,13 +1,16 @@
 import 'package:go_router/go_router.dart';
 
-import '../../features/analytics/presentation/analyst_dashboard_screen.dart';
 import '../../features/auth/auth_screen.dart';
 import '../../features/auth/presentation/forgot_password_email_screen.dart';
-import '../../features/auth/presentation/forgot_password_verify_screen.dart';
+// Old password reset code verification screen (hidden - now using Firebase links)
+// import '../../features/auth/presentation/forgot_password_verify_screen.dart';
+import '../../features/auth/presentation/password_reset_link_screen.dart';
 import '../../features/auth/presentation/reset_password_screen.dart';
 import '../../features/auth/presentation/sign_in_email_screen.dart';
 import '../../features/auth/presentation/sign_up_choices_screen.dart';
-import '../../features/auth/presentation/verify_email_screen.dart';
+// Old code verification screen (hidden but kept for future use)
+// import '../../features/auth/presentation/verify_email_screen.dart';
+import '../../features/auth/presentation/verify_email_link_screen.dart';
 import '../../features/auth/presentation/welcome_back_screen.dart';
 import '../../features/chat/presentation/mara_chat_history_screen.dart';
 import '../../features/chat/presentation/pages/chat_page.dart';
@@ -93,9 +96,19 @@ class AppRouter {
         path: '/sign-in-email',
         builder: (context, state) => const SignInEmailScreen(),
       ),
+      // Firebase email link verification (active)
       GoRoute(
         path: '/verify-email',
-        builder: (context, state) => const VerifyEmailScreen(),
+        builder: (context, state) => const VerifyEmailLinkScreen(),
+      ),
+      // Old code verification screen (hidden but kept for future use)
+      // GoRoute(
+      //   path: '/verify-email-code',
+      //   builder: (context, state) => const VerifyEmailScreen(),
+      // ),
+      GoRoute(
+        path: '/password-reset-link',
+        builder: (context, state) => const PasswordResetLinkScreen(),
       ),
       GoRoute(
         path: '/welcome-back',
@@ -105,13 +118,18 @@ class AppRouter {
         path: '/forgot-password-email',
         builder: (context, state) => const ForgotPasswordEmailScreen(),
       ),
-      GoRoute(
-        path: '/forgot-password-verify',
-        builder: (context, state) => const ForgotPasswordVerifyScreen(),
-      ),
+      // Old password reset code verification screen (hidden - now using Firebase links)
+      // GoRoute(
+      //   path: '/forgot-password-verify',
+      //   builder: (context, state) => const ForgotPasswordVerifyScreen(),
+      // ),
       GoRoute(
         path: '/reset-password',
-        builder: (context, state) => const ResetPasswordScreen(),
+        builder: (context, state) {
+          // Extract oobCode from query parameters (from Firebase deep link)
+          final oobCode = state.uri.queryParameters['oobCode'];
+          return ResetPasswordScreen(oobCode: oobCode);
+        },
       ),
       GoRoute(path: '/auth', builder: (context, state) => const AuthScreen()),
       GoRoute(path: '/ready', builder: (context, state) => const ReadyScreen()),
@@ -205,10 +223,6 @@ class AppRouter {
         builder: (context, state) => const PermissionsScreen(),
       ),
       GoRoute(path: '/home', builder: (context, state) => const HomeScreen()),
-      GoRoute(
-        path: '/analytics',
-        builder: (context, state) => const AnalystDashboardScreen(),
-      ),
       GoRoute(
         path: '/chat',
         builder: (context, state) {

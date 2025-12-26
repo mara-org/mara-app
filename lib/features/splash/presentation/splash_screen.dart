@@ -39,11 +39,14 @@ class _SplashScreenState extends State<SplashScreen> {
         child: SafeArea(
           child: Stack(
             children: [
-              // Logo at specific position
-              Positioned(
-                left: 68,
-                top: 270,
-                child: const MaraLogo(width: 285, height: 202),
+              // Logo centered vertically and horizontally
+              Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const MaraLogo(width: 200, height: 140),
+                  ],
+                ),
               ),
               // Tagline at the bottom
               Positioned(

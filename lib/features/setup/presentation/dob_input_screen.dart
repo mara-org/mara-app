@@ -173,7 +173,7 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
                       height: 36,
                       decoration: BoxDecoration(
                         color: AppColors.languageButtonColor
-                            .withValues(alpha: 0.1),
+                            .withOpacity( 0.1),
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(
@@ -186,7 +186,7 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
                 ),
                 const SizedBox(height: 20),
                 // Mara logo
-                const Center(child: MaraLogo(width: 258, height: 202)),
+                const Center(child: MaraLogo(width: 140, height: 99)),
                 const SizedBox(height: 40),
                 // Title
                 Text(
@@ -257,7 +257,7 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
                                                     ? AppColorsDark
                                                         .textSecondary
                                                     : AppColors.textSecondary)
-                                                .withValues(alpha: 0.66),
+                                                .withOpacity( 0.66),
                                         fontSize: 20,
                                         fontWeight: FontWeight.normal,
                                       ),
@@ -286,7 +286,7 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
                                   : (isDark
                                           ? AppColorsDark.textSecondary
                                           : AppColors.textSecondary)
-                                      .withValues(alpha: 0.5),
+                                      .withOpacity( 0.5),
                               fontSize: 14,
                             ),
                           ),
@@ -339,7 +339,7 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
                                                       ? AppColorsDark
                                                           .textSecondary
                                                       : AppColors.textSecondary)
-                                                  .withValues(alpha: 0.66),
+                                                  .withOpacity( 0.66),
                                           fontSize: 20,
                                           fontWeight: FontWeight.normal,
                                         ),
@@ -370,7 +370,7 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
                                   : (isDark
                                           ? AppColorsDark.textSecondary
                                           : AppColors.textSecondary)
-                                      .withValues(alpha: 0.5),
+                                      .withOpacity( 0.5),
                               fontSize: 14,
                             ),
                           ),
@@ -425,7 +425,7 @@ class _DobInputScreenState extends ConsumerState<DobInputScreen> {
                                                       ? AppColorsDark
                                                           .textSecondary
                                                       : AppColors.textSecondary)
-                                                  .withValues(alpha: 0.66),
+                                                  .withOpacity( 0.66),
                                           fontSize: 20,
                                           fontWeight: FontWeight.normal,
                                         ),

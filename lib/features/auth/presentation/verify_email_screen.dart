@@ -8,9 +8,14 @@ import '../../../core/theme/app_colors_dark.dart';
 import '../../../core/utils/platform_utils.dart';
 import '../../../core/widgets/mara_code_input.dart';
 import '../../../core/widgets/mara_logo.dart';
+import '../../../core/widgets/spinning_mara_logo.dart';
 import '../../../core/di/dependency_injection.dart';
+import '../../../core/session/session_service.dart';
+import '../../../core/providers/email_provider.dart';
+import '../../../core/providers/temp_auth_provider.dart';
+import '../../../core/services/api_service.dart';
+import '../../../core/utils/firebase_auth_helper.dart';
 import '../../../l10n/app_localizations.dart';
-import '../domain/repositories/auth_repository.dart';
 import '../data/datasources/auth_remote_data_source_impl.dart'
     show VerificationRateLimitException, VerificationCooldownException;
 
@@ -110,13 +115,112 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
     });
 
     try {
-      final success = await authRepository.verifyEmailCode(_code);
+      final email = ref.read(emailProvider);
+      final tempAuth = ref.read(tempAuthProvider);
+      
+      if (email == null) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Email not found. Please sign up again.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+      
+      if (tempAuth.password == null) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Session expired. Please sign in again.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        context.go('/welcome-back');
+        return;
+      }
+
+      // Step 1: Verify email code
+      final success = await authRepository.verifyEmailCode(_code, email: email);
       
       if (!mounted) return;
       
       if (success) {
-        // Success - navigate to ready screen
-        context.go('/ready');
+        debugPrint('✅ VerifyEmailScreen: Email verification successful');
+        
+        // Step 2: Sign in with Firebase using stored password
+        try {
+          await FirebaseAuthHelper.signInWithEmailAndPassword(
+            email: email,
+            password: tempAuth.password!,
+          );
+          debugPrint('✅ VerifyEmailScreen: Firebase sign-in successful');
+          
+          // Clear stored password for security
+          ref.read(tempAuthProvider.notifier).clearPassword();
+          
+          // Step 3: Create backend session
+          final sessionService = SessionService();
+          await sessionService.createBackendSession();
+          debugPrint('✅ VerifyEmailScreen: Backend session created successfully');
+          
+          // Step 4: Fetch user info
+          await sessionService.fetchUserInfo();
+          debugPrint('✅ VerifyEmailScreen: User info fetched successfully');
+          
+          // Step 5: Check profile completeness
+          final apiService = ApiService();
+          try {
+            final profileResponse = await apiService.getUserProfile();
+            final profile = profileResponse.profile;
+            
+            // Check if required fields are present
+            final hasName = profile['name'] != null && 
+                           (profile['name'] as String).trim().isNotEmpty;
+            final hasDateOfBirth = profile['dateOfBirth'] != null;
+            final hasGender = profile['gender'] != null;
+            final hasHeight = profile['height'] != null && 
+                             (profile['height'] as int) > 0;
+            final hasWeight = profile['weight'] != null && 
+                             (profile['weight'] as int) > 0;
+            
+            final isProfileComplete = hasName && hasDateOfBirth && 
+                                     hasGender && hasHeight && hasWeight;
+            
+            if (!isProfileComplete) {
+              debugPrint('⚠️ VerifyEmailScreen: Profile incomplete, redirecting to onboarding');
+              if (!mounted) return;
+              context.go('/onboarding');
+              return;
+            }
+            
+            debugPrint('✅ VerifyEmailScreen: Profile complete, navigating to home');
+            // Profile is complete - navigate to home
+            if (!mounted) return;
+            context.go('/home');
+            return;
+          } catch (e) {
+            // If profile fetch fails, assume incomplete and redirect to onboarding
+            debugPrint('⚠️ VerifyEmailScreen: Error fetching profile: $e');
+            debugPrint('⚠️ VerifyEmailScreen: Redirecting to onboarding');
+            if (!mounted) return;
+            context.go('/onboarding');
+            return;
+          }
+        } catch (e) {
+          // Clear password on error
+          ref.read(tempAuthProvider.notifier).clearPassword();
+          debugPrint('❌ VerifyEmailScreen: Error signing in with Firebase: $e');
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Sign in failed. Please try again.'),
+              backgroundColor: Colors.red,
+            ),
+          );
+          return;
+        }
       } else {
         // Failed verification
         setState(() {
@@ -196,13 +300,26 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
     if (!_canResend) return;
     
     final authRepository = ref.read(authRepositoryProvider);
+    final email = ref.read(emailProvider);
+    
+    if (email == null) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Email not found. Please sign in again.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      context.go('/welcome-back');
+      return;
+    }
     
     setState(() {
       _isResending = true;
     });
 
     try {
-      final success = await authRepository.resendVerificationCode();
+      final success = await authRepository.resendVerificationCode(email: email);
       
       if (!mounted) return;
       
@@ -320,7 +437,7 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
                         ),
                       ),
                     ),
-                    const Center(child: MaraLogo(width: 258, height: 202)),
+                    const Center(child: MaraLogo(width: 180, height: 130)),
                   ],
                 ),
                 const SizedBox(height: 40),
@@ -384,20 +501,29 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
                     opacity: _isLockedOut ? 0.5 : 1.0,
                     child: IgnorePointer(
                       ignoring: _isLockedOut,
-                      child: MaraCodeInput(
+                      child:                       MaraCodeInput(
                         key: _codeInputKey,
                         length: _codeLength,
                         onChanged: (final value) {
+                          debugPrint('🔢 VerifyEmailScreen: Code changed: "$value" (length: ${value.length})');
                           setState(() {
                             _code = value;
                           });
+                          debugPrint('🔢 VerifyEmailScreen: _code updated to "$_code"');
+                          debugPrint('🔢 VerifyEmailScreen: _isCodeComplete: $_isCodeComplete');
+                          debugPrint('🔢 VerifyEmailScreen: _canVerify: $_canVerify');
                         },
                         onCompleted: (final value) {
+                          debugPrint('✅ VerifyEmailScreen: Code completed: "$value"');
                           setState(() {
                             _code = value;
                           });
+                          debugPrint('✅ VerifyEmailScreen: _canVerify: $_canVerify');
                           if (_canVerify) {
+                            debugPrint('✅ VerifyEmailScreen: Auto-verifying...');
                             _handleVerify();
+                          } else {
+                            debugPrint('⚠️ VerifyEmailScreen: Cannot verify yet. _isCodeComplete: $_isCodeComplete, _isVerifying: $_isVerifying, _isLockedOut: $_isLockedOut');
                           }
                         },
                       ),
@@ -418,12 +544,9 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
                       : TextButton(
                           onPressed: _canResend ? _resendCode : null,
                           child: _isResending
-                              ? SizedBox(
-                                  width: 16,
-                                  height: 16,
-                                  child: const CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                  ),
+                              ? const SpinningMaraLogo(
+                                  width: 24,
+                                  height: 24,
                                 )
                               : Text(
                                   l10n.resendCodeButton,
@@ -438,62 +561,79 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
                 ),
                 const SizedBox(height: 40),
                 // Verify button with gradient
-                Opacity(
-                  opacity: _canVerify ? 1 : 0.5,
-                  child: Container(
-                    width: double.infinity,
-                    height: 52,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      gradient: LinearGradient(
-                        begin: const Alignment(
-                          0.0005944162257947028,
-                          -0.15902137756347656,
-                        ),
-                        end: const Alignment(
-                          6.022111415863037,
-                          0.0005944162257947028,
-                        ),
-                        colors: [
-                          AppColors.gradientStart,
-                          AppColors.gradientEnd,
+                IgnorePointer(
+                  ignoring: !_canVerify,
+                  child: Opacity(
+                    opacity: _canVerify ? 1.0 : 0.5,
+                    child: Container(
+                      width: double.infinity,
+                      height: 52,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        gradient: _canVerify
+                            ? LinearGradient(
+                                begin: const Alignment(
+                                  0.0005944162257947028,
+                                  -0.15902137756347656,
+                                ),
+                                end: const Alignment(
+                                  6.022111415863037,
+                                  0.0005944162257947028,
+                                ),
+                                colors: [
+                                  AppColors.gradientStart,
+                                  AppColors.gradientEnd,
+                                ],
+                              )
+                            : null,
+                        color: _canVerify ? null : Colors.grey,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(isDark ? 0.4 : 0.25),
+                            offset: const Offset(0, 4),
+                            blurRadius: 50,
+                          ),
                         ],
                       ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(isDark ? 0.4 : 0.25),
-                          offset: const Offset(0, 4),
-                          blurRadius: 50,
-                        ),
-                      ],
-                    ),
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        onTap: _canVerify ? _handleVerify : null,
-                        borderRadius: BorderRadius.circular(12),
-                        child: Center(
-                          child: _isVerifying
-                              ? const SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                      Colors.white,
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: _canVerify
+                              ? () {
+                                  debugPrint('🔘 VerifyEmailScreen: Button tapped');
+                                  debugPrint('🔘 VerifyEmailScreen: _code: "$_code"');
+                                  debugPrint('🔘 VerifyEmailScreen: _isCodeComplete: $_isCodeComplete');
+                                  debugPrint('🔘 VerifyEmailScreen: _isVerifying: $_isVerifying');
+                                  debugPrint('🔘 VerifyEmailScreen: _isLockedOut: $_isLockedOut');
+                                  debugPrint('🔘 VerifyEmailScreen: _canVerify: $_canVerify');
+                                  _handleVerify();
+                                }
+                              : () {
+                                  debugPrint('🚫 VerifyEmailScreen: Button disabled');
+                                  debugPrint('🚫 VerifyEmailScreen: _code: "$_code"');
+                                  debugPrint('🚫 VerifyEmailScreen: _isCodeComplete: $_isCodeComplete');
+                                  debugPrint('🚫 VerifyEmailScreen: _isVerifying: $_isVerifying');
+                                  debugPrint('🚫 VerifyEmailScreen: _isLockedOut: $_isLockedOut');
+                                  debugPrint('🚫 VerifyEmailScreen: _canVerify: $_canVerify');
+                                },
+                          borderRadius: BorderRadius.circular(12),
+                          child: Center(
+                            child: _isVerifying
+                                ? const SpinningMaraLogo(
+                                    width: 32,
+                                    height: 32,
+                                  )
+                                : Text(
+                                    l10n.verify,
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.normal,
+                                      height: 1,
                                     ),
                                   ),
-                                )
-                              : Text(
-                                  l10n.verify,
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.normal,
-                                    height: 1,
-                                  ),
-                                ),
+                          ),
                         ),
                       ),
                     ),

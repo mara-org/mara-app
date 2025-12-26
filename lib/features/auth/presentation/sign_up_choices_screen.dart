@@ -1,14 +1,174 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_colors_dark.dart';
 import '../../../core/utils/platform_utils.dart';
 import '../../../core/widgets/mara_logo.dart';
+import '../../../core/providers/email_provider.dart';
+import '../../../core/session/session_service.dart';
+import '../../../core/utils/firebase_auth_helper.dart';
+import '../../../core/utils/logger.dart';
+import '../../../core/network/api_exceptions.dart';
 import '../../../l10n/app_localizations.dart';
 
-class SignUpChoicesScreen extends StatelessWidget {
+class SignUpChoicesScreen extends ConsumerStatefulWidget {
   const SignUpChoicesScreen({super.key});
+
+  @override
+  ConsumerState<SignUpChoicesScreen> createState() => _SignUpChoicesScreenState();
+}
+
+class _SignUpChoicesScreenState extends ConsumerState<SignUpChoicesScreen> {
+  bool _isLoading = false;
+  String? _errorMessage;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
+  Future<void> _handleAppleSignIn() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      Logger.info(
+        'Starting Sign in with Apple',
+        feature: 'auth',
+        screen: 'sign_up_choices_screen',
+      );
+
+      // Step 1: Sign in with Apple (works for both new and existing users)
+      await FirebaseAuthHelper.signInWithApple();
+
+      // Step 2: Create backend session (send Firebase ID token for verification)
+      Logger.info(
+        'Apple sign-in successful, creating backend session',
+        feature: 'auth',
+        screen: 'sign_up_choices_screen',
+      );
+      
+      final sessionService = SessionService();
+      try {
+        await sessionService.createBackendSession();
+        Logger.info(
+          'Backend session created successfully',
+          feature: 'auth',
+          screen: 'sign_up_choices_screen',
+        );
+        
+        // Step 3: Fetch user info and entitlements
+        try {
+          Logger.info(
+            'Fetching user info',
+            feature: 'auth',
+            screen: 'sign_up_choices_screen',
+          );
+          await sessionService.fetchUserInfo();
+          Logger.info(
+            'User info fetched successfully',
+            feature: 'auth',
+            screen: 'sign_up_choices_screen',
+          );
+        } catch (e) {
+          Logger.warning(
+            'Failed to fetch user info: $e',
+            feature: 'auth',
+            screen: 'sign_up_choices_screen',
+          );
+        }
+      } catch (e, stackTrace) {
+        Logger.error(
+          'Backend session failed',
+          feature: 'auth',
+          screen: 'sign_up_choices_screen',
+          error: e,
+          stackTrace: stackTrace,
+        );
+        
+        // Backend session failed - check if it's a backend down error
+        if (e.toString().contains('network') || 
+            e.toString().contains('connection') ||
+            e.toString().contains('timeout') ||
+            e.toString().contains('unavailable')) {
+          if (!mounted) return;
+          setState(() {
+            _isLoading = false;
+            _errorMessage = 'Service unavailable. Please try again later.';
+          });
+          return;
+        }
+        // Other errors - allow Apple sign-in to proceed
+        Logger.warning(
+          'Allowing Apple sign-in to proceed despite backend error',
+          feature: 'auth',
+          screen: 'sign_up_choices_screen',
+        );
+      }
+
+      if (!mounted) return;
+
+      // Step 4: Get user email (if available) and navigate
+      final user = FirebaseAuth.instance.currentUser;
+      final email = user?.email;
+      if (email != null && email.isNotEmpty) {
+        ref.read(emailProvider.notifier).setEmail(email);
+      }
+      
+      Logger.info(
+        'Apple sign-in successful, navigating to home',
+        feature: 'auth',
+        screen: 'sign_up_choices_screen',
+      );
+      context.go('/home');
+    } catch (e) {
+      if (!mounted) return;
+      
+      Logger.error(
+        'Apple sign-in error: $e',
+        feature: 'auth',
+        screen: 'sign_up_choices_screen',
+        error: e,
+      );
+      
+      String errorMsg = 'Sign in with Apple failed. Please try again.';
+      
+      // Handle device limit error
+      if (e is DeviceLimitException) {
+        setState(() {
+          _isLoading = false;
+          if (e.plan == 'free') {
+            _errorMessage = '${e.message}\n\nUpgrade to Premium to use up to 3 devices.';
+          } else {
+            _errorMessage = '${e.message}\n\nYou can remove a device from Settings to add this one.';
+          }
+        });
+        return;
+      }
+      
+      if (e.toString().contains('canceled')) {
+        // User canceled - don't show error, just reset loading state
+        setState(() {
+          _isLoading = false;
+        });
+        return;
+      } else if (e.toString().contains('network') || 
+                 e.toString().contains('connection') ||
+                 e.toString().contains('unavailable')) {
+        errorMsg = 'Service unavailable. Please try again later.';
+      }
+      
+      setState(() {
+        _isLoading = false;
+        _errorMessage = errorMsg;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +191,7 @@ class SignUpChoicesScreen extends StatelessWidget {
                   children: [
                     const SizedBox(height: 20),
                     // Mara logo
-                    const Center(child: MaraLogo(width: 258, height: 202)),
+                    const Center(child: MaraLogo(width: 180, height: 130)),
                     const SizedBox(
                       height: 800,
                     ), // Space for positioned elements
@@ -104,8 +264,8 @@ class SignUpChoicesScreen extends StatelessWidget {
                 width: screenWidth - 64,
                 height: 52,
                 isDark: isDark,
-                onPressed: () {
-                  // TODO: Implement Apple sign-in
+                onPressed: _isLoading ? null : () {
+                  _handleAppleSignIn();
                 },
               ),
             ),
@@ -125,6 +285,30 @@ class SignUpChoicesScreen extends StatelessWidget {
                 },
               ),
             ),
+            // Error message
+            if (_errorMessage != null)
+              PositionedDirectional(
+                start: 32,
+                top: 580,
+                child: Container(
+                  width: screenWidth - 64,
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.red.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.red, width: 1),
+                  ),
+                  child: Text(
+                    _errorMessage!,
+                    style: const TextStyle(
+                      color: Colors.red,
+                      fontSize: 14,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+
             // Positioned "Already a member? Sign in" at y740, centered horizontally
             PositionedDirectional(
               start: 0,
@@ -183,7 +367,7 @@ class _SocialButton extends StatelessWidget {
   final double width;
   final double height;
   final bool isDark;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
 
   const _SocialButton({
     required this.text,
@@ -199,7 +383,7 @@ class _SocialButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onPressed,
+      onTap: onPressed ?? () {},
       child: Container(
         width: width,
         height: height,
@@ -223,7 +407,7 @@ class _SocialButton extends StatelessWidget {
                   height: 28,
                   fit: BoxFit.contain,
                   filterQuality: FilterQuality.high,
-                  errorBuilder: (context, error, stackTrace) {
+                  errorBuilder: (context, final error, stackTrace) {
                     debugPrint('Error loading image: $iconImagePath - $error');
                     return Icon(Icons.image, color: textColor, size: 28);
                   },

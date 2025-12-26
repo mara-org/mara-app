@@ -362,7 +362,7 @@ class _ProfileMenuItem extends StatelessWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: AppColors.languageButtonColor.withValues(alpha: 0.1),
+                color: AppColors.languageButtonColor.withOpacity( 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(icon, color: AppColors.languageButtonColor, size: 24),
@@ -542,7 +542,7 @@ class _DeveloperInfoItem extends StatelessWidget {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: AppColors.languageButtonColor.withValues(alpha: 0.1),
+              color: AppColors.languageButtonColor.withOpacity( 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(icon, color: AppColors.languageButtonColor, size: 24),
