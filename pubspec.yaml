@@ -44,7 +44,7 @@ dependencies:
   # Health data integration - Apple Health / Google Fit
   health: ^13.1.3
   # Charts for analytics dashboard
-  fl_chart: ^0.69.0
+  fl_chart: ^1.1.1
   # Notifications
   flutter_local_notifications: ^17.2.4
   timezone: ^0.9.4
