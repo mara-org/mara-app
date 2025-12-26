@@ -147,7 +147,8 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
       // The verifyEmailCode method no longer exists in AuthRepository
       // For now, we'll skip verification and proceed directly to sign-in
       // In production, this screen should not be accessible
-      final success = true; // await authRepository.verifyEmailCode(_code, email: email);
+      final success =
+          true; // await authRepository.verifyEmailCode(_code, email: email);
 
       if (!mounted) return;
 
